@@ -1,0 +1,123 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #050510;
+  color: #f5f5f5;
+  line-height: 1.6;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5vw;
+  background: rgba(5, 5, 16, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.logo {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.nav a {
+  margin-left: 1.5rem;
+  text-decoration: none;
+  color: #ccccff;
+  font-size: 0.9rem;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  padding: 4rem 5vw;
+  background: radial-gradient(circle at top left, #29295a, #050510);
+}
+
+.hero-content {
+  max-width: 640px;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+  color: #d0d0ff;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid #ffd54a;
+  color: #111;
+  background: #ffd54a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn:hover {
+  filter: brightness(1.05);
+}
+
+.section {
+  padding: 4rem 5vw;
+}
+
+.section-alt {
+  background: #0b0b1a;
+}
+
+.section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.card {
+  background: #141428;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid #26264a;
+}
+
+.card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 2rem 5vw;
+  font-size: 0.8rem;
+  color: #8888aa;
+  border-top: 1px solid #181830;
+}
