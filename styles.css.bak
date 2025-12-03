@@ -190,14 +190,3 @@ blockquote footer {
     font-size: 0.9rem;
   }
 }
-
-/* Contact email — lighter, high-contrast color */
-#contact a,
-#contact a:visited {
-  color: #d9eeff;       /* lighter, readable blue */
-  text-decoration: underline;
-}
-#contact a:hover,
-#contact a:focus {
-  color: #ffffff;       /* bright on hover/focus */
-}
