@@ -165,6 +165,9 @@ button:focus {
 }
 
 .site-footer {
+  position: sticky;
+  bottom: 0;
+  background: rgba(15, 15, 15, 0.9);
   text-align: center;
   padding: 2rem 5vw;
   font-size: 0.85rem;
