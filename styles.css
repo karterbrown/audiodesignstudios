@@ -19,7 +19,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 3rem 5vw;
+  padding: 2rem 5vw;
   background: rgba(0f0f0ff2);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(6px);
@@ -36,9 +36,9 @@ body {
 
 .nav a {
   margin-left: 1.5rem;
-  text-decoration: none;
-  color: #f4f4ff;            
-  font-size: 1.2rem;
+  text-decoration: solid;
+  color: #dedede;            
+  font-size: 1rem;
 }
 
 .nav a:hover,
@@ -112,8 +112,8 @@ button:focus {
   display: inline-block;
   padding: 0.75rem 1.5rem;
   border-radius: 999px;
-  border: 1px solid #cbcb83;
-  color: #31c49f;
+  border: 1px solid #31c49f;
+  color: #cbcb83;
   background: #0d1d14f2;
   font-weight: 600;
   text-decoration: none;
@@ -155,7 +155,7 @@ button:focus {
   border-radius: 0.75rem;
   padding: 1.5rem;
   border: 1px solid rgba(255,255,255,0.03);
-  box-shadow: 0 8px 20px rgba(2,6,23,0.6);
+  box-shadow: 0 8px 20px rgba(39, 71, 31, 0.6);
   color: #f4f4ff;
 }
 
