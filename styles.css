@@ -281,3 +281,36 @@ blockquote footer {
   cursor: pointer;
 }
 
+.headshot-wrapper {
+  display: flex;
+  justify-content: left;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  margin-left: 3rem;
+}
+
+.headshot {
+  width: 250px;             
+  height: 250px;
+  object-fit: cover;
+  border-radius: 50%;       
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 30px rgba(99,105,135,0.5);
+}
+
+.env-image {
+  width: 100%;
+  height: 260px; 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.env-home {
+  background-image: url('../Photos/bridgetoshinob2.png');
+}
+
+.env-portfolio {
+  background-image: url('../Photos/bridgetoshinob.png');
+}
+
