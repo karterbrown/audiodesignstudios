@@ -7,7 +7,7 @@
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #0f0f0ff2;       
-  color: #cbcb83;            
+  color: #f4f4ff;            
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -37,7 +37,7 @@ body {
 .nav a {
   margin-left: 1.5rem;
   text-decoration: none;
-  color: #cbcb83;            
+  color: #f4f4ff;            
   font-size: 0.95rem;
 }
 
@@ -99,7 +99,7 @@ button:focus {
 .hero h1 {
   font-size: 2.6rem;
   margin-bottom: 1rem;
-  color: #f4f8ff;
+  color: #f4f4ff;
 }
 
 .hero p {
@@ -136,7 +136,7 @@ button:focus {
 .section h2 {
   font-size: 1.8rem;
   margin-bottom: 1.25rem;
-  color: #f4f8ff;
+  color: #f4f4ff;
 }
 
 .grid {
@@ -156,19 +156,19 @@ button:focus {
   padding: 1.5rem;
   border: 1px solid rgba(255,255,255,0.03);
   box-shadow: 0 8px 20px rgba(2,6,23,0.6);
-  color: #e6eef8;
+  color: #f4f4ff;
 }
 
 .card h3 {
   margin-bottom: 0.5rem;
-  color: #f8fbff;
+  color: #31c49f;
 }
 
 .site-footer {
   text-align: center;
   padding: 2rem 5vw;
   font-size: 0.85rem;
-  color: #cbcb83;
+  color: #f4f4ff;
   border-top: 1px solid rgba(175, 141, 141, 0.02);
 }
 
@@ -177,26 +177,26 @@ blockquote {
   padding: 1rem 1rem 1rem 1rem;
   border-left: 4px solid #3d4f5f; 
   background: rgba(120, 154, 186, 0.04);
-  color: #eef6ff;
+  color: #f4f4ff;
   border-radius: 6px;
 }
 
 blockquote p {
   margin: 0;
   font-style: italic;
-  color: #e6eef8;
+  color: #f4f4ff;
 }
 
 blockquote footer {
   margin-top: 0.75rem;
-  color: #c9daf6;
+  color: #f4f4ff;
   font-weight: 600;
 }
 
 .attribution {
   display: block;
   margin-top: 1rem;
-  color: #c9daf6;
+  color: #f4f4ff;
   font-weight: 600;
 }
 
