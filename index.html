@@ -11,27 +11,54 @@
     <div class="logo">Audio Design Studios</div>
     <nav class="nav">
       <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
       <a href="portfolio.html">Portfolio</a>
       <a href="about.html">About</a>
       <a href="offworlddepot.html">Off World Depot</a>
     </nav>
   </header>
+<main>
 
-  <main>
+  <section class="env-image env-home"></section>
 
-<section class="env-image env-home"></section>
-
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Custom Services</h1>
-        <p>Composing, Music Production, Sound Design, Dialogue Editing, Mixing, Mastering</p>
-        <a href="services.html" class="btn">Design Audio With Karter</a>
+<section id="services" class="section section-alt">
+      <h2>Services</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Sound Design</h3>
+          <p>Custom SFX, soundscapes, and detailed sound editing for film, animation, and games.</p>
+        </div>
+        <div class="card">
+          <h3>Mixing & Mastering</h3>
+          <p>Clean, balanced mixes for music, podcasts, trailers, and cinematic content.</p>
+        </div>
+        <div class="card">
+          <h3>Original Music</h3>
+          <p>Score cues, thematic motifs, and production music tailored to your project.</p>
+        </div>
       </div>
-      <div class="headshot-wrapper">
-  <img src="Photos/headshot.jpg" alt="Karter Brown Headshot" class="headshot">
-</div>
     </section>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="headshot-wrapper">
+      <img src="Photos/headshot.jpg" alt="Karter Brown Headshot" class="headshot">
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <h1>Tell Me About Your Project</h1>
+    <p>Send a message and I’ll get back to you with next steps.</p>
+
+    <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" placeholder="Describe your project..." required></textarea>
+      <button type="submit" class="btn">Send Message</button>
+    </form>
+
+    <p id="form-status" style="margin-top:1rem; opacity:0.8;"></p>
+  </div>
+</section>
 
     </main>
 
