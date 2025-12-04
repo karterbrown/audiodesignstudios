@@ -6,8 +6,8 @@
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #060613;       
-  color: #e6eef8;            
+  background: #0f0f0ff2;       
+  color: #cbcb83;            
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,8 +20,8 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 5vw;
-  background: rgba(6, 6, 19, 0.85);
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  background: rgba(0f0f0ff2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(6px);
   z-index: 10;
 }
@@ -30,26 +30,26 @@ body {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.95rem;
-  color: #f4f8ff;
+  font-size: 1rem;
+  color: #cbcb83;
 }
 
 .nav a {
   margin-left: 1.5rem;
   text-decoration: none;
-  color: #bcd1ff;            
+  color: #cbcb83;            
   font-size: 0.95rem;
 }
 
 .nav a:hover,
 .nav a:focus {
-  color: #ffffff;
+  color: #31c49f;
   text-decoration: underline;
 }
 
 a:focus,
 button:focus {
-  outline: 3px solid rgba(147,197,253,0.18);
+  outline: 3px solid rgba(229, 229, 229, 0.18);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -64,8 +64,8 @@ button:focus {
   padding: clamp(2rem, 6vw, 4rem) clamp(4vw, 8vw, 12vw);
 
   background:
-    radial-gradient(circle at 10% 10%, rgba(57,62,104,0.25), rgba(6,6,19,0.85)),
-    linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0));
+    radial-gradient(circle at 10% 10%, rgba(64, 99, 80, 0.25), rgba(6,6,19,0.85)),
+    linear-gradient(to bottom right, rgba(18, 10, 23, 0.1), rgba(41, 41, 41, 0));
 
   backdrop-filter: blur(1px);
 }
@@ -99,22 +99,22 @@ button:focus {
 .hero h1 {
   font-size: 2.6rem;
   margin-bottom: 1rem;
-  color: #f8fbff;
+  color: #f4f8ff;
 }
 
 .hero p {
   max-width: 560px;
   margin-bottom: 1.5rem;
-  color: #c9d8f8;            
+  color: #f4f8ff;            
 }
 
 .btn {
   display: inline-block;
   padding: 0.75rem 1.5rem;
   border-radius: 999px;
-  border: 1px solid #ffd54a;
-  color: #0b1220;
-  background: #ffd54a;
+  border: 1px solid #cbcb83;
+  color: #31c49f;
+  background: #0f0f0ff2;
   font-weight: 600;
   text-decoration: none;
 }
@@ -168,15 +168,15 @@ button:focus {
   text-align: center;
   padding: 2rem 5vw;
   font-size: 0.85rem;
-  color: #9fb0d6;
-  border-top: 1px solid rgba(255,255,255,0.02);
+  color: #cbcb83;
+  border-top: 1px solid rgba(175, 141, 141, 0.02);
 }
 
 blockquote {
   margin: 0 0 1.5rem 0;
   padding: 1rem 1rem 1rem 1rem;
-  border-left: 4px solid #7cc0ff; 
-  background: rgba(124,192,255,0.04);
+  border-left: 4px solid #3d4f5f; 
+  background: rgba(120, 154, 186, 0.04);
   color: #eef6ff;
   border-radius: 6px;
 }
@@ -212,10 +212,10 @@ blockquote footer {
 
 #contact a,
 #contact a:visited {
-  color: #d9eeff;       
+  color: #31c49f;       
   text-decoration: underline;
 }
 #contact a:hover,
 #contact a:focus {
-  color: #ffffff;       
+  color: #cbcb83;       
 }
