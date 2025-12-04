@@ -39,17 +39,43 @@
 
     <section class="hero">
   <div class="hero-content">
-    <h1>Contact Me</h1>
-    <p>Have a project in mind? Send me a message and I'll get back to you.</p>
+    <h1>Tell Me About Your Project</h1>
+    <p>Send a message and I’ll get back to you with next steps.</p>
 
-    <form class="contact-form" action="mailto:music@kartergbrown.com" method="POST" enctype="text/plain">
+    <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
       <input type="text" name="name" placeholder="Your Name" required>
       <input type="email" name="email" placeholder="Your Email" required>
-      <textarea name="message" placeholder="Tell me about your project..." required></textarea>
+      <textarea name="message" placeholder="Describe your project..." required></textarea>
       <button type="submit" class="btn">Send Message</button>
     </form>
+
+    <p id="form-status" style="margin-top:1rem; opacity:0.8;"></p>
   </div>
 </section>
+
+<script>
+  const form = document.querySelector('.contact-form');
+  const status = document.getElementById('form-status');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (res.ok) {
+      status.textContent = "Message sent! I'll reach out soon.";
+      form.reset();
+    } else {
+      status.textContent = "Oops – something went wrong. You can email me directly at music@kartergbrown.com.";
+    }
+  });
+</script>
+
   </main>
 
   <footer class="site-footer">
