@@ -245,3 +245,38 @@ blockquote footer {
 #contact a:focus {
   color: #cbcb83;       
 }
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(238, 167, 167, 0.06);
+  padding: 0.85rem 1rem;
+  border-radius: 0.5rem;
+  color: #f4f4ff;
+  font-size: 0.95rem;
+  backdrop-filter: blur(4px);
+}
+
+.contact-form textarea {
+  height: 140px;
+  resize: none;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+.contact-form button.btn {
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
