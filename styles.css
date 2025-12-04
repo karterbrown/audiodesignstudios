@@ -64,7 +64,7 @@ button:focus {
   padding: clamp(2rem, 6vw, 4rem) clamp(4vw, 8vw, 12vw);
 
   background:
-    radial-gradient(circle at 10% 10%, rgba(64, 99, 80, 0.25), rgba(6,6,19,0.85)),
+    radial-gradient(circle at 10% 10%, rgba(25, 172, 91, 0.25), rgba(6,6,19,0.85)),
     linear-gradient(to bottom right, rgba(18, 10, 23, 0.1), rgba(41, 41, 41, 0));
 
   backdrop-filter: blur(1px);
@@ -114,7 +114,7 @@ button:focus {
   border-radius: 999px;
   border: 1px solid #cbcb83;
   color: #31c49f;
-  background: #0f0f0ff2;
+  background: #0d1d14f2;
   font-weight: 600;
   text-decoration: none;
 }
@@ -165,14 +165,37 @@ button:focus {
 }
 
 .site-footer {
-  position: sticky;
-  bottom: 0;
-  background: rgba(15, 15, 15, 0.9);
+  padding: 3rem 5vw;
   text-align: center;
-  padding: 2rem 5vw;
+  font-size: 0.9rem;
+  color: #cfcfd8;
+  opacity: 0.85;
+  margin-top: 6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+}
+
+.site-footer h2 {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.site-footer a {
+  color: #cfcfd8;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.site-footer a:hover {
+  opacity: 1;
+}
+
+.footer-copy {
+  margin-top: 2rem;
+  opacity: 0.75;
   font-size: 0.85rem;
-  color: #f4f4ff;
-  border-top: 1px solid rgba(175, 141, 141, 0.02);
 }
 
 blockquote {
