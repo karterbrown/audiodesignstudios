@@ -32,7 +32,11 @@
         <div class="player-wrapper">
           <div class="player-left">
             <div class="album-cover" aria-hidden="true">
-              <img id="albumCover" src="Photos/headshot.webp" alt="Album cover" />
+              <picture>
+                <source media="(min-width:1200px)" srcset="highlights/staticcurrents2000.webp">
+                <source media="(min-width:720px)" srcset="highlights/staticcurrents1400.webp">
+                <img id="albumCover" src="highlights/staticcurrents800.webp" alt="Highlights album cover" />
+              </picture>
             </div>
           </div>
 
@@ -51,9 +55,19 @@
         <div class="playlist-card">
           <div class="playlist-card-header">
             <div class="playlist-album-art" id="dotpArt">
-              <img src="Photos/headshot.webp" alt="Daughter of the Plains">
+              <picture>
+                <source media="(min-width:1200px)" srcset="daughteroftheplains/daughteroftheplains2000.webp">
+                <source media="(min-width:720px)" srcset="daughteroftheplains/daughteroftheplains1400.webp">
+                <img src="daughteroftheplains/daughteroftheplains800.webp" alt="Daughter of the Plains">
+              </picture>
             </div>
             <h3>Daughter of the Plains</h3>
+          </div>
+          <div id="mainWave" class="playlist-waveform" aria-hidden="true"></div>
+          <div class="playlist-player-controls">
+            <button id="prevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
+            <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
+            <button id="nextBtn" class="control-btn" aria-label="Next track">⏭</button>
           </div>
           <div class="playlist-content" id="dotpPlaylist">
             <!-- Tracks will be injected here -->
@@ -67,6 +81,12 @@
               <img src="Photos/headshot.webp" alt="All Works">
             </div>
             <h3>All Works</h3>
+          </div>
+          <div id="allMainWave" class="playlist-waveform" aria-hidden="true"></div>
+          <div class="playlist-player-controls">
+            <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
+            <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
+            <button id="allNextBtn" class="control-btn" aria-label="Next track">⏭</button>
           </div>
           <div class="playlist-scroll" id="allWorksPlaylist">
             <!-- Tracks will be injected here -->
@@ -93,24 +113,22 @@
   <!-- Waveform player (WaveSurfer) -->
   <script src="https://unpkg.com/wavesurfer.js"></script>
   <script>
-    // Wait for DOM and WaveSurfer to be ready
-    document.addEventListener('DOMContentLoaded', function() {
-      // Check if WaveSurfer loaded
+    document.addEventListener('DOMContentLoaded', () => {
       if (typeof WaveSurfer === 'undefined') {
         console.error('WaveSurfer library failed to load');
         return;
       }
 
-      // Basic playlist data - replace the urls with your hosted audio files
-      const tracks = [
-        { id: 'track1', title: 'Neon Wasteland', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { id: 'track2', title: 'Interstellar Worlds Align', url: 'audio/Interstellar Worlds Align.mp3' },
-        { id: 'track3', title: 'Buried Trials', url: 'audio/BuriedTrials_FullMix.mp3' }
+      // --- Highlights mini-players ---
+      const highlights = [
+        { id: 'track1', title: 'Neon Wasteland', url: 'highlights/NeonWasteland_FullMix.mp3' },
+        { id: 'track2', title: 'Interstellar Worlds Align', url: 'highlights/Interstellar Worlds Align.mp3' },
+        { id: 'track3', title: 'Buried Trials', url: 'highlights/BuriedTrials_FullMix.mp3' }
       ];
 
-      const playlistEl = document.getElementById('playlist');
+      const highlightsContainer = document.getElementById('playlist');
 
-      function createTrackRow(track) {
+      function createHighlightRow(track) {
         const row = document.createElement('div');
         row.className = 'track-row';
 
@@ -141,7 +159,6 @@
         row.appendChild(header);
         row.appendChild(wave);
 
-        // Create WaveSurfer instance
         const ws = WaveSurfer.create({
           container: wave,
           waveColor: '#6d6d76',
@@ -151,75 +168,180 @@
           normalize: true
         });
 
-        // prevent right-click download/context menu on waveform
-        wave.addEventListener('contextmenu', e => e.preventDefault());
-
+        wave.addEventListener('contextmenu', (e) => e.preventDefault());
         ws.load(track.url);
-
-        ws.on('ready', () => {
-          console.log('Track ready:', track.title);
-        });
 
         ws.on('error', (e) => {
           console.error('WaveSurfer error for', track.title, ':', e);
         });
 
-        // update play/pause button
-        btn.addEventListener('click', () => {
-          ws.playPause();
-        });
-
+        btn.addEventListener('click', () => ws.playPause());
         ws.on('play', () => { btn.textContent = '⏸'; });
         ws.on('pause', () => { btn.textContent = '▶'; });
         ws.on('finish', () => { btn.textContent = '▶'; });
 
-        // click on waveform seeks to that location (built-in)
-
-        // append row
-        playlistEl.appendChild(row);
+        highlightsContainer.appendChild(row);
       }
 
-      // Build playlist
-      tracks.forEach(createTrackRow);
+      highlights.forEach(createHighlightRow);
 
-      // Accessibility: prevent dragging of the album cover image
-      const album = document.getElementById('albumCover');
-      if (album) album.setAttribute('draggable', 'false');
+      // --- Player instances (per playlist) ---
+      const mainWaveEl = document.getElementById('mainWave');
+      const mainWs = WaveSurfer.create({
+        container: mainWaveEl,
+        waveColor: '#6d6d76',
+        progressColor: '#31c49f',
+        height: 37,
+        responsive: true,
+        normalize: true
+      });
+      if (mainWaveEl) mainWaveEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      // Populate playlists section
+      const allMainWaveEl = document.getElementById('allMainWave');
+      const allMainWs = WaveSurfer.create({
+        container: allMainWaveEl,
+        waveColor: '#6d6d76',
+        progressColor: '#31c49f',
+        height: 37,
+        responsive: true,
+        normalize: true
+      });
+      if (allMainWaveEl) allMainWaveEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      const allPlayPauseBtn = document.getElementById('allPlayPauseBtn');
+      const allPrevBtn = document.getElementById('allPrevBtn');
+      const allNextBtn = document.getElementById('allNextBtn');
+
+      const playlistButtonLookup = {
+        dotp: 'dotpPlaylist',
+        allWorks: 'allWorksPlaylist'
+      };
+
+      const getTrackButtons = (key) => {
+        const containerId = playlistButtonLookup[key];
+        if (!containerId) return [];
+        const container = document.getElementById(containerId);
+        return container ? Array.from(container.querySelectorAll('.track-item-play-btn')) : [];
+      };
+
+      const players = {
+        dotp: {
+          ws: mainWs,
+          controls: { playPauseBtn, prevBtn, nextBtn },
+          current: null,
+          key: 'dotp'
+        },
+        allWorks: {
+          ws: allMainWs,
+          controls: { playPauseBtn: allPlayPauseBtn, prevBtn: allPrevBtn, nextBtn: allNextBtn },
+          current: null,
+          key: 'allWorks'
+        }
+      };
+
+      function loadAndPlayInPlayer(playerKey, track, btn, itemProgressEl, timeEl) {
+        const ctx = players[playerKey];
+        if (!ctx) return;
+        const url = typeof track === 'string' ? track : track.url || track;
+        if (!url) return;
+
+        if (ctx.current && ctx.current.btn === btn) {
+          ctx.ws.playPause();
+          return;
+        }
+
+        if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
+        ctx.current = { btn, itemProgressEl, timeEl };
+        btn.textContent = '…';
+
+        try {
+          ctx.ws.load(url);
+          ctx.ws.once('ready', () => ctx.ws.play());
+        } catch (e) {
+          console.warn('player load failed', e);
+        }
+      }
+
+      function attachWaveEvents(playerKey) {
+        const ctx = players[playerKey];
+        if (!ctx) return;
+        const { ws, controls } = ctx;
+
+        ws.on('audioprocess', () => {
+          if (!ctx.current) return;
+          const cur = ws.getCurrentTime() || 0;
+          const dur = ws.getDuration() || 0;
+          const pct = dur ? (cur / dur) : 0;
+          if (ctx.current.itemProgressEl) ctx.current.itemProgressEl.style.width = `${pct * 100}%`;
+          if (ctx.current.timeEl) ctx.current.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+        });
+
+        ws.on('play', () => {
+          if (controls.playPauseBtn) controls.playPauseBtn.textContent = '⏸';
+          if (ctx.current?.btn) ctx.current.btn.textContent = '⏸';
+        });
+
+        ws.on('pause', () => {
+          if (controls.playPauseBtn) controls.playPauseBtn.textContent = '▶';
+          if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
+        });
+
+        ws.on('finish', () => {
+          if (controls.playPauseBtn) controls.playPauseBtn.textContent = '▶';
+          if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
+          if (ctx.current?.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
+        });
+      }
+
+      attachWaveEvents('dotp');
+      attachWaveEvents('allWorks');
+
+      // --- Playlist data ---
       const daughterOfPlainsData = [
-        { title: 'Opening Theme', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Journey Begins', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Heartland', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Memories', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Finale', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' }
+        { title: 'Daughter of the Plains (Score)', url: 'daughteroftheplains/01daughteroftheplainsscore.mp3' },
+        { title: 'BIG', url: 'daughteroftheplains/02big.mp3' },
+        { title: 'Alisons Theme', url: 'daughteroftheplains/03alisonstheme.mp3' },
+        { title: 'Like A Child', url: 'daughteroftheplains/04likeachild.mp3' },
+        { title: 'Daughter of the Plains (Motif)', url: 'daughteroftheplains/05daughteroftheplainsmotif.mp3' }
       ];
 
       const allWorksData = [
-        { title: 'Neon Wasteland', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Interstellar Worlds Align', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Buried Trials', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Digital Dreams', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Cosmic Voyage', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Electric Pulse', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Resonance', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Timeless Echo', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Void Walker', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Aurora', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Cascade', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Nexus', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Luminescence', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Phantom Requiem', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Ethereal', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Serpent', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Paradox', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Horizon', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
-        { title: 'Mirage', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { title: 'Sanctum', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
-        { title: 'Twilight', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' }
+        { title: 'Neon Wasteland', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Interstellar Worlds Align', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Buried Trials', url: 'allworks/BuriedTrials_FullMix.mp3' },
+        { title: 'Digital Dreams', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Cosmic Voyage', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Electric Pulse', url: 'allworks/BuriedTrials_FullMix.mp3' },
+        { title: 'Resonance', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Timeless Echo', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Void Walker', url: 'allworks/BuriedTrials_FullMix.mp3' },
+        { title: 'Aurora', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Cascade', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Nexus', url: 'allworks/BuriedTrials_FullMix.mp3' },
+        { title: 'Luminescence', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Phantom Requiem', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Ethereal', url: 'allworks/BuriedTrials_FullMix.mp3' },
+        { title: 'Serpent', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Paradox', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Horizon', url: 'allworks/BuriedTrials_FullMix.mp3' },
+        { title: 'Mirage', url: 'allworks/NeonWasteland_FullMix.mp3' },
+        { title: 'Sanctum', url: 'allworks/Interstellar Worlds Align.mp3' },
+        { title: 'Twilight', url: 'allworks/BuriedTrials_FullMix.mp3' }
       ];
 
-      function createPlaylistItem(track, index) {
+      // --- Shared playlist items ---
+      function formatTime(sec) {
+        const safeSec = Math.max(0, Math.floor(sec || 0));
+        const m = Math.floor(safeSec / 60);
+        const s = safeSec % 60;
+        return `${m}:${s.toString().padStart(2, '0')}`;
+      }
+
+      function createPlaylistItem(track, index, playlistKey) {
         const item = document.createElement('div');
         item.className = 'track-item';
 
@@ -234,20 +356,41 @@
         title.className = 'track-item-title';
         title.textContent = track.title;
 
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'track-item-progress-wrap';
+        const progressFill = document.createElement('div');
+        progressFill.className = 'track-item-progress-fill';
+        progressFill.style.width = '0%';
+        progressWrap.appendChild(progressFill);
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'track-item-time';
+        timeEl.textContent = '0:00 / 0:00';
+
         info.appendChild(num);
         info.appendChild(title);
+        info.appendChild(progressWrap);
 
         const btn = document.createElement('button');
         btn.className = 'track-item-play-btn';
         btn.setAttribute('aria-label', `Play ${track.title}`);
         btn.textContent = '▶';
+
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          console.log('Playing:', track.title);
-          btn.textContent = btn.textContent === '▶' ? '⏸' : '▶';
+          loadAndPlayInPlayer(playlistKey, track, btn, progressFill, timeEl);
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const rect = progressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          const targetWs = players[playlistKey]?.ws;
+          try { targetWs?.seekTo(pct); } catch (_err) {}
         });
 
         item.appendChild(info);
+        item.appendChild(timeEl);
         item.appendChild(btn);
 
         return item;
@@ -257,16 +400,60 @@
       const allWorksEl = document.getElementById('allWorksPlaylist');
 
       daughterOfPlainsData.forEach((track, idx) => {
-        dotpEl.appendChild(createPlaylistItem(track, idx));
+        dotpEl.appendChild(createPlaylistItem(track, idx, 'dotp'));
       });
 
       allWorksData.forEach((track, idx) => {
-        allWorksEl.appendChild(createPlaylistItem(track, idx));
+        allWorksEl.appendChild(createPlaylistItem(track, idx, 'allWorks'));
       });
 
-      // Prevent right-click download on playlists
       dotpEl.addEventListener('contextmenu', (e) => e.preventDefault());
       allWorksEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      // --- Transport controls (per playlist) ---
+      function attachTransportHandlers(playerKey) {
+        const ctx = players[playerKey];
+        if (!ctx) return;
+        const { controls, ws } = ctx;
+
+        const handlePlayPause = () => {
+          if (!ctx.current) {
+            const firstBtn = getTrackButtons(playerKey)[0];
+            if (firstBtn) {
+              firstBtn.click();
+              return;
+            }
+          }
+          ws.playPause();
+        };
+
+        const handlePrev = () => {
+          if (ws.getCurrentTime() > 3) {
+            ws.seekTo(0);
+            return;
+          }
+          const buttons = getTrackButtons(playerKey);
+          const currentIdx = buttons.findIndex((btn) => btn === ctx.current?.btn);
+          if (currentIdx > 0) buttons[currentIdx - 1].click();
+        };
+
+        const handleNext = () => {
+          const buttons = getTrackButtons(playerKey);
+          const currentIdx = buttons.findIndex((btn) => btn === ctx.current?.btn);
+          if (currentIdx >= 0 && currentIdx < buttons.length - 1) buttons[currentIdx + 1].click();
+        };
+
+        if (controls.playPauseBtn) controls.playPauseBtn.addEventListener('click', handlePlayPause);
+        if (controls.prevBtn) controls.prevBtn.addEventListener('click', handlePrev);
+        if (controls.nextBtn) controls.nextBtn.addEventListener('click', handleNext);
+      }
+
+      attachTransportHandlers('dotp');
+      attachTransportHandlers('allWorks');
+
+      // --- Misc ---
+      const album = document.getElementById('albumCover');
+      if (album) album.setAttribute('draggable', 'false');
     });
   </script>
 </body>
