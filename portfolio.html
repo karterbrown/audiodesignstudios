@@ -59,95 +59,96 @@
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
   <!-- Waveform player (WaveSurfer) -->
-  <script src="https://unpkg.com/wavesurfer.js/dist/wavesurfer.min.js"></script>
-  <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js"></script>
   <script>
-    // Basic playlist data - replace the urls with your hosted audio files
-    const tracks = [
-      { id: 'track1', title: 'Neon Wasteland', url: 'audio/NeonWasteland_FullMix.mp3' },
-      { id: 'track2', title: 'Track Two — Example', url: 'audio/track2.mp3' },
-      { id: 'track3', title: 'Track Three — Example', url: 'audio/track3.mp3' }
-    ];
+    // Wait for DOM and WaveSurfer to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if WaveSurfer loaded
+      if (typeof WaveSurfer === 'undefined') {
+        console.error('WaveSurfer library failed to load');
+        return;
+      }
 
-    const playlistEl = document.getElementById('playlist');
+      // Basic playlist data - replace the urls with your hosted audio files
+      const tracks = [
+        { id: 'track1', title: 'Neon Wasteland', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { id: 'track2', title: 'Track Two — Example', url: 'audio/track2.mp3' },
+        { id: 'track3', title: 'Track Three — Example', url: 'audio/track3.mp3' }
+      ];
 
-    function createTrackRow(track) {
-      const row = document.createElement('div');
-      row.className = 'track-row';
+      const playlistEl = document.getElementById('playlist');
 
-      const left = document.createElement('div');
-      left.className = 'track-left';
+      function createTrackRow(track) {
+        const row = document.createElement('div');
+        row.className = 'track-row';
 
-      const btn = document.createElement('button');
-      btn.className = 'play-btn';
-      btn.setAttribute('aria-label', `Play ${track.title}`);
-      btn.textContent = '▶';
+        const left = document.createElement('div');
+        left.className = 'track-left';
 
-      const wave = document.createElement('div');
-      wave.className = 'waveform';
-      wave.id = `wave_${track.id}`;
+        const btn = document.createElement('button');
+        btn.className = 'play-btn';
+        btn.setAttribute('aria-label', `Play ${track.title}`);
+        btn.textContent = '▶';
 
-      left.appendChild(btn);
-      left.appendChild(wave);
+        const wave = document.createElement('div');
+        wave.className = 'waveform';
+        wave.id = `wave_${track.id}`;
 
-      const right = document.createElement('div');
-      right.className = 'track-right';
-      right.textContent = track.title;
+        left.appendChild(btn);
+        left.appendChild(wave);
 
-      row.appendChild(left);
-      row.appendChild(right);
+        const right = document.createElement('div');
+        right.className = 'track-right';
+        right.textContent = track.title;
 
-      // Create WaveSurfer instance
-      const ws = WaveSurfer.create({
-        container: `#${wave.id}`,
-        waveColor: '#6d6d76',
-        progressColor: '#31c49f',
-        height: 60,
-        responsive: true,
-        normalize: true,
-        plugins: [WaveSurfer.regions.create({})]
-      });
+        row.appendChild(left);
+        row.appendChild(right);
 
-      // prevent right-click download/context menu on waveform
-      wave.addEventListener('contextmenu', e => e.preventDefault());
+        // Create WaveSurfer instance
+        const ws = WaveSurfer.create({
+          container: wave,
+          waveColor: '#6d6d76',
+          progressColor: '#31c49f',
+          height: 60,
+          responsive: true,
+          normalize: true
+        });
 
-      ws.load(track.url);
+        // prevent right-click download/context menu on waveform
+        wave.addEventListener('contextmenu', e => e.preventDefault());
 
-      ws.on('ready', () => {
-        // enable drag selection to create regions
-        if (ws.enableDragSelection) {
-          ws.enableDragSelection({ color: 'rgba(49,196,159,0.15)' });
-        }
-      });
+        ws.load(track.url);
 
-      // update play/pause button
-      btn.addEventListener('click', () => {
-        ws.playPause();
-      });
+        ws.on('ready', () => {
+          console.log('Track ready:', track.title);
+        });
 
-      ws.on('play', () => { btn.textContent = '⏸'; });
-      ws.on('pause', () => { btn.textContent = '▶'; });
-      ws.on('finish', () => { btn.textContent = '▶'; });
+        ws.on('error', (e) => {
+          console.error('WaveSurfer error for', track.title, ':', e);
+        });
 
-      // click on waveform seeks to that location (built-in)
+        // update play/pause button
+        btn.addEventListener('click', () => {
+          ws.playPause();
+        });
 
-      // append row
-      playlistEl.appendChild(row);
-    }
+        ws.on('play', () => { btn.textContent = '⏸'; });
+        ws.on('pause', () => { btn.textContent = '▶'; });
+        ws.on('finish', () => { btn.textContent = '▶'; });
 
-    // Build playlist
-    tracks.forEach(createTrackRow);
+        // click on waveform seeks to that location (built-in)
 
-    // Accessibility: prevent dragging of the album cover image
-    const album = document.getElementById('albumCover');
-    if (album) album.setAttribute('draggable', 'false');
+        // append row
+        playlistEl.appendChild(row);
+      }
 
-    // Note: it's not possible to fully prevent determined users from downloading
-    // audio files delivered to their browser. To reduce casual downloads:
-    // - do not provide direct links
-    // - disable right-click on waveform and album art (done above)
-    // For stronger protection serve audio through a streaming endpoint that
-    // doesn't expose direct file URLs.
+      // Build playlist
+      tracks.forEach(createTrackRow);
+
+      // Accessibility: prevent dragging of the album cover image
+      const album = document.getElementById('albumCover');
+      if (album) album.setAttribute('draggable', 'false');
+    });
   </script>
 </body>
 </html>   
