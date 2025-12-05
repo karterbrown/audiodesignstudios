@@ -72,8 +72,8 @@
       // Basic playlist data - replace the urls with your hosted audio files
       const tracks = [
         { id: 'track1', title: 'Neon Wasteland', url: 'audio/NeonWasteland_FullMix.mp3' },
-        { id: 'track2', title: 'Track Two — Example', url: 'audio/track2.mp3' },
-        { id: 'track3', title: 'Track Three — Example', url: 'audio/track3.mp3' }
+        { id: 'track2', title: 'Interstellar Worlds Align', url: 'audio/Interstellar Worlds Align.mp3' },
+        { id: 'track3', title: 'Buried Trials', url: 'audio/BuriedTrials_FullMix.mp3' }
       ];
 
       const playlistEl = document.getElementById('playlist');
@@ -82,27 +82,32 @@
         const row = document.createElement('div');
         row.className = 'track-row';
 
-        const left = document.createElement('div');
-        left.className = 'track-left';
+        const num = document.createElement('div');
+        num.className = 'track-number';
+        num.textContent = track.id.replace('track', '');
 
         const btn = document.createElement('button');
         btn.className = 'play-btn';
         btn.setAttribute('aria-label', `Play ${track.title}`);
         btn.textContent = '▶';
 
+        const container = document.createElement('div');
+        container.className = 'track-container';
+
+        const title = document.createElement('div');
+        title.className = 'track-title';
+        title.textContent = track.title;
+
         const wave = document.createElement('div');
         wave.className = 'waveform';
         wave.id = `wave_${track.id}`;
 
-        left.appendChild(btn);
-        left.appendChild(wave);
+        container.appendChild(title);
+        container.appendChild(wave);
 
-        const right = document.createElement('div');
-        right.className = 'track-right';
-        right.textContent = track.title;
-
-        row.appendChild(left);
-        row.appendChild(right);
+        row.appendChild(num);
+        row.appendChild(btn);
+        row.appendChild(container);
 
         // Create WaveSurfer instance
         const ws = WaveSurfer.create({

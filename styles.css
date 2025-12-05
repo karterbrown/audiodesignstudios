@@ -384,27 +384,18 @@ blockquote footer {
 
 .track-row {
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  gap: 0.75rem;
+  align-items: flex-start;
 }
 
-.track-left {
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
-  flex: 1 1 auto;
-}
-
-.track-right {
-  flex: 0 0 220px;
-  text-align: right;
+.track-number {
   font-weight: 600;
-  color: #f4f4ff;
-}
-
-.waveform {
-  flex: 1 1 auto;
-  min-width: 180px;
+  color: #cbcb83;
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+  min-width: 24px;
+  text-align: center;
+  margin-top: 0.25rem;
 }
 
 .play-btn {
@@ -415,10 +406,34 @@ blockquote footer {
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.play-btn:hover {
+  background: rgba(255,255,255,0.05);
 }
 
 .play-btn:focus {
   outline: 3px solid rgba(229, 229, 229, 0.12);
+}
+
+.track-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+}
+
+.track-title {
+  font-weight: 600;
+  color: #f4f4ff;
+  font-size: 0.95rem;
+}
+
+.waveform {
+  flex: 1 1 auto;
+  min-width: 180px;
 }
 
 @media (max-width: 720px) {
