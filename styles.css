@@ -16,36 +16,49 @@ body {
 
 /* -------- Header / Nav -------- */
 .site-header {
+  position: centered;
   top: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 6vw;
+  padding: 1rem 4vw;
   background: rgba(15, 15, 15, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(6px);
   z-index: 10;
+  min-height: 70px;
 }
 
 .logo {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #cbcb83;
+  line-height: 1;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .nav a {
-  margin-left: .5rem;
-  text-decoration: solid;
-  color: #f4f4ff;            
-  font-size: 1rem;
+  text-decoration: none;
+  color: #f4f4ff;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+  display: inline-block;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .nav a:hover,
 .nav a:focus {
   color: #31c49f;
-  text-decoration: underline;
+  border-bottom-color: #31c49f;
 }
 
 a:focus,
@@ -202,12 +215,26 @@ blockquote footer {
 }
 
 @media (max-width: 640px) {
+  .site-header {
+    padding: 0.75rem 3vw;
+    min-height: 60px;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .nav {
+    gap: 0.25rem;
+  }
+
+  .nav a {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.5rem;
+  }
+
   .hero h1 {
     font-size: 1.8rem;
-  }
-  .nav a {
-    margin-left: 1rem;
-    font-size: 0.9rem;
   }
 }
 
@@ -279,17 +306,17 @@ blockquote footer {
 .env-home { background-image: url('../Photos/bridgetoshinob2_2000.webp'); }
 
 .env-portfolio {
-  background-image: url('../photos/bridgetoshinob2_800.webp');
+  background-image: url('Photos/bridgetoshinob800.webp');
   background-position: center;
   background-size: cover;
 }
 
 @media (min-width: 720px) {
-  .env-portfolio { background-image: url('../photos/bridgetoshinob2_1400.webp'); }
+  .env-portfolio { background-image: url('Photos/bridgetoshinob1400.webp'); }
 }
 
 @media (min-width: 1200px) {
-  .env-portfolio { background-image: url('../photos/bridgetoshinob2_2000.webp'); }
+  .env-portfolio { background-image: url('Photos/bridgetoshinob2000.webp'); }
 }
 
 /* -------- Player: Highlights block -------- */
