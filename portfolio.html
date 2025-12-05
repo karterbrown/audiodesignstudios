@@ -26,6 +26,22 @@
       <h2>Portfolio</h2>
       <p>Add project tiles here – e.g. Daughter of the Plains, podcast work, game cues, etc.</p>
     </section>
+
+    <section class="hero player-hero">
+      <div class="player-wrapper">
+        <div class="player-left">
+          <div class="album-cover" aria-hidden="true">
+            <img id="albumCover" src="Photos/headshot.webp" alt="Album cover" />
+          </div>
+        </div>
+
+        <div class="player-right">
+          <div class="playlist" id="playlist">
+            <!-- Track rows will be injected here -->
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
 <footer class="site-footer">
@@ -41,6 +57,97 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <!-- Waveform player (WaveSurfer) -->
+  <script src="https://unpkg.com/wavesurfer.js/dist/wavesurfer.min.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script>
+  <script>
+    // Basic playlist data - replace the urls with your hosted audio files
+    const tracks = [
+      { id: 'track1', title: 'Neon Wasteland', url: 'audio/NeonWasteland_FullMix.mp3' },
+      { id: 'track2', title: 'Track Two — Example', url: 'audio/track2.mp3' },
+      { id: 'track3', title: 'Track Three — Example', url: 'audio/track3.mp3' }
+    ];
+
+    const playlistEl = document.getElementById('playlist');
+
+    function createTrackRow(track) {
+      const row = document.createElement('div');
+      row.className = 'track-row';
+
+      const left = document.createElement('div');
+      left.className = 'track-left';
+
+      const btn = document.createElement('button');
+      btn.className = 'play-btn';
+      btn.setAttribute('aria-label', `Play ${track.title}`);
+      btn.textContent = '▶';
+
+      const wave = document.createElement('div');
+      wave.className = 'waveform';
+      wave.id = `wave_${track.id}`;
+
+      left.appendChild(btn);
+      left.appendChild(wave);
+
+      const right = document.createElement('div');
+      right.className = 'track-right';
+      right.textContent = track.title;
+
+      row.appendChild(left);
+      row.appendChild(right);
+
+      // Create WaveSurfer instance
+      const ws = WaveSurfer.create({
+        container: `#${wave.id}`,
+        waveColor: '#6d6d76',
+        progressColor: '#31c49f',
+        height: 60,
+        responsive: true,
+        normalize: true,
+        plugins: [WaveSurfer.regions.create({})]
+      });
+
+      // prevent right-click download/context menu on waveform
+      wave.addEventListener('contextmenu', e => e.preventDefault());
+
+      ws.load(track.url);
+
+      ws.on('ready', () => {
+        // enable drag selection to create regions
+        if (ws.enableDragSelection) {
+          ws.enableDragSelection({ color: 'rgba(49,196,159,0.15)' });
+        }
+      });
+
+      // update play/pause button
+      btn.addEventListener('click', () => {
+        ws.playPause();
+      });
+
+      ws.on('play', () => { btn.textContent = '⏸'; });
+      ws.on('pause', () => { btn.textContent = '▶'; });
+      ws.on('finish', () => { btn.textContent = '▶'; });
+
+      // click on waveform seeks to that location (built-in)
+
+      // append row
+      playlistEl.appendChild(row);
+    }
+
+    // Build playlist
+    tracks.forEach(createTrackRow);
+
+    // Accessibility: prevent dragging of the album cover image
+    const album = document.getElementById('albumCover');
+    if (album) album.setAttribute('draggable', 'false');
+
+    // Note: it's not possible to fully prevent determined users from downloading
+    // audio files delivered to their browser. To reduce casual downloads:
+    // - do not provide direct links
+    // - disable right-click on waveform and album art (done above)
+    // For stronger protection serve audio through a streaming endpoint that
+    // doesn't expose direct file URLs.
   </script>
 </body>
 </html>   

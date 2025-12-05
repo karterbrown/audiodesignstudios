@@ -335,3 +335,99 @@ blockquote footer {
   background-image: url('../Photos/bridgetoshinob2000.webp');
 }
 
+/* Playlist / player styles */
+.player-hero {
+  min-height: auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(4vw, 8vw, 12vw);
+  background: transparent;
+}
+
+.player-wrapper {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  padding: 1rem;
+}
+
+.player-left {
+  flex: 0 0 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.album-cover {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+}
+
+.album-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.player-right {
+  flex: 1 1 auto;
+}
+
+.playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.track-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.track-left {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex: 1 1 auto;
+}
+
+.track-right {
+  flex: 0 0 220px;
+  text-align: right;
+  font-weight: 600;
+  color: #f4f4ff;
+}
+
+.waveform {
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+.play-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #cbcb83;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.play-btn:focus {
+  outline: 3px solid rgba(229, 229, 229, 0.12);
+}
+
+@media (max-width: 720px) {
+  .player-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .player-left { order: 0; }
+  .player-right { order: 1; }
+  .track-right { text-align: left; }
+}
+
