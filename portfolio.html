@@ -22,22 +22,54 @@
   <main>
     <section class="env-image env-portfolio"></section>
 
-    <section id="portfolio" class="section">
-      <h2>Portfolio</h2>
-      <p>Add project tiles here – e.g. Daughter of the Plains, podcast work, game cues, etc.</p>
+    <section id="portfolio" class="hero">
+      <div class="hero-content">
+        <h1>Highlights</h1>
+        <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
+      </div>
+
+      <div class="highlights-section">
+        <div class="player-wrapper">
+          <div class="player-left">
+            <div class="album-cover" aria-hidden="true">
+              <img id="albumCover" src="Photos/headshot.webp" alt="Album cover" />
+            </div>
+          </div>
+
+          <div class="player-right">
+            <div class="playlist" id="playlist">
+              <!-- Track rows will be injected here -->
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <section class="hero player-hero">
-      <div class="player-wrapper">
-        <div class="player-left">
-          <div class="album-cover" aria-hidden="true">
-            <img id="albumCover" src="Photos/headshot.webp" alt="Album cover" />
+    <section class="playlists-section">
+      <div class="playlists-container">
+        <!-- Left Playlist: Daughter of the Plains -->
+        <div class="playlist-card">
+          <div class="playlist-card-header">
+            <div class="playlist-album-art" id="dotpArt">
+              <img src="Photos/headshot.webp" alt="Daughter of the Plains">
+            </div>
+            <h3>Daughter of the Plains</h3>
+          </div>
+          <div class="playlist-content" id="dotpPlaylist">
+            <!-- Tracks will be injected here -->
           </div>
         </div>
 
-        <div class="player-right">
-          <div class="playlist" id="playlist">
-            <!-- Track rows will be injected here -->
+        <!-- Right Playlist: All Works -->
+        <div class="playlist-card">
+          <div class="playlist-card-header">
+            <div class="playlist-album-art" id="allWorksArt">
+              <img src="Photos/headshot.webp" alt="All Works">
+            </div>
+            <h3>All Works</h3>
+          </div>
+          <div class="playlist-scroll" id="allWorksPlaylist">
+            <!-- Tracks will be injected here -->
           </div>
         </div>
       </div>
@@ -82,6 +114,9 @@
         const row = document.createElement('div');
         row.className = 'track-row';
 
+        const header = document.createElement('div');
+        header.className = 'track-header';
+
         const num = document.createElement('div');
         num.className = 'track-number';
         num.textContent = track.id.replace('track', '');
@@ -91,9 +126,6 @@
         btn.setAttribute('aria-label', `Play ${track.title}`);
         btn.textContent = '▶';
 
-        const container = document.createElement('div');
-        container.className = 'track-container';
-
         const title = document.createElement('div');
         title.className = 'track-title';
         title.textContent = track.title;
@@ -102,19 +134,19 @@
         wave.className = 'waveform';
         wave.id = `wave_${track.id}`;
 
-        container.appendChild(title);
-        container.appendChild(wave);
+        header.appendChild(num);
+        header.appendChild(btn);
+        header.appendChild(title);
 
-        row.appendChild(num);
-        row.appendChild(btn);
-        row.appendChild(container);
+        row.appendChild(header);
+        row.appendChild(wave);
 
         // Create WaveSurfer instance
         const ws = WaveSurfer.create({
           container: wave,
           waveColor: '#6d6d76',
           progressColor: '#31c49f',
-          height: 60,
+          height: 40,
           responsive: true,
           normalize: true
         });
@@ -153,6 +185,88 @@
       // Accessibility: prevent dragging of the album cover image
       const album = document.getElementById('albumCover');
       if (album) album.setAttribute('draggable', 'false');
+
+      // Populate playlists section
+      const daughterOfPlainsData = [
+        { title: 'Opening Theme', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Journey Begins', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Heartland', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Memories', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Finale', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' }
+      ];
+
+      const allWorksData = [
+        { title: 'Neon Wasteland', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Interstellar Worlds Align', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Buried Trials', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Digital Dreams', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Cosmic Voyage', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Electric Pulse', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Resonance', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Timeless Echo', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Void Walker', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Aurora', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Cascade', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Nexus', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Luminescence', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Phantom Requiem', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Ethereal', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Serpent', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Paradox', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Horizon', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' },
+        { title: 'Mirage', artwork: 'Photos/headshot.webp', url: 'audio/NeonWasteland_FullMix.mp3' },
+        { title: 'Sanctum', artwork: 'Photos/headshot.webp', url: 'audio/Interstellar Worlds Align.mp3' },
+        { title: 'Twilight', artwork: 'Photos/headshot.webp', url: 'audio/BuriedTrials_FullMix.mp3' }
+      ];
+
+      function createPlaylistItem(track, index) {
+        const item = document.createElement('div');
+        item.className = 'track-item';
+
+        const info = document.createElement('div');
+        info.className = 'track-item-info';
+
+        const num = document.createElement('div');
+        num.className = 'track-item-number';
+        num.textContent = `${index + 1}`;
+
+        const title = document.createElement('div');
+        title.className = 'track-item-title';
+        title.textContent = track.title;
+
+        info.appendChild(num);
+        info.appendChild(title);
+
+        const btn = document.createElement('button');
+        btn.className = 'track-item-play-btn';
+        btn.setAttribute('aria-label', `Play ${track.title}`);
+        btn.textContent = '▶';
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('Playing:', track.title);
+          btn.textContent = btn.textContent === '▶' ? '⏸' : '▶';
+        });
+
+        item.appendChild(info);
+        item.appendChild(btn);
+
+        return item;
+      }
+
+      const dotpEl = document.getElementById('dotpPlaylist');
+      const allWorksEl = document.getElementById('allWorksPlaylist');
+
+      daughterOfPlainsData.forEach((track, idx) => {
+        dotpEl.appendChild(createPlaylistItem(track, idx));
+      });
+
+      allWorksData.forEach((track, idx) => {
+        allWorksEl.appendChild(createPlaylistItem(track, idx));
+      });
+
+      // Prevent right-click download on playlists
+      dotpEl.addEventListener('contextmenu', (e) => e.preventDefault());
+      allWorksEl.addEventListener('contextmenu', (e) => e.preventDefault());
     });
   </script>
 </body>
