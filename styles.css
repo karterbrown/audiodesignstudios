@@ -34,9 +34,9 @@ body {
 }
 
 .nav a {
-  margin-left: 1.5rem;
+  margin-left: .5rem;
   text-decoration: solid;
-  color: #dedede;            
+  color: #f4f4ff;            
   font-size: 1rem;
 }
 
