@@ -46,7 +46,11 @@
     <section class="hero">
       <div class="hero-left">
         <div class="headshot-wrapper">
-          <img src="Photos/headshot2_2000.webp" alt="Karter Brown Headshot" class="headshot" />
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" />
+          </picture>
         </div>
       </div>
 
