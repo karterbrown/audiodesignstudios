@@ -375,12 +375,39 @@
           loadAndPlayInPlayer(playlistKey, track, btn, progressFill, timeEl);
         });
 
-        progressWrap.addEventListener('click', (e) => {
-          e.stopPropagation();
+        let isDragging = false;
+
+        const updateProgress = (e) => {
           const rect = progressWrap.getBoundingClientRect();
           const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
           const targetWs = players[playlistKey]?.ws;
           try { targetWs?.seekTo(pct); } catch (_err) {}
+        };
+
+        progressWrap.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          isDragging = true;
+          updateProgress(e);
+          progressWrap.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (isDragging) {
+            e.preventDefault();
+            updateProgress(e);
+          }
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            progressWrap.style.cursor = 'pointer';
+          }
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!isDragging) updateProgress(e);
         });
 
         item.appendChild(info);
