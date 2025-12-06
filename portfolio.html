@@ -70,7 +70,8 @@
             </div>
             <h3>Daughter of the Plains</h3>
           </div>
-          <div id="mainWave" class="playlist-waveform" aria-hidden="true"></div>
+          <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
+          <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
           <div class="playlist-player-controls">
             <button id="prevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
             <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
@@ -89,7 +90,8 @@
             </div>
             <h3>All Works</h3>
           </div>
-          <div id="allMainWave" class="playlist-waveform" aria-hidden="true"></div>
+          <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
+          <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
           <div class="playlist-player-controls">
             <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
             <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
@@ -117,15 +119,8 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
-  <!-- Waveform player (WaveSurfer) -->
-  <script src="https://unpkg.com/wavesurfer.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      if (typeof WaveSurfer === 'undefined') {
-        console.error('WaveSurfer library failed to load');
-        return;
-      }
-
       // --- Highlights mini-players ---
       const highlights = [
         { id: 'track1', title: 'Neon Wasteland', url: 'highlights/NeonWasteland_FullMix.mp3' },
@@ -155,37 +150,88 @@
         title.className = 'track-title';
         title.textContent = track.title;
 
-        const wave = document.createElement('div');
-        wave.className = 'waveform';
-        wave.id = `wave_${track.id}`;
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'highlight-progress-container';
+        
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'highlight-progress-wrap';
+        
+        const progressFill = document.createElement('div');
+        progressFill.className = 'highlight-progress-fill';
+        progressFill.style.width = '0%';
+        
+        const scrubber = document.createElement('div');
+        scrubber.className = 'highlight-scrubber';
+        
+        progressWrap.appendChild(progressFill);
+        progressWrap.appendChild(scrubber);
+        progressContainer.appendChild(progressWrap);
+
+        const audio = new Audio(track.url);
 
         header.appendChild(num);
         header.appendChild(btn);
         header.appendChild(title);
 
         row.appendChild(header);
-        row.appendChild(wave);
+        row.appendChild(progressContainer);
 
-        const ws = WaveSurfer.create({
-          container: wave,
-          waveColor: '#6d6d76',
-          progressColor: '#31c49f',
-          height: 40,
-          responsive: true,
-          normalize: true
+        btn.addEventListener('click', () => {
+          if (audio.paused) {
+            audio.play();
+          } else {
+            audio.pause();
+          }
         });
 
-        wave.addEventListener('contextmenu', (e) => e.preventDefault());
-        ws.load(track.url);
-
-        ws.on('error', (e) => {
-          console.error('WaveSurfer error for', track.title, ':', e);
+        audio.addEventListener('play', () => { btn.textContent = '⏸'; });
+        audio.addEventListener('pause', () => { btn.textContent = '▶'; });
+        audio.addEventListener('ended', () => { 
+          btn.textContent = '▶'; 
+          progressFill.style.width = '0%';
+          scrubber.style.left = '0%';
         });
 
-        btn.addEventListener('click', () => ws.playPause());
-        ws.on('play', () => { btn.textContent = '⏸'; });
-        ws.on('pause', () => { btn.textContent = '▶'; });
-        ws.on('finish', () => { btn.textContent = '▶'; });
+        audio.addEventListener('timeupdate', () => {
+          const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+          progressFill.style.width = `${pct}%`;
+          scrubber.style.left = `${pct}%`;
+        });
+
+        // Drag and click to seek
+        let isDragging = false;
+
+        const updateSeek = (e) => {
+          const rect = progressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          if (audio.duration) {
+            audio.currentTime = pct * audio.duration;
+          }
+        };
+
+        progressWrap.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          updateSeek(e);
+          progressWrap.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (isDragging) {
+            e.preventDefault();
+            updateSeek(e);
+          }
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            progressWrap.style.cursor = 'pointer';
+          }
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+          if (!isDragging) updateSeek(e);
+        });
 
         highlightsContainer.appendChild(row);
       }
@@ -193,27 +239,8 @@
       highlights.forEach(createHighlightRow);
 
       // --- Player instances (per playlist) ---
-      const mainWaveEl = document.getElementById('mainWave');
-      const mainWs = WaveSurfer.create({
-        container: mainWaveEl,
-        waveColor: '#6d6d76',
-        progressColor: '#31c49f',
-        height: 37,
-        responsive: true,
-        normalize: true
-      });
-      if (mainWaveEl) mainWaveEl.addEventListener('contextmenu', (e) => e.preventDefault());
-
-      const allMainWaveEl = document.getElementById('allMainWave');
-      const allMainWs = WaveSurfer.create({
-        container: allMainWaveEl,
-        waveColor: '#6d6d76',
-        progressColor: '#31c49f',
-        height: 37,
-        responsive: true,
-        normalize: true
-      });
-      if (allMainWaveEl) allMainWaveEl.addEventListener('contextmenu', (e) => e.preventDefault());
+      const mainAudio = new Audio();
+      const allMainAudio = new Audio();
 
       const playPauseBtn = document.getElementById('playPauseBtn');
       const prevBtn = document.getElementById('prevBtn');
@@ -237,18 +264,38 @@
 
       const players = {
         dotp: {
-          ws: mainWs,
+          audio: mainAudio,
           controls: { playPauseBtn, prevBtn, nextBtn },
           current: null,
-          key: 'dotp'
+          key: 'dotp',
+          progressWrap: document.getElementById('mainWave'),
+          nowPlayingEl: document.getElementById('dotpNowPlaying'),
+          scrubber: null
         },
         allWorks: {
-          ws: allMainWs,
+          audio: allMainAudio,
           controls: { playPauseBtn: allPlayPauseBtn, prevBtn: allPrevBtn, nextBtn: allNextBtn },
           current: null,
-          key: 'allWorks'
+          key: 'allWorks',
+          progressWrap: document.getElementById('allMainWave'),
+          nowPlayingEl: document.getElementById('allWorksNowPlaying'),
+          scrubber: null
         }
       };
+
+      // Create progress fills and scrubbers for main players
+      Object.values(players).forEach(ctx => {
+        const progressFill = document.createElement('div');
+        progressFill.className = 'main-player-progress-fill';
+        progressFill.style.width = '0%';
+        ctx.progressWrap.appendChild(progressFill);
+        ctx.progressFill = progressFill;
+        
+        const scrubber = document.createElement('div');
+        scrubber.className = 'main-player-scrubber';
+        ctx.progressWrap.appendChild(scrubber);
+        ctx.scrubber = scrubber;
+      });
 
       function loadAndPlayInPlayer(playerKey, track, btn, itemProgressEl, timeEl) {
         const ctx = players[playerKey];
@@ -257,55 +304,119 @@
         if (!url) return;
 
         if (ctx.current && ctx.current.btn === btn) {
-          ctx.ws.playPause();
+          if (ctx.audio.paused) {
+            ctx.audio.play();
+          } else {
+            ctx.audio.pause();
+          }
           return;
         }
 
         if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
-        ctx.current = { btn, itemProgressEl, timeEl };
+        const itemScrubber = itemProgressEl?.parentElement?.querySelector('.track-item-scrubber');
+        ctx.current = { btn, itemProgressEl, itemScrubber, timeEl, track };
         btn.textContent = '…';
 
-        try {
-          ctx.ws.load(url);
-          ctx.ws.once('ready', () => ctx.ws.play());
-        } catch (e) {
-          console.warn('player load failed', e);
+        // Update now playing info
+        if (ctx.nowPlayingEl) {
+          const trackTitle = track.title || 'Unknown Track';
+          ctx.nowPlayingEl.textContent = trackTitle;
         }
+
+        ctx.audio.src = url;
+        ctx.audio.load();
+        ctx.audio.play().catch(e => console.warn('play failed', e));
       }
 
-      function attachWaveEvents(playerKey) {
+      function attachAudioEvents(playerKey) {
         const ctx = players[playerKey];
         if (!ctx) return;
-        const { ws, controls } = ctx;
+        const { audio, controls } = ctx;
 
-        ws.on('audioprocess', () => {
+        audio.addEventListener('timeupdate', () => {
           if (!ctx.current) return;
-          const cur = ws.getCurrentTime() || 0;
-          const dur = ws.getDuration() || 0;
+          const cur = audio.currentTime || 0;
+          const dur = audio.duration || 0;
           const pct = dur ? (cur / dur) : 0;
           if (ctx.current.itemProgressEl) ctx.current.itemProgressEl.style.width = `${pct * 100}%`;
+          if (ctx.current.itemScrubber) ctx.current.itemScrubber.style.left = `${pct * 100}%`;
           if (ctx.current.timeEl) ctx.current.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+          
+          // Update main player progress fill and scrubber position
+          if (ctx.progressFill) {
+            ctx.progressFill.style.width = `${pct * 100}%`;
+          }
+          if (ctx.scrubber) {
+            ctx.scrubber.style.left = `${pct * 100}%`;
+          }
+          
+          // Update now playing time
+          if (ctx.nowPlayingEl && ctx.current.track) {
+            const trackTitle = ctx.current.track.title || 'Unknown Track';
+            ctx.nowPlayingEl.textContent = `${trackTitle} • ${formatTime(cur)} / ${formatTime(dur)}`;
+          }
         });
 
-        ws.on('play', () => {
+        audio.addEventListener('play', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.textContent = '⏸';
           if (ctx.current?.btn) ctx.current.btn.textContent = '⏸';
         });
 
-        ws.on('pause', () => {
+        audio.addEventListener('pause', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.textContent = '▶';
           if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
         });
 
-        ws.on('finish', () => {
+        audio.addEventListener('ended', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.textContent = '▶';
           if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
           if (ctx.current?.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
+          if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
+          if (ctx.progressFill) ctx.progressFill.style.width = '0%';
+          if (ctx.scrubber) ctx.scrubber.style.left = '0%';
+        });
+
+        audio.addEventListener('loadedmetadata', () => {
+          if (ctx.current?.btn) ctx.current.btn.textContent = '⏸';
+        });
+
+        // Drag and click main player progress to seek
+        let isMainDragging = false;
+
+        const updateMainSeek = (e) => {
+          if (!audio.src || !audio.duration) return;
+          const rect = ctx.progressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          audio.currentTime = pct * audio.duration;
+        };
+
+        ctx.progressWrap.addEventListener('mousedown', (e) => {
+          isMainDragging = true;
+          updateMainSeek(e);
+          ctx.progressWrap.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (isMainDragging) {
+            e.preventDefault();
+            updateMainSeek(e);
+          }
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isMainDragging) {
+            isMainDragging = false;
+            ctx.progressWrap.style.cursor = 'pointer';
+          }
+        });
+
+        ctx.progressWrap.addEventListener('click', (e) => {
+          if (!isMainDragging) updateMainSeek(e);
         });
       }
 
-      attachWaveEvents('dotp');
-      attachWaveEvents('allWorks');
+      attachAudioEvents('dotp');
+      attachAudioEvents('allWorks');
 
       // --- Playlist data ---
       const daughterOfPlainsData = [
@@ -355,7 +466,10 @@
         const progressFill = document.createElement('div');
         progressFill.className = 'track-item-progress-fill';
         progressFill.style.width = '0%';
+        const scrubber = document.createElement('div');
+        scrubber.className = 'track-item-scrubber';
         progressWrap.appendChild(progressFill);
+        progressWrap.appendChild(scrubber);
 
         const timeEl = document.createElement('div');
         timeEl.className = 'track-item-time';
@@ -389,8 +503,10 @@
         const updateProgress = (e) => {
           const rect = progressWrap.getBoundingClientRect();
           const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-          const targetWs = players[playlistKey]?.ws;
-          try { targetWs?.seekTo(pct); } catch (_err) {}
+          const targetAudio = players[playlistKey]?.audio;
+          if (targetAudio && targetAudio.duration) {
+            targetAudio.currentTime = pct * targetAudio.duration;
+          }
         };
 
         progressWrap.addEventListener('mousedown', (e) => {
@@ -444,7 +560,7 @@
       function attachTransportHandlers(playerKey) {
         const ctx = players[playerKey];
         if (!ctx) return;
-        const { controls, ws } = ctx;
+        const { controls, audio } = ctx;
 
         const handlePlayPause = () => {
           if (!ctx.current) {
@@ -454,12 +570,16 @@
               return;
             }
           }
-          ws.playPause();
+          if (audio.paused) {
+            audio.play();
+          } else {
+            audio.pause();
+          }
         };
 
         const handlePrev = () => {
-          if (ws.getCurrentTime() > 3) {
-            ws.seekTo(0);
+          if (audio.currentTime > 3) {
+            audio.currentTime = 0;
             return;
           }
           const buttons = getTrackButtons(playerKey);
