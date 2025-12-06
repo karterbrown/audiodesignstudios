@@ -129,6 +129,9 @@
       ];
 
       const highlightsContainer = document.getElementById('playlist');
+      
+      // Shared drag state
+      let activeDrag = null;
 
       function createHighlightRow(track) {
         const row = document.createElement('div');
@@ -199,8 +202,6 @@
         });
 
         // Drag and click to seek
-        let isDragging = false;
-
         const updateSeek = (e) => {
           const rect = progressWrap.getBoundingClientRect();
           const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -210,33 +211,35 @@
         };
 
         progressWrap.addEventListener('mousedown', (e) => {
-          isDragging = true;
+          e.preventDefault();
+          activeDrag = { element: progressWrap, update: updateSeek };
           updateSeek(e);
           progressWrap.style.cursor = 'grabbing';
         });
 
-        document.addEventListener('mousemove', (e) => {
-          if (isDragging) {
-            e.preventDefault();
-            updateSeek(e);
-          }
-        });
-
-        document.addEventListener('mouseup', () => {
-          if (isDragging) {
-            isDragging = false;
-            progressWrap.style.cursor = 'pointer';
-          }
-        });
-
         progressWrap.addEventListener('click', (e) => {
-          if (!isDragging) updateSeek(e);
+          if (!activeDrag) updateSeek(e);
         });
 
         highlightsContainer.appendChild(row);
       }
 
       highlights.forEach(createHighlightRow);
+      
+      // Shared document-level drag handlers
+      document.addEventListener('mousemove', (e) => {
+        if (activeDrag) {
+          e.preventDefault();
+          activeDrag.update(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (activeDrag) {
+          activeDrag.element.style.cursor = 'pointer';
+          activeDrag = null;
+        }
+      });
 
       // --- Player instances (per playlist) ---
       const mainAudio = new Audio();
@@ -381,8 +384,6 @@
         });
 
         // Drag and click main player progress to seek
-        let isMainDragging = false;
-
         const updateMainSeek = (e) => {
           if (!audio.src || !audio.duration) return;
           const rect = ctx.progressWrap.getBoundingClientRect();
@@ -391,27 +392,14 @@
         };
 
         ctx.progressWrap.addEventListener('mousedown', (e) => {
-          isMainDragging = true;
+          e.preventDefault();
+          activeDrag = { element: ctx.progressWrap, update: updateMainSeek };
           updateMainSeek(e);
           ctx.progressWrap.style.cursor = 'grabbing';
         });
 
-        document.addEventListener('mousemove', (e) => {
-          if (isMainDragging) {
-            e.preventDefault();
-            updateMainSeek(e);
-          }
-        });
-
-        document.addEventListener('mouseup', () => {
-          if (isMainDragging) {
-            isMainDragging = false;
-            ctx.progressWrap.style.cursor = 'pointer';
-          }
-        });
-
         ctx.progressWrap.addEventListener('click', (e) => {
-          if (!isMainDragging) updateMainSeek(e);
+          if (!activeDrag) updateMainSeek(e);
         });
       }
 
@@ -498,8 +486,6 @@
           loadAndPlayInPlayer(playlistKey, track, btn, progressFill, timeEl);
         });
 
-        let isDragging = false;
-
         const updateProgress = (e) => {
           const rect = progressWrap.getBoundingClientRect();
           const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -511,28 +497,15 @@
 
         progressWrap.addEventListener('mousedown', (e) => {
           e.stopPropagation();
-          isDragging = true;
+          e.preventDefault();
+          activeDrag = { element: progressWrap, update: updateProgress };
           updateProgress(e);
           progressWrap.style.cursor = 'grabbing';
         });
 
-        document.addEventListener('mousemove', (e) => {
-          if (isDragging) {
-            e.preventDefault();
-            updateProgress(e);
-          }
-        });
-
-        document.addEventListener('mouseup', () => {
-          if (isDragging) {
-            isDragging = false;
-            progressWrap.style.cursor = 'pointer';
-          }
-        });
-
         progressWrap.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (!isDragging) updateProgress(e);
+          if (!activeDrag) updateProgress(e);
         });
 
         item.appendChild(info);
@@ -552,9 +525,6 @@
       allWorksData.forEach((track, idx) => {
         allWorksEl.appendChild(createPlaylistItem(track, idx, 'allWorks'));
       });
-
-      dotpEl.addEventListener('contextmenu', (e) => e.preventDefault());
-      allWorksEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
       // --- Transport controls (per playlist) ---
       function attachTransportHandlers(playerKey) {
