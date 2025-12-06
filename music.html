@@ -23,11 +23,14 @@
   <!-- Hero Image Banner -->
     <section class="env-image env-music"></section>
     
-  <section class="hero">
-    <div class="hero-content">
+  <section class="hero hero-music">
+    <div class="hero-left-music">
       <h1>Off World Depot</h1>
       <p>Download full session stems and mixes for your films, games and media production.</p>
       <a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="btn">Take Me There!</a>
+    </div>
+    <div class="hero-right-music">
+      <div class="matrix-terminal-music" id="matrixTerminalMusic"></div>
     </div>
   </section>
 </main>
@@ -45,6 +48,34 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  
+  <script>
+    // Matrix animation for music page - horizontal flow with musical notes
+    const musicalNotes = '♩♪♫♬♭♮♯';
+    const container = document.getElementById('matrixTerminalMusic');
+    const numRows = 12;
+
+    function randomChars(length) {
+      let str = '';
+      for (let i = 0; i < length; i++) {
+        str += musicalNotes[Math.floor(Math.random() * musicalNotes.length)] + ' ';
+      }
+      return str;
+    }
+
+    for (let i = 0; i < numRows; i++) {
+      const row = document.createElement('div');
+      row.className = 'matrix-row-music';
+      const length = Math.floor(Math.random() * 20) + 15;
+      row.textContent = randomChars(length);
+      row.style.top = `${Math.random() * 95}%`;
+      const duration = Math.random() * 3 + 4;
+      const delay = Math.random() * 3;
+      row.style.animationDuration = `${duration}s`;
+      row.style.animationDelay = `${delay}s`;
+      container.appendChild(row);
+    }
   </script>
 </body>
 

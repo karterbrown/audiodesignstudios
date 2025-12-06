@@ -8,7 +8,9 @@
 </head>
 
 <body>
-  <!-- Site Header -->
+  <!-- ========================================================================
+       SITE HEADER
+       ======================================================================== -->
   <header class="site-header">
     <div class="logo">Audio Design Studios</div>
     <nav class="nav">
@@ -19,13 +21,15 @@
     </nav>
   </header>
 
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
   <main>
     <!-- Hero Image Banner -->
     <section class="env-image env-home"></section>
 
-    <!-- Services Grid -->
+    <!-- Services Grid Section -->
     <section id="services" class="section section-alt">
-      <h2>Services</h2>
       <div class="grid">
         <div class="card">
           <h3>Sound Design</h3>
@@ -42,8 +46,9 @@
       </div>
     </section>
 
-    <!-- Contact CTA -->
-    <section class="hero">
+    <!-- Hero Section: Headshot & Matrix Animation -->
+    <section class="hero hero-home">
+      <!-- Left Column: Headshot Image -->
       <div class="hero-left">
         <div class="headshot-wrapper">
           <picture>
@@ -54,9 +59,17 @@
         </div>
       </div>
 
+      <!-- Right Column: Matrix Terminal Effect -->
       <div class="hero-right">
-        <h1>Tell Me About Your Project</h1>
-        <p>Send a message and I’ll get back to you with next steps.</p>
+        <div class="matrix-terminal" id="matrixTerminal"></div>
+      </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="section contact-section">
+      <div class="contact-wrapper">
+        <h1>Get In Touch</h1>
+        <p>Send a message and I'll get back to you with next steps.</p>
         <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
           <input type="text" name="name" placeholder="Your Name" required />
           <input type="email" name="email" placeholder="Your Email" required />
@@ -67,7 +80,9 @@
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- ========================================================================
+       SITE FOOTER
+       ======================================================================== -->
   <footer class="site-footer">
     <div class="footer-content">
       <h2>Contact</h2>
@@ -76,8 +91,48 @@
     </div>
   </footer>
 
+  <!-- ========================================================================
+       SCRIPTS
+       ======================================================================== -->
   <script>
+    // Update copyright year dynamically
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ========================================================================
+    // Matrix Terminal Effect (Green Musical Notes)
+    // ========================================================================
+    const terminal = document.getElementById('matrixTerminal');
+    const chars = '♩♪♫♬♭♮♯'; // Musical note characters
+    const numColumns = 25;
+    
+    function createColumn() {
+      const column = document.createElement('div');
+      column.className = 'matrix-column';
+      
+      // Random horizontal position
+      const leftPos = Math.random() * 95;
+      column.style.left = `${leftPos}%`;
+      
+      // Create vertical string of random musical characters
+      let text = '';
+      const length = Math.floor(Math.random() * 12) + 8;
+      for (let i = 0; i < length; i++) {
+        text += chars.charAt(Math.floor(Math.random() * chars.length)) + '\n';
+      }
+      column.textContent = text;
+      
+      // Random animation duration and delay
+      const duration = Math.random() * 3 + 4; // 4-7 seconds
+      const delay = Math.random() * 3; // 0-3 seconds delay
+      column.style.animation = `matrixFall ${duration}s linear ${delay}s infinite`;
+      
+      terminal.appendChild(column);
+    }
+    
+    // Generate all matrix columns
+    for (let i = 0; i < numColumns; i++) {
+      createColumn();
+    }
   </script>
 </body>
 </html>

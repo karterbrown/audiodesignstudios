@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <title>Audio Design Studios – Karter G. Brown</title>
@@ -9,6 +8,9 @@
 </head>
 
 <body>
+  <!-- ========================================================================
+       SITE HEADER
+       ======================================================================== -->
   <header class="site-header">
     <div class="logo">Audio Design Studios</div>
     <nav class="nav">
@@ -19,47 +21,61 @@
     </nav>
   </header>
 
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
   <main>
+    <!-- Hero Image Banner -->
     <section class="env-image env-portfolio"></section>
 
+    <!-- Hero Section: 3-Column Layout (Highlights, Banner, Matrix) -->
     <section id="portfolio" class="hero">
-      <div class="hero-content">
+      <!-- Left Column: Highlights Player & Album Art -->
+      <div class="hero-left-portfolio">
         <h1>Highlights</h1>
         <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
+        
+        <!-- Album Cover Art -->
+        <div class="album-cover" aria-hidden="true">
+          <picture>
+            <source media="(min-width:1200px)" srcset="highlights/staticcurrents2000.webp">
+            <source media="(min-width:720px)" srcset="highlights/staticcurrents1400.webp">
+            <img id="albumCover" src="highlights/staticcurrents800.webp" alt="Highlights album cover" />
+          </picture>
+        </div>
+        
+        <!-- Highlights Mini-Players (3 tracks) -->
+        <div class="highlights-section">
+          <div class="playlist" id="playlist">
+            <!-- Track rows will be injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Column: Banner Image -->
+      <div class="hero-center-portfolio">
         <div class="highlights-banner">
           <picture>
-            <source media="(min-width:1200px)" srcset="highlightstextimage/highlightstextimage2000.webp">
-            <source media="(min-width:720px)" srcset="highlightstextimage/highlightstextimage1400.webp">
-            <img src="highlightstextimage/highlightstextimage800.webp" alt="Highlights banner" />
+            <source media="(min-width:1200px)" srcset="highlightstextimage/portraitbridge2000.webp">
+            <source media="(min-width:720px)" srcset="highlightstextimage/portraitbridge1400.webp">
+            <img src="highlightstextimage/portraitbridge800.webp" alt="Highlights banner" />
           </picture>
         </div>
       </div>
 
-      <div class="highlights-section">
-        <div class="player-wrapper">
-          <div class="player-left">
-            <div class="album-cover" aria-hidden="true">
-              <picture>
-                <source media="(min-width:1200px)" srcset="highlights/staticcurrents2000.webp">
-                <source media="(min-width:720px)" srcset="highlights/staticcurrents1400.webp">
-                <img id="albumCover" src="highlights/staticcurrents800.webp" alt="Highlights album cover" />
-              </picture>
-            </div>
-          </div>
-
-          <div class="player-right">
-            <div class="playlist" id="playlist">
-              <!-- Track rows will be injected here -->
-            </div>
-          </div>
-        </div>
+      <!-- Right Column: Matrix Word List Animation -->
+      <div class="hero-right-portfolio">
+        <div class="matrix-words" id="matrixWords"></div>
       </div>
     </section>
 
+    <!-- Full-Width Playlists Section -->
     <section class="playlists-section">
       <div class="playlists-container">
+        
         <!-- Left Playlist: Daughter of the Plains -->
         <div class="playlist-card">
+          <!-- Album Art & Title -->
           <div class="playlist-card-header">
             <div class="playlist-album-art" id="dotpArt">
               <picture>
@@ -70,58 +86,128 @@
             </div>
             <h3>Daughter of the Plains</h3>
           </div>
+          
+          <!-- Progress Bar -->
           <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
+          
+          <!-- Now Playing Display -->
           <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
+          
+          <!-- Transport Controls -->
           <div class="playlist-player-controls">
             <button id="prevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
             <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
             <button id="nextBtn" class="control-btn" aria-label="Next track">⏭</button>
           </div>
+          
+          <!-- Track List -->
           <div class="playlist-content" id="dotpPlaylist">
-            <!-- Tracks will be injected here -->
+            <!-- Tracks injected via JavaScript -->
           </div>
         </div>
 
         <!-- Right Playlist: All Works -->
         <div class="playlist-card">
+          <!-- Album Art & Title -->
           <div class="playlist-card-header">
             <div class="playlist-album-art" id="allWorksArt">
               <img src="Photos/headshot.webp" alt="All Works">
             </div>
             <h3>All Works</h3>
           </div>
+          
+          <!-- Progress Bar -->
           <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
+          
+          <!-- Now Playing Display -->
           <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
+          
+          <!-- Transport Controls -->
           <div class="playlist-player-controls">
             <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
             <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
             <button id="allNextBtn" class="control-btn" aria-label="Next track">⏭</button>
           </div>
+          
+          <!-- Track List (Scrollable) -->
           <div class="playlist-scroll" id="allWorksPlaylist">
-            <!-- Tracks will be injected here -->
+            <!-- Tracks injected via JavaScript -->
           </div>
         </div>
+        
       </div>
     </section>
   </main>
 
-<footer class="site-footer">
-  <div class="footer-content">
-     <h2>Contact</h2>
-     <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+  <!-- ========================================================================
+       SITE FOOTER
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+      <p class="footer-copy">© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
+    </div>
+  </footer>
 
-     <p class="footer-copy">
-     © <span id="year"></span> Audio Design Studios. All rights reserved.
-     </p>
-  </div>
-</footer>
-
+  <!-- ========================================================================
+       SCRIPTS
+       ======================================================================== -->
+  
+  <!-- Dynamic Copyright Year -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+  
+  <!-- ========================================================================
+       Matrix Word List Animation (Red Vertical Words)
+       ======================================================================== -->
+  <script>
+    const portfolioWords = [
+      'COMPOSITION',
+      'SOUND DESIGN',
+      'MIXING',
+      'MASTERING',
+      'ORCHESTRATION',
+      'FILM SCORE',
+      'GAME AUDIO',
+      'FOLEY',
+      'DIALOGUE',
+      'AMBIENCE',
+      'SFX',
+      'MUSIC PRODUCTION',
+      'POST PRODUCTION',
+      'AUDIO EDITING',
+      'CINEMATIC',
+      'IMMERSIVE',
+      'DYNAMIC',
+      'ATMOSPHERIC'
+    ];
+
+    const matrixContainer = document.getElementById('matrixWords');
+    
+    // Create each word element with staggered animation
+    function createWordColumn(word, index) {
+      const wordEl = document.createElement('div');
+      wordEl.className = 'matrix-word';
+      wordEl.textContent = word;
+      const delay = (index * 0.3) % 5;
+      wordEl.style.animationDelay = `${delay}s`;
+      matrixContainer.appendChild(wordEl);
+    }
+    
+    portfolioWords.forEach((word, index) => createWordColumn(word, index));
+  </script>
+  
+  <!-- ========================================================================
+       Audio Player System (Highlights + Playlists)
+       ======================================================================== -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // --- Highlights mini-players ---
+      
+      // ======================================================================
+      // HIGHLIGHTS MINI-PLAYERS (3 Independent Players)
+      // ======================================================================
       const highlights = [
         { id: 'track1', title: 'Neon Wasteland', url: 'highlights/NeonWasteland_FullMix.mp3' },
         { id: 'track2', title: 'Interstellar Worlds Align', url: 'highlights/Interstellar Worlds Align.mp3' },
@@ -129,10 +215,9 @@
       ];
 
       const highlightsContainer = document.getElementById('playlist');
-      
-      // Shared drag state
-      let activeDrag = null;
+      let activeDrag = null; // Shared drag state for all players
 
+      // Create individual highlight track row with mini-player
       function createHighlightRow(track) {
         const row = document.createElement('div');
         row.className = 'track-row';
@@ -224,9 +309,10 @@
         highlightsContainer.appendChild(row);
       }
 
+      // Generate all highlight rows
       highlights.forEach(createHighlightRow);
       
-      // Shared document-level drag handlers
+      // Global drag handlers for progress scrubbing
       document.addEventListener('mousemove', (e) => {
         if (activeDrag) {
           e.preventDefault();
@@ -241,23 +327,29 @@
         }
       });
 
-      // --- Player instances (per playlist) ---
+      // ======================================================================
+      // MAIN PLAYLIST PLAYERS (Daughter of the Plains & All Works)
+      // ======================================================================
+      
+      // Audio instances
       const mainAudio = new Audio();
       const allMainAudio = new Audio();
 
+      // Control buttons
       const playPauseBtn = document.getElementById('playPauseBtn');
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
-
       const allPlayPauseBtn = document.getElementById('allPlayPauseBtn');
       const allPrevBtn = document.getElementById('allPrevBtn');
       const allNextBtn = document.getElementById('allNextBtn');
 
+      // Playlist container lookup
       const playlistButtonLookup = {
         dotp: 'dotpPlaylist',
         allWorks: 'allWorksPlaylist'
       };
 
+      // Get all track buttons for a playlist
       const getTrackButtons = (key) => {
         const containerId = playlistButtonLookup[key];
         if (!containerId) return [];
@@ -265,6 +357,7 @@
         return container ? Array.from(container.querySelectorAll('.track-item-play-btn')) : [];
       };
 
+      // Player context objects
       const players = {
         dotp: {
           audio: mainAudio,
@@ -403,10 +496,13 @@
         });
       }
 
+      // Attach events for both playlists
       attachAudioEvents('dotp');
       attachAudioEvents('allWorks');
 
-      // --- Playlist data ---
+      // ======================================================================
+      // PLAYLIST DATA
+      // ======================================================================
       const daughterOfPlainsData = [
         { title: 'Daughter of the Plains (Score)', url: 'daughteroftheplains/01daughteroftheplainsscore.mp3' },
         { title: 'BIG', url: 'daughteroftheplains/02big.mp3' },
@@ -426,7 +522,11 @@
         { title: 'Cavalry March', url: 'allworks/cavalrymarch.mp3' },
       ];
 
-      // --- Shared playlist items ---
+      // ======================================================================
+      // PLAYLIST ITEM CREATION
+      // ======================================================================
+      
+      // Format time (seconds to MM:SS)
       function formatTime(sec) {
         const safeSec = Math.max(0, Math.floor(sec || 0));
         const m = Math.floor(safeSec / 60);
@@ -515,6 +615,7 @@
         return item;
       }
 
+      // Populate playlists
       const dotpEl = document.getElementById('dotpPlaylist');
       const allWorksEl = document.getElementById('allWorksPlaylist');
 
@@ -526,7 +627,9 @@
         allWorksEl.appendChild(createPlaylistItem(track, idx, 'allWorks'));
       });
 
-      // --- Transport controls (per playlist) ---
+      // ======================================================================
+      // TRANSPORT CONTROLS (Play/Pause, Prev, Next)
+      // ======================================================================
       function attachTransportHandlers(playerKey) {
         const ctx = players[playerKey];
         if (!ctx) return;
@@ -568,13 +671,19 @@
         if (controls.nextBtn) controls.nextBtn.addEventListener('click', handleNext);
       }
 
+      // Attach transport controls for both playlists
       attachTransportHandlers('dotp');
       attachTransportHandlers('allWorks');
 
-      // --- Misc ---
+      // ======================================================================
+      // MISCELLANEOUS
+      // ======================================================================
+      
+      // Prevent album cover from being draggable
       const album = document.getElementById('albumCover');
       if (album) album.setAttribute('draggable', 'false');
     });
   </script>
+  
 </body>
 </html>   
