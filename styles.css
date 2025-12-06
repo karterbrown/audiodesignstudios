@@ -296,10 +296,10 @@ blockquote footer {
 }
 
 .headshot {
-  width: 250px;
-  height: 250px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 2%;
   border: 2px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 12px 30px rgba(99, 105, 135, 0.5);
 }
@@ -312,8 +312,40 @@ blockquote footer {
   background-repeat: no-repeat;
 }
 
-.env-home { background-image: url('../Photos/bridgetoshinob2_2000.webp'); }
+/* -------- Background Image: Music-------- */
+.env-music { background-image: url('../Photos/homepiano800.webp'); }
 
+@media (min-width: 720px) {
+  .env-music { background-image: url('../Photos/homepiano1400.webp'); }
+}
+
+@media (min-width: 1200px) {
+  .env-music { background-image: url('../Photos/homepiano2000.webp'); }
+}
+
+/* -------- Background Image: About-------- */
+.env-about { background-image: url('../Photos/about800.webp'); }
+
+@media (min-width: 720px) {
+  .env-about { background-image: url('../Photos/about1400.webp'); }
+}
+
+@media (min-width: 1200px) {
+  .env-about { background-image: url('../Photos/about2000.webp'); }
+}
+
+/* -------- Background Image: Home -------- */
+.env-home { background-image: url('../Photos/bridgetoshinob2_800.webp'); }
+
+@media (min-width: 720px) {
+  .env-home { background-image: url('../Photos/bridgetoshinob2_1400.webp'); }
+}
+
+@media (min-width: 1200px) {
+  .env-home { background-image: url('../Photos/bridgetoshinob2_2000.webp'); }
+}
+
+/* -------- Background Image: Portfolio-------- */
 .env-portfolio {
   background-image: url('Photos/bridgetoshinob800.webp');
   background-position: center;
