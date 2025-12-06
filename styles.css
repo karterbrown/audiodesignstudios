@@ -594,7 +594,7 @@ blockquote footer {
 .track-item-play-btn:focus { outline: 3px solid rgba(229, 229, 229, 0.12); }
 
 .track-item-progress-wrap {
-  height: 4px;
+  height: 6px;
   border-radius: 4px;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
   overflow: visible;
@@ -609,7 +609,7 @@ blockquote footer {
 
 .track-item-progress-wrap:hover {
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
-  height: 5px;
+  height: 7px;
 }
 
 .track-item-progress-fill {

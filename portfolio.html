@@ -370,6 +370,15 @@
         btn.setAttribute('aria-label', `Play ${track.title}`);
         btn.textContent = '▶';
 
+        // Make entire track item clickable to play
+        item.addEventListener('click', (e) => {
+          // Don't trigger if clicking progress bar or button directly
+          if (!e.target.closest('.track-item-progress-wrap') && !e.target.closest('.track-item-play-btn')) {
+            loadAndPlayInPlayer(playlistKey, track, btn, progressFill, timeEl);
+          }
+        });
+        item.style.cursor = 'pointer';
+
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           loadAndPlayInPlayer(playlistKey, track, btn, progressFill, timeEl);
