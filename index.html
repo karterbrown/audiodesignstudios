@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765138169" />
+  <link rel="stylesheet" href="styles.css?v=1765143285" />
 </head>
 
 <body>
@@ -64,33 +64,30 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 3: Highlights Hero (2-Column Layout)
-         Left: Album art + 3 track players | Right: Headshot + Cycling word
+         SECTION 3: Highlights Hero (3-Column Layout)
+         Left: Album art | Center: Title, description, cycling word | Right: Headshot
+         Bottom: Track players spanning full width
          ====================================================================== -->
-    <section id="portfolio" class="hero hero-highlights-2col">
-      <!-- Left Column: Highlights Player & Album Art -->
-      <div class="hero-left-portfolio">
-        <h1>Highlights</h1>
-        <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
-        
-        <!-- Album Cover Art - Centered -->
+    <section id="portfolio" class="hero hero-highlights-3col">
+      <!-- Left Column: Album Art -->
+      <div class="hero-left-highlights">
         <div class="album-cover-centered" aria-hidden="true">
           <picture>
             <source media="(min-width:1200px)" srcset="highlights/staticcurrents2000.webp">
             <source media="(min-width:720px)" srcset="highlights/staticcurrents1400.webp">
-            <img id="albumCover" src="highlights/staticcurrents800.webp" alt="Highlights album cover" />
+            <img src="highlights/staticcurrents800.webp" alt="Highlights album cover" />
           </picture>
-        </div>
-        
-        <!-- Highlights Mini-Players (3 tracks) -->
-        <div class="highlights-section">
-          <div class="playlist" id="playlist">
-            <!-- Track rows will be injected via JavaScript -->
-          </div>
         </div>
       </div>
 
-      <!-- Right Column: Headshot Image & Cycling Word -->
+      <!-- Center Column: Title, Description & Cycling Word -->
+      <div class="hero-center-highlights">
+        <h1>Highlights</h1>
+        <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
+        <div class="cycling-word" id="cyclingWord"></div>
+      </div>
+
+      <!-- Right Column: Headshot -->
       <div class="hero-right-highlights">
         <div class="headshot-wrapper-portrait">
           <picture>
@@ -99,8 +96,13 @@
             <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" />
           </picture>
         </div>
-        <!-- Cycling Word Display -->
-        <div class="cycling-word" id="cyclingWord"></div>
+      </div>
+
+      <!-- Full Width Bottom: Track Players -->
+      <div class="hero-tracks-highlights">
+        <div class="playlist" id="playlist">
+          <!-- Track rows will be injected via JavaScript -->
+        </div>
       </div>
     </section>
 
@@ -144,7 +146,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765138169"></script>
+  <script src="content.js?v=1765143285"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -270,9 +272,7 @@
         }
       });
 
-      // Prevent album cover from being draggable
-      const album = document.getElementById('albumCover');
-      if (album) album.setAttribute('draggable', 'false');
+
     });
   </script>
 
@@ -340,7 +340,7 @@
       let attempts = 0;
       let position;
       do {
-        position = Math.floor(Math.random() * 19) * 5;
+        position = Math.floor(Math.random() * 20) * 5; // 0% to 95% in 5% increments
         attempts++;
       } while (occupiedSlots.has(position) && attempts < 50);
       

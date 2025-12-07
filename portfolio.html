@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765138169" />
+  <link rel="stylesheet" href="styles.css?v=1765143285" />
 </head>
 
 <body>
@@ -54,7 +54,7 @@
         <div class="playlist-card">
           <!-- Album Art & Title -->
           <div class="playlist-card-header">
-            <div class="playlist-album-art" id="dotpArt">
+            <div class="playlist-album-art">
               <picture>
                 <source media="(min-width:1200px)" srcset="daughteroftheplains/daughteroftheplains2000.webp">
                 <source media="(min-width:720px)" srcset="daughteroftheplains/daughteroftheplains1400.webp">
@@ -87,7 +87,7 @@
         <div class="playlist-card">
           <!-- Album Art & Title -->
           <div class="playlist-card-header">
-            <div class="playlist-album-art" id="allWorksArt">
+            <div class="playlist-album-art">
               <img src="Photos/headshot.webp" alt="All Works">
             </div>
             <h3>All Works</h3>
@@ -132,7 +132,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765138169"></script>
+  <script src="content.js?v=1765143285"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -489,13 +489,7 @@
       attachTransportHandlers('dotp');
       attachTransportHandlers('allWorks');
 
-      // ======================================================================
-      // MISCELLANEOUS
-      // ======================================================================
-      
-      // Prevent album cover from being draggable
-      const album = document.getElementById('albumCover');
-      if (album) album.setAttribute('draggable', 'false');
+
     });
   </script>
   
