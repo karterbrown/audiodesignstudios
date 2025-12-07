@@ -54,27 +54,53 @@
     // Matrix animation for music page - horizontal flow with musical notes
     const musicalNotes = '♩♪♫♬♭♮♯';
     const container = document.getElementById('matrixTerminalMusic');
-    const numRows = 12;
+    const numRows = 18;
 
     function randomChars(length) {
       let str = '';
       for (let i = 0; i < length; i++) {
-        str += musicalNotes[Math.floor(Math.random() * musicalNotes.length)] + ' ';
+        const note = musicalNotes[Math.floor(Math.random() * musicalNotes.length)];
+        const spacing = Math.random() > 0.5 ? '  ' : ' ';
+        str += note + spacing;
       }
       return str;
     }
 
-    for (let i = 0; i < numRows; i++) {
+    const occupiedSlots = new Set();
+    
+    function getAvailablePosition() {
+      let attempts = 0;
+      let position;
+      do {
+        position = Math.floor(Math.random() * 20) * 5;
+        attempts++;
+      } while (occupiedSlots.has(position) && attempts < 50);
+      
+      occupiedSlots.add(position);
+      setTimeout(() => occupiedSlots.delete(position), 3000);
+      return position;
+    }
+
+    function createRow() {
       const row = document.createElement('div');
       row.className = 'matrix-row-music';
-      const length = Math.floor(Math.random() * 20) + 15;
+      const length = Math.floor(Math.random() * 30) + 20;
       row.textContent = randomChars(length);
-      row.style.top = `${Math.random() * 95}%`;
-      const duration = Math.random() * 3 + 4;
-      const delay = Math.random() * 3;
+      row.style.top = `${getAvailablePosition()}%`;
+      const duration = Math.random() * 4 + 7;
       row.style.animationDuration = `${duration}s`;
-      row.style.animationDelay = `${delay}s`;
+      row.style.fontSize = `${Math.random() * 8 + 15}px`;
+      row.style.opacity = Math.random() * 0.4 + 0.4;
       container.appendChild(row);
+      
+      setTimeout(() => {
+        row.remove();
+        createRow();
+      }, duration * 1000);
+    }
+
+    for (let i = 0; i < numRows; i++) {
+      setTimeout(() => createRow(), (i * 400) + Math.random() * 1000);
     }
   </script>
 </body>

@@ -46,23 +46,47 @@
       </div>
     </section>
 
-    <!-- Hero Section: Headshot & Matrix Animation -->
-    <section class="hero hero-home">
-      <!-- Left Column: Headshot Image -->
-      <div class="hero-left">
-        <div class="headshot-wrapper">
+    <!-- Highlights Hero Section: 2-Column Layout -->
+    <section id="portfolio" class="hero hero-highlights-2col">
+      <!-- Left Column: Highlights Player & Album Art -->
+      <div class="hero-left-portfolio">
+        <h1>Highlights</h1>
+        <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
+        
+        <!-- Album Cover Art - Centered -->
+        <div class="album-cover-centered" aria-hidden="true">
+          <picture>
+            <source media="(min-width:1200px)" srcset="highlights/staticcurrents2000.webp">
+            <source media="(min-width:720px)" srcset="highlights/staticcurrents1400.webp">
+            <img id="albumCover" src="highlights/staticcurrents800.webp" alt="Highlights album cover" />
+          </picture>
+        </div>
+        
+        <!-- Highlights Mini-Players (3 tracks) -->
+        <div class="highlights-section">
+          <div class="playlist" id="playlist">
+            <!-- Track rows will be injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Headshot Image & Cycling Word -->
+      <div class="hero-right-highlights">
+        <div class="headshot-wrapper-portrait">
           <picture>
             <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
             <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
             <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" />
           </picture>
         </div>
+        <!-- Cycling Word Display -->
+        <div class="cycling-word" id="cyclingWord"></div>
       </div>
+    </section>
 
-      <!-- Right Column: Matrix Terminal Effect -->
-      <div class="hero-right">
-        <div class="matrix-terminal" id="matrixTerminal"></div>
-      </div>
+    <!-- Matrix Animation Section -->
+    <section class="matrix-section">
+      <div class="matrix-terminal" id="matrixTerminal"></div>
     </section>
 
     <!-- Contact Form Section -->
@@ -94,45 +118,242 @@
   <!-- ========================================================================
        SCRIPTS
        ======================================================================== -->
+  
+  <!-- Dynamic Copyright Year -->
   <script>
-    // Update copyright year dynamically
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
-    // ========================================================================
-    // Matrix Terminal Effect (Green Musical Notes)
-    // ========================================================================
+  <!-- ========================================================================
+       Highlights Mini-Players (3 Independent Players)
+       ======================================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const highlights = [
+        { id: 'track1', title: 'Neon Wasteland', url: 'highlights/NeonWasteland_FullMix.mp3' },
+        { id: 'track2', title: 'Interstellar Worlds Align', url: 'highlights/Interstellar Worlds Align.mp3' },
+        { id: 'track3', title: 'Buried Trials', url: 'highlights/BuriedTrials_FullMix.mp3' }
+      ];
+
+      const highlightsContainer = document.getElementById('playlist');
+      let activeDrag = null; // Shared drag state for all players
+
+      // Create individual highlight track row with mini-player
+      function createHighlightRow(track) {
+        const row = document.createElement('div');
+        row.className = 'track-row';
+
+        const header = document.createElement('div');
+        header.className = 'track-header';
+
+        const num = document.createElement('div');
+        num.className = 'track-number';
+        num.textContent = track.id.replace('track', '');
+
+        const btn = document.createElement('button');
+        btn.className = 'play-btn';
+        btn.setAttribute('aria-label', `Play ${track.title}`);
+        btn.textContent = '▶';
+
+        const title = document.createElement('div');
+        title.className = 'track-title';
+        title.textContent = track.title;
+
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'highlight-progress-container';
+        
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'highlight-progress-wrap';
+        
+        const progressFill = document.createElement('div');
+        progressFill.className = 'highlight-progress-fill';
+        progressFill.style.width = '0%';
+        
+        const scrubber = document.createElement('div');
+        scrubber.className = 'highlight-scrubber';
+        
+        progressWrap.appendChild(progressFill);
+        progressWrap.appendChild(scrubber);
+        progressContainer.appendChild(progressWrap);
+
+        const audio = new Audio(track.url);
+
+        header.appendChild(num);
+        header.appendChild(btn);
+        header.appendChild(title);
+
+        row.appendChild(header);
+        row.appendChild(progressContainer);
+
+        btn.addEventListener('click', () => {
+          if (audio.paused) {
+            audio.play();
+          } else {
+            audio.pause();
+          }
+        });
+
+        audio.addEventListener('play', () => { btn.textContent = '⏸'; });
+        audio.addEventListener('pause', () => { btn.textContent = '▶'; });
+        audio.addEventListener('ended', () => { 
+          btn.textContent = '▶'; 
+          progressFill.style.width = '0%';
+          scrubber.style.left = '0%';
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+          progressFill.style.width = `${pct}%`;
+          scrubber.style.left = `${pct}%`;
+        });
+
+        // Drag and click to seek
+        const updateSeek = (e) => {
+          const rect = progressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          if (audio.duration) {
+            audio.currentTime = pct * audio.duration;
+          }
+        };
+
+        progressWrap.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          activeDrag = { element: progressWrap, update: updateSeek };
+          updateSeek(e);
+          progressWrap.style.cursor = 'grabbing';
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+          if (!activeDrag) updateSeek(e);
+        });
+
+        highlightsContainer.appendChild(row);
+      }
+
+      // Generate all highlight rows
+      highlights.forEach(createHighlightRow);
+      
+      // Global drag handlers for progress scrubbing
+      document.addEventListener('mousemove', (e) => {
+        if (activeDrag) {
+          e.preventDefault();
+          activeDrag.update(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (activeDrag) {
+          activeDrag.element.style.cursor = 'pointer';
+          activeDrag = null;
+        }
+      });
+
+      // Prevent album cover from being draggable
+      const album = document.getElementById('albumCover');
+      if (album) album.setAttribute('draggable', 'false');
+    });
+  </script>
+
+  <!-- ========================================================================
+       Cycling Word Animation (One Word at a Time with Fade)
+       ======================================================================== -->
+  <script>
+    const portfolioWords = [
+      'COMPOSITION',
+      'SOUND DESIGN',
+      'MIXING',
+      'MASTERING',
+      'ORCHESTRATION',
+      'FILM SCORE',
+      'GAME AUDIO',
+      'FOLEY',
+      'DIALOGUE',
+      'AMBIENCE',
+      'SFX',
+      'MUSIC PRODUCTION',
+      'POST PRODUCTION',
+      'AUDIO EDITING',
+      'CINEMATIC',
+      'IMMERSIVE',
+      'DYNAMIC',
+      'ATMOSPHERIC'
+    ];
+
+    const cyclingWordEl = document.getElementById('cyclingWord');
+    let currentIndex = 0;
+    
+    function updateWord() {
+      cyclingWordEl.textContent = portfolioWords[currentIndex];
+      currentIndex = (currentIndex + 1) % portfolioWords.length;
+    }
+    
+    // Initial word
+    updateWord();
+    
+    // Cycle through words every 3 seconds (matching animation duration)
+    setInterval(updateWord, 3000);
+  </script>
+
+  <!-- ========================================================================
+       Matrix Terminal Effect (Green Musical Notes)
+       ======================================================================== -->
+  <script>
     const terminal = document.getElementById('matrixTerminal');
     const chars = '♩♪♫♬♭♮♯'; // Musical note characters
-    const numColumns = 25;
+    const numColumns = 35;
+    
+    function randomChars(length) {
+      let text = '';
+      for (let i = 0; i < length; i++) {
+        const note = chars.charAt(Math.floor(Math.random() * chars.length));
+        const spacing = Math.random() > 0.6 ? '\n\n' : '\n';
+        text += note + spacing;
+      }
+      return text;
+    }
+    
+    const occupiedSlots = new Set();
+    
+    function getAvailablePosition() {
+      let attempts = 0;
+      let position;
+      do {
+        position = Math.floor(Math.random() * 19) * 5;
+        attempts++;
+      } while (occupiedSlots.has(position) && attempts < 50);
+      
+      occupiedSlots.add(position);
+      setTimeout(() => occupiedSlots.delete(position), 2500);
+      return position;
+    }
     
     function createColumn() {
       const column = document.createElement('div');
       column.className = 'matrix-column';
       
-      // Random horizontal position
-      const leftPos = Math.random() * 95;
-      column.style.left = `${leftPos}%`;
+      column.style.left = `${getAvailablePosition()}%`;
       
-      // Create vertical string of random musical characters
-      let text = '';
-      const length = Math.floor(Math.random() * 12) + 8;
-      for (let i = 0; i < length; i++) {
-        text += chars.charAt(Math.floor(Math.random() * chars.length)) + '\n';
-      }
-      column.textContent = text;
+      const length = Math.floor(Math.random() * 10) + 6;
+      column.textContent = randomChars(length);
       
-      // Random animation duration and delay
-      const duration = Math.random() * 3 + 4; // 4-7 seconds
-      const delay = Math.random() * 3; // 0-3 seconds delay
-      column.style.animation = `matrixFall ${duration}s linear ${delay}s infinite`;
+      const duration = Math.random() * 4 + 6;
+      column.style.animationDuration = `${duration}s`;
+      column.style.fontSize = `${Math.random() * 8 + 15}px`;
+      column.style.opacity = Math.random() * 0.5 + 0.3;
+      column.style.letterSpacing = `${Math.random() * 30 + 30}px`;
       
       terminal.appendChild(column);
+      
+      setTimeout(() => {
+        column.remove();
+        createColumn();
+      }, duration * 1000);
     }
     
-    // Generate all matrix columns
     for (let i = 0; i < numColumns; i++) {
-      createColumn();
+      setTimeout(() => createColumn(), (i * 200) + Math.random() * 1000);
     }
   </script>
+
 </body>
 </html>
