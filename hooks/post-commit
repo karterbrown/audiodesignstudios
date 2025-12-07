@@ -5,13 +5,8 @@
 # Generate new version number (current timestamp)
 NEW_VERSION=$(date +%s)
 
-# Get the repository root directory
-REPO_ROOT=$(git rev-parse --show-toplevel)
-
-# Change to repository root
-cd "$REPO_ROOT" || exit
-
 # Update all HTML files with new version
+cd "$GIT_DIR/.." || exit
 sed -i '' "s/styles\.css?v=[0-9]*/styles.css?v=$NEW_VERSION/g" *.html
 sed -i '' "s/content\.js?v=[0-9]*/content.js?v=$NEW_VERSION/g" *.html
 
