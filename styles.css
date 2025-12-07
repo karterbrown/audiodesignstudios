@@ -1,39 +1,17 @@
 /* =============================================================================
    AUDIO DESIGN STUDIOS - STYLESHEET
-   Organized by section for easy maintenance and navigation
    ============================================================================= */
 
-/* =============================================================================
-   TABLE OF CONTENTS
+/* TABLE OF CONTENTS
    1. Base Styles & Reset
    2. Typography
-   3. Layout Components
-      - Header & Navigation
-      - Hero Sections
-      - Footer
-   4. Page-Specific Layouts
-      - Home Page (index.html)
-      - Portfolio Page
-      - Music Page
-   5. Matrix Animations
-      - Vertical Fall (Home)
-      - Word List (Portfolio)
-      - Horizontal Flow (Music)
+   3. Layout Components (Header, Navigation, Hero, Footer)
+   4. Page-Specific Layouts (Home, Portfolio, Music)
+   5. Matrix Animations (Vertical, Word List, Horizontal)
    6. Audio Player Components
-      - Highlights Player
-      - Main Playlist Players
-      - Progress Bars & Scrubbers
-      - Transport Controls
-   7. UI Components
-      - Buttons
-      - Forms
-      - Cards & Sections
+   7. UI Components (Buttons, Forms, Cards)
    8. Images & Media
-      - Responsive Background Images
-      - Headshots & Album Art
    9. Responsive Design
-      - Tablet Breakpoints
-      - Mobile Breakpoints
    ============================================================================= */
 
 
@@ -81,10 +59,12 @@ button:focus {
   color: #f4f8ff;
 }
 
-.section h2 {
+.section h2,
+.section-title {
   font-size: 1.8rem;
   margin-bottom: 1.25rem;
   color: #f4f4ff;
+  text-align: center;
 }
 
 blockquote {
@@ -97,13 +77,12 @@ blockquote {
 }
 
 blockquote p {
-  margin: 1;
+  margin: 0;
   letter-spacing: 0.1rem;
   font-style: italic;
   font-weight: 100;
   font-family: "Sans Serif", serif;
   font-size: 1.2rem;
-  color: #f4f4ff;
 }
 
 blockquote footer {
@@ -172,7 +151,7 @@ blockquote footer {
 /* ---------- Hero Sections ---------- */
 
 .hero {
-  min-height: 60vh;
+  min-height: 70vh;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
   align-items: center;
@@ -290,15 +269,7 @@ blockquote footer {
   margin: 1rem auto;
   border-radius: 12px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.album-cover-centered img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .hero-right-highlights {
@@ -314,7 +285,6 @@ blockquote footer {
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
@@ -329,7 +299,8 @@ blockquote footer {
   font-weight: 700;
   color: #31c49f;
   text-align: center;
-  min-height: 60px;
+  min-height: 90px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,6 +308,8 @@ blockquote footer {
   letter-spacing: 2px;
   opacity: 0;
   animation: fadeInOut 3s ease-in-out infinite;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* Contact Section - Centered */
@@ -368,23 +341,6 @@ blockquote footer {
 
 
 /* ---------- Portfolio Page (3-Column Layout) ---------- */
-
-.hero-left-portfolio {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.hero-left-portfolio h1 {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.hero-left-portfolio p {
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-  max-width: 100%;
-}
 
 .hero-center-portfolio {
   display: flex;
@@ -653,18 +609,6 @@ blockquote footer {
   padding: 0;
 }
 
-.player-left {
-  flex: 0 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.player-right {
-  flex: 1 1 auto;
-  width: 100%;
-}
-
 .playlist {
   display: flex;
   flex-direction: column;
@@ -698,6 +642,7 @@ blockquote footer {
   color: #f4f4ff;
   font-size: 0.95rem;
   flex: 1 1 auto;
+  text-align: left;
 }
 
 .play-btn {
@@ -716,18 +661,13 @@ blockquote footer {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.play-btn:focus {
+.play-btn:focus,
+.play-btn:focus-visible {
   outline: 3px solid rgba(229, 229, 229, 0.12);
 }
 
 .play-btn:active {
-  color: #cbcb83;
   transform: scale(0.95);
-}
-
-.play-btn:focus-visible {
-  outline: 3px solid rgba(229, 229, 229, 0.12);
-  color: #cbcb83;
 }
 
 
@@ -738,11 +678,12 @@ blockquote footer {
   height: 180px;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.04);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
-.album-cover img {
+.album-cover img,
+.album-cover-centered img,
+.playlist-album-art img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -755,7 +696,7 @@ blockquote footer {
 /* Highlights Progress Bar */
 .highlight-progress-container {
   flex: 1 1 auto;
-  min-width: 180px;
+  min-width: 400px;
   padding: 0 1rem;
 }
 
@@ -926,16 +867,11 @@ blockquote footer {
 
 .control-btn:active {
   transform: scale(0.95);
-  color: #cbcb83;
 }
 
-.control-btn:focus {
-  outline: 3px solid rgba(229, 229, 229, 0.12);
-}
-
+.control-btn:focus,
 .control-btn:focus-visible {
   outline: 3px solid rgba(229, 229, 229, 0.12);
-  color: #cbcb83;
 }
 
 .control-btn-play {
@@ -989,14 +925,6 @@ blockquote footer {
   flex-shrink: 0;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.playlist-album-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .playlist-content {
@@ -1108,18 +1036,13 @@ blockquote footer {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.track-item-play-btn:focus {
+.track-item-play-btn:focus,
+.track-item-play-btn:focus-visible {
   outline: 3px solid rgba(229, 229, 229, 0.12);
 }
 
 .track-item-play-btn:active {
-  color: #cbcb83;
   transform: scale(0.95);
-}
-
-.track-item-play-btn:focus-visible {
-  outline: 3px solid rgba(229, 229, 229, 0.12);
-  color: #cbcb83;
 }
 
 .track-item-time {
@@ -1140,16 +1063,23 @@ blockquote footer {
 .btn {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  border-radius: 999px;
-  border: 1px solid #31c49f;
-  color: #cbcb83;
-  background: #0d1d14f2;
+  border-radius: 8px;
+  border: 1px solid rgba(49, 196, 159, 0.4);
+  color: #f4f4ff;
+  background: rgba(15, 15, 15, 0.8);
   font-weight: 600;
   text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
 .btn:hover {
-  filter: brightness(0.98);
+  background: rgba(49, 196, 159, 0.15);
+  border-color: #31c49f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(49, 196, 159, 0.3);
 }
 
 
@@ -1254,7 +1184,6 @@ blockquote footer {
   height: 100%;
   object-fit: cover;
   border-radius: 2%;
-  border: 2px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 12px 30px rgba(99, 105, 135, 0.5);
 }
 
@@ -1347,25 +1276,24 @@ blockquote footer {
 /* ---------- Tablet Breakpoints ---------- */
 
 @media (max-width: 800px) {
-  .hero {
+  .hero,
+  .hero-highlights-2col,
+  .hero-music {
     grid-template-columns: 1fr;
     text-align: center;
   }
 
-  .matrix-section {
-    min-height: 50vh;
-  }
-
+  .matrix-section,
   .matrix-section .matrix-terminal {
     min-height: 50vh;
   }
 
-  .hero-highlights-2col {
-    grid-template-columns: 1fr;
-  }
-
   .hero-left-portfolio,
-  .hero-right-highlights {
+  .hero-center-portfolio,
+  .hero-right-portfolio,
+  .hero-right-highlights,
+  .hero-left-music,
+  .hero-right-music {
     max-width: 100%;
   }
 
@@ -1387,13 +1315,11 @@ blockquote footer {
     justify-self: center;
     min-height: 450px;
     height: 450px;
-    display: block !important;
     position: relative;
     width: 100%;
   }
 
   .matrix-terminal {
-    display: block !important;
     width: 100%;
     height: 100%;
     min-height: 450px;
@@ -1401,29 +1327,8 @@ blockquote footer {
     overflow: hidden;
   }
 
-  .matrix-column {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  .hero-left-portfolio,
-  .hero-center-portfolio,
-  .hero-right-portfolio {
-    max-width: 100%;
-  }
-
   .matrix-words {
     padding: 2rem 1rem;
-  }
-
-  .hero-music {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-left-music,
-  .hero-right-music {
-    max-width: 100%;
   }
 }
 
@@ -1455,7 +1360,8 @@ blockquote footer {
     padding: 0.4rem 0.5rem;
   }
 
-  .hero {
+  .hero,
+  .hero-highlights-2col {
     grid-template-columns: 1fr;
     gap: 2rem;
     min-height: 80vh;
@@ -1466,16 +1372,9 @@ blockquote footer {
     font-size: 1.8rem;
   }
 
-  .matrix-section {
-    min-height: 400px;
-  }
-
+  .matrix-section,
   .matrix-section .matrix-terminal {
     min-height: 400px;
-  }
-
-  .hero-highlights-2col {
-    grid-template-columns: 1fr;
   }
 
   .album-cover-centered {
@@ -1499,13 +1398,11 @@ blockquote footer {
     order: 2;
     min-height: 500px;
     height: 500px;
-    display: block !important;
     position: relative;
     width: 100%;
   }
 
   .matrix-terminal {
-    display: block !important;
     width: 100%;
     height: 100%;
     min-height: 500px;
@@ -1513,35 +1410,15 @@ blockquote footer {
     overflow: hidden;
   }
 
-  .matrix-column {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  .hero-right-music {
-    min-height: 400px;
-    height: 400px;
-    display: block;
-  }
-
+  .hero-right-music,
   .hero-right-portfolio {
     min-height: 400px;
     height: 400px;
-    display: block;
   }
 
   .player-wrapper {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .player-left {
-    order: 0;
-  }
-
-  .player-right {
-    order: 1;
   }
 
   .playlists-container {

@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- ============================================================================
+     MUSIC PAGE - Audio Design Studios
+     Off World Depot link with animated musical notes
+     ============================================================================ -->
+
 <head>
+  <!-- Meta Information -->
   <meta charset="UTF-8" />
-  <title>Audio Design Studios – Karter G. Brown</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Audio Design Studios – Karter G. Brown</title>
+  
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
+  <!-- ========================================================================
+       SITE HEADER - Navigation
+       ======================================================================== -->
   <header class="site-header">
     <div class="logo">Audio Design Studios</div>
     <nav class="nav">
@@ -19,36 +33,43 @@
     </nav>
   </header>
 
-<main>
-  <!-- Hero Image Banner -->
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
+  <main>
+    <!-- Hero Image Banner -->
     <section class="env-image env-music"></section>
     
-  <section class="hero hero-music">
-    <div class="hero-left-music">
-      <h1>Off World Depot</h1>
-      <p>Download full session stems and mixes for your films, games and media production.</p>
-      <a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="btn">Take Me There!</a>
-    </div>
-    <div class="hero-right-music">
-      <div class="matrix-terminal-music" id="matrixTerminalMusic"></div>
-    </div>
-  </section>
-</main>
-    
-<footer class="site-footer">
-  <div class="footer-content">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+    <!-- Off World Depot Section with Musical Notes Animation -->
+    <section class="hero hero-music">
+      <div class="hero-left-music">
+        <h1>Off World Depot</h1>
+        <p>Download full session stems and mixes for your films, games and media production.</p>
+        <a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="btn">Take Me There!</a>
+      </div>
+      <div class="hero-right-music">
+        <div class="matrix-terminal-music" id="matrixTerminalMusic"></div>
+      </div>
+    </section>
+  </main>
 
-    <p class="footer-copy">
-    © <span id="year"></span> Audio Design Studios. All rights reserved.
-    </p>
-  </div>
-</footer>
+  <!-- ========================================================================
+       SITE FOOTER - Contact Information
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+      <p class="footer-copy">© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
+    </div>
+  </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <!-- ========================================================================
+       SCRIPTS
+       ======================================================================== -->
+  
+  <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
+  <script src="content.js"></script>
   
   <script>
     // Matrix animation for music page - horizontal flow with musical notes

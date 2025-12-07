@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- ============================================================================
+     HOME PAGE - Audio Design Studios
+     Main landing page with highlights, services, and contact
+     ============================================================================ -->
+
 <head>
+  <!-- Meta Information -->
   <meta charset="UTF-8" />
-  <title>Audio Design Studios – Karter G. Brown</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Audio Design Studios – Karter G. Brown</title>
+  
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <!-- ========================================================================
-       SITE HEADER
+       SITE HEADER - Navigation
        ======================================================================== -->
   <header class="site-header">
     <div class="logo">Audio Design Studios</div>
@@ -25,10 +37,15 @@
        MAIN CONTENT
        ======================================================================== -->
   <main>
-    <!-- Hero Image Banner -->
+    
+    <!-- ======================================================================
+         SECTION 1: Hero Image Banner
+         ====================================================================== -->
     <section class="env-image env-home"></section>
 
-    <!-- Services Grid Section -->
+    <!-- ======================================================================
+         SECTION 2: Services Grid (3 Cards)
+         ====================================================================== -->
     <section id="services" class="section section-alt">
       <div class="grid">
         <div class="card">
@@ -46,7 +63,10 @@
       </div>
     </section>
 
-    <!-- Highlights Hero Section: 2-Column Layout -->
+    <!-- ======================================================================
+         SECTION 3: Highlights Hero (2-Column Layout)
+         Left: Album art + 3 track players | Right: Headshot + Cycling word
+         ====================================================================== -->
     <section id="portfolio" class="hero hero-highlights-2col">
       <!-- Left Column: Highlights Player & Album Art -->
       <div class="hero-left-portfolio">
@@ -84,12 +104,16 @@
       </div>
     </section>
 
-    <!-- Matrix Animation Section -->
+    <!-- ======================================================================
+         SECTION 4: Matrix Animation (Green Musical Notes)
+         ====================================================================== -->
     <section class="matrix-section">
       <div class="matrix-terminal" id="matrixTerminal"></div>
     </section>
 
-    <!-- Contact Form Section -->
+    <!-- ======================================================================
+         SECTION 5: Contact Form
+         ====================================================================== -->
     <section class="section contact-section">
       <div class="contact-wrapper">
         <h1>Get In Touch</h1>
@@ -105,7 +129,7 @@
   </main>
 
   <!-- ========================================================================
-       SITE FOOTER
+       SITE FOOTER - Contact Information
        ======================================================================== -->
   <footer class="site-footer">
     <div class="footer-content">
@@ -119,10 +143,8 @@
        SCRIPTS
        ======================================================================== -->
   
-  <!-- Dynamic Copyright Year -->
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
+  <script src="content.js"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
