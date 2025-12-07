@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Post-commit hook: Update cache-busting version numbers after each commit
+
+# Generate new version number (current timestamp)
+NEW_VERSION=$(date +%s)
+
+# Update all HTML files with new version
+cd "$GIT_DIR/.." || exit
+sed -i '' "s/styles\.css?v=[0-9]*/styles.css?v=$NEW_VERSION/g" *.html
+sed -i '' "s/content\.js?v=[0-9]*/content.js?v=$NEW_VERSION/g" *.html
+
+# Stage the version changes
+git add *.html
+
+# Amend the commit to include version updates (silent)
+git commit --amend --no-edit --no-verify
+
+echo "✓ Cache-busting version updated to: $NEW_VERSION"
