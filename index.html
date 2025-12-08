@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765227645" />
+  <link rel="stylesheet" href="styles.css?v=1765228603" />
 </head>
 
 <body>
@@ -43,6 +43,26 @@
          ====================================================================== -->
     <section class="env-image env-home"></section>
 
+    <!-- ======================================================================
+         SECTION 2: Services Grid (3 Cards)
+         ====================================================================== -->
+    <section id="services" class="section section-alt">
+      <div class="grid">
+        <div class="card">
+          <h3>Sound Design</h3>
+          <p>Custom SFX, soundscapes, and detailed sound editing for film, animation, and games.</p>
+        </div>
+        <div class="card">
+          <h3>Mixing & Mastering</h3>
+          <p>Clean, balanced mixes for music, podcasts, trailers, and cinematic content.</p>
+        </div>
+        <div class="card">
+          <h3>Original Music</h3>
+          <p>Score cues, thematic motifs, and production music tailored to your project.</p>
+        </div>
+      </div>
+    </section>
+    
     <!-- ======================================================================
          SECTION 4: Before & After Mixing/Mastering Comparison
          ====================================================================== -->
@@ -80,26 +100,6 @@
         <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
       </div>
     </section>
-
-    <!-- ======================================================================
-         SECTION 2: Services Grid (3 Cards)
-         ====================================================================== -->
-    <section id="services" class="section section-alt">
-      <div class="grid">
-        <div class="card">
-          <h3>Sound Design</h3>
-          <p>Custom SFX, soundscapes, and detailed sound editing for film, animation, and games.</p>
-        </div>
-        <div class="card">
-          <h3>Mixing & Mastering</h3>
-          <p>Clean, balanced mixes for music, podcasts, trailers, and cinematic content.</p>
-        </div>
-        <div class="card">
-          <h3>Original Music</h3>
-          <p>Score cues, thematic motifs, and production music tailored to your project.</p>
-        </div>
-      </div>
-    </section>
     
     <!-- ======================================================================
          SECTION 3: Highlights Hero (3-Column Layout)
@@ -118,10 +118,18 @@
         </div>
       </div>
 
-      <!-- Center Column: Title & Description -->
+      <!-- Center Column: Contact Form -->
       <div class="hero-center-highlights">
-        <h1>Highlights</h1>
-        <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
+        <div class="contact-wrapper">
+          <h1>Get In Touch</h1>
+          <p>Send a message and I'll get back to you with next steps.</p>
+          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Describe your project..." required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+        </div>
       </div>
 
       <!-- Right Column: Headshot -->
@@ -149,22 +157,6 @@
     <section class="matrix-section">
       <div class="matrix-terminal" id="matrixTerminal"></div>
     </section>
-    
-    <!-- ======================================================================
-         SECTION 6: Contact Form
-         ====================================================================== -->
-    <section class="section contact-section">
-      <div class="contact-wrapper">
-        <h1>Get In Touch</h1>
-        <p>Send a message and I'll get back to you with next steps.</p>
-        <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
-          <textarea name="message" placeholder="Describe your project..." required></textarea>
-          <button type="submit" class="btn">Send Message</button>
-        </form>
-      </div>
-    </section>
   </main>
 
   <!-- ========================================================================
@@ -183,7 +175,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765227645"></script>
+  <script src="content.js?v=1765228603"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
