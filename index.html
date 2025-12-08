@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765217518" />
+  <link rel="stylesheet" href="styles.css?v=1765223010" />
 </head>
 
 <body>
@@ -51,6 +51,9 @@
       <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
       
       <div class="ba-single-player">
+        <!-- Track Title -->
+        <div class="ba-track-title">Near Wild Heaven (Cover)</div>
+
         <!-- Toggle Section: Before - Toggle - After -->
         <div class="ba-toggle-section">
           <span class="ba-toggle-label ba-toggle-before">Before</span>
@@ -180,7 +183,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765217518"></script>
+  <script src="content.js?v=1765223010"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -362,6 +365,24 @@
       // Toggle switch
       baToggle.addEventListener('change', (e) => {
         switchTrack(e.target.checked);
+        
+        // Update label styling
+        const beforeLabel = document.querySelector('.ba-toggle-before');
+        const afterLabel = document.querySelector('.ba-toggle-after');
+        
+        if (e.target.checked) {
+          // After is active
+          beforeLabel.style.opacity = '0.6';
+          beforeLabel.style.fontWeight = '500';
+          afterLabel.style.opacity = '1';
+          afterLabel.style.fontWeight = '600';
+        } else {
+          // Before is active
+          beforeLabel.style.opacity = '1';
+          beforeLabel.style.fontWeight = '600';
+          afterLabel.style.opacity = '0.6';
+          afterLabel.style.fontWeight = '500';
+        }
       });
 
       // Audio event listeners for both tracks
