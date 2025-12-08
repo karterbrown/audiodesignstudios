@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765143285" />
+  <link rel="stylesheet" href="styles.css?v=1765152680" />
 </head>
 
 <body>
@@ -107,14 +107,49 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 4: Matrix Animation (Green Musical Notes)
+         SECTION 4: Before & After Mixing/Mastering Comparison
+         ====================================================================== -->
+    <section class="section before-after-section">
+      <h2>Before & After Mixing and Mastering</h2>
+      <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
+      
+      <div class="ba-single-player">
+        <!-- Toggle Switch -->
+        <div class="ba-toggle-container">
+          <span class="ba-toggle-label">Before</span>
+          <label class="ba-toggle-switch">
+            <input type="checkbox" id="baToggle">
+            <span class="ba-toggle-slider"></span>
+          </label>
+          <span class="ba-toggle-label ba-toggle-label-after">After</span>
+        </div>
+
+        <!-- Player Controls -->
+        <div class="ba-player-controls">
+          <button class="play-btn ba-play-btn" id="baPlayBtn" aria-label="Play">▶</button>
+          <div class="ba-progress-container">
+            <div class="ba-progress-wrap" id="baProgressWrap">
+              <div class="ba-progress-fill" id="baProgressFill"></div>
+              <div class="ba-scrubber" id="baScrubber"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden Audio Elements -->
+        <audio id="beforeAudio" src="highlights/B_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+        <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 5: Matrix Animation (Green Musical Notes)
          ====================================================================== -->
     <section class="matrix-section">
       <div class="matrix-terminal" id="matrixTerminal"></div>
     </section>
 
     <!-- ======================================================================
-         SECTION 5: Contact Form
+         SECTION 6: Contact Form
          ====================================================================== -->
     <section class="section contact-section">
       <div class="contact-wrapper">
@@ -146,7 +181,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765143285"></script>
+  <script src="content.js?v=1765152680"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -154,9 +189,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const highlights = [
-        { id: 'track1', title: 'Neon Wasteland', url: 'highlights/NeonWasteland_FullMix.mp3' },
-        { id: 'track2', title: 'Interstellar Worlds Align', url: 'highlights/Interstellar Worlds Align.mp3' },
-        { id: 'track3', title: 'Buried Trials', url: 'highlights/BuriedTrials_FullMix.mp3' }
+        { id: 'track1', title: 'Nearly Ever', url: 'highlights/NearlyEver_FullMix.mp3' },
+        { id: 'track2', title: 'The Revolt', url: 'highlights/therevolt.mp3' }
       ];
 
       const highlightsContainer = document.getElementById('playlist');
@@ -314,6 +348,132 @@
     
     // Cycle through words every 3 seconds (matching animation duration)
     setInterval(updateWord, 3000);
+  </script>
+
+  <!-- ========================================================================
+       Before & After Mixing/Mastering Toggle Player
+       ======================================================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const beforeAudio = document.getElementById('beforeAudio');
+      const afterAudio = document.getElementById('afterAudio');
+      const baPlayBtn = document.getElementById('baPlayBtn');
+      const baToggle = document.getElementById('baToggle');
+      const baProgressWrap = document.getElementById('baProgressWrap');
+      const baProgressFill = document.getElementById('baProgressFill');
+      const baScrubber = document.getElementById('baScrubber');
+
+      let activeDrag = null;
+      let currentAudio = beforeAudio; // Start with "before" track
+      let isPlaying = false;
+
+      // Sync both audio elements to the same time
+      function syncAudioTime(fromAudio, toAudio) {
+        toAudio.currentTime = fromAudio.currentTime;
+      }
+
+      // Switch between before and after tracks
+      function switchTrack(useAfter) {
+        const wasPlaying = !currentAudio.paused;
+        const currentTime = currentAudio.currentTime;
+
+        if (wasPlaying) {
+          currentAudio.pause();
+        }
+
+        currentAudio = useAfter ? afterAudio : beforeAudio;
+        currentAudio.currentTime = currentTime;
+
+        if (wasPlaying) {
+          currentAudio.play().catch(e => console.warn('play failed', e));
+        }
+      }
+
+      // Play/Pause button
+      baPlayBtn.addEventListener('click', () => {
+        if (currentAudio.paused) {
+          currentAudio.play();
+          isPlaying = true;
+        } else {
+          currentAudio.pause();
+          isPlaying = false;
+        }
+      });
+
+      // Toggle switch
+      baToggle.addEventListener('change', (e) => {
+        switchTrack(e.target.checked);
+      });
+
+      // Audio event listeners for both tracks
+      [beforeAudio, afterAudio].forEach(audio => {
+        audio.addEventListener('play', () => { 
+          if (audio === currentAudio) {
+            baPlayBtn.textContent = '⏸'; 
+            isPlaying = true;
+          }
+        });
+
+        audio.addEventListener('pause', () => { 
+          if (audio === currentAudio) {
+            baPlayBtn.textContent = '▶'; 
+            isPlaying = false;
+          }
+        });
+
+        audio.addEventListener('ended', () => { 
+          if (audio === currentAudio) {
+            baPlayBtn.textContent = '▶'; 
+            baProgressFill.style.width = '0%';
+            baScrubber.style.left = '0%';
+            isPlaying = false;
+          }
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          if (audio === currentAudio) {
+            const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+            baProgressFill.style.width = `${pct}%`;
+            baScrubber.style.left = `${pct}%`;
+          }
+        });
+      });
+
+      // Progress bar scrubbing
+      const updateSeek = (e) => {
+        const rect = baProgressWrap.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        if (currentAudio.duration) {
+          currentAudio.currentTime = pct * currentAudio.duration;
+        }
+      };
+
+      baProgressWrap.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        activeDrag = { element: baProgressWrap, update: updateSeek };
+        updateSeek(e);
+        baProgressWrap.style.cursor = 'grabbing';
+      });
+
+      baProgressWrap.addEventListener('click', (e) => {
+        if (!activeDrag) updateSeek(e);
+      });
+
+      // Global drag handlers
+      document.addEventListener('mousemove', (e) => {
+        if (activeDrag) {
+          e.preventDefault();
+          activeDrag.update(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (activeDrag) {
+          activeDrag.element.style.cursor = 'pointer';
+          activeDrag = null;
+        }
+      });
+    });
   </script>
 
   <!-- ========================================================================
