@@ -1325,18 +1325,18 @@ blockquote footer {
 
 /* Home Page Background */
 .env-home {
-  background-image: url('../Photos/bridgetoshinob2_800.webp');
+  background-image: url('../Photos/homepiano800.webp');
 }
 
 @media (min-width: 720px) {
   .env-home {
-    background-image: url('../Photos/bridgetoshinob2_1400.webp');
+    background-image: url('../Photos/homepiano1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-home {
-    background-image: url('../Photos/bridgetoshinob2_2000.webp');
+    background-image: url('../Photos/homepiano2000.webp');
   }
 }
 
@@ -1378,18 +1378,18 @@ blockquote footer {
 
 /* Music Page Background */
 .env-music {
-  background-image: url('../Photos/homepiano800.webp');
+  background-image: url('../Photos/bridgetoshinob2_800.webp');
 }
 
 @media (min-width: 720px) {
   .env-music {
-    background-image: url('../Photos/homepiano1400.webp');
+    background-image: url('../Photos/bridgetoshinob2_1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-music {
-    background-image: url('../Photos/homepiano2000.webp');
+    background-image: url('../Photos/bridgetoshinob2_2000.webp');
   }
 }
 
