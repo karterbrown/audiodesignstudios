@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765223010" />
+  <link rel="stylesheet" href="styles.css?v=1765224950" />
 </head>
 
 <body>
@@ -120,17 +120,17 @@
          ====================================================================== -->
     <section class="section before-after-playlist-section">
       <h2>Before & After Mixing and Mastering</h2>
-      <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">Compare raw recordings with final mixed and mastered versions. Use the toggle to switch between before and after.</p>
+      <p class="centered-text">Compare raw recordings with final mixed and mastered versions. Use the toggle to switch between before and after.</p>
       
       <div class="playlist-card">
         <!-- Global Toggle Section -->
         <div class="ba-global-toggle-section">
-          <span class="ba-toggle-label ba-global-toggle-before">Before</span>
+          <span class="ba-toggle-label ba-toggle-before">Before</span>
           <label class="ba-toggle-switch">
             <input type="checkbox" id="baGlobalToggle">
             <span class="ba-toggle-slider"></span>
           </label>
-          <span class="ba-toggle-label ba-global-toggle-after">After</span>
+          <span class="ba-toggle-label ba-toggle-after">After</span>
         </div>
 
         <!-- Progress Bar -->
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765223010"></script>
+  <script src="content.js?v=1765224950"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -726,8 +726,8 @@
         baIsPlayingBefore = !e.target.checked;
 
         // Update label styling
-        const beforeLabel = document.querySelector('.ba-global-toggle-before');
-        const afterLabel = document.querySelector('.ba-global-toggle-after');
+        const beforeLabel = document.querySelector('.ba-toggle-before');
+        const afterLabel = document.querySelector('.ba-toggle-after');
         
         if (e.target.checked) {
           beforeLabel.style.opacity = '0.6';
