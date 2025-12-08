@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- ============================================================================
+     SECRET MATRIX PAGE - Audio Design Studios
+     Easter egg page with full-screen falling matrix animation
+     ============================================================================ -->
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Matrix - Audio Design Studios</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #08ce18;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .matrix-fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+
+    .matrix-column {
+      position: absolute;
+      top: -20%;
+      font-size: 18px;
+      line-height: 2;
+      color: #08ce18;
+      text-shadow: 0 0 12px rgba(8, 206, 24, 0.9),
+                   0 0 24px rgba(8, 206, 24, 0.6),
+                   0 0 36px rgba(8, 206, 24, 0.3);
+      white-space: pre;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 50px;
+      animation: matrixFall 10s linear infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes matrixFall {
+      0% {
+        top: -20%;
+        opacity: 0;
+        transform: translateY(0) scale(0.9);
+      }
+      5% {
+        opacity: 0.2;
+        transform: translateY(0) scale(0.95);
+      }
+      15% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      75% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      85% {
+        opacity: 0.6;
+        transform: translateY(0) scale(0.98);
+      }
+      95% {
+        opacity: 0.2;
+        transform: translateY(0) scale(0.95);
+      }
+      100% {
+        top: 120%;
+        opacity: 0;
+        transform: translateY(0) scale(0.9);
+      }
+    }
+
+    .home-link {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 1rem 2rem;
+      background: rgba(8, 206, 24, 0.1);
+      border: 2px solid #08ce18;
+      color: #08ce18;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(8, 206, 24, 0.3);
+    }
+
+    .home-link:hover {
+      background: rgba(8, 206, 24, 0.2);
+      box-shadow: 0 0 30px rgba(8, 206, 24, 0.6);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .home-link:active {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 720px) {
+      .home-link {
+        bottom: 1.5rem;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Full-screen Matrix Animation -->
+  <div class="matrix-fullscreen" id="matrixFullscreen"></div>
+
+  <!-- Return Home Link -->
+  <a href="index.html" class="home-link">Return Home</a>
+
+  <!-- Matrix Animation Script -->
+  <script>
+    const terminal = document.getElementById('matrixFullscreen');
+    const chars = '♩♪♫♬♭♮♯'; // Musical note characters
+    const numColumns = 60; // More columns for fullscreen
+    
+    function randomChars(length) {
+      let text = '';
+      for (let i = 0; i < length; i++) {
+        const note = chars.charAt(Math.floor(Math.random() * chars.length));
+        const spacing = Math.random() > 0.6 ? '\n\n' : '\n';
+        text += note + spacing;
+      }
+      return text;
+    }
+    
+    const occupiedSlots = new Set();
+    
+    function getAvailablePosition() {
+      let attempts = 0;
+      let position;
+      do {
+        position = Math.floor(Math.random() * 20) * 5; // 0% to 95% in 5% increments
+        attempts++;
+      } while (occupiedSlots.has(position) && attempts < 50);
+      
+      occupiedSlots.add(position);
+      setTimeout(() => occupiedSlots.delete(position), 2500);
+      return position;
+    }
+    
+    function createColumn() {
+      const column = document.createElement('div');
+      column.className = 'matrix-column';
+      
+      column.style.left = `${getAvailablePosition()}%`;
+      
+      const length = Math.floor(Math.random() * 12) + 8;
+      column.textContent = randomChars(length);
+      
+      const duration = Math.random() * 4 + 6;
+      column.style.animationDuration = `${duration}s`;
+      column.style.fontSize = `${Math.random() * 8 + 15}px`;
+      column.style.opacity = Math.random() * 0.5 + 0.3;
+      column.style.letterSpacing = `${Math.random() * 30 + 30}px`;
+      
+      terminal.appendChild(column);
+      
+      setTimeout(() => {
+        column.remove();
+        createColumn();
+      }, duration * 1000);
+    }
+    
+    // Create more columns for fuller screen coverage
+    for (let i = 0; i < numColumns; i++) {
+      setTimeout(() => createColumn(), (i * 150) + Math.random() * 1000);
+    }
+  </script>
+</body>
+</html>
