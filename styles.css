@@ -332,24 +332,6 @@ blockquote footer {
   object-fit: cover;
 }
 
-.cycling-word {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #31c49f;
-  text-align: center;
-  min-height: 90px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  opacity: 0;
-  animation: fadeInOut 3s ease-in-out infinite;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
 /* Before & After Mixing/Mastering Section */
 .before-after-section {
   padding: 4rem 5vw;
@@ -370,11 +352,12 @@ blockquote footer {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
 }
 
-.ba-toggle-container {
-  display: flex;
+.ba-toggle-section {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
+  gap: 2rem;
+  width: 100%;
 }
 
 .ba-toggle-label {
@@ -383,15 +366,26 @@ blockquote footer {
   font-weight: 500;
   opacity: 0.6;
   transition: opacity 0.3s ease;
+  text-align: center;
 }
 
-.ba-toggle-label-after {
-  opacity: 0.6;
-}
-
-#baToggle:checked ~ .ba-toggle-container .ba-toggle-label-after,
-.ba-toggle-switch input:checked + .ba-toggle-slider ~ .ba-toggle-label-after {
+.ba-toggle-before {
   opacity: 1;
+  text-align: right;
+}
+
+.ba-toggle-after {
+  opacity: 0.6;
+  text-align: left;
+}
+
+/* When toggle is checked, "After" becomes active */
+.ba-toggle-switch input:checked ~ .ba-toggle-after {
+  opacity: 1;
+}
+
+.ba-toggle-switch input:checked ~ .ba-toggle-before {
+  opacity: 0.6;
 }
 
 .ba-toggle-switch {
@@ -775,26 +769,6 @@ blockquote footer {
   }
 }
 
-/* ---------- Cycling Word Fade Animation ---------- */
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  15% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  85% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-}
 
 
 /* =============================================================================
@@ -1527,10 +1501,6 @@ blockquote footer {
     max-width: 350px;
   }
 
-  .cycling-word {
-    font-size: 2rem;
-  }
-
   .hero-tracks-highlights {
     padding: 0 1rem;
   }
@@ -1614,12 +1584,6 @@ blockquote footer {
   .headshot-wrapper-portrait {
     width: 180px;
     height: 180px;
-  }
-
-  .cycling-word {
-    font-size: 1.5rem;
-    min-height: 70px;
-    height: 70px;
   }
 
   .hero-tracks-highlights .playlist {

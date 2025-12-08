@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765153420" />
+  <link rel="stylesheet" href="styles.css?v=1765214651" />
 </head>
 
 <body>
@@ -43,6 +43,47 @@
          ====================================================================== -->
     <section class="env-image env-home"></section>
 
+    <!-- ======================================================================
+         SECTION 4: Before & After Mixing/Mastering Comparison
+         ====================================================================== -->
+    <section class="section before-after-section">
+      <h2>Before & After Mixing and Mastering</h2>
+      <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
+      
+      <div class="ba-single-player">
+        <!-- Toggle Section: Before - Toggle - After -->
+        <div class="ba-toggle-section">
+          <span class="ba-toggle-label ba-toggle-before">Before</span>
+          <label class="ba-toggle-switch">
+            <input type="checkbox" id="baToggle">
+            <span class="ba-toggle-slider"></span>
+          </label>
+          <span class="ba-toggle-label ba-toggle-after">After</span>
+        </div>
+
+        <!-- Player Controls -->
+        <div class="ba-player-controls">
+          <button class="play-btn ba-play-btn" id="baPlayBtn" aria-label="Play">▶</button>
+          <div class="ba-progress-container">
+            <div class="ba-progress-wrap" id="baProgressWrap">
+              <div class="ba-progress-fill" id="baProgressFill"></div>
+              <div class="ba-scrubber" id="baScrubber"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden Audio Elements -->
+        <audio id="beforeAudio" src="highlights/B_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+        <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+      </div>
+    </section>
+
+<!-- ======================================================================
+         SECTION 5: Matrix Animation (Green Musical Notes)
+         ====================================================================== -->
+    <section class="matrix-section">
+      <div class="matrix-terminal" id="matrixTerminal"></div>
+    </section>
     <!-- ======================================================================
          SECTION 2: Services Grid (3 Cards)
          ====================================================================== -->
@@ -80,11 +121,10 @@
         </div>
       </div>
 
-      <!-- Center Column: Title, Description & Cycling Word -->
+      <!-- Center Column: Title & Description -->
       <div class="hero-center-highlights">
         <h1>Highlights</h1>
         <p>Listen to featured audio samples from my recent work including film scores, game design, and original compositions.</p>
-        <div class="cycling-word" id="cyclingWord"></div>
       </div>
 
       <!-- Right Column: Headshot -->
@@ -104,48 +144,6 @@
           <!-- Track rows will be injected via JavaScript -->
         </div>
       </div>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 4: Before & After Mixing/Mastering Comparison
-         ====================================================================== -->
-    <section class="section before-after-section">
-      <h2>Before & After Mixing and Mastering</h2>
-      <p style="text-align: center; max-width: 700px; margin: 0 auto 2rem;">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
-      
-      <div class="ba-single-player">
-        <!-- Toggle Switch -->
-        <div class="ba-toggle-container">
-          <span class="ba-toggle-label">Before</span>
-          <label class="ba-toggle-switch">
-            <input type="checkbox" id="baToggle">
-            <span class="ba-toggle-slider"></span>
-          </label>
-          <span class="ba-toggle-label ba-toggle-label-after">After</span>
-        </div>
-
-        <!-- Player Controls -->
-        <div class="ba-player-controls">
-          <button class="play-btn ba-play-btn" id="baPlayBtn" aria-label="Play">▶</button>
-          <div class="ba-progress-container">
-            <div class="ba-progress-wrap" id="baProgressWrap">
-              <div class="ba-progress-fill" id="baProgressFill"></div>
-              <div class="ba-scrubber" id="baScrubber"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hidden Audio Elements -->
-        <audio id="beforeAudio" src="highlights/B_NearWildHeaven_12072025.mp3" preload="auto"></audio>
-        <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 5: Matrix Animation (Green Musical Notes)
-         ====================================================================== -->
-    <section class="matrix-section">
-      <div class="matrix-terminal" id="matrixTerminal"></div>
     </section>
 
     <!-- ======================================================================
@@ -181,7 +179,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765153420"></script>
+  <script src="content.js?v=1765214651"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -308,46 +306,6 @@
 
 
     });
-  </script>
-
-  <!-- ========================================================================
-       Cycling Word Animation (One Word at a Time with Fade)
-       ======================================================================== -->
-  <script>
-    const portfolioWords = [
-      'COMPOSITION',
-      'SOUND DESIGN',
-      'MIXING',
-      'MASTERING',
-      'ORCHESTRATION',
-      'FILM SCORE',
-      'GAME AUDIO',
-      'FOLEY',
-      'DIALOGUE',
-      'AMBIENCE',
-      'SFX',
-      'MUSIC PRODUCTION',
-      'POST PRODUCTION',
-      'AUDIO EDITING',
-      'CINEMATIC',
-      'IMMERSIVE',
-      'DYNAMIC',
-      'ATMOSPHERIC'
-    ];
-
-    const cyclingWordEl = document.getElementById('cyclingWord');
-    let currentIndex = 0;
-    
-    function updateWord() {
-      cyclingWordEl.textContent = portfolioWords[currentIndex];
-      currentIndex = (currentIndex + 1) % portfolioWords.length;
-    }
-    
-    // Initial word
-    updateWord();
-    
-    // Cycle through words every 3 seconds (matching animation duration)
-    setInterval(updateWord, 3000);
   </script>
 
   <!-- ========================================================================
