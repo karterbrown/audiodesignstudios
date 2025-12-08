@@ -33,6 +33,11 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 a:focus,
@@ -1619,6 +1624,11 @@ blockquote footer {
 
   .hero-tracks-highlights .playlist {
     max-width: 100%;
+  }
+
+  .highlight-progress-container {
+    min-width: 0;
+    padding: 0 0.5rem;
   }
 
   .ba-single-player {
