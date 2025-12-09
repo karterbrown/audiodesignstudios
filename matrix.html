@@ -113,69 +113,48 @@
   <!-- Matrix Animation Script -->
   <script>
     const terminal = document.getElementById('matrixFullscreen');
-    const chars = '♩♪♫♬♭♮♯'; // Musical note characters
-    const numColumns = 60; // More columns for fullscreen
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    terminal.appendChild(canvas);
     
-    function randomChars(length) {
-      let text = '';
-      for (let i = 0; i < length; i++) {
-        const note = chars.charAt(Math.floor(Math.random() * chars.length));
-        const spacing = Math.random() > 0.6 ? '\n\n' : '\n';
-        text += note + spacing;
+    const chars = '♩♪♫♬♭♮♯';
+    let columns, drops, xPositions;
+    
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = 'block';
+      const fontSize = 18;
+      columns = Math.floor(canvas.width / 60);
+      drops = Array(columns).fill(0).map(() => Math.random() * -50);
+      xPositions = Array(columns).fill(0).map((_, i) => i * 60 + 15);
+    }
+    
+    function draw() {
+      ctx.fillStyle = 'rgba(20, 20, 20, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.font = 'bold 18px Courier New';
+      ctx.fillStyle = '#08ce18';
+      
+      for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        const x = xPositions[i];
+        const y = drops[i] * 30;
+        
+        ctx.fillText(char, x, y);
+        
+        if (y > canvas.height && Math.random() > 0.95) {
+          drops[i] = Math.random() * -50;
+          xPositions[i] = i * 60 + Math.random() * 40 - 5;
+        }
+        drops[i] += 0.5;
       }
-      return text;
     }
     
-    const occupiedSlots = new Set();
-    
-    function getAvailablePosition() {
-      let attempts = 0;
-      let position;
-      do {
-        position = Math.floor(Math.random() * 20) * 5; // 0% to 95% in 5% increments
-        attempts++;
-      } while (occupiedSlots.has(position) && attempts < 50);
-      
-      occupiedSlots.add(position);
-      setTimeout(() => occupiedSlots.delete(position), 2500);
-      return position;
-    }
-    
-    function createColumn() {
-      const column = document.createElement('div');
-      column.className = 'matrix-column';
-      
-      column.style.left = `${getAvailablePosition()}%`;
-      
-      const length = Math.floor(Math.random() * 12) + 8;
-      column.textContent = randomChars(length);
-      
-      const duration = Math.random() * 4 + 6;
-      column.style.animationDuration = `${duration}s`;
-      column.style.fontSize = `${Math.random() * 8 + 15}px`;
-      column.style.opacity = Math.random() * 0.5 + 0.3;
-      column.style.letterSpacing = `${Math.random() * 30 + 30}px`;
-      
-      // Use requestAnimationFrame for smoother DOM insertion
-      requestAnimationFrame(() => {
-        terminal.appendChild(column);
-      });
-      
-      setTimeout(() => {
-        // Use requestAnimationFrame for smoother DOM removal
-        requestAnimationFrame(() => {
-          if (column.parentNode) {
-            column.remove();
-          }
-          createColumn();
-        });
-      }, duration * 1000);
-    }
-    
-    // Create more columns for fuller screen coverage
-    for (let i = 0; i < numColumns; i++) {
-      setTimeout(() => createColumn(), (i * 150) + Math.random() * 1000);
-    }
+    resize();
+    window.addEventListener('resize', resize);
+    setInterval(draw, 80);
   </script>
 </body>
 </html>
