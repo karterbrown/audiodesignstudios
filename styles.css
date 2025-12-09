@@ -151,8 +151,8 @@ blockquote footer {
 
 .nav a:hover,
 .nav a:focus {
-  color: #31c49f;
-  border-bottom-color: #31c49f;
+  color: #cbcb83;
+  border-bottom-color: #cbcb83;
 }
 
 
@@ -234,6 +234,17 @@ blockquote footer {
 /* ---------- Home Page ---------- */
 
 /* Matrix Animation Section (No Hero Background) */
+.matrix-link {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.matrix-link:hover {
+  opacity: 0.85;
+}
+
 .matrix-section {
   min-height: 60vh;
   padding: 0;
@@ -1222,6 +1233,13 @@ blockquote footer {
   color: #08ce18;
   font-size: 0.95rem;
   backdrop-filter: blur(4px);
+  outline: none;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: rgba(8, 206, 24, 0.3);
+  outline: none;
 }
 
 .contact-form textarea {
