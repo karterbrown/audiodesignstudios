@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765255534" />
+  <link rel="stylesheet" href="styles.css?v=1765255785" />
 </head>
 
 <body>
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765255534"></script>
+  <script src="content.js?v=1765255785"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -791,6 +791,10 @@
 
       // Global toggle between before/after - just swap mute state
       baGlobalToggle.addEventListener('change', (e) => {
+        // Briefly stop sync to prevent glitches during toggle
+        const wasSyncing = syncInterval !== null;
+        if (wasSyncing) stopSyncMonitor();
+        
         // Update label styling
         const beforeLabel = document.querySelector('.ba-toggle-before');
         const afterLabel = document.querySelector('.ba-toggle-after');
@@ -820,6 +824,11 @@
           const track = baTracks[baCurrentTrackIndex];
           const beforeOrAfter = baBeforeAudio.muted ? 'After' : 'Before';
           baNowPlaying.textContent = `Now Playing: ${track.title} (${beforeOrAfter})`;
+        }
+        
+        // Restart sync after a brief delay
+        if (wasSyncing && isPlaying) {
+          setTimeout(() => startSyncMonitor(), 200);
         }
       });
 

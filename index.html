@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765255534" />
+  <link rel="stylesheet" href="styles.css?v=1765255785" />
 </head>
 
 <body>
@@ -175,7 +175,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765255534"></script>
+  <script src="content.js?v=1765255785"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -396,6 +396,10 @@
 
       // Toggle switch - just swaps mute state
       baToggle.addEventListener('change', (e) => {
+        // Briefly stop sync to prevent glitches during toggle
+        const wasSyncing = syncInterval !== null;
+        if (wasSyncing) stopSyncMonitor();
+        
         if (e.target.checked) {
           // After is active (unmuted)
           beforeAudio.muted = true;
@@ -416,6 +420,11 @@
           document.querySelector('.ba-toggle-before').style.fontWeight = '600';
           document.querySelector('.ba-toggle-after').style.opacity = '0.6';
           document.querySelector('.ba-toggle-after').style.fontWeight = '500';
+        }
+        
+        // Restart sync after a brief delay
+        if (wasSyncing && isPlaying) {
+          setTimeout(() => startSyncMonitor(), 200);
         }
       });
 
