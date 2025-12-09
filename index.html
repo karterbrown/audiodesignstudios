@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765255126" />
+  <link rel="stylesheet" href="styles.css?v=1765255394" />
 </head>
 
 <body>
@@ -175,7 +175,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765255126"></script>
+  <script src="content.js?v=1765255394"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -342,6 +342,12 @@
         if (syncInterval) return;
         syncInterval = setInterval(() => {
           if (!isPlaying) return;
+          // Skip if either track is loading/seeking
+          if (beforeAudio.seeking || afterAudio.seeking) return;
+          if (beforeAudio.readyState < 3 || afterAudio.readyState < 3) return;
+          // Skip if duration isn't loaded yet
+          if (!beforeAudio.duration || !afterAudio.duration) return;
+          
           const diff = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
           if (diff > 0.05) { // More than 50ms drift
             afterAudio.currentTime = beforeAudio.currentTime;

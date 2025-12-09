@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765255126" />
+  <link rel="stylesheet" href="styles.css?v=1765255394" />
 </head>
 
 <body>
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765255126"></script>
+  <script src="content.js?v=1765255394"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -573,6 +573,12 @@
         if (syncInterval) return;
         syncInterval = setInterval(() => {
           if (!isPlaying) return;
+          // Skip if either track is loading/seeking
+          if (baBeforeAudio.seeking || baAfterAudio.seeking) return;
+          if (baBeforeAudio.readyState < 3 || baAfterAudio.readyState < 3) return;
+          // Skip if duration isn't loaded yet
+          if (!baBeforeAudio.duration || !baAfterAudio.duration) return;
+          
           const diff = Math.abs(baBeforeAudio.currentTime - baAfterAudio.currentTime);
           if (diff > 0.05) { // More than 50ms drift
             baAfterAudio.currentTime = baBeforeAudio.currentTime;
@@ -710,6 +716,8 @@
           baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
         }
 
+        // Stop sync monitor while switching tracks
+        stopSyncMonitor();
         baCurrentTrackIndex = index;
 
         // Update UI
