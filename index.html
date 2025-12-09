@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765254406" />
+  <link rel="stylesheet" href="styles.css?v=1765255126" />
 </head>
 
 <body>
@@ -175,7 +175,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765254406"></script>
+  <script src="content.js?v=1765255126"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -320,27 +320,71 @@
 
       let activeDrag = null;
       let isPlaying = false;
+      let syncInterval = null;
 
       // Initialize: Before is audible, After is muted
       beforeAudio.muted = false;
       afterAudio.muted = true;
 
+      // Utility: Wait for audio to be ready to play
+      function waitForReady(audio) {
+        return new Promise(resolve => {
+          if (audio.readyState >= 3) {
+            resolve();
+          } else {
+            audio.addEventListener('canplaythrough', resolve, { once: true });
+          }
+        });
+      }
+
+      // Utility: Keep audio tracks synced (drift correction)
+      function startSyncMonitor() {
+        if (syncInterval) return;
+        syncInterval = setInterval(() => {
+          if (!isPlaying) return;
+          const diff = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
+          if (diff > 0.05) { // More than 50ms drift
+            afterAudio.currentTime = beforeAudio.currentTime;
+          }
+        }, 100);
+      }
+
+      function stopSyncMonitor() {
+        if (syncInterval) {
+          clearInterval(syncInterval);
+          syncInterval = null;
+        }
+      }
+
       // Play/Pause button - controls BOTH audio elements
-      baPlayBtn.addEventListener('click', () => {
+      baPlayBtn.addEventListener('click', async () => {
         if (isPlaying) {
           // Pause both
           beforeAudio.pause();
           afterAudio.pause();
           baPlayBtn.textContent = '▶';
           isPlaying = false;
+          stopSyncMonitor();
         } else {
-          // Play both simultaneously
-          Promise.all([
-            beforeAudio.play(),
-            afterAudio.play()
-          ]).catch(e => console.warn('play failed', e));
-          baPlayBtn.textContent = '⏸';
-          isPlaying = true;
+          // Wait for both to be ready, then play simultaneously
+          baPlayBtn.textContent = '…';
+          try {
+            await Promise.all([
+              waitForReady(beforeAudio),
+              waitForReady(afterAudio)
+            ]);
+            await Promise.all([
+              beforeAudio.play(),
+              afterAudio.play()
+            ]);
+            baPlayBtn.textContent = '⏸';
+            isPlaying = true;
+            startSyncMonitor();
+          } catch (e) {
+            console.warn('play failed', e);
+            baPlayBtn.textContent = '▶';
+            isPlaying = false;
+          }
         }
       });
 
@@ -382,6 +426,7 @@
         baProgressFill.style.width = '0%';
         baScrubber.style.left = '0%';
         isPlaying = false;
+        stopSyncMonitor();
       });
 
       // Progress bar scrubbing - seek both tracks
