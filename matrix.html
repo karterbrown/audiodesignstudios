@@ -156,11 +156,19 @@
       column.style.opacity = Math.random() * 0.5 + 0.3;
       column.style.letterSpacing = `${Math.random() * 30 + 30}px`;
       
-      terminal.appendChild(column);
+      // Use requestAnimationFrame for smoother DOM insertion
+      requestAnimationFrame(() => {
+        terminal.appendChild(column);
+      });
       
       setTimeout(() => {
-        column.remove();
-        createColumn();
+        // Use requestAnimationFrame for smoother DOM removal
+        requestAnimationFrame(() => {
+          if (column.parentNode) {
+            column.remove();
+          }
+          createColumn();
+        });
       }, duration * 1000);
     }
     

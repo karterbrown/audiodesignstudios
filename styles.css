@@ -889,9 +889,9 @@ blockquote footer {
   top: 0;
   bottom: 0;
   width: 0%;
-  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  background: var(--gradient-fill);
   transition: width 0.1s linear;
-  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+  box-shadow: var(--shadow-progress);
 }
 
 .highlight-progress-fill { border-radius: 6px 0 0 6px; }
@@ -904,8 +904,8 @@ blockquote footer {
   top: -6px;
   bottom: -6px;
   width: 2px;
-  background: linear-gradient(180deg, #2dd4a0, #31c49f);
-  box-shadow: 0 0 8px rgba(49, 196, 159, 0.8), 0 0 4px rgba(49, 196, 159, 0.6);
+  background: var(--gradient-scrubber);
+  box-shadow: var(--shadow-scrubber);
   pointer-events: none;
   transition: left 0.1s linear;
   border-radius: 1px;
@@ -953,8 +953,8 @@ blockquote footer {
   top: -6px;
   bottom: -6px;
   width: 2px;
-  background: linear-gradient(180deg, #2dd4a0, #31c49f);
-  box-shadow: 0 0 8px rgba(49, 196, 159, 0.8), 0 0 4px rgba(49, 196, 159, 0.6);
+  background: var(--gradient-scrubber);
+  box-shadow: var(--shadow-scrubber);
   pointer-events: none;
   transition: left 0.1s linear;
   border-radius: 1px;

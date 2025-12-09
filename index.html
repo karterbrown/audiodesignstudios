@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765296593" />
+  <link rel="stylesheet" href="styles.css?v=1765297775" />
 </head>
 
 <body>
@@ -177,7 +177,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765296593"></script>
+  <script src="content.js?v=1765297775"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -495,11 +495,19 @@
       column.style.opacity = Math.random() * 0.5 + 0.3;
       column.style.letterSpacing = `${Math.random() * 30 + 30}px`;
       
-      terminal.appendChild(column);
+      // Use requestAnimationFrame for smoother DOM insertion
+      requestAnimationFrame(() => {
+        terminal.appendChild(column);
+      });
       
       setTimeout(() => {
-        column.remove();
-        createColumn();
+        // Use requestAnimationFrame for smoother DOM removal
+        requestAnimationFrame(() => {
+          if (column.parentNode) {
+            column.remove();
+          }
+          createColumn();
+        });
       }, duration * 1000);
     }
     
