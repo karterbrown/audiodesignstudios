@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765255785" />
+  <link rel="stylesheet" href="styles.css?v=1765256464" />
 </head>
 
 <body>
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765255785"></script>
+  <script src="content.js?v=1765256464"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -551,7 +551,6 @@
 
       let baCurrentTrackIndex = -1;
       let isPlaying = false;
-      let syncInterval = null;
       
       // Initialize: Before is audible, After is muted
       baBeforeAudio.muted = false;
@@ -566,31 +565,6 @@
             audio.addEventListener('canplaythrough', resolve, { once: true });
           }
         });
-      }
-
-      // Utility: Keep audio tracks synced (drift correction)
-      function startSyncMonitor() {
-        if (syncInterval) return;
-        syncInterval = setInterval(() => {
-          if (!isPlaying) return;
-          // Skip if either track is loading/seeking
-          if (baBeforeAudio.seeking || baAfterAudio.seeking) return;
-          if (baBeforeAudio.readyState < 3 || baAfterAudio.readyState < 3) return;
-          // Skip if duration isn't loaded yet
-          if (!baBeforeAudio.duration || !baAfterAudio.duration) return;
-          
-          const diff = Math.abs(baBeforeAudio.currentTime - baAfterAudio.currentTime);
-          if (diff > 0.05) { // More than 50ms drift
-            baAfterAudio.currentTime = baBeforeAudio.currentTime;
-          }
-        }, 100);
-      }
-
-      function stopSyncMonitor() {
-        if (syncInterval) {
-          clearInterval(syncInterval);
-          syncInterval = null;
-        }
       }
 
       // Create progress fill and scrubber
@@ -716,8 +690,6 @@
           baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
         }
 
-        // Stop sync monitor while switching tracks
-        stopSyncMonitor();
         baCurrentTrackIndex = index;
 
         // Update UI
@@ -747,7 +719,6 @@
           ]);
         }).then(() => {
           isPlaying = true;
-          startSyncMonitor();
           if (track._uiRefs) {
             track._uiRefs.btn.textContent = '⏸';
           }
@@ -791,10 +762,6 @@
 
       // Global toggle between before/after - just swap mute state
       baGlobalToggle.addEventListener('change', (e) => {
-        // Briefly stop sync to prevent glitches during toggle
-        const wasSyncing = syncInterval !== null;
-        if (wasSyncing) stopSyncMonitor();
-        
         // Update label styling
         const beforeLabel = document.querySelector('.ba-toggle-before');
         const afterLabel = document.querySelector('.ba-toggle-after');
@@ -825,11 +792,6 @@
           const beforeOrAfter = baBeforeAudio.muted ? 'After' : 'Before';
           baNowPlaying.textContent = `Now Playing: ${track.title} (${beforeOrAfter})`;
         }
-        
-        // Restart sync after a brief delay
-        if (wasSyncing && isPlaying) {
-          setTimeout(() => startSyncMonitor(), 200);
-        }
       });
 
       // Play/Pause button
@@ -840,14 +802,12 @@
           baBeforeAudio.pause();
           baAfterAudio.pause();
           isPlaying = false;
-          stopSyncMonitor();
         } else {
           Promise.all([
             baBeforeAudio.play(),
             baAfterAudio.play()
           ]).then(() => {
             isPlaying = true;
-            startSyncMonitor();
           }).catch(e => console.warn('play failed', e));
         }
       });
@@ -865,13 +825,11 @@
         if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
           baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
         }
-        stopSyncMonitor();
       });
 
       baBeforeAudio.addEventListener('ended', () => {
         baPlayPauseBtn.textContent = '▶';
         isPlaying = false;
-        stopSyncMonitor();
         if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
           baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
           baTracks[baCurrentTrackIndex]._uiRefs.progressFill.style.width = '0%';

@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765255785" />
+  <link rel="stylesheet" href="styles.css?v=1765256464" />
 </head>
 
 <body>
@@ -175,7 +175,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765255785"></script>
+  <script src="content.js?v=1765256464"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -320,7 +320,6 @@
 
       let activeDrag = null;
       let isPlaying = false;
-      let syncInterval = null;
 
       // Initialize: Before is audible, After is muted
       beforeAudio.muted = false;
@@ -337,31 +336,6 @@
         });
       }
 
-      // Utility: Keep audio tracks synced (drift correction)
-      function startSyncMonitor() {
-        if (syncInterval) return;
-        syncInterval = setInterval(() => {
-          if (!isPlaying) return;
-          // Skip if either track is loading/seeking
-          if (beforeAudio.seeking || afterAudio.seeking) return;
-          if (beforeAudio.readyState < 3 || afterAudio.readyState < 3) return;
-          // Skip if duration isn't loaded yet
-          if (!beforeAudio.duration || !afterAudio.duration) return;
-          
-          const diff = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
-          if (diff > 0.05) { // More than 50ms drift
-            afterAudio.currentTime = beforeAudio.currentTime;
-          }
-        }, 100);
-      }
-
-      function stopSyncMonitor() {
-        if (syncInterval) {
-          clearInterval(syncInterval);
-          syncInterval = null;
-        }
-      }
-
       // Play/Pause button - controls BOTH audio elements
       baPlayBtn.addEventListener('click', async () => {
         if (isPlaying) {
@@ -370,7 +344,6 @@
           afterAudio.pause();
           baPlayBtn.textContent = '▶';
           isPlaying = false;
-          stopSyncMonitor();
         } else {
           // Wait for both to be ready, then play simultaneously
           baPlayBtn.textContent = '…';
@@ -385,7 +358,6 @@
             ]);
             baPlayBtn.textContent = '⏸';
             isPlaying = true;
-            startSyncMonitor();
           } catch (e) {
             console.warn('play failed', e);
             baPlayBtn.textContent = '▶';
@@ -396,10 +368,6 @@
 
       // Toggle switch - just swaps mute state
       baToggle.addEventListener('change', (e) => {
-        // Briefly stop sync to prevent glitches during toggle
-        const wasSyncing = syncInterval !== null;
-        if (wasSyncing) stopSyncMonitor();
-        
         if (e.target.checked) {
           // After is active (unmuted)
           beforeAudio.muted = true;
@@ -421,11 +389,6 @@
           document.querySelector('.ba-toggle-after').style.opacity = '0.6';
           document.querySelector('.ba-toggle-after').style.fontWeight = '500';
         }
-        
-        // Restart sync after a brief delay
-        if (wasSyncing && isPlaying) {
-          setTimeout(() => startSyncMonitor(), 200);
-        }
       });
 
       // Use beforeAudio for progress tracking (both are synced)
@@ -441,7 +404,6 @@
         baProgressFill.style.width = '0%';
         baScrubber.style.left = '0%';
         isPlaying = false;
-        stopSyncMonitor();
       });
 
       // Progress bar scrubbing - seek both tracks
