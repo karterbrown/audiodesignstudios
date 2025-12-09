@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765300247" />
+  <link rel="stylesheet" href="styles.css?v=1765302953" />
 </head>
 
 <body>
@@ -152,6 +152,15 @@
         </div>
       </div>
     </section>
+
+    <!-- ======================================================================
+         SECTION 4: Red Matrix Animation (Musical Notes)
+         ====================================================================== -->
+    <a href="about.html" class="matrix-link">
+      <section class="matrix-section">
+        <div class="matrix-terminal" id="matrixTerminalRed"></div>
+      </section>
+    </a>
   </main>
 
   <!-- ========================================================================
@@ -170,7 +179,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765300247"></script>
+  <script src="content.js?v=1765302953"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -868,6 +877,54 @@
       });
 
     });
+  </script>
+
+  <!-- ========================================================================
+       Red Matrix Terminal Effect (Musical Notes)
+       ======================================================================== -->
+  <script>
+    const terminalRed = document.getElementById('matrixTerminalRed');
+    const canvasRed = document.createElement('canvas');
+    const ctxRed = canvasRed.getContext('2d');
+    terminalRed.appendChild(canvasRed);
+    
+    const charsRed = '♩♪♫♬♭♮♯';
+    let columnsRed, dropsRed, xPositionsRed;
+    
+    function resizeRed() {
+      canvasRed.width = terminalRed.offsetWidth;
+      canvasRed.height = terminalRed.offsetHeight;
+      const fontSize = 18;
+      columnsRed = Math.floor(canvasRed.width / 60);
+      dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -50);
+      xPositionsRed = Array(columnsRed).fill(0).map((_, i) => i * 60 + 15);
+    }
+    
+    function drawRed() {
+      ctxRed.fillStyle = 'rgba(20, 20, 20, 0.1)';
+      ctxRed.fillRect(0, 0, canvasRed.width, canvasRed.height);
+      
+      ctxRed.font = 'bold 18px Courier New';
+      ctxRed.fillStyle = '#ff0000';
+      
+      for (let i = 0; i < dropsRed.length; i++) {
+        const char = charsRed[Math.floor(Math.random() * charsRed.length)];
+        const x = xPositionsRed[i];
+        const y = dropsRed[i] * 30;
+        
+        ctxRed.fillText(char, x, y);
+        
+        if (y > canvasRed.height && Math.random() > 0.95) {
+          dropsRed[i] = Math.random() * -50;
+          xPositionsRed[i] = i * 60 + Math.random() * 40 - 5;
+        }
+        dropsRed[i] += 0.5;
+      }
+    }
+    
+    resizeRed();
+    window.addEventListener('resize', resizeRed);
+    setInterval(drawRed, 80);
   </script>
   
 </body>

@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765300247" />
+  <link rel="stylesheet" href="styles.css?v=1765302953" />
 </head>
 
 <body>
@@ -40,7 +40,7 @@
     <!-- Hero Image Banner -->
     <section class="env-image env-music"></section>
     
-    <!-- Off World Depot Section with Musical Notes Animation -->
+    <!-- Off World Depot Section -->
     <section class="hero hero-music">
       <div class="hero-left-music">
         <h1>Off World Depot</h1>
@@ -48,9 +48,20 @@
         <a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="btn btn-block">Take Me There!</a>
       </div>
       <div class="hero-right-music">
-        <div class="matrix-terminal-music" id="matrixTerminalMusic"></div>
+        <picture>
+          <source srcset="Photos/portraitbridge800.webp" media="(max-width: 720px)">
+          <source srcset="Photos/portraitbridge1400.webp" media="(max-width: 1200px)">
+          <img src="Photos/portraitbridge2000.webp" alt="Bridge" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+        </picture>
       </div>
     </section>
+
+    <!-- Matrix Animation Section (Gold Musical Notes) -->
+    <a href="index.html" class="matrix-link">
+      <section class="matrix-section">
+        <div class="matrix-terminal" id="matrixTerminalMusic"></div>
+      </section>
+    </a>
   </main>
 
   <!-- ========================================================================
@@ -69,60 +80,52 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765300247"></script>
+  <script src="content.js?v=1765302953"></script>
   
   <script>
-    // Matrix animation for music page - horizontal flow with musical notes
-    const musicalNotes = '♩♪♫♬♭♮♯';
-    const container = document.getElementById('matrixTerminalMusic');
-    const numRows = 18;
-
-    function randomChars(length) {
-      let str = '';
-      for (let i = 0; i < length; i++) {
-        const note = musicalNotes[Math.floor(Math.random() * musicalNotes.length)];
-        const spacing = Math.random() > 0.5 ? '  ' : ' ';
-        str += note + spacing;
-      }
-      return str;
-    }
-
-    const occupiedSlots = new Set();
+    // Matrix animation for music page - gold version of home page animation
+    const terminal = document.getElementById('matrixTerminalMusic');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    terminal.appendChild(canvas);
     
-    function getAvailablePosition() {
-      let attempts = 0;
-      let position;
-      do {
-        position = Math.floor(Math.random() * 20) * 5;
-        attempts++;
-      } while (occupiedSlots.has(position) && attempts < 50);
+    const chars = '♩♪♫♬♭♮♯';
+    let columns, drops, xPositions;
+    
+    function resize() {
+      canvas.width = terminal.offsetWidth;
+      canvas.height = terminal.offsetHeight;
+      const fontSize = 18;
+      columns = Math.floor(canvas.width / 60);
+      drops = Array(columns).fill(0).map(() => Math.random() * -50);
+      xPositions = Array(columns).fill(0).map((_, i) => i * 60 + 15);
+    }
+    
+    function draw() {
+      ctx.fillStyle = 'rgba(20, 20, 20, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      occupiedSlots.add(position);
-      setTimeout(() => occupiedSlots.delete(position), 3000);
-      return position;
-    }
-
-    function createRow() {
-      const row = document.createElement('div');
-      row.className = 'matrix-row-music';
-      const length = Math.floor(Math.random() * 30) + 20;
-      row.textContent = randomChars(length);
-      row.style.top = `${getAvailablePosition()}%`;
-      const duration = Math.random() * 4 + 7;
-      row.style.animationDuration = `${duration}s`;
-      row.style.fontSize = `${Math.random() * 8 + 15}px`;
-      row.style.opacity = Math.random() * 0.4 + 0.4;
-      container.appendChild(row);
+      ctx.font = 'bold 18px Courier New';
+      ctx.fillStyle = '#ffd700';
       
-      setTimeout(() => {
-        row.remove();
-        createRow();
-      }, duration * 1000);
+      for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        const x = xPositions[i];
+        const y = drops[i] * 30;
+        
+        ctx.fillText(char, x, y);
+        
+        if (y > canvas.height && Math.random() > 0.95) {
+          drops[i] = Math.random() * -50;
+          xPositions[i] = i * 60 + Math.random() * 40 - 5;
+        }
+        drops[i] += 0.5;
+      }
     }
-
-    for (let i = 0; i < numRows; i++) {
-      setTimeout(() => createRow(), (i * 400) + Math.random() * 1000);
-    }
+    
+    resize();
+    window.addEventListener('resize', resize);
+    setInterval(draw, 80);
   </script>
 </body>
 
