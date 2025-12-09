@@ -91,53 +91,24 @@
       }
     }
 
-    .home-link {
+    .fullscreen-link {
       position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 1rem 2rem;
-      background: rgba(8, 206, 24, 0.1);
-      border: 2px solid #08ce18;
-      color: #08ce18;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      z-index: 100;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(8, 206, 24, 0.3);
-    }
-
-    .home-link:hover {
-      background: rgba(8, 206, 24, 0.2);
-      box-shadow: 0 0 30px rgba(8, 206, 24, 0.6);
-      transform: translateX(-50%) translateY(-2px);
-    }
-
-    .home-link:active {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    @media (max-width: 720px) {
-      .home-link {
-        bottom: 1.5rem;
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-      }
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
+  <!-- Full-screen clickable link -->
+  <a href="index.html" class="fullscreen-link"></a>
+  
   <!-- Full-screen Matrix Animation -->
   <div class="matrix-fullscreen" id="matrixFullscreen"></div>
-
-  <!-- Return Home Link -->
-  <a href="index.html" class="home-link">Return Home</a>
 
   <!-- Matrix Animation Script -->
   <script>
