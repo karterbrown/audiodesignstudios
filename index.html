@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765253283" />
+  <link rel="stylesheet" href="styles.css?v=1765254406" />
 </head>
 
 <body>
@@ -175,7 +175,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765253283"></script>
+  <script src="content.js?v=1765254406"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -306,6 +306,7 @@
 
   <!-- ========================================================================
        Before & After Mixing/Mastering Toggle Player
+       New approach: Both tracks play simultaneously, toggle controls muting
        ======================================================================== -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -318,105 +319,79 @@
       const baScrubber = document.getElementById('baScrubber');
 
       let activeDrag = null;
-      let currentAudio = beforeAudio; // Start with "before" track
       let isPlaying = false;
 
-      // Sync both audio elements to the same time
-      function syncAudioTime(fromAudio, toAudio) {
-        toAudio.currentTime = fromAudio.currentTime;
-      }
+      // Initialize: Before is audible, After is muted
+      beforeAudio.muted = false;
+      afterAudio.muted = true;
 
-      // Switch between before and after tracks
-      function switchTrack(useAfter) {
-        const wasPlaying = !currentAudio.paused;
-        const currentTime = currentAudio.currentTime;
-
-        if (wasPlaying) {
-          currentAudio.pause();
-        }
-
-        currentAudio = useAfter ? afterAudio : beforeAudio;
-        currentAudio.currentTime = currentTime;
-
-        if (wasPlaying) {
-          currentAudio.play().catch(e => console.warn('play failed', e));
-        }
-      }
-
-      // Play/Pause button
+      // Play/Pause button - controls BOTH audio elements
       baPlayBtn.addEventListener('click', () => {
-        if (currentAudio.paused) {
-          currentAudio.play();
-          isPlaying = true;
-        } else {
-          currentAudio.pause();
+        if (isPlaying) {
+          // Pause both
+          beforeAudio.pause();
+          afterAudio.pause();
+          baPlayBtn.textContent = '▶';
           isPlaying = false;
-        }
-      });
-
-      // Toggle switch
-      baToggle.addEventListener('change', (e) => {
-        switchTrack(e.target.checked);
-        
-        // Update label styling
-        const beforeLabel = document.querySelector('.ba-toggle-before');
-        const afterLabel = document.querySelector('.ba-toggle-after');
-        
-        if (e.target.checked) {
-          // After is active
-          beforeLabel.style.opacity = '0.6';
-          beforeLabel.style.fontWeight = '500';
-          afterLabel.style.opacity = '1';
-          afterLabel.style.fontWeight = '600';
         } else {
-          // Before is active
-          beforeLabel.style.opacity = '1';
-          beforeLabel.style.fontWeight = '600';
-          afterLabel.style.opacity = '0.6';
-          afterLabel.style.fontWeight = '500';
+          // Play both simultaneously
+          Promise.all([
+            beforeAudio.play(),
+            afterAudio.play()
+          ]).catch(e => console.warn('play failed', e));
+          baPlayBtn.textContent = '⏸';
+          isPlaying = true;
         }
       });
 
-      // Audio event listeners for both tracks
-      [beforeAudio, afterAudio].forEach(audio => {
-        audio.addEventListener('play', () => { 
-          if (audio === currentAudio) {
-            baPlayBtn.textContent = '⏸'; 
-            isPlaying = true;
-          }
-        });
-
-        audio.addEventListener('pause', () => { 
-          if (audio === currentAudio) {
-            baPlayBtn.textContent = '▶'; 
-            isPlaying = false;
-          }
-        });
-
-        audio.addEventListener('ended', () => { 
-          if (audio === currentAudio) {
-            baPlayBtn.textContent = '▶'; 
-            baProgressFill.style.width = '0%';
-            baScrubber.style.left = '0%';
-            isPlaying = false;
-          }
-        });
-
-        audio.addEventListener('timeupdate', () => {
-          if (audio === currentAudio) {
-            const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-            baProgressFill.style.width = `${pct}%`;
-            baScrubber.style.left = `${pct}%`;
-          }
-        });
+      // Toggle switch - just swaps mute state
+      baToggle.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          // After is active (unmuted)
+          beforeAudio.muted = true;
+          afterAudio.muted = false;
+          
+          // Update label styling
+          document.querySelector('.ba-toggle-before').style.opacity = '0.6';
+          document.querySelector('.ba-toggle-before').style.fontWeight = '500';
+          document.querySelector('.ba-toggle-after').style.opacity = '1';
+          document.querySelector('.ba-toggle-after').style.fontWeight = '600';
+        } else {
+          // Before is active (unmuted)
+          beforeAudio.muted = false;
+          afterAudio.muted = true;
+          
+          // Update label styling
+          document.querySelector('.ba-toggle-before').style.opacity = '1';
+          document.querySelector('.ba-toggle-before').style.fontWeight = '600';
+          document.querySelector('.ba-toggle-after').style.opacity = '0.6';
+          document.querySelector('.ba-toggle-after').style.fontWeight = '500';
+        }
       });
 
-      // Progress bar scrubbing
+      // Use beforeAudio for progress tracking (both are synced)
+      beforeAudio.addEventListener('timeupdate', () => {
+        const pct = beforeAudio.duration ? (beforeAudio.currentTime / beforeAudio.duration) * 100 : 0;
+        baProgressFill.style.width = `${pct}%`;
+        baScrubber.style.left = `${pct}%`;
+      });
+
+      // Handle end of playback
+      beforeAudio.addEventListener('ended', () => {
+        baPlayBtn.textContent = '▶';
+        baProgressFill.style.width = '0%';
+        baScrubber.style.left = '0%';
+        isPlaying = false;
+      });
+
+      // Progress bar scrubbing - seek both tracks
       const updateSeek = (e) => {
         const rect = baProgressWrap.getBoundingClientRect();
         const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        if (currentAudio.duration) {
-          currentAudio.currentTime = pct * currentAudio.duration;
+        if (beforeAudio.duration) {
+          const newTime = pct * beforeAudio.duration;
+          beforeAudio.currentTime = newTime;
+          afterAudio.currentTime = newTime;
         }
       };
 
