@@ -125,9 +125,11 @@
       canvas.height = window.innerHeight;
       canvas.style.display = 'block';
       const fontSize = 18;
-      columns = Math.floor(canvas.width / 60);
+      const columnWidth = 60;
+      columns = Math.ceil(canvas.width / columnWidth);
+      const actualSpacing = canvas.width / columns;
       drops = Array(columns).fill(0).map(() => Math.random() * -50);
-      xPositions = Array(columns).fill(0).map((_, i) => i * 60 + 15);
+      xPositions = Array(columns).fill(0).map((_, i) => i * actualSpacing + actualSpacing / 2);
     }
     
     function draw() {
@@ -146,15 +148,16 @@
         
         if (y > canvas.height && Math.random() > 0.95) {
           drops[i] = Math.random() * -50;
-          xPositions[i] = i * 60 + Math.random() * 40 - 5;
+          const actualSpacing = canvas.width / columns;
+          xPositions[i] = i * actualSpacing + actualSpacing / 2 + Math.random() * 20 - 10;
         }
-        drops[i] += 0.5;
+        drops[i] += 0.3;
       }
     }
     
     resize();
     window.addEventListener('resize', resize);
-    setInterval(draw, 80);
+    setInterval(draw, 100);
   </script>
 </body>
 </html>

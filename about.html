@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765305461" />
+  <link rel="stylesheet" href="styles.css?v=1765384082" />
 </head>
 
 <body>
@@ -86,7 +86,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765305461"></script>
+  <script src="content.js?v=1765384082"></script>
 
   <!-- ========================================================================
        Blue Matrix Terminal Effect (Musical Notes)
@@ -104,9 +104,11 @@
       canvasBlue.width = terminalBlue.offsetWidth;
       canvasBlue.height = terminalBlue.offsetHeight;
       const fontSize = 18;
-      columnsBlue = Math.floor(canvasBlue.width / 60);
+      const columnWidth = 60;
+      columnsBlue = Math.ceil(canvasBlue.width / columnWidth);
+      const actualSpacing = canvasBlue.width / columnsBlue;
       dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -50);
-      xPositionsBlue = Array(columnsBlue).fill(0).map((_, i) => i * 60 + 15);
+      xPositionsBlue = Array(columnsBlue).fill(0).map((_, i) => i * actualSpacing + actualSpacing / 2);
     }
     
     function drawBlue() {
@@ -125,15 +127,16 @@
         
         if (y > canvasBlue.height && Math.random() > 0.95) {
           dropsBlue[i] = Math.random() * -50;
-          xPositionsBlue[i] = i * 60 + Math.random() * 40 - 5;
+          const actualSpacing = canvasBlue.width / columnsBlue;
+          xPositionsBlue[i] = i * actualSpacing + actualSpacing / 2 + Math.random() * 20 - 10;
         }
-        dropsBlue[i] += 0.5;
+        dropsBlue[i] += 0.3;
       }
     }
     
     resizeBlue();
     window.addEventListener('resize', resizeBlue);
-    setInterval(drawBlue, 80);
+    setInterval(drawBlue, 100);
   </script>
 
 </body>

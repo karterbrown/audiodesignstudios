@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765305461" />
+  <link rel="stylesheet" href="styles.css?v=1765384082" />
 </head>
 
 <body>
@@ -82,7 +82,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765305461"></script>
+  <script src="content.js?v=1765384082"></script>
   
   <script>
     // Matrix animation for music page - gold version of home page animation
@@ -98,9 +98,11 @@
       canvas.width = terminal.offsetWidth;
       canvas.height = terminal.offsetHeight;
       const fontSize = 18;
-      columns = Math.floor(canvas.width / 60);
+      const columnWidth = 60;
+      columns = Math.ceil(canvas.width / columnWidth);
+      const actualSpacing = canvas.width / columns;
       drops = Array(columns).fill(0).map(() => Math.random() * -50);
-      xPositions = Array(columns).fill(0).map((_, i) => i * 60 + 15);
+      xPositions = Array(columns).fill(0).map((_, i) => i * actualSpacing + actualSpacing / 2);
     }
     
     function draw() {
@@ -119,15 +121,16 @@
         
         if (y > canvas.height && Math.random() > 0.95) {
           drops[i] = Math.random() * -50;
-          xPositions[i] = i * 60 + Math.random() * 40 - 5;
+          const actualSpacing = canvas.width / columns;
+          xPositions[i] = i * actualSpacing + actualSpacing / 2 + Math.random() * 20 - 10;
         }
-        drops[i] += 0.5;
+        drops[i] += 0.3;
       }
     }
     
     resize();
     window.addEventListener('resize', resize);
-    setInterval(draw, 80);
+    setInterval(draw, 100);
   </script>
 </body>
 
