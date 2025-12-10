@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765390125" />
+  <link rel="stylesheet" href="styles.css?v=1765390693" />
 </head>
 
 <body>
@@ -179,7 +179,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765390125"></script>
+  <script src="content.js?v=1765390693"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -895,11 +895,11 @@
       canvasRed.width = terminalRed.offsetWidth;
       canvasRed.height = terminalRed.offsetHeight;
       const fontSize = 18;
-      const columnWidth = 28;
+      const columnWidth = 15;
       columnsRed = Math.floor(canvasRed.width / columnWidth);
       const totalWidth = columnsRed * columnWidth;
       const offsetX = (canvasRed.width - totalWidth) / 2;
-      dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -100);
+      dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -20);
       xPositionsRed = Array(columnsRed).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
     }
     
@@ -913,24 +913,24 @@
       for (let i = 0; i < dropsRed.length; i++) {
         const char = charsRed[Math.floor(Math.random() * charsRed.length)];
         const x = xPositionsRed[i];
-        const y = dropsRed[i] * 45;
+        const y = dropsRed[i] * 38;
         
         ctxRed.fillText(char, x, y);
         
         if (y > canvasRed.height && Math.random() > 0.95) {
-        dropsRed[i] = Math.random() * -100;
-        const columnWidth = 28;
+        dropsRed[i] = 0;
+        const columnWidth = 15;
         const totalWidth = columnsRed * columnWidth;
         const offsetX = (canvasRed.width - totalWidth) / 2;
-        xPositionsRed[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 14 - 7;
+        xPositionsRed[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 8 - 4;
         }
-        dropsRed[i] += 0.32;
+        dropsRed[i] += 0.42;
       }
     }
     
     resizeRed();
     window.addEventListener('resize', resizeRed);
-    setInterval(drawRed, 100);
+    setInterval(drawRed, 90);
   </script>
   
 </body>

@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765390125" />
+  <link rel="stylesheet" href="styles.css?v=1765390693" />
 </head>
 
 <body>
@@ -73,7 +73,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765390125"></script>
+  <script src="content.js?v=1765390693"></script>
   
   <script>
     // Matrix animation for music page - gold version of home page animation
@@ -89,11 +89,11 @@
       canvas.width = terminal.offsetWidth;
       canvas.height = terminal.offsetHeight;
       const fontSize = 18;
-      const columnWidth = 28;
+      const columnWidth = 15;
       columns = Math.floor(canvas.width / columnWidth);
       const totalWidth = columns * columnWidth;
       const offsetX = (canvas.width - totalWidth) / 2;
-      drops = Array(columns).fill(0).map(() => Math.random() * -100);
+      drops = Array(columns).fill(0).map(() => Math.random() * -20);
       xPositions = Array(columns).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
     }
     
@@ -107,24 +107,24 @@
       for (let i = 0; i < drops.length; i++) {
         const char = chars[Math.floor(Math.random() * chars.length)];
         const x = xPositions[i];
-        const y = drops[i] * 45;
+        const y = drops[i] * 38;
         
         ctx.fillText(char, x, y);
         
         if (y > canvas.height && Math.random() > 0.95) {
-        drops[i] = Math.random() * -100;
-        const columnWidth = 28;
+        drops[i] = 0;
+        const columnWidth = 15;
         const totalWidth = columns * columnWidth;
         const offsetX = (canvas.width - totalWidth) / 2;
-        xPositions[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 14 - 7;
+        xPositions[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 8 - 4;
         }
-        drops[i] += 0.32;
+        drops[i] += 0.42;
       }
     }
     
     resize();
     window.addEventListener('resize', resize);
-    setInterval(draw, 100);
+    setInterval(draw, 90);
   </script>
 </body>
 

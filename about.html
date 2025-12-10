@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765390125" />
+  <link rel="stylesheet" href="styles.css?v=1765390693" />
 </head>
 
 <body>
@@ -86,7 +86,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765390125"></script>
+  <script src="content.js?v=1765390693"></script>
 
   <!-- ========================================================================
        Blue Matrix Terminal Effect (Musical Notes)
@@ -104,11 +104,11 @@
       canvasBlue.width = terminalBlue.offsetWidth;
       canvasBlue.height = terminalBlue.offsetHeight;
       const fontSize = 18;
-      const columnWidth = 28;
+      const columnWidth = 15;
       columnsBlue = Math.floor(canvasBlue.width / columnWidth);
       const totalWidth = columnsBlue * columnWidth;
       const offsetX = (canvasBlue.width - totalWidth) / 2;
-      dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -100);
+      dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -20);
       xPositionsBlue = Array(columnsBlue).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
     }
     
@@ -122,24 +122,24 @@
       for (let i = 0; i < dropsBlue.length; i++) {
         const char = charsBlue[Math.floor(Math.random() * charsBlue.length)];
         const x = xPositionsBlue[i];
-        const y = dropsBlue[i] * 45;
+        const y = dropsBlue[i] * 38;
         
         ctxBlue.fillText(char, x, y);
         
         if (y > canvasBlue.height && Math.random() > 0.95) {
-        dropsBlue[i] = Math.random() * -100;
-        const columnWidth = 28;
+        dropsBlue[i] = 0;
+        const columnWidth = 15;
         const totalWidth = columnsBlue * columnWidth;
         const offsetX = (canvasBlue.width - totalWidth) / 2;
-        xPositionsBlue[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 14 - 7;
+        xPositionsBlue[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 8 - 4;
         }
-        dropsBlue[i] += 0.32;
+        dropsBlue[i] += 0.42;
       }
     }
     
     resizeBlue();
     window.addEventListener('resize', resizeBlue);
-    setInterval(drawBlue, 100);
+    setInterval(drawBlue, 90);
   </script>
 
 </body>
