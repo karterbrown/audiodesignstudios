@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765384082" />
+  <link rel="stylesheet" href="styles.css?v=1765389528" />
 </head>
 
 <body>
@@ -177,7 +177,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765384082"></script>
+  <script src="content.js?v=1765389528"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -463,11 +463,12 @@
       canvas.width = terminal.offsetWidth;
       canvas.height = terminal.offsetHeight;
       const fontSize = 18;
-      const columnWidth = 60;
-      columns = Math.ceil(canvas.width / columnWidth);
-      const actualSpacing = canvas.width / columns;
-      drops = Array(columns).fill(0).map(() => Math.random() * -50);
-      xPositions = Array(columns).fill(0).map((_, i) => i * actualSpacing + actualSpacing / 2);
+      const columnWidth = 35;
+      columns = Math.floor(canvas.width / columnWidth);
+      const totalWidth = columns * columnWidth;
+      const offsetX = (canvas.width - totalWidth) / 2;
+      drops = Array(columns).fill(0).map(() => Math.random() * -100);
+      xPositions = Array(columns).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
     }
     
     function draw() {
@@ -480,16 +481,18 @@
       for (let i = 0; i < drops.length; i++) {
         const char = chars[Math.floor(Math.random() * chars.length)];
         const x = xPositions[i];
-        const y = drops[i] * 30;
+        const y = drops[i] * 45;
         
         ctx.fillText(char, x, y);
         
         if (y > canvas.height && Math.random() > 0.95) {
-          drops[i] = Math.random() * -50;
-          const actualSpacing = canvas.width / columns;
-          xPositions[i] = i * actualSpacing + actualSpacing / 2 + Math.random() * 20 - 10;
+        drops[i] = Math.random() * -100;
+        const columnWidth = 28;
+        const totalWidth = columns * columnWidth;
+        const offsetX = (canvas.width - totalWidth) / 2;
+        xPositions[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 14 - 7;
         }
-        drops[i] += 0.3;
+        drops[i] += 0.32;
       }
     }
     
