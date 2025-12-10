@@ -563,17 +563,20 @@ blockquote footer {
 }
 
 
-/* ---------- Music Page (2-Column Layout) ---------- */
+/* ---------- Music Page (Centered Single Column) ---------- */
 
 .hero-music {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-left-music {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  justify-content: center;
+  text-align: left;
+  max-width: 600px;
 }
 
 .hero-right-music {
