@@ -120,7 +120,7 @@ blockquote footer {
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(6px);
   z-index: 10;
-  min-height: 70px;
+  min-height: 80px;
 }
 
 .logo {
@@ -1513,7 +1513,7 @@ blockquote footer {
 @media (max-width: 720px) {
   .site-header {
     padding: 0.75rem 4vw;
-    min-height: 60px;
+    min-height: 80px;
   }
 
   .logo {
