@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1765469415" />
+  <link rel="stylesheet" href="styles.css?v=1765470769" />
 </head>
 
 <body>
@@ -179,7 +179,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1765469415"></script>
+  <script src="content.js?v=1765470769"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -307,10 +307,10 @@
             ctx.scrubber.style.left = `${pct * 100}%`;
           }
           
-          // Update now playing time
+          // Update now playing title only (no time counter)
           if (ctx.nowPlayingEl && ctx.current.track) {
             const trackTitle = ctx.current.track.title || 'Unknown Track';
-            ctx.nowPlayingEl.textContent = `${trackTitle} • ${formatTime(cur)} / ${formatTime(dur)}`;
+            ctx.nowPlayingEl.textContent = trackTitle;
           }
         });
 
@@ -331,6 +331,19 @@
           if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
           if (ctx.progressFill) ctx.progressFill.style.width = '0%';
           if (ctx.scrubber) ctx.scrubber.style.left = '0%';
+          
+          // Auto-play next track, loop back to first track at the end
+          const buttons = getTrackButtons(playerKey);
+          const currentIdx = buttons.findIndex((btn) => btn === ctx.current?.btn);
+          if (currentIdx >= 0) {
+            if (currentIdx < buttons.length - 1) {
+              // Play next track
+              buttons[currentIdx + 1].click();
+            } else {
+              // Loop back to first track
+              buttons[0].click();
+            }
+          }
         });
 
         audio.addEventListener('loadedmetadata', () => {
@@ -754,7 +767,7 @@
           }
           
           const beforeOrAfter = baBeforeAudio.muted ? 'After' : 'Before';
-          baNowPlaying.textContent = `${track.title} (${beforeOrAfter}) • ${formatTime(cur)} / ${formatTime(dur)}`;
+          baNowPlaying.textContent = `${track.title} (${beforeOrAfter})`;
         }
       });
 
@@ -847,9 +860,12 @@
         baProgressFill.style.width = '0%';
         baScrubber.style.left = '0%';
         
-        // Auto-play next track
+        // Auto-play next track, loop back to first track at the end
         if (baCurrentTrackIndex < baTracks.length - 1) {
           loadBATrack(baCurrentTrackIndex + 1);
+        } else {
+          // Loop back to first track
+          loadBATrack(0);
         }
       });
 
