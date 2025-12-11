@@ -1355,6 +1355,7 @@ blockquote footer {
 /* Home Page Background */
 .env-home {
   background-image: url('../Photos/homepiano800.webp');
+  background-position: center top;
 }
 
 @media (min-width: 720px) {
