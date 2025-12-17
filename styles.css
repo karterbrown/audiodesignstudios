@@ -1508,6 +1508,21 @@ blockquote footer {
 }
 
 
+/* ---------- Tablet/Medium Screen Breakpoints ---------- */
+
+@media (max-width: 1024px) and (min-width: 721px) {
+  .playlists-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    max-width: 700px;
+  }
+  
+  .playlist-card {
+    width: 100%;
+  }
+}
+
+
 /* ---------- Mobile Breakpoints ---------- */
 
 @media (max-width: 720px) {
