@@ -1550,7 +1550,7 @@ blockquote footer {
     grid-template-columns: 1fr;
     gap: 2rem;
     min-height: 80vh;
-    padding: 2rem 4vw 3rem;
+    padding: 2rem 4vw 8rem;
   }
 
   .hero h1 {
