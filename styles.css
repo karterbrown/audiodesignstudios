@@ -1631,7 +1631,7 @@ blockquote footer {
   .section,
   .before-after-section,
   .playlists-section {
-    padding: 2rem 4vw;
+    padding: 2rem 2vw;
   }
 
   .contact-section {
@@ -1640,7 +1640,59 @@ blockquote footer {
 
   .ba-playlist-card,
   .playlist-card {
-    padding: 1.25rem 0.75rem;
+    padding: 0.75rem 0.25rem;
+  }
+
+  .playlist-album-art {
+    width: clamp(30px, 10vw, 140px);
+    height: clamp(30px, 10vw, 140px);
+  }
+
+  .playlist-card-header {
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.2rem, 0.8vw, 1.5rem);
+  }
+
+  .playlist-card h3 {
+    font-size: clamp(0.5rem, 2vw, 1.5rem);
+  }
+
+  .track-item {
+    padding: 0.3rem 0.4rem;
+  }
+
+  .track-item-number {
+    font-size: 0.6rem;
+  }
+
+  .track-item-title {
+    font-size: 0.7rem;
+  }
+
+  .playlist-scroll {
+    max-height: none;
+  }
+
+  .playlist-content {
+    gap: 0.5rem;
+  }
+
+  .now-playing-info {
+    padding: 0 0.5rem;
+  }
+
+  .main-player-progress {
+    margin: 0.5rem 0;
+  }
+
+  .playlist-player-controls {
+    margin-bottom: 0.5rem;
+  }
+
+  .track-item {
+    gap: 0.4rem;
+    padding: 0.2rem 0.3rem;
   }
 
   .ba-global-toggle-section {
