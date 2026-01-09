@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1767842411" />
+  <link rel="stylesheet" href="styles.css?v=1767973896" />
 </head>
 
 <body>
@@ -24,7 +24,7 @@
        SITE HEADER - Navigation
        ======================================================================== -->
   <header class="site-header">
-    <a href="matrix.html" class="logo" style="text-decoration: none;">Audio Design Studios</a>
+    <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
       <a href="index.html">Home</a>
       <a href="portfolio.html">Portfolio</a>
@@ -179,7 +179,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1767842411"></script>
+  <script src="content.js?v=1767973896"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -442,7 +442,6 @@
 
         info.appendChild(num);
         info.appendChild(title);
-        info.appendChild(progressWrap);
 
         const btn = document.createElement('button');
         btn.className = 'track-item-play-btn';
@@ -486,6 +485,7 @@
         });
 
         item.appendChild(info);
+        item.appendChild(progressWrap);
         item.appendChild(timeEl);
         item.appendChild(btn);
 
@@ -557,11 +557,11 @@
       // ======================================================================
       const baTracks = [
         { id: 1, title: 'Ocean Etude (Chopin)', before: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_Unmixed.mp3', after: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
-        { id: 1, title: 'Reggae Lights (Instrumental Reggae Demo)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' },
-        { id: 1, title: 'Near Wild Heaven - R.E.M (Cover)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
-        { id: 2, title: 'Hysteria - Muse (Drum Cover)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
-        { id: 3, title: 'Were In this Together - Nine Inch Nails (Drum Cover)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
-        { id: 3, title: 'Fortunate Supportive Thoughts (Guitar/Drums Demo)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
+        { id: 2, title: 'Reggae Lights (Instrumental Reggae Demo)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' },
+        { id: 3, title: 'Near Wild Heaven - R.E.M (Cover)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
+        { id: 4, title: 'Hysteria - Muse (Drum Cover)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
+        { id: 5, title: 'Were In this Together - Nine Inch Nails (Drum Cover)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
+        { id: 6, title: 'Fortunate Supportive Thoughts (Guitar/Drums Demo)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
       ];
 
       // Two audio elements: one for before versions, one for after versions
@@ -639,7 +639,6 @@
 
         info.appendChild(num);
         info.appendChild(title);
-        info.appendChild(progressWrap);
 
         const btn = document.createElement('button');
         btn.className = 'track-item-play-btn';
@@ -686,6 +685,7 @@
         });
 
         trackRow.appendChild(info);
+        trackRow.appendChild(progressWrap);
         trackRow.appendChild(timeEl);
         trackRow.appendChild(btn);
         baPlaylistContainer.appendChild(trackRow);
