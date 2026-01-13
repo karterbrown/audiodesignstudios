@@ -1,0 +1,258 @@
+/* =============================================================================
+   AUDIO DESIGN STUDIOS - ABOUT PAGE (about.html)
+   Page-specific styles for the about page
+   ============================================================================= */
+
+@import url('./shared.css');
+
+/* About Page Background */
+.env-about {
+  background-image: url('../Photos/about800.webp');
+  min-height: 60vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (min-width: 720px) {
+  .env-about {
+    background-image: url('../Photos/about1400.webp');
+  }
+}
+
+@media (min-width: 1200px) {
+  .env-about {
+    background-image: url('../Photos/about2000.webp');
+  }
+}
+
+/* Testimonial/Quote Section */
+blockquote {
+  margin: 0 0 1.5rem 0;
+  padding: 1rem;
+  border-left: 4px solid #31c49f;
+  background: rgba(120, 154, 186, 0.04);
+  color: #f4f4ff;
+  border-radius: 6px;
+}
+
+blockquote p,
+blockquote footer {
+  letter-spacing: 0.1rem;
+  font-style: italic;
+  font-family: "Sans Serif", serif;
+  font-size: 1rem;
+}
+
+blockquote p {
+  margin: 0;
+  font-weight: 100;
+}
+
+blockquote footer {
+  margin-top: 1rem;
+  color: #f4f4ff;
+  font-weight: 600;
+}
+
+/* About Page Hero Section */
+.section {
+  padding: 4rem 5vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* About Hero Layout */
+.hero {
+  min-height: 70vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 4rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  background: radial-gradient(circle at 10% 10%, rgba(25, 172, 91, 0.25), rgba(6, 6, 19, 0.85));
+  mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInHero 0.6s ease-out forwards;
+}
+
+@keyframes fadeInHero {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Matrix Animation Section for About Page */
+.matrix-link {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.matrix-link:hover {
+  opacity: 0.85;
+}
+
+.matrix-section {
+  min-height: 60vh;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.matrix-section .matrix-terminal {
+  width: 100%;
+  height: 100%;
+  min-height: 60vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.matrix-terminal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.matrix-row {
+  position: absolute;
+  top: -20%;
+  font-size: 18px;
+  line-height: 2;
+  color: #6699ff;
+  text-shadow: 0 0 12px rgba(102, 153, 255, 0.9),
+               0 0 24px rgba(102, 153, 255, 0.6),
+               0 0 36px rgba(102, 153, 255, 0.3);
+  white-space: pre;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 8px;
+  animation: matrixFall 10s linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes matrixFall {
+  0% {
+    top: -20%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+  5% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.95);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  85% {
+    opacity: 0.6;
+    transform: translateY(0) scale(0.98);
+  }
+  95% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.95);
+  }
+  100% {
+    top: 120%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+}
+
+/* About Page Headshot */
+.headshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.headshot-wrapper-portrait {
+  width: 240px;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.headshot-wrapper-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================= */
+
+@media (max-width: 800px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .matrix-section,
+  .matrix-section .matrix-terminal {
+    min-height: 50vh;
+  }
+
+  .headshot-wrapper-portrait {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    min-height: 80vh;
+    padding: 2rem 4vw 8rem;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .section {
+    padding: 2rem 2vw;
+  }
+
+  .headshot-wrapper-portrait {
+    width: 180px;
+    height: 180px;
+  }
+}

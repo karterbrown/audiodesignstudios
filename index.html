@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1768325570" />
+  <link rel="stylesheet" href="index.css?v=1768328465" />
 </head>
 
 <body>
@@ -134,15 +134,17 @@
           <span class="ba-toggle-label ba-toggle-after">After</span>
         </div>
 
-        <!-- Player Controls -->
-        <div class="ba-player-controls">
-          <button class="play-btn ba-play-btn" id="baPlayBtn" aria-label="Play">▶</button>
-          <div class="ba-progress-container">
-            <div class="ba-progress-wrap" id="baProgressWrap">
-              <div class="ba-progress-fill" id="baProgressFill"></div>
-              <div class="ba-scrubber" id="baScrubber"></div>
-            </div>
-          </div>
+        <!-- Progress Bar -->
+        <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
+        
+        <!-- Now Playing Display -->
+        <div id="baNowPlaying" class="now-playing-info">No track playing</div>
+
+        <!-- Transport Controls -->
+        <div class="playlist-player-controls">
+          <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
+          <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
+          <button id="baNextBtn" class="control-btn" aria-label="Next track">⏭</button>
         </div>
 
         <!-- Hidden Audio Elements -->
@@ -186,7 +188,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768325570"></script>
+  <script src="content.js?v=1768328465"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -324,11 +326,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       const beforeAudio = document.getElementById('beforeAudio');
       const afterAudio = document.getElementById('afterAudio');
-      const baPlayBtn = document.getElementById('baPlayBtn');
       const baToggle = document.getElementById('baToggle');
-      const baProgressWrap = document.getElementById('baProgressWrap');
-      const baProgressFill = document.getElementById('baProgressFill');
-      const baScrubber = document.getElementById('baScrubber');
+      const baWave = document.getElementById('baWave');
+      const baNowPlaying = document.getElementById('baNowPlaying');
 
       let activeDrag = null;
       let isPlaying = false;
@@ -350,16 +350,16 @@
       }
 
       // Play/Pause button - controls BOTH audio elements
-      baPlayBtn.addEventListener('click', async () => {
+      baPlayPauseBtn.addEventListener('click', async () => {
         if (isPlaying) {
           // Pause both
           beforeAudio.pause();
           afterAudio.pause();
-          baPlayBtn.textContent = '▶';
+          baPlayPauseBtn.textContent = '▶';
           isPlaying = false;
         } else {
           // Wait for both to be ready, then play simultaneously
-          baPlayBtn.textContent = '…';
+          baPlayPauseBtn.textContent = '…';
           try {
             await Promise.all([
               waitForReady(beforeAudio),
@@ -369,14 +369,25 @@
               beforeAudio.play(),
               afterAudio.play()
             ]);
-            baPlayBtn.textContent = '⏸';
+            baPlayPauseBtn.textContent = '⏸';
             isPlaying = true;
           } catch (e) {
             console.warn('play failed', e);
-            baPlayBtn.textContent = '▶';
+            baPlayPauseBtn.textContent = '▶';
             isPlaying = false;
           }
         }
+      });
+
+      // Previous button - restart track
+      baPrevBtn.addEventListener('click', () => {
+        beforeAudio.currentTime = 0;
+        afterAudio.currentTime = 0;
+      });
+
+      // Next button - not applicable for single track, but keep for consistency
+      baNextBtn.addEventListener('click', () => {
+        // Do nothing for single track
       });
 
       // Toggle switch - just swaps mute state
@@ -397,21 +408,19 @@
       // Use beforeAudio for progress tracking (both are synced)
       beforeAudio.addEventListener('timeupdate', () => {
         const pct = beforeAudio.duration ? (beforeAudio.currentTime / beforeAudio.duration) * 100 : 0;
-        baProgressFill.style.width = `${pct}%`;
-        baScrubber.style.left = `${pct}%`;
+        if (baWave) baWave.style.width = `${pct}%`;
       });
 
       // Handle end of playback
       beforeAudio.addEventListener('ended', () => {
-        baPlayBtn.textContent = '▶';
-        baProgressFill.style.width = '0%';
-        baScrubber.style.left = '0%';
+        baPlayPauseBtn.textContent = '▶';
+        if (baWave) baWave.style.width = '0%';
         isPlaying = false;
       });
 
-      // Progress bar scrubbing - seek both tracks
+      // Wave bar scrubbing - seek both tracks
       const updateSeek = (e) => {
-        const rect = baProgressWrap.getBoundingClientRect();
+        const rect = baWave.getBoundingClientRect();
         const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
         if (beforeAudio.duration) {
           const newTime = pct * beforeAudio.duration;
@@ -420,14 +429,14 @@
         }
       };
 
-      baProgressWrap.addEventListener('mousedown', (e) => {
+      baWave.addEventListener('mousedown', (e) => {
         e.preventDefault();
-        activeDrag = { element: baProgressWrap, update: updateSeek };
+        activeDrag = { element: baWave, update: updateSeek };
         updateSeek(e);
-        baProgressWrap.style.cursor = 'grabbing';
+        baWave.style.cursor = 'grabbing';
       });
 
-      baProgressWrap.addEventListener('click', (e) => {
+      baWave.addEventListener('click', (e) => {
         if (!activeDrag) updateSeek(e);
       });
     });

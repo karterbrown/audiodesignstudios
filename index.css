@@ -1,0 +1,607 @@
+/* =============================================================================
+   AUDIO DESIGN STUDIOS - HOME PAGE (index.html)
+   Page-specific styles for the home page
+   ============================================================================= */
+
+@import url('./shared.css');
+
+/* =============================================================================
+   PAGE-SPECIFIC: HOME PAGE LAYOUTS
+   ============================================================================= */
+
+/* Services Grid - Cards Section */
+.section {
+  padding: 4rem 5vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.section-alt {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 0%, transparent 100%);
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 1200px) {
+  .section-alt {
+    padding-bottom: 3rem;
+    margin-bottom: 3rem;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.centered-text {
+  text-align: center;
+  color: #cfcfd8;
+}
+
+/* Hero Image Banner */
+.env-image {
+  min-height: 60vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.env-home {
+  background-image: url('../Photos/homepiano800.webp');
+  background-position: center top;
+}
+
+@media (min-width: 720px) {
+  .env-home {
+    background-image: url('../Photos/homepiano1400.webp');
+  }
+}
+
+@media (min-width: 1200px) {
+  .env-home {
+    background-image: url('../Photos/homepiano2000.webp');
+  }
+}
+
+/* Highlights 3-Column Hero Section */
+.hero-highlights-3col {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 2rem 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 1200px) {
+  .hero-highlights-3col {
+    padding-bottom: 3rem;
+  }
+}
+
+.hero-left-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-center-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.hero-center-highlights h1 {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-center-highlights p {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-right-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-tracks-highlights {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.hero-tracks-highlights .playlist {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.album-cover-centered,
+.headshot-wrapper-portrait {
+  width: 240px;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.album-cover-centered img,
+.headshot-wrapper-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Before & After Section */
+.before-after-section {
+  padding: 4rem 5vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.before-after-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 3rem 4vw;
+}
+
+.ba-single-player {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ba-track-title {
+  font-size: 1.5rem;
+  color: #f4f4ff;
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ba-toggle-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.now-playing-info {
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(244, 244, 255, 0.85);
+  margin: 0.75rem 0 0.5rem 0;
+  min-height: 1.5rem;
+  padding: 0 1rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.ba-toggle-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ba-toggle-label.inactive {
+  opacity: 0.4;
+}
+
+.ba-toggle-before { 
+  color: #9966cc;
+}
+
+.ba-toggle-after { 
+  color: #31c49f;
+}
+
+.ba-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 28px;
+}
+
+.ba-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ba-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: 0.4s;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ba-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.ba-toggle-switch input:checked + .ba-toggle-slider {
+  background: linear-gradient(135deg, #31c49f, #2dd4a0);
+  border-color: rgba(49, 196, 159, 0.5);
+}
+
+.ba-toggle-switch input:checked + .ba-toggle-slider:before {
+  transform: translateX(32px);
+  background: linear-gradient(135deg, #31c49f, #2dd4a0);
+}
+
+/* Wave progress bar for audio players - works with width % on container (index) or child element (portfolio) */
+.main-player-progress {
+  position: relative;
+  width: 0%;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+  cursor: pointer;
+  overflow: visible;
+  display: block;
+  transition: width 0.1s linear;
+  margin-top: 0;
+}
+
+.main-player-progress:hover {
+  height: 14px;
+  box-shadow: 0 0 12px rgba(49, 196, 159, 0.8);
+}
+
+/* Progress fill bar inside main-player-progress container (for portfolio.html) */
+.main-player-progress-fill {
+  height: 4px;
+  width: 0%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+  transition: width 0.1s linear;
+  margin-top: 4px;
+}
+
+/* Transport controls for before/after player */
+.playlist-player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbcb83;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn:focus {
+  outline: 3px solid rgba(229, 229, 229, 0.12);
+}
+
+.control-btn-play {
+  padding: 0.7rem 1rem;
+  font-size: 1.3rem;
+}
+
+/* Matrix Animation Section */
+.matrix-link {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.matrix-link:hover {
+  opacity: 0.85;
+}
+
+.matrix-section {
+  min-height: 60vh;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.matrix-section .matrix-terminal {
+  width: 100%;
+  height: 100%;
+  min-height: 60vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.matrix-terminal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.matrix-row {
+  position: absolute;
+  top: -20%;
+  font-size: 18px;
+  line-height: 2;
+  color: #00ff00;
+  text-shadow: 0 0 12px rgba(0, 255, 0, 0.9),
+               0 0 24px rgba(0, 255, 0, 0.6),
+               0 0 36px rgba(0, 255, 0, 0.3);
+  white-space: pre;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 8px;
+  animation: matrixFall 10s linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes matrixFall {
+  0% {
+    top: -20%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+  5% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.95);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  85% {
+    opacity: 0.6;
+    transform: translateY(0) scale(0.98);
+  }
+  95% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.95);
+  }
+  100% {
+    top: 120%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+}
+
+/* Highlight Audio Players */
+.playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.track-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.track-header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.track-number {
+  font-weight: 600;
+  color: #cbcb83;
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+  min-width: 24px;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+.track-title {
+  font-weight: 600;
+  color: #f4f4ff;
+  font-size: 0.95rem;
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.highlight-progress-container {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 1rem;
+}
+
+.highlight-progress-wrap {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: height 0.15s ease, background 0.15s ease;
+  overflow: visible;
+  width: 100%;
+}
+
+.highlight-progress-wrap:hover {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+  height: 14px;
+}
+
+.highlight-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  border-radius: 6px 0 0 6px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+}
+
+.highlight-scrubber {
+  position: absolute;
+  left: 0;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: linear-gradient(180deg, #2dd4a0, #31c49f);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.8), 0 0 4px rgba(49, 196, 159, 0.6);
+  pointer-events: none;
+  transition: left 0.1s linear;
+  border-radius: 1px;
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================= */
+
+@media (max-width: 800px) {
+  .hero,
+  .hero-highlights-3col {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-highlights-3col {
+    grid-template-rows: auto;
+  }
+
+  .matrix-section,
+  .matrix-section .matrix-terminal {
+    min-height: 50vh;
+  }
+
+  .hero-left-highlights,
+  .hero-center-highlights,
+  .hero-right-highlights {
+    max-width: 100%;
+  }
+
+  .album-cover-centered {
+    width: 200px;
+    height: 200px;
+  }
+
+  .headshot-wrapper-portrait {
+    width: 200px;
+    height: 200px;
+  }
+
+  .hero-tracks-highlights .playlist {
+    max-width: 100%;
+  }
+
+  .highlight-progress-container {
+    min-width: 0;
+    padding: 0 0.5rem;
+  }
+
+  .ba-single-player {
+    padding: 2rem 1rem;
+  }
+
+  .ba-toggle-section {
+    gap: 1rem;
+  }
+
+  .ba-toggle-label {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .album-cover-centered {
+    width: 180px;
+    height: 180px;
+  }
+
+  .headshot-wrapper-portrait {
+    width: 180px;
+    height: 180px;
+  }
+
+  .hero-right-portfolio {
+    max-height: 200px;
+    height: 200px;
+  }
+
+  .section,
+  .before-after-section {
+    padding: 2rem 2vw;
+  }
+}
