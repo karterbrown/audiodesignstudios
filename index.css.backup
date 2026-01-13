@@ -10,6 +10,25 @@
    ============================================================================= */
 
 /* Services Grid - Cards Section */
+.section {
+  padding: 4rem 5vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.section-alt {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 0%, transparent 100%);
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 1200px) {
+  .section-alt {
+    padding-bottom: 3rem;
+    margin-bottom: 3rem;
+  }
+}
+
 .grid {
   display: grid;
   gap: 1.5rem;
@@ -19,6 +38,11 @@
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+.centered-text {
+  text-align: center;
+  color: #cfcfd8;
 }
 
 /* Hero Image Banner */
@@ -159,9 +183,194 @@
   text-align: center;
 }
 
+.ba-toggle-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
 
+.now-playing-info {
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(244, 244, 255, 0.85);
+  margin: 0.75rem 0 0.5rem 0;
+  min-height: 1.5rem;
+  padding: 0 1rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
 
-/* Matrix Animation Section (page-specific overrides if needed) */
+.ba-toggle-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ba-toggle-label.inactive {
+  opacity: 0.4;
+}
+
+.ba-toggle-before { 
+  color: #9966cc;
+}
+
+.ba-toggle-after { 
+  color: #31c49f;
+}
+
+.ba-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 28px;
+}
+
+.ba-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ba-toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: 0.4s;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ba-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.ba-toggle-switch input:checked + .ba-toggle-slider {
+  background: linear-gradient(135deg, #31c49f, #2dd4a0);
+  border-color: rgba(49, 196, 159, 0.5);
+}
+
+.ba-toggle-switch input:checked + .ba-toggle-slider:before {
+  transform: translateX(32px);
+  background: linear-gradient(135deg, #31c49f, #2dd4a0);
+}
+
+/* Wave progress bar for audio players - works with width % on container (index) or child element (portfolio) */
+.main-player-progress {
+  position: relative;
+  width: 0%;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+  cursor: pointer;
+  overflow: visible;
+  display: block;
+  transition: width 0.1s linear;
+  margin-top: 0;
+}
+
+.main-player-progress:hover {
+  height: 14px;
+  box-shadow: 0 0 12px rgba(49, 196, 159, 0.8);
+}
+
+/* Progress fill bar inside main-player-progress container (for portfolio.html) */
+.main-player-progress-fill {
+  height: 4px;
+  width: 0%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+  transition: width 0.1s linear;
+  margin-top: 4px;
+}
+
+/* Transport controls for before/after player */
+.playlist-player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbcb83;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn:focus {
+  outline: 3px solid rgba(229, 229, 229, 0.12);
+}
+
+.control-btn-play {
+  padding: 0.7rem 1rem;
+  font-size: 1.3rem;
+}
+
+/* Matrix Animation Section */
+.matrix-link {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.matrix-link:hover {
+  opacity: 0.85;
+}
+
+.matrix-section {
+  min-height: 50vh;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 20%, transparent 40%, transparent 60%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.matrix-section .matrix-terminal {
+  width: 100%;
+  height: 100%;
+  min-height: 60vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 .matrix-terminal {
   position: absolute;

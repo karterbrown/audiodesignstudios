@@ -33,6 +33,7 @@ main {
   position: relative;
   overflow: hidden;
   background: #0f0f0f;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 20%, transparent 40%, transparent 60%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0.6) 100%);
   max-width: 100%;
   margin: 0;
   width: 100%;
