@@ -28,4 +28,11 @@ echo "🚀 Pushing to GitHub..."
 git push
 
 echo ""
-echo "✨ Done! Your changes are live."
+echo "✨ Done! Your changes are live at:"
+echo "   https://www.audiodesignstudios.com"
+echo ""
+echo "⚠️  IMPORTANT: Hard refresh your browser to see changes:"
+echo "   Mac:     Cmd + Shift + R"
+echo "   Windows: Ctrl + Shift + R"
+echo ""
+echo "   Or open DevTools (F12) → Right-click reload → 'Empty Cache and Hard Reload'"
