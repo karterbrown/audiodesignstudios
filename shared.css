@@ -71,8 +71,8 @@ button:focus {
   position: relative;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 20%, transparent 40%, transparent 60%, rgba(0, 0, 0, 0.2) 80%, rgba(0, 0, 0, 0.6) 100%);
-  max-width: 1600px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   width: 100%;
 }
 
@@ -90,6 +90,8 @@ button:focus {
   text-decoration: none;
   cursor: pointer;
   transition: opacity 0.3s ease;
+  margin: 0;
+  padding: 0;
 }
 
 .matrix-link:hover {
