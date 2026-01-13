@@ -457,17 +457,6 @@
 }
 
 /* Matrix Animation Section */
-.matrix-link {
-  display: block;
-  text-decoration: none;
-  cursor: pointer;
-  color: inherit;
-  transition: opacity 0.3s ease;
-}
-
-.matrix-link:hover {
-  opacity: 0.85;
-}
 
 @media (max-width: 800px) {
   .matrix-section,
