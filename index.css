@@ -152,16 +152,12 @@
 
 /* Before & After Section */
 .before-after-section {
-  padding: 4rem 5vw;
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-.before-after-section {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   padding: 3rem 4vw;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .ba-single-player {
@@ -356,7 +352,7 @@
 }
 
 .matrix-section {
-  min-height: 60vh;
+  min-height: 30vh;
   padding: 0;
   position: relative;
   overflow: hidden;
