@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="styles.css?v=1768324889" />
+  <link rel="stylesheet" href="styles.css?v=1768325570" />
 </head>
 
 <body>
@@ -62,45 +62,7 @@
         </div>
       </div>
     </section>
-    
-    <!-- ======================================================================
-         SECTION 4: Before & After Mixing/Mastering Comparison
-         ====================================================================== -->
-    <section class="section before-after-section">
-      <h2>Before & After Mixing and Mastering</h2>
-      <p class="centered-text">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
-      
-      <div class="ba-single-player">
-        <!-- Track Title -->
-        <div class="ba-track-title">Near Wild Heaven (Cover)</div>
 
-        <!-- Toggle Section: Before - Toggle - After -->
-        <div class="ba-toggle-section">
-          <span class="ba-toggle-label ba-toggle-before">Before</span>
-          <label class="ba-toggle-switch">
-            <input type="checkbox" id="baToggle">
-            <span class="ba-toggle-slider"></span>
-          </label>
-          <span class="ba-toggle-label ba-toggle-after">After</span>
-        </div>
-
-        <!-- Player Controls -->
-        <div class="ba-player-controls">
-          <button class="play-btn ba-play-btn" id="baPlayBtn" aria-label="Play">▶</button>
-          <div class="ba-progress-container">
-            <div class="ba-progress-wrap" id="baProgressWrap">
-              <div class="ba-progress-fill" id="baProgressFill"></div>
-              <div class="ba-scrubber" id="baScrubber"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hidden Audio Elements -->
-        <audio id="beforeAudio" src="highlights/B_NearWildHeaven_12072025.mp3" preload="auto"></audio>
-        <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
-      </div>
-    </section>
-    
     <!-- ======================================================================
          SECTION 3: Highlights Hero (3-Column Layout)
          Left: Album art | Center: Title, description, cycling word | Right: Headshot
@@ -150,6 +112,53 @@
         </div>
       </div>
     </section>
+    
+    <!-- ======================================================================
+         SECTION 4: Before & After Mixing/Mastering Comparison
+         ====================================================================== -->
+    <section class="section before-after-section">
+      <h2>Before & After Mixing and Mastering</h2>
+      <p class="centered-text">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
+      
+      <div class="ba-single-player">
+        <!-- Track Title -->
+        <div class="ba-track-title">Near Wild Heaven (Cover)</div>
+
+        <!-- Toggle Section: Before - Toggle - After -->
+        <div class="ba-toggle-section">
+          <span class="ba-toggle-label ba-toggle-before">Before</span>
+          <label class="ba-toggle-switch">
+            <input type="checkbox" id="baToggle">
+            <span class="ba-toggle-slider"></span>
+          </label>
+          <span class="ba-toggle-label ba-toggle-after">After</span>
+        </div>
+
+        <!-- Player Controls -->
+        <div class="ba-player-controls">
+          <button class="play-btn ba-play-btn" id="baPlayBtn" aria-label="Play">▶</button>
+          <div class="ba-progress-container">
+            <div class="ba-progress-wrap" id="baProgressWrap">
+              <div class="ba-progress-fill" id="baProgressFill"></div>
+              <div class="ba-scrubber" id="baScrubber"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hidden Audio Elements -->
+        <audio id="beforeAudio" src="highlights/B_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+        <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+      </div>
+    </section>
+    
+    <!-- ======================================================================
+         SECTION 5: Matrix Animation (Green Musical Notes)
+         ====================================================================== -->
+    <a href="portfolio.html" class="matrix-link">
+      <section class="matrix-section">
+        <div class="matrix-terminal" id="matrixTerminal"></div>
+      </section>
+    </a>
 
     <!-- ======================================================================
          SECTION 5: Matrix Animation (Green Musical Notes)
@@ -177,7 +186,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768324889"></script>
+  <script src="content.js?v=1768325570"></script>
 
   <!-- ========================================================================
        Highlights Mini-Players (3 Independent Players)
@@ -287,31 +296,31 @@
 
       // Generate all highlight rows
       highlights.forEach(createHighlightRow);
-      
-      // Global drag handlers for progress scrubbing
-      document.addEventListener('mousemove', (e) => {
-        if (activeDrag) {
-          e.preventDefault();
-          activeDrag.update(e);
-        }
-      });
-      
-      document.addEventListener('mouseup', () => {
-        if (activeDrag) {
-          activeDrag.element.style.cursor = 'pointer';
-          activeDrag = null;
-        }
-      });
-
-
     });
   </script>
 
   <!-- ========================================================================
-       Before & After Mixing/Mastering Toggle Player
+       Before & After Mixing/Mastering Toggle Player & Unified Drag Handler
        New approach: Both tracks play simultaneously, toggle controls muting
        ======================================================================== -->
   <script>
+    let activeDrag = null;
+
+    // Global drag handlers for all progress scrubbing
+    document.addEventListener('mousemove', (e) => {
+      if (activeDrag) {
+        e.preventDefault();
+        activeDrag.update(e);
+      }
+    });
+    
+    document.addEventListener('mouseup', () => {
+      if (activeDrag) {
+        activeDrag.element.style.cursor = 'pointer';
+        activeDrag = null;
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       const beforeAudio = document.getElementById('beforeAudio');
       const afterAudio = document.getElementById('afterAudio');
@@ -327,6 +336,7 @@
       // Initialize: Before is audible, After is muted
       beforeAudio.muted = false;
       afterAudio.muted = true;
+      document.querySelector('.ba-toggle-after').classList.add('inactive');
 
       // Utility: Wait for audio to be ready to play
       function waitForReady(audio) {
@@ -372,25 +382,15 @@
       // Toggle switch - just swaps mute state
       baToggle.addEventListener('change', (e) => {
         if (e.target.checked) {
-          // After is active (unmuted)
           beforeAudio.muted = true;
           afterAudio.muted = false;
-          
-          // Update label styling
-          document.querySelector('.ba-toggle-before').style.opacity = '0.6';
-          document.querySelector('.ba-toggle-before').style.fontWeight = '500';
-          document.querySelector('.ba-toggle-after').style.opacity = '1';
-          document.querySelector('.ba-toggle-after').style.fontWeight = '600';
+          document.querySelector('.ba-toggle-before').classList.add('inactive');
+          document.querySelector('.ba-toggle-after').classList.remove('inactive');
         } else {
-          // Before is active (unmuted)
           beforeAudio.muted = false;
           afterAudio.muted = true;
-          
-          // Update label styling
-          document.querySelector('.ba-toggle-before').style.opacity = '1';
-          document.querySelector('.ba-toggle-before').style.fontWeight = '600';
-          document.querySelector('.ba-toggle-after').style.opacity = '0.6';
-          document.querySelector('.ba-toggle-after').style.fontWeight = '500';
+          document.querySelector('.ba-toggle-before').classList.remove('inactive');
+          document.querySelector('.ba-toggle-after').classList.add('inactive');
         }
       });
 
@@ -429,21 +429,6 @@
 
       baProgressWrap.addEventListener('click', (e) => {
         if (!activeDrag) updateSeek(e);
-      });
-
-      // Global drag handlers
-      document.addEventListener('mousemove', (e) => {
-        if (activeDrag) {
-          e.preventDefault();
-          activeDrag.update(e);
-        }
-      });
-      
-      document.addEventListener('mouseup', () => {
-        if (activeDrag) {
-          activeDrag.element.style.cursor = 'pointer';
-          activeDrag = null;
-        }
       });
     });
   </script>

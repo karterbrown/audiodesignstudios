@@ -364,18 +364,23 @@ blockquote footer {
 .ba-toggle-label {
   font-size: 1.2rem;
   color: #f4f4ff;
-  font-weight: 500;
-  opacity: 0.6;
+  font-weight: 600;
+  opacity: 1;
   transition: opacity 0.3s ease, font-weight 0.3s ease;
+}
+
+.ba-toggle-label.inactive {
+  opacity: 0.6;
+  font-weight: 500;
 }
 
 .ba-toggle-before { 
   text-align: right;
-  opacity: 1;
-  font-weight: 600;
 }
 
-.ba-toggle-after { text-align: left; }
+.ba-toggle-after { 
+  text-align: left;
+}
 
 .ba-toggle-switch {
   position: relative;
