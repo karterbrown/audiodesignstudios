@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="about.css?v=1768584162" />
+  <link rel="stylesheet" href="about.css?v=1768594326" />
 </head>
 
 <body>
@@ -86,7 +86,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768584162"></script>
+  <script src="content.js?v=1768594326"></script>
 
   <!-- ========================================================================
        Blue Matrix Terminal Effect (Musical Notes)
@@ -94,52 +94,178 @@
   <script>
     const terminalBlue = document.getElementById('matrixTerminalBlue');
     const canvasBlue = document.createElement('canvas');
-    const ctxBlue = canvasBlue.getContext('2d');
+    const ctxBlue = canvasBlue.getContext('2d', { alpha: false, desynchronized: true });
     terminalBlue.appendChild(canvasBlue);
     
-    const charsBlue = '♩♪♫♬♭♮♯';
-    let columnsBlue, dropsBlue, xPositionsBlue;
+    const charsBlue = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜';
+    const binaryCharsBlue = [0, 1];
+    const musicalNotesBlue = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+    const japaneseCharsBlue = [22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
+    const mathCharsBlue = [66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84];
+    
+    let columnsBlue, rowsBlue, dropsBlue, charGridBlue, charAgeBlue, brightnessBlue, speedsBlue, cycleSpeedsBlue;
+    let animationIdBlue;
+    let lastFrameTimeBlue = 0;
+    const frameIntervalBlue = 30;
+    const numColumnsBlue = 50;
+    const phaseDurationBlue = 15000;
+    let phaseStartTimeBlue = Date.now();
+    
+    function getCurrentPhaseBlue() {
+      const elapsed = Date.now() - phaseStartTimeBlue;
+      const totalCycle = phaseDurationBlue * 5;
+      const cyclePosition = elapsed % totalCycle;
+      const phase = Math.floor(cyclePosition / phaseDurationBlue);
+      const phaseProgress = (cyclePosition % phaseDurationBlue) / phaseDurationBlue;
+      return { phase, progress: phaseProgress };
+    }
+    
+    function randomCharBlue(isLeading = false) {
+      const { phase, progress } = getCurrentPhaseBlue();
+      let charSet = binaryCharsBlue; // Default to binary
+      
+      if (phase === 0) {
+        if (Math.random() < progress) {
+          charSet = japaneseCharsBlue;
+        } else {
+          charSet = binaryCharsBlue;
+        }
+      } else if (phase === 1) {
+        if (Math.random() < progress) {
+          charSet = mathCharsBlue;
+        } else {
+          charSet = japaneseCharsBlue;
+        }
+      } else if (phase === 2) {
+        if (Math.random() < progress) {
+          charSet = musicalNotesBlue;
+        } else {
+          charSet = mathCharsBlue;
+        }
+      } else if (phase === 3) {
+        if (Math.random() < progress) {
+          const rand = Math.random();
+          if (rand < 0.3) charSet = binaryCharsBlue;
+          else if (rand < 0.5) charSet = musicalNotesBlue;
+          else if (rand < 0.7) charSet = japaneseCharsBlue;
+          else charSet = mathCharsBlue;
+        } else {
+          charSet = musicalNotesBlue;
+        }
+      } else {
+        if (Math.random() < progress) {
+          charSet = binaryCharsBlue;
+        } else {
+          const rand = Math.random();
+          if (rand < 0.3) charSet = binaryCharsBlue;
+          else if (rand < 0.5) charSet = musicalNotesBlue;
+          else if (rand < 0.7) charSet = japaneseCharsBlue;
+          else charSet = mathCharsBlue;
+        }
+      }
+      
+      const index = charSet[Math.floor(Math.random() * charSet.length)];
+      return index !== undefined ? index : 0;
+    }
     
     function resizeBlue() {
       canvasBlue.width = terminalBlue.offsetWidth;
       canvasBlue.height = terminalBlue.offsetHeight;
-      const fontSize = 18;
-      const columnWidth = 15;
-      columnsBlue = Math.floor(canvasBlue.width / columnWidth);
-      const totalWidth = columnsBlue * columnWidth;
-      const offsetX = (canvasBlue.width - totalWidth) / 2;
-      dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -20);
-      xPositionsBlue = Array(columnsBlue).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
+      const columnWidth = canvasBlue.width / numColumnsBlue;
+      columnsBlue = numColumnsBlue;
+      const newRows = Math.ceil(canvasBlue.height / columnWidth);
+      if (!dropsBlue || dropsBlue.length !== columnsBlue || rowsBlue !== newRows) {
+        rowsBlue = newRows;
+        dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -20);
+        speedsBlue = Array(columnsBlue).fill(0).map(() => 0.2 + Math.random() * 0.4);
+        charGridBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(null).map(() => randomCharBlue()));
+        charAgeBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(null).map(() => Math.random()));
+        cycleSpeedsBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(null).map(() => 0.08 + Math.random() * 0.15));
+        brightnessBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(0));
+      }
+      ctxBlue.fillStyle = '#000000';
+      ctxBlue.fillRect(0, 0, canvasBlue.width, canvasBlue.height);
     }
     
-    function drawBlue() {
-      ctxBlue.fillStyle = 'rgba(20, 20, 20, 0.1)';
+    function drawBlue(timestamp) {
+      if (timestamp - lastFrameTimeBlue < frameIntervalBlue) {
+        animationIdBlue = requestAnimationFrame(drawBlue);
+        return;
+      }
+      lastFrameTimeBlue = timestamp;
+      
+      ctxBlue.fillStyle = '#000000';
       ctxBlue.fillRect(0, 0, canvasBlue.width, canvasBlue.height);
       
-      ctxBlue.font = 'bold 18px Courier New';
-      ctxBlue.fillStyle = '#0080ff';
+      const columnWidth = canvasBlue.width / numColumnsBlue;
+      const fontSize = Math.floor(columnWidth * 0.85);
       
-      for (let i = 0; i < dropsBlue.length; i++) {
-        const char = charsBlue[Math.floor(Math.random() * charsBlue.length)];
-        const x = xPositionsBlue[i];
-        const y = dropsBlue[i] * 35;
+      ctxBlue.font = `bold ${fontSize}px Courier New`;
+      ctxBlue.textAlign = 'center';
+      ctxBlue.textBaseline = 'middle';
+      
+      for (let i = 0; i < columnsBlue; i++) {
+        const currentDrop = Math.floor(dropsBlue[i]);
+        const x = i * columnWidth + columnWidth / 2;
         
-        ctxBlue.fillText(char, x, y);
-        
-        if (y > canvasBlue.height && Math.random() > 0.95) {
-        dropsBlue[i] = 0;
-        const columnWidth = 15;
-        const totalWidth = columnsBlue * columnWidth;
-        const offsetX = (canvasBlue.width - totalWidth) / 2;
-        xPositionsBlue[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 8 - 4;
+        for (let j = 0; j < rowsBlue; j++) {
+          charAgeBlue[i][j] += cycleSpeedsBlue[i][j];
+          if (charAgeBlue[i][j] >= 1.0) {
+            const distance = currentDrop - j;
+            const isLeading = distance === 0;
+            charGridBlue[i][j] = randomCharBlue(isLeading);
+            charAgeBlue[i][j] = 0;
+          }
+          
+          const distance = currentDrop - j;
+          
+          if (distance === 0) {
+            brightnessBlue[i][j] = 1.5;
+          } else if (distance > 0 && distance < 30) {
+            const targetBrightness = 1 - (distance / 30);
+            brightnessBlue[i][j] = Math.max(brightnessBlue[i][j], targetBrightness);
+          }
+          
+          brightnessBlue[i][j] *= 0.95;
+          
+          if (brightnessBlue[i][j] > 0.01) {
+            const blue = Math.floor(120 + Math.min(brightnessBlue[i][j], 1) * 136);
+            const alpha = Math.min(1, brightnessBlue[i][j] * 0.9);
+            
+            const glowIntensity = Math.min(brightnessBlue[i][j], 1);
+            ctxBlue.shadowBlur = 15 * glowIntensity;
+            ctxBlue.shadowColor = `rgba(0, ${Math.floor(blue * 0.5)}, ${blue}, ${glowIntensity * 0.8})`;
+            
+            ctxBlue.fillStyle = `rgba(0, ${Math.floor(blue * 0.5)}, ${blue}, ${alpha})`;
+            ctxBlue.fillText(charsBlue[charGridBlue[i][j]], x, j * columnWidth + columnWidth / 2);
+            
+            ctxBlue.shadowBlur = 0;
+          }
         }
-        dropsBlue[i] += 0.42;
+        
+        dropsBlue[i] += speedsBlue[i];
+        
+        if (dropsBlue[i] > rowsBlue && Math.random() > 0.975) {
+          dropsBlue[i] = 0;
+          speedsBlue[i] = 0.2 + Math.random() * 0.4;
+        }
       }
+      
+      animationIdBlue = requestAnimationFrame(drawBlue);
     }
     
     resizeBlue();
-    window.addEventListener('resize', resizeBlue);
-    setInterval(drawBlue, 90);
+    let resizeTimeoutBlue;
+    let lastWidthBlue = terminalBlue.offsetWidth;
+    let lastHeightBlue = terminalBlue.offsetHeight;
+    window.addEventListener('resize', () => {
+      if (terminalBlue.offsetWidth === lastWidthBlue && terminalBlue.offsetHeight === lastHeightBlue) return;
+      lastWidthBlue = terminalBlue.offsetWidth;
+      lastHeightBlue = terminalBlue.offsetHeight;
+      clearTimeout(resizeTimeoutBlue);
+      resizeTimeoutBlue = setTimeout(resizeBlue, 150);
+    });
+    requestAnimationFrame(drawBlue);
   </script>
 
 </body>

@@ -16,7 +16,7 @@
   <title>Matrix - Audio Design Studios</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="matrix.css?v=1768584162" />
+  <link rel="stylesheet" href="matrix.css?v=1768594326" />
 </head>
 
 <body>
@@ -30,53 +30,206 @@
   <script>
     const terminal = document.getElementById('matrixFullscreen');
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
     terminal.appendChild(canvas);
     
-    const chars = '♩♪♫♬♭♮♯';
-    let columns, drops, xPositions;
+    const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜';
+    const binaryChars = [0, 1];
+    const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+    const japaneseChars = [22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
+    const mathChars = [66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84];
+    
+    let columns, rows, drops, charGrid, charAge, brightness, speeds, cycleSpeeds;
+    let animationId;
+    let lastFrameTime = 0;
+    const frameInterval = 40; // Slightly slower frame rate for performance
+    const phaseDuration = 15000; // 15 seconds per phase
+    let phaseStartTime = Date.now();
+    
+    function getCurrentPhase() {
+      const elapsed = Date.now() - phaseStartTime;
+      const totalCycle = phaseDuration * 5;
+      const cyclePosition = elapsed % totalCycle;
+      const phase = Math.floor(cyclePosition / phaseDuration);
+      const phaseProgress = (cyclePosition % phaseDuration) / phaseDuration;
+      return { phase, progress: phaseProgress };
+    }
+    
+    function randomChar(isLeading = false) {
+      const { phase, progress } = getCurrentPhase();
+      let charSet = binaryChars; // Default to binary
+      
+      if (phase === 0) {
+        // Binary phase, gradually mixing in Japanese
+        if (Math.random() < progress) {
+          charSet = japaneseChars;
+        } else {
+          charSet = binaryChars;
+        }
+      } else if (phase === 1) {
+        // Japanese phase, gradually mixing in math
+        if (Math.random() < progress) {
+          charSet = mathChars;
+        } else {
+          charSet = japaneseChars;
+        }
+      } else if (phase === 2) {
+        // Math phase, gradually mixing in musical
+        if (Math.random() < progress) {
+          charSet = musicalNotes;
+        } else {
+          charSet = mathChars;
+        }
+      } else if (phase === 3) {
+        // Musical phase, gradually mixing in all
+        if (Math.random() < progress) {
+          const rand = Math.random();
+          if (rand < 0.3) charSet = binaryChars;
+          else if (rand < 0.5) charSet = musicalNotes;
+          else if (rand < 0.7) charSet = japaneseChars;
+          else charSet = mathChars;
+        } else {
+          charSet = musicalNotes;
+        }
+      } else {
+        // Mixed phase, gradually returning to binary
+        if (Math.random() < progress) {
+          charSet = binaryChars;
+        } else {
+          const rand = Math.random();
+          if (rand < 0.3) charSet = binaryChars;
+          else if (rand < 0.5) charSet = musicalNotes;
+          else if (rand < 0.7) charSet = japaneseChars;
+          else charSet = mathChars;
+        }
+      }
+      
+      const index = charSet[Math.floor(Math.random() * charSet.length)];
+      return index !== undefined ? index : 0;
+    }
     
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
       canvas.style.display = 'block';
-      const fontSize = 18;
-      const columnWidth = 15;
-      columns = Math.floor(canvas.width / columnWidth);
-      const totalWidth = columns * columnWidth;
-      const offsetX = (canvas.width - totalWidth) / 2;
-      drops = Array(columns).fill(0).map(() => Math.random() * -20);
-      xPositions = Array(columns).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      
+      // Calculate columns to fill screen width - with reasonable limits
+      const desiredColumnWidth = 18; // Smaller column width for more columns and rows
+      columns = Math.floor(canvas.width / desiredColumnWidth);
+      if (columns > 150) columns = 150; // Reasonable performance cap
+      const columnWidth = canvas.width / columns; // Use exact width to fill screen
+      rows = Math.ceil(canvas.height / columnWidth);
+      if (!drops || drops.length !== columns) {
+        drops = Array(columns).fill(0).map(() => Math.random() * -20);
+        speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
+        // Full grid of characters - always present, always cycling
+        charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
+        charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
+        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.05 + Math.random() * 0.1));
+        // Brightness grid - 0 to 1, creates the falling effect
+        brightness = Array(columns).fill(null).map(() => Array(rows).fill(0));
+      }
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     
-    function draw() {
-      ctx.fillStyle = 'rgba(20, 20, 20, 0.1)';
+    function draw(timestamp) {
+      if (timestamp - lastFrameTime < frameInterval) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = timestamp;
+      
+      // Solid black background
+      ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      ctx.font = 'bold 18px Courier New';
-      ctx.fillStyle = '#08ce18';
+      const columnWidth = Math.floor(canvas.width / columns);
+      const fontSize = Math.floor(columnWidth * 0.85);
       
-      for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        const x = xPositions[i];
-        const y = drops[i] * 35;
+      ctx.font = `bold ${fontSize}px Courier New`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      for (let i = 0; i < columns; i++) {
+        const currentDrop = Math.floor(drops[i]);
+        const x = i * columnWidth + columnWidth / 2;
         
-        ctx.fillText(char, x, y);
-        
-        if (y > canvas.height && Math.random() > 0.95) {
-        drops[i] = 0;
-        const columnWidth = 15;
-        const totalWidth = columns * columnWidth;
-        const offsetX = (canvas.width - totalWidth) / 2;
-        xPositions[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 8 - 4;
+        // Update brightness for all cells in this column
+        for (let j = 0; j < rows; j++) {
+          // Illuminate cells based on raindrop position first
+          const distance = currentDrop - j;
+          
+          if (distance === 0) {
+            // Leading character (bottom) - always brightest
+            brightness[i][j] = 1.5;
+          } else if (distance > 0 && distance < 30) {
+            // Trail - longer and fades more gradually
+            const targetBrightness = 1 - (distance / 30);
+            brightness[i][j] = Math.max(brightness[i][j], targetBrightness);
+          }
+          
+          // Fade brightness over time
+          brightness[i][j] *= 0.92;
+          
+          // Cycle characters that are visible or about to be visible
+          if (brightness[i][j] > 0.01 || distance === 0) {
+            charAge[i][j] += cycleSpeeds[i][j];
+            if (charAge[i][j] >= 1.0) {
+              const isLeading = distance === 0;
+              charGrid[i][j] = randomChar(isLeading);
+              charAge[i][j] = 0;
+            }
+          }
+          
+          // Draw character if it has any brightness
+          if (brightness[i][j] > 0.01) {
+            // Brighter green values, boosted for leading character
+            const green = Math.floor(120 + Math.min(brightness[i][j], 1) * 136);
+            const alpha = Math.min(1, brightness[i][j] * 0.9);
+            
+            // Add glow effect
+            const glowIntensity = Math.min(brightness[i][j], 1);
+            ctx.shadowBlur = 15 * glowIntensity;
+            ctx.shadowColor = `rgba(0, ${green}, 0, ${glowIntensity * 0.8})`;
+            
+            ctx.fillStyle = `rgba(0, ${green}, 0, ${alpha})`;
+            ctx.fillText(chars[charGrid[i][j]], x, j * columnWidth + columnWidth / 2);
+            
+            // Reset shadow for next character
+            ctx.shadowBlur = 0;
+          }
         }
-        drops[i] += 0.42;
+        
+        drops[i] += speeds[i];
+        
+        // Reset column
+        if (drops[i] > rows && Math.random() > 0.975) {
+          drops[i] = 0;
+          speeds[i] = 0.2 + Math.random() * 0.4;
+        }
       }
+      
+      animationId = requestAnimationFrame(draw);
     }
     
     resize();
-    window.addEventListener('resize', resize);
-    setInterval(draw, 90);
+    let resizeTimeout;
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === lastWidth && window.innerHeight === lastHeight) return;
+      lastWidth = window.innerWidth;
+      lastHeight = window.innerHeight;
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resize, 150);
+    });
+    requestAnimationFrame(draw);
   </script>
 </body>
 </html>

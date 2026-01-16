@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1768584162" />
+  <link rel="stylesheet" href="portfolio.css?v=1768594326" />
 </head>
 
 <body>
@@ -141,7 +141,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768584162"></script>
+  <script src="content.js?v=1768594326"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -522,52 +522,178 @@
   <script>
     const terminalRed = document.getElementById('matrixTerminalRed');
     const canvasRed = document.createElement('canvas');
-    const ctxRed = canvasRed.getContext('2d');
+    const ctxRed = canvasRed.getContext('2d', { alpha: false, desynchronized: true });
     terminalRed.appendChild(canvasRed);
     
-    const charsRed = '♩♪♫♬♭♮♯';
-    let columnsRed, dropsRed, xPositionsRed;
+    const charsRed = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜';
+    const binaryCharsRed = [0, 1];
+    const musicalNotesRed = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+    const japaneseCharsRed = [22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
+    const mathCharsRed = [66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84];
+    
+    let columnsRed, rowsRed, dropsRed, charGridRed, charAgeRed, brightnessRed, speedsRed, cycleSpeedsRed;
+    let animationIdRed;
+    let lastFrameTimeRed = 0;
+    const frameIntervalRed = 30;
+    const numColumnsRed = 50;
+    const phaseDurationRed = 15000;
+    let phaseStartTimeRed = Date.now();
+    
+    function getCurrentPhaseRed() {
+      const elapsed = Date.now() - phaseStartTimeRed;
+      const totalCycle = phaseDurationRed * 5;
+      const cyclePosition = elapsed % totalCycle;
+      const phase = Math.floor(cyclePosition / phaseDurationRed);
+      const phaseProgress = (cyclePosition % phaseDurationRed) / phaseDurationRed;
+      return { phase, progress: phaseProgress };
+    }
+    
+    function randomCharRed(isLeading = false) {
+      const { phase, progress } = getCurrentPhaseRed();
+      let charSet = binaryCharsRed; // Default to binary
+      
+      if (phase === 0) {
+        if (Math.random() < progress) {
+          charSet = japaneseCharsRed;
+        } else {
+          charSet = binaryCharsRed;
+        }
+      } else if (phase === 1) {
+        if (Math.random() < progress) {
+          charSet = mathCharsRed;
+        } else {
+          charSet = japaneseCharsRed;
+        }
+      } else if (phase === 2) {
+        if (Math.random() < progress) {
+          charSet = musicalNotesRed;
+        } else {
+          charSet = mathCharsRed;
+        }
+      } else if (phase === 3) {
+        if (Math.random() < progress) {
+          const rand = Math.random();
+          if (rand < 0.3) charSet = binaryCharsRed;
+          else if (rand < 0.5) charSet = musicalNotesRed;
+          else if (rand < 0.7) charSet = japaneseCharsRed;
+          else charSet = mathCharsRed;
+        } else {
+          charSet = musicalNotesRed;
+        }
+      } else {
+        if (Math.random() < progress) {
+          charSet = binaryCharsRed;
+        } else {
+          const rand = Math.random();
+          if (rand < 0.3) charSet = binaryCharsRed;
+          else if (rand < 0.5) charSet = musicalNotesRed;
+          else if (rand < 0.7) charSet = japaneseCharsRed;
+          else charSet = mathCharsRed;
+        }
+      }
+      
+      const index = charSet[Math.floor(Math.random() * charSet.length)];
+      return index !== undefined ? index : 0;
+    }
     
     function resizeRed() {
       canvasRed.width = terminalRed.offsetWidth;
       canvasRed.height = terminalRed.offsetHeight;
-      const fontSize = 18;
-      const columnWidth = 15;
-      columnsRed = Math.floor(canvasRed.width / columnWidth);
-      const totalWidth = columnsRed * columnWidth;
-      const offsetX = (canvasRed.width - totalWidth) / 2;
-      dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -20);
-      xPositionsRed = Array(columnsRed).fill(0).map((_, i) => offsetX + i * columnWidth + columnWidth / 2);
+      const columnWidth = canvasRed.width / numColumnsRed;
+      columnsRed = numColumnsRed;
+      const newRows = Math.ceil(canvasRed.height / columnWidth);
+      if (!dropsRed || dropsRed.length !== columnsRed || rowsRed !== newRows) {
+        rowsRed = newRows;
+        dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -20);
+        speedsRed = Array(columnsRed).fill(0).map(() => 0.2 + Math.random() * 0.4);
+        charGridRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(null).map(() => randomCharRed()));
+        charAgeRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(null).map(() => Math.random()));
+        cycleSpeedsRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(null).map(() => 0.08 + Math.random() * 0.15));
+        brightnessRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(0));
+      }
+      ctxRed.fillStyle = '#000000';
+      ctxRed.fillRect(0, 0, canvasRed.width, canvasRed.height);
     }
     
-    function drawRed() {
-      ctxRed.fillStyle = 'rgba(20, 20, 20, 0.1)';
+    function drawRed(timestamp) {
+      if (timestamp - lastFrameTimeRed < frameIntervalRed) {
+        animationIdRed = requestAnimationFrame(drawRed);
+        return;
+      }
+      lastFrameTimeRed = timestamp;
+      
+      ctxRed.fillStyle = '#000000';
       ctxRed.fillRect(0, 0, canvasRed.width, canvasRed.height);
       
-      ctxRed.font = 'bold 18px Courier New';
-      ctxRed.fillStyle = '#ff0000';
+      const columnWidth = canvasRed.width / numColumnsRed;
+      const fontSize = Math.floor(columnWidth * 0.85);
       
-      for (let i = 0; i < dropsRed.length; i++) {
-        const char = charsRed[Math.floor(Math.random() * charsRed.length)];
-        const x = xPositionsRed[i];
-        const y = dropsRed[i] * 35;
+      ctxRed.font = `bold ${fontSize}px Courier New`;
+      ctxRed.textAlign = 'center';
+      ctxRed.textBaseline = 'middle';
+      
+      for (let i = 0; i < columnsRed; i++) {
+        const currentDrop = Math.floor(dropsRed[i]);
+        const x = i * columnWidth + columnWidth / 2;
         
-        ctxRed.fillText(char, x, y);
-        
-        if (y > canvasRed.height && Math.random() > 0.95) {
-        dropsRed[i] = 0;
-        const columnWidth = 15;
-        const totalWidth = columnsRed * columnWidth;
-        const offsetX = (canvasRed.width - totalWidth) / 2;
-        xPositionsRed[i] = offsetX + i * columnWidth + columnWidth / 2 + Math.random() * 8 - 4;
+        for (let j = 0; j < rowsRed; j++) {
+          charAgeRed[i][j] += cycleSpeedsRed[i][j];
+          if (charAgeRed[i][j] >= 1.0) {
+            const distance = currentDrop - j;
+            const isLeading = distance === 0;
+            charGridRed[i][j] = randomCharRed(isLeading);
+            charAgeRed[i][j] = 0;
+          }
+          
+          const distance = currentDrop - j;
+          
+          if (distance === 0) {
+            brightnessRed[i][j] = 1.5;
+          } else if (distance > 0 && distance < 30) {
+            const targetBrightness = 1 - (distance / 30);
+            brightnessRed[i][j] = Math.max(brightnessRed[i][j], targetBrightness);
+          }
+          
+          brightnessRed[i][j] *= 0.95;
+          
+          if (brightnessRed[i][j] > 0.01) {
+            const red = Math.floor(120 + Math.min(brightnessRed[i][j], 1) * 136);
+            const alpha = Math.min(1, brightnessRed[i][j] * 0.9);
+            
+            const glowIntensity = Math.min(brightnessRed[i][j], 1);
+            ctxRed.shadowBlur = 15 * glowIntensity;
+            ctxRed.shadowColor = `rgba(${red}, 0, 0, ${glowIntensity * 0.8})`;
+            
+            ctxRed.fillStyle = `rgba(${red}, 0, 0, ${alpha})`;
+            ctxRed.fillText(charsRed[charGridRed[i][j]], x, j * columnWidth + columnWidth / 2);
+            
+            ctxRed.shadowBlur = 0;
+          }
         }
-        dropsRed[i] += 0.42;
+        
+        dropsRed[i] += speedsRed[i];
+        
+        if (dropsRed[i] > rowsRed && Math.random() > 0.975) {
+          dropsRed[i] = 0;
+          speedsRed[i] = 0.2 + Math.random() * 0.4;
+        }
       }
+      
+      animationIdRed = requestAnimationFrame(drawRed);
     }
     
     resizeRed();
-    window.addEventListener('resize', resizeRed);
-    setInterval(drawRed, 90);
+    let resizeTimeoutRed;
+    let lastWidthRed = terminalRed.offsetWidth;
+    let lastHeightRed = terminalRed.offsetHeight;
+    window.addEventListener('resize', () => {
+      if (terminalRed.offsetWidth === lastWidthRed && terminalRed.offsetHeight === lastHeightRed) return;
+      lastWidthRed = terminalRed.offsetWidth;
+      lastHeightRed = terminalRed.offsetHeight;
+      clearTimeout(resizeTimeoutRed);
+      resizeTimeoutRed = setTimeout(resizeRed, 150);
+    });
+    requestAnimationFrame(drawRed);
   </script>
   
 </body>
