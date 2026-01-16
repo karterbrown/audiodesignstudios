@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1768335731" />
+  <link rel="stylesheet" href="index.css?v=1768581640" />
 </head>
 
 <body>
@@ -104,31 +104,21 @@
           </picture>
         </div>
       </div>
-
-      <!-- Full Width Bottom: Track Players -->
-      <div class="hero-tracks-highlights">
-        <div class="playlist" id="playlist">
-          <!-- Track rows will be injected via JavaScript -->
-        </div>
-      </div>
     </section>
     
     <!-- ======================================================================
-         SECTION 4: Before & After Mixing/Mastering Comparison
+         SECTION 4: Before & After Playlist
          ====================================================================== -->
-    <section class="section before-after-section">
+    <section class="section before-after-playlist-section">
       <h2>Before & After Mixing and Mastering</h2>
-      <p class="centered-text">Compare the raw recording with the final mixed and mastered version. Use the toggle to switch between versions in real time.</p>
+      <p class="centered-text">Compare raw recordings with final mixed and mastered versions. Use the toggle to switch between before and after.</p>
       
-      <div class="ba-single-player">
-        <!-- Track Title -->
-        <div class="ba-track-title">Near Wild Heaven (Cover)</div>
-
-        <!-- Toggle Section: Before - Toggle - After -->
-        <div class="ba-toggle-section">
+      <div class="playlist-card">
+        <!-- Global Toggle Section -->
+        <div class="ba-global-toggle-section">
           <span class="ba-toggle-label ba-toggle-before">Before</span>
           <label class="ba-toggle-switch">
-            <input type="checkbox" id="baToggle">
+            <input type="checkbox" id="baGlobalToggle">
             <span class="ba-toggle-slider"></span>
           </label>
           <span class="ba-toggle-label ba-toggle-after">After</span>
@@ -136,7 +126,7 @@
 
         <!-- Progress Bar -->
         <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
-        
+
         <!-- Now Playing Display -->
         <div id="baNowPlaying" class="now-playing-info">No track playing</div>
 
@@ -147,9 +137,10 @@
           <button id="baNextBtn" class="control-btn" aria-label="Next track">⏭</button>
         </div>
 
-        <!-- Hidden Audio Elements -->
-        <audio id="beforeAudio" src="highlights/B_NearWildHeaven_12072025.mp3" preload="auto"></audio>
-        <audio id="afterAudio" src="highlights/A_NearWildHeaven_12072025.mp3" preload="auto"></audio>
+        <!-- Track List -->
+        <div class="playlist-content" id="baPlaylistTracks">
+          <!-- Track rows will be injected via JavaScript -->
+        </div>
       </div>
     </section>
     
@@ -179,157 +170,56 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768335731"></script>
+  <script src="content.js?v=1768581640"></script>
 
   <!-- ========================================================================
-       Highlights Mini-Players (3 Independent Players)
+       Before & After Playlist Player
        ======================================================================== -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const highlights = [
-        { id: 'track1', title: 'Ocean Etude (Chopin)', url: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
-        { id: 'track1', title: 'Nearly Ever', url: 'highlights/NearlyEver_FullMix.mp3' },
-        { id: 'track2', title: 'The Revolt', url: 'highlights/therevolt.mp3' }
+      let activeDrag = null;
+
+      // Global drag handlers for all progress scrubbing
+      document.addEventListener('mousemove', (e) => {
+        if (activeDrag) {
+          e.preventDefault();
+          activeDrag.update(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (activeDrag) {
+          activeDrag.element.style.cursor = 'pointer';
+          activeDrag = null;
+        }
+      });
+
+      // Before & After Playlist
+      const baTracks = [
+        { id: 1, title: 'Ocean Etude (Chopin)', before: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_Unmixed.mp3', after: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
+        { id: 2, title: 'Reggae Lights (Instrumental Reggae Demo)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' },
+        { id: 3, title: 'Near Wild Heaven - R.E.M (Cover)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
+        { id: 4, title: 'Hysteria - Muse (Drum Cover)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
+        { id: 5, title: 'Were In this Together - Nine Inch Nails (Drum Cover)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
+        { id: 6, title: 'Fortunate Supportive Thoughts (Guitar/Drums Demo)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
       ];
 
-      const highlightsContainer = document.getElementById('playlist');
-      let activeDrag = null; // Shared drag state for all players
-
-      // Create individual highlight track row with mini-player
-      function createHighlightRow(track) {
-        const row = document.createElement('div');
-        row.className = 'track-row';
-
-        const header = document.createElement('div');
-        header.className = 'track-header';
-
-        const num = document.createElement('div');
-        num.className = 'track-number';
-        num.textContent = track.id.replace('track', '');
-
-        const btn = document.createElement('button');
-        btn.className = 'play-btn';
-        btn.setAttribute('aria-label', `Play ${track.title}`);
-        btn.textContent = '▶';
-
-        const title = document.createElement('div');
-        title.className = 'track-title';
-        title.textContent = track.title;
-
-        const progressContainer = document.createElement('div');
-        progressContainer.className = 'highlight-progress-container';
-        
-        const progressWrap = document.createElement('div');
-        progressWrap.className = 'highlight-progress-wrap';
-        
-        const progressFill = document.createElement('div');
-        progressFill.className = 'highlight-progress-fill';
-        progressFill.style.width = '0%';
-        
-        const scrubber = document.createElement('div');
-        scrubber.className = 'highlight-scrubber';
-        
-        progressWrap.appendChild(progressFill);
-        progressWrap.appendChild(scrubber);
-        progressContainer.appendChild(progressWrap);
-
-        const audio = new Audio(track.url);
-
-        header.appendChild(num);
-        header.appendChild(btn);
-        header.appendChild(title);
-
-        row.appendChild(header);
-        row.appendChild(progressContainer);
-
-        btn.addEventListener('click', () => {
-          if (audio.paused) {
-            audio.play();
-          } else {
-            audio.pause();
-          }
-        });
-
-        audio.addEventListener('play', () => { btn.textContent = '⏸'; });
-        audio.addEventListener('pause', () => { btn.textContent = '▶'; });
-        audio.addEventListener('ended', () => { 
-          btn.textContent = '▶'; 
-          progressFill.style.width = '0%';
-          scrubber.style.left = '0%';
-        });
-
-        audio.addEventListener('timeupdate', () => {
-          const pct = audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
-          progressFill.style.width = `${pct}%`;
-          scrubber.style.left = `${pct}%`;
-        });
-
-        // Drag and click to seek
-        const updateSeek = (e) => {
-          const rect = progressWrap.getBoundingClientRect();
-          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-          if (audio.duration) {
-            audio.currentTime = pct * audio.duration;
-          }
-        };
-
-        progressWrap.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          activeDrag = { element: progressWrap, update: updateSeek };
-          updateSeek(e);
-          progressWrap.style.cursor = 'grabbing';
-        });
-
-        progressWrap.addEventListener('click', (e) => {
-          if (!activeDrag) updateSeek(e);
-        });
-
-        highlightsContainer.appendChild(row);
-      }
-
-      // Generate all highlight rows
-      highlights.forEach(createHighlightRow);
-    });
-  </script>
-
-  <!-- ========================================================================
-       Before & After Mixing/Mastering Toggle Player & Unified Drag Handler
-       New approach: Both tracks play simultaneously, toggle controls muting
-       ======================================================================== -->
-  <script>
-    let activeDrag = null;
-
-    // Global drag handlers for all progress scrubbing
-    document.addEventListener('mousemove', (e) => {
-      if (activeDrag) {
-        e.preventDefault();
-        activeDrag.update(e);
-      }
-    });
-    
-    document.addEventListener('mouseup', () => {
-      if (activeDrag) {
-        activeDrag.element.style.cursor = 'pointer';
-        activeDrag = null;
-      }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const beforeAudio = document.getElementById('beforeAudio');
-      const afterAudio = document.getElementById('afterAudio');
-      const baToggle = document.getElementById('baToggle');
-      const baWave = document.getElementById('baWave');
+      const baBeforeAudio = new Audio();
+      const baAfterAudio = new Audio();
+      const baPlaylistContainer = document.getElementById('baPlaylistTracks');
+      const baGlobalToggle = document.getElementById('baGlobalToggle');
+      const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
+      const baPrevBtn = document.getElementById('baPrevBtn');
+      const baNextBtn = document.getElementById('baNextBtn');
       const baNowPlaying = document.getElementById('baNowPlaying');
+      const baProgressWrap = document.getElementById('baWave');
 
-      let activeDrag = null;
+      let baCurrentTrackIndex = -1;
       let isPlaying = false;
+      
+      baBeforeAudio.muted = false;
+      baAfterAudio.muted = true;
 
-      // Initialize: Before is audible, After is muted
-      beforeAudio.muted = false;
-      afterAudio.muted = true;
-      document.querySelector('.ba-toggle-after').classList.add('inactive');
-
-      // Utility: Wait for audio to be ready to play
       function waitForReady(audio) {
         return new Promise(resolve => {
           if (audio.readyState >= 3) {
@@ -340,95 +230,287 @@
         });
       }
 
-      // Play/Pause button - controls BOTH audio elements
-      baPlayPauseBtn.addEventListener('click', async () => {
-        if (isPlaying) {
-          // Pause both
-          beforeAudio.pause();
-          afterAudio.pause();
-          baPlayPauseBtn.textContent = '▶';
-          isPlaying = false;
-        } else {
-          // Wait for both to be ready, then play simultaneously
-          baPlayPauseBtn.textContent = '…';
-          try {
-            await Promise.all([
-              waitForReady(beforeAudio),
-              waitForReady(afterAudio)
-            ]);
-            await Promise.all([
-              beforeAudio.play(),
-              afterAudio.play()
-            ]);
-            baPlayPauseBtn.textContent = '⏸';
-            isPlaying = true;
-          } catch (e) {
-            console.warn('play failed', e);
-            baPlayPauseBtn.textContent = '▶';
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      const baProgressFill = document.createElement('div');
+      baProgressFill.className = 'main-player-progress-fill';
+      baProgressFill.style.width = '0%';
+      baProgressWrap.appendChild(baProgressFill);
+
+      const baScrubber = document.createElement('div');
+      baScrubber.className = 'main-player-scrubber';
+      baProgressWrap.appendChild(baScrubber);
+
+      baTracks.forEach((track, index) => {
+        const trackRow = document.createElement('div');
+        trackRow.className = 'track-item';
+        trackRow.dataset.trackIndex = index;
+        trackRow.style.cursor = 'pointer';
+
+        const info = document.createElement('div');
+        info.className = 'track-item-info';
+
+        const num = document.createElement('span');
+        num.className = 'track-item-number';
+        num.textContent = track.id;
+
+        const title = document.createElement('span');
+        title.className = 'track-item-title';
+        title.textContent = track.title;
+
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'track-item-progress-wrap';
+
+        const progressFill = document.createElement('div');
+        progressFill.className = 'track-item-progress-fill';
+        progressFill.style.width = '0%';
+        progressWrap.appendChild(progressFill);
+
+        const itemScrubber = document.createElement('div');
+        itemScrubber.className = 'track-item-scrubber';
+        progressWrap.appendChild(itemScrubber);
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'track-item-time';
+        timeEl.textContent = '0:00 / 0:00';
+
+        info.appendChild(num);
+        info.appendChild(title);
+
+        const btn = document.createElement('button');
+        btn.className = 'track-item-play-btn';
+        btn.setAttribute('aria-label', `Play ${track.title}`);
+        btn.textContent = '▶';
+
+        track._uiRefs = { btn, progressFill, itemScrubber, timeEl };
+
+        trackRow.addEventListener('click', (e) => {
+          if (!e.target.closest('.track-item-progress-wrap') && !e.target.closest('.track-item-play-btn')) {
+            loadBATrack(index);
+          }
+        });
+
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          loadBATrack(index);
+        });
+
+        const updateProgress = (e) => {
+          const rect = progressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          if (baBeforeAudio.duration) {
+            const newTime = pct * baBeforeAudio.duration;
+            baBeforeAudio.currentTime = newTime;
+            baAfterAudio.currentTime = newTime;
+          }
+        };
+
+        progressWrap.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          activeDrag = { element: progressWrap, update: updateProgress };
+          updateProgress(e);
+          progressWrap.style.cursor = 'grabbing';
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!activeDrag) updateProgress(e);
+        });
+
+        trackRow.appendChild(info);
+        trackRow.appendChild(progressWrap);
+        trackRow.appendChild(timeEl);
+        trackRow.appendChild(btn);
+        baPlaylistContainer.appendChild(trackRow);
+      });
+
+      function loadBATrack(index) {
+        const track = baTracks[index];
+        
+        if (baCurrentTrackIndex === index) {
+          if (isPlaying) {
+            baBeforeAudio.pause();
+            baAfterAudio.pause();
             isPlaying = false;
+          } else {
+            Promise.all([
+              baBeforeAudio.play(),
+              baAfterAudio.play()
+            ]).catch(e => console.warn('play failed', e));
+            isPlaying = true;
+          }
+          return;
+        }
+
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
+        }
+
+        baCurrentTrackIndex = index;
+
+        document.querySelectorAll('#baPlaylistTracks .track-item').forEach((item, i) => {
+          item.classList.toggle('active', i === index);
+        });
+
+        if (track._uiRefs) {
+          track._uiRefs.btn.textContent = '…';
+        }
+
+        const beforeOrAfter = baBeforeAudio.muted ? 'After' : 'Before';
+        baNowPlaying.textContent = `${track.title} (${beforeOrAfter})`;
+
+        baBeforeAudio.src = track.before;
+        baAfterAudio.src = track.after;
+        
+        Promise.all([
+          waitForReady(baBeforeAudio),
+          waitForReady(baAfterAudio)
+        ]).then(() => {
+          return Promise.all([
+            baBeforeAudio.play(),
+            baAfterAudio.play()
+          ]);
+        }).then(() => {
+          isPlaying = true;
+          if (track._uiRefs) {
+            track._uiRefs.btn.textContent = '⏸';
+          }
+        }).catch(e => console.warn('play failed', e));
+      }
+
+      baBeforeAudio.addEventListener('timeupdate', () => {
+        const cur = baBeforeAudio.currentTime || 0;
+        const dur = baBeforeAudio.duration || 0;
+        const pct = dur ? (cur / dur) : 0;
+        const percent = pct * 100;
+        
+        baProgressFill.style.width = percent + '%';
+        baScrubber.style.left = percent + '%';
+
+        if (baCurrentTrackIndex >= 0) {
+          const track = baTracks[baCurrentTrackIndex];
+          if (track._uiRefs) {
+            track._uiRefs.progressFill.style.width = percent + '%';
+            track._uiRefs.itemScrubber.style.left = percent + '%';
+            track._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
           }
         }
       });
 
-      // Previous button - restart track
-      baPrevBtn.addEventListener('click', () => {
-        beforeAudio.currentTime = 0;
-        afterAudio.currentTime = 0;
+      baProgressWrap.addEventListener('click', (e) => {
+        if (baBeforeAudio.duration) {
+          const rect = baProgressWrap.getBoundingClientRect();
+          const percent = (e.clientX - rect.left) / rect.width;
+          const newTime = percent * baBeforeAudio.duration;
+          baBeforeAudio.currentTime = newTime;
+          baAfterAudio.currentTime = newTime;
+        }
       });
 
-      // Next button - not applicable for single track, but keep for consistency
-      baNextBtn.addEventListener('click', () => {
-        // Do nothing for single track
-      });
-
-      // Toggle switch - just swaps mute state
-      baToggle.addEventListener('change', (e) => {
+      baGlobalToggle.addEventListener('change', (e) => {
+        const beforeLabel = document.querySelector('.ba-toggle-before');
+        const afterLabel = document.querySelector('.ba-toggle-after');
+        
         if (e.target.checked) {
-          beforeAudio.muted = true;
-          afterAudio.muted = false;
-          document.querySelector('.ba-toggle-before').classList.add('inactive');
-          document.querySelector('.ba-toggle-after').classList.remove('inactive');
+          baBeforeAudio.muted = true;
+          baAfterAudio.muted = false;
+          beforeLabel.style.opacity = '0.6';
+          beforeLabel.style.fontWeight = '500';
+          afterLabel.style.opacity = '1';
+          afterLabel.style.fontWeight = '600';
+          
+          if (baCurrentTrackIndex >= 0) {
+            const track = baTracks[baCurrentTrackIndex];
+            baNowPlaying.textContent = `${track.title} (After)`;
+          }
         } else {
-          beforeAudio.muted = false;
-          afterAudio.muted = true;
-          document.querySelector('.ba-toggle-before').classList.remove('inactive');
-          document.querySelector('.ba-toggle-after').classList.add('inactive');
+          baBeforeAudio.muted = false;
+          baAfterAudio.muted = true;
+          beforeLabel.style.opacity = '1';
+          beforeLabel.style.fontWeight = '600';
+          afterLabel.style.opacity = '0.6';
+          afterLabel.style.fontWeight = '500';
+          
+          if (baCurrentTrackIndex >= 0) {
+            const track = baTracks[baCurrentTrackIndex];
+            baNowPlaying.textContent = `${track.title} (Before)`;
+          }
         }
       });
 
-      // Use beforeAudio for progress tracking (both are synced)
-      beforeAudio.addEventListener('timeupdate', () => {
-        const pct = beforeAudio.duration ? (beforeAudio.currentTime / beforeAudio.duration) * 100 : 0;
-        if (baWave) baWave.style.width = `${pct}%`;
+      baPlayPauseBtn.addEventListener('click', () => {
+        if (baCurrentTrackIndex === -1) {
+          loadBATrack(0);
+        } else if (isPlaying) {
+          baBeforeAudio.pause();
+          baAfterAudio.pause();
+          isPlaying = false;
+        } else {
+          Promise.all([
+            baBeforeAudio.play(),
+            baAfterAudio.play()
+          ]).then(() => {
+            isPlaying = true;
+          }).catch(e => console.warn('play failed', e));
+        }
       });
 
-      // Handle end of playback
-      beforeAudio.addEventListener('ended', () => {
+      baBeforeAudio.addEventListener('play', () => {
+        baPlayPauseBtn.textContent = '⏸';
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '⏸';
+        }
+      });
+
+      baBeforeAudio.addEventListener('pause', () => {
         baPlayPauseBtn.textContent = '▶';
-        if (baWave) baWave.style.width = '0%';
-        isPlaying = false;
-      });
-
-      // Wave bar scrubbing - seek both tracks
-      const updateSeek = (e) => {
-        const rect = baWave.getBoundingClientRect();
-        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        if (beforeAudio.duration) {
-          const newTime = pct * beforeAudio.duration;
-          beforeAudio.currentTime = newTime;
-          afterAudio.currentTime = newTime;
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
         }
-      };
-
-      baWave.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        activeDrag = { element: baWave, update: updateSeek };
-        updateSeek(e);
-        baWave.style.cursor = 'grabbing';
       });
 
-      baWave.addEventListener('click', (e) => {
-        if (!activeDrag) updateSeek(e);
+      baBeforeAudio.addEventListener('ended', () => {
+        baPlayPauseBtn.textContent = '▶';
+        isPlaying = false;
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
+          baTracks[baCurrentTrackIndex]._uiRefs.progressFill.style.width = '0%';
+          baTracks[baCurrentTrackIndex]._uiRefs.itemScrubber.style.left = '0%';
+        }
+        baProgressFill.style.width = '0%';
+        baScrubber.style.left = '0%';
+        
+        if (baCurrentTrackIndex < baTracks.length - 1) {
+          loadBATrack(baCurrentTrackIndex + 1);
+        } else {
+          loadBATrack(0);
+        }
+      });
+
+      baBeforeAudio.addEventListener('loadedmetadata', () => {
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '⏸';
+        }
+      });
+
+      baPrevBtn.addEventListener('click', () => {
+        if (baBeforeAudio.currentTime > 3) {
+          baBeforeAudio.currentTime = 0;
+          baAfterAudio.currentTime = 0;
+        } else if (baCurrentTrackIndex > 0) {
+          loadBATrack(baCurrentTrackIndex - 1);
+        }
+      });
+
+      baNextBtn.addEventListener('click', () => {
+        if (baCurrentTrackIndex < baTracks.length - 1) {
+          loadBATrack(baCurrentTrackIndex + 1);
+        }
       });
     });
   </script>
