@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1768581640" />
+  <link rel="stylesheet" href="portfolio.css?v=1768584162" />
 </head>
 
 <body>
@@ -72,9 +72,9 @@
           
           <!-- Transport Controls -->
           <div class="playlist-player-controls">
-            <button id="prevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
-            <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
-            <button id="nextBtn" class="control-btn" aria-label="Next track">⏭</button>
+            <button id="prevBtn" class="control-btn" aria-label="Back to beginning"></button>
+            <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+            <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
           </div>
           
           <!-- Track List -->
@@ -101,9 +101,9 @@
           
           <!-- Transport Controls -->
           <div class="playlist-player-controls">
-            <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
-            <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
-            <button id="allNextBtn" class="control-btn" aria-label="Next track">⏭</button>
+            <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+            <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+            <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
           </div>
           
           <!-- Track List (Scrollable) -->
@@ -141,7 +141,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768581640"></script>
+  <script src="content.js?v=1768584162"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -231,10 +231,9 @@
           return;
         }
 
-        if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
+        if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
         const itemScrubber = itemProgressEl?.parentElement?.querySelector('.track-item-scrubber');
         ctx.current = { btn, itemProgressEl, itemScrubber, timeEl, track };
-        btn.textContent = '…';
 
         // Update now playing info
         if (ctx.nowPlayingEl) {
@@ -277,18 +276,18 @@
         });
 
         audio.addEventListener('play', () => {
-          if (controls.playPauseBtn) controls.playPauseBtn.textContent = '⏸';
-          if (ctx.current?.btn) ctx.current.btn.textContent = '⏸';
+          if (controls.playPauseBtn) controls.playPauseBtn.classList.add('playing');
+          if (ctx.current?.btn) ctx.current.btn.classList.add('playing');
         });
 
         audio.addEventListener('pause', () => {
-          if (controls.playPauseBtn) controls.playPauseBtn.textContent = '▶';
-          if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
+          if (controls.playPauseBtn) controls.playPauseBtn.classList.remove('playing');
+          if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
         });
 
         audio.addEventListener('ended', () => {
-          if (controls.playPauseBtn) controls.playPauseBtn.textContent = '▶';
-          if (ctx.current?.btn) ctx.current.btn.textContent = '▶';
+          if (controls.playPauseBtn) controls.playPauseBtn.classList.remove('playing');
+          if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
           if (ctx.current?.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
           if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
           if (ctx.progressFill) ctx.progressFill.style.width = '0%';
@@ -309,7 +308,7 @@
         });
 
         audio.addEventListener('loadedmetadata', () => {
-          if (ctx.current?.btn) ctx.current.btn.textContent = '⏸';
+          if (ctx.current?.btn) ctx.current.btn.classList.add('playing');
         });
 
         // Drag and click main player progress to seek
@@ -408,7 +407,7 @@
         const btn = document.createElement('button');
         btn.className = 'track-item-play-btn';
         btn.setAttribute('aria-label', `Play ${track.title}`);
-        btn.textContent = '▶';
+        btn.textContent = '';
 
         // Make entire track item clickable to play
         item.addEventListener('click', (e) => {

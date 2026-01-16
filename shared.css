@@ -192,31 +192,46 @@ button:focus {
 
 .main-player-progress {
   position: relative;
-  width: 0%;
+  width: 100%;
   height: 12px;
   border-radius: 6px;
-  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
-  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   overflow: visible;
   display: block;
-  transition: width 0.1s linear;
+  transition: height 0.15s ease;
   margin-top: 0;
 }
 
 .main-player-progress:hover {
   height: 14px;
-  box-shadow: 0 0 12px rgba(49, 196, 159, 0.8);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
 }
 
 .main-player-progress-fill {
-  height: 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 0%;
-  border-radius: 2px;
+  border-radius: 6px 0 0 6px;
   background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
   box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
   transition: width 0.1s linear;
-  margin-top: 4px;
+}
+
+.main-player-scrubber {
+  position: absolute;
+  left: 0;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: linear-gradient(180deg, #2dd4a0, #31c49f);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.8), 0 0 4px rgba(49, 196, 159, 0.6);
+  pointer-events: none;
+  transition: left 0.1s linear;
+  border-radius: 1px;
 }
 
 .now-playing-info {
@@ -246,7 +261,7 @@ button:focus {
   padding: 0.75rem 1rem;
   border-radius: 50px;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 0;
   min-width: 48px;
   min-height: 48px;
   display: flex;
@@ -254,6 +269,76 @@ button:focus {
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  line-height: 1;
+  text-align: center;
+  position: relative;
+}
+
+/* Play icon - triangle pointing right */
+.control-btn[aria-label*="Play"]::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 10px solid currentColor;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  margin-left: 2px;
+}
+
+/* Pause icon - two vertical bars */
+.control-btn.playing::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-4.5px);
+  width: 3px;
+  height: 14px;
+  background: currentColor;
+  box-shadow: 6px 0 0 currentColor;
+  border: none;
+  margin-left: 0;
+}
+
+/* Previous/Back icon - two triangles pointing left */
+.control-btn[aria-label*="beginning"]::before,
+.control-btn[aria-label*="Back"]::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-right: 8px solid currentColor;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+.control-btn[aria-label*="beginning"]::after,
+.control-btn[aria-label*="Back"]::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-right: 8px solid currentColor;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  margin-left: -2px;
+}
+
+/* Next/Forward icon - two triangles pointing right */
+.control-btn[aria-label*="Next"]::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 8px solid currentColor;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+.control-btn[aria-label*="Next"]::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 8px solid currentColor;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  margin-left: -2px;
 }
 
 .control-btn:hover {
@@ -268,7 +353,7 @@ button:focus {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-.control-btn:focus {
+.control-btn:focus-visible {
   outline: 3px solid rgba(49, 196, 159, 0.4);
   outline-offset: 2px;
 }
@@ -280,6 +365,7 @@ button:focus {
   min-height: 56px;
   background: linear-gradient(135deg, rgba(49, 196, 159, 0.25), rgba(45, 212, 160, 0.15));
   border-width: 2px;
+  line-height: 1;
 }
 
 
@@ -428,9 +514,9 @@ blockquote footer {
 /* ---------- Footer ---------- */
 
 .site-footer {
-  padding: 3rem 5vw;
+  padding: 1rem 4vw;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #cfcfd8;
   opacity: 0.85;
   margin-top: 0;
@@ -439,12 +525,16 @@ blockquote footer {
   backdrop-filter: blur(6px);
   font-weight: 400;
   letter-spacing: 0.01em;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .site-footer h2 {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 500;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   color: #ffffff;
 }
 
@@ -459,9 +549,9 @@ blockquote footer {
 }
 
 .footer-copy {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   opacity: 0.75;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
 
@@ -503,8 +593,8 @@ button:active {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-.btn:focus,
-button:focus {
+.btn:focus-visible,
+button:focus-visible {
   outline: 3px solid rgba(49, 196, 159, 0.4);
   outline-offset: 2px;
 }

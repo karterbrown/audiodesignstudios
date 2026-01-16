@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1768581640" />
+  <link rel="stylesheet" href="index.css?v=1768584162" />
 </head>
 
 <body>
@@ -124,21 +124,21 @@
           <span class="ba-toggle-label ba-toggle-after">After</span>
         </div>
 
-        <!-- Progress Bar -->
-        <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
-
         <!-- Now Playing Display -->
         <div id="baNowPlaying" class="now-playing-info">No track playing</div>
 
+        <!-- Progress Bar -->
+        <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
+
         <!-- Transport Controls -->
         <div class="playlist-player-controls">
-          <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning">⏮</button>
-          <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause">▶</button>
-          <button id="baNextBtn" class="control-btn" aria-label="Next track">⏭</button>
+          <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+          <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+          <button id="baNextBtn" class="control-btn" aria-label="Next track"></button>
         </div>
 
-        <!-- Track List -->
-        <div class="playlist-content" id="baPlaylistTracks">
+        <!-- Track List (Hidden) -->
+        <div class="playlist-content ba-track-list-hidden" id="baPlaylistTracks" style="display: none;">
           <!-- Track rows will be injected via JavaScript -->
         </div>
       </div>
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768581640"></script>
+  <script src="content.js?v=1768584162"></script>
 
   <!-- ========================================================================
        Before & After Playlist Player
@@ -284,7 +284,7 @@
         const btn = document.createElement('button');
         btn.className = 'track-item-play-btn';
         btn.setAttribute('aria-label', `Play ${track.title}`);
-        btn.textContent = '▶';
+        btn.textContent = '';
 
         track._uiRefs = { btn, progressFill, itemScrubber, timeEl };
 
@@ -348,7 +348,8 @@
         }
 
         if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
-          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
         }
 
         baCurrentTrackIndex = index;
@@ -358,7 +359,7 @@
         });
 
         if (track._uiRefs) {
-          track._uiRefs.btn.textContent = '…';
+          track._uiRefs.btn.textContent = '';
         }
 
         const beforeOrAfter = baBeforeAudio.muted ? 'After' : 'Before';
@@ -378,7 +379,8 @@
         }).then(() => {
           isPlaying = true;
           if (track._uiRefs) {
-            track._uiRefs.btn.textContent = '⏸';
+            track._uiRefs.btn.classList.add('playing');
+            track._uiRefs.btn.textContent = '';
           }
         }).catch(e => console.warn('play failed', e));
       }
@@ -461,24 +463,30 @@
       });
 
       baBeforeAudio.addEventListener('play', () => {
-        baPlayPauseBtn.textContent = '⏸';
+        baPlayPauseBtn.classList.add('playing');
+        baPlayPauseBtn.textContent = '';
         if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
-          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '⏸';
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.add('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
         }
       });
 
       baBeforeAudio.addEventListener('pause', () => {
-        baPlayPauseBtn.textContent = '▶';
+        baPlayPauseBtn.classList.remove('playing');
+        baPlayPauseBtn.textContent = '';
         if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
-          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
         }
       });
 
       baBeforeAudio.addEventListener('ended', () => {
-        baPlayPauseBtn.textContent = '▶';
+        baPlayPauseBtn.classList.remove('playing');
+        baPlayPauseBtn.textContent = '';
         isPlaying = false;
         if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
-          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '▶';
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
           baTracks[baCurrentTrackIndex]._uiRefs.progressFill.style.width = '0%';
           baTracks[baCurrentTrackIndex]._uiRefs.itemScrubber.style.left = '0%';
         }
@@ -512,6 +520,25 @@
           loadBATrack(baCurrentTrackIndex + 1);
         }
       });
+
+      // Load the first track on page load (ready to play, but paused)
+      function initFirstTrack() {
+        const track = baTracks[0];
+        baCurrentTrackIndex = 0;
+        
+        const beforeOrAfter = baBeforeAudio.muted ? 'After' : 'Before';
+        baNowPlaying.textContent = `${track.title} (${beforeOrAfter})`;
+        
+        baBeforeAudio.src = track.before;
+        baAfterAudio.src = track.after;
+        
+        // Preload both tracks
+        baBeforeAudio.load();
+        baAfterAudio.load();
+      }
+
+      // Initialize the first track when page loads
+      initFirstTrack();
     });
   </script>
 

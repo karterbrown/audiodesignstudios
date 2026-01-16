@@ -238,12 +238,12 @@
   background: linear-gradient(135deg, rgba(49, 196, 159, 0.12), rgba(45, 212, 160, 0.06));
   border: 1.5px solid rgba(49, 196, 159, 0.25);
   color: #f4f4ff;
-  padding: 0.5rem 0.65rem;
+  padding: 0.4rem 0.55rem;
   border-radius: 50px;
   cursor: pointer;
-  font-size: 0.85rem;
-  min-width: 40px;
-  min-height: 40px;
+  font-size: 0;
+  min-width: 36px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,6 +251,35 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   grid-column: 3;
   grid-row: 1;
+  line-height: 1;
+  text-align: center;
+  position: relative;
+}
+
+/* Play icon for track buttons */
+.track-item-play-btn::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 8px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-left: 2px;
+}
+
+/* Pause icon for track buttons */
+.track-item-play-btn.playing::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-4px);
+  width: 2.5px;
+  height: 10px;
+  background: currentColor;
+  box-shadow: 5px 0 0 currentColor;
+  border: none;
+  margin-left: 0;
 }
 
 .track-item-play-btn:hover {
@@ -260,7 +289,7 @@
   transform: translateY(-1px);
 }
 
-.track-item-play-btn:focus {
+.track-item-play-btn:focus-visible {
   outline: 2px solid rgba(49, 196, 159, 0.4);
   outline-offset: 2px;
 }
