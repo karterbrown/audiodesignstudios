@@ -85,6 +85,19 @@ button:focus {
   left: 0;
 }
 
+/* Common matrix terminal masks */
+.matrix-terminal {
+  pointer-events: none;
+  -webkit-mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 15%, black 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 15%, black 100%);
+  mask-composite: intersect;
+}
+
 .matrix-link {
   display: block;
   text-decoration: none;
@@ -96,6 +109,37 @@ button:focus {
 
 .matrix-link:hover {
   opacity: 0.85;
+}
+
+/* Responsive matrix adjustments */
+@media (max-width: 800px) {
+  .matrix-section,
+  .matrix-section .matrix-terminal {
+    min-height: 50vh;
+  }
+}
+
+/* =============================================================================
+   3. COMMON IMAGE OPTIMIZATION
+   ============================================================================= */
+
+picture {
+  display: contents;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.lazy-img {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.lazy-img.loaded {
+  opacity: 1;
 }
 
 /* Before/After Toggle & Player Controls */
