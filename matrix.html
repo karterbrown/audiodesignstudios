@@ -16,18 +16,41 @@
   <title>Matrix - Audio Design Studios</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="matrix.css?v=1768672734" />
+  <link rel="stylesheet" href="matrix.css?v=1768674591" />
 </head>
 
 <body>
-  <!-- Full-screen clickable link -->
-  <a href="index.html" class="fullscreen-link"></a>
+  <!-- Full-screen clickable area -->
+  <div class="fullscreen-link" onclick="window.location.href='index.html'"></div>
   
   <!-- Full-screen Matrix Animation -->
   <div class="matrix-fullscreen" id="matrixFullscreen"></div>
 
   <!-- Matrix Animation Script -->
   <script>
+    // Keep screen awake while viewing matrix
+    let wakeLock = null;
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+          wakeLock.addEventListener('release', () => {
+            console.log('Wake Lock released');
+          });
+        }
+      } catch (err) {
+        console.log('Wake Lock not supported or denied');
+      }
+    }
+    requestWakeLock();
+    
+    // Re-request wake lock when page becomes visible again
+    document.addEventListener('visibilitychange', async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        await requestWakeLock();
+      }
+    });
+    
     const terminal = document.getElementById('matrixFullscreen');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
@@ -221,6 +244,18 @@
       resizeTimeout = setTimeout(resize, 150);
     });
     requestAnimationFrame(draw);
+    
+    // Auto-hide cursor after 2 seconds of inactivity
+    let cursorTimeout;
+    document.body.style.cursor = 'default';
+    
+    document.addEventListener('mousemove', () => {
+      document.body.style.cursor = 'default';
+      clearTimeout(cursorTimeout);
+      cursorTimeout = setTimeout(() => {
+        document.body.style.cursor = 'none';
+      }, 2000);
+    });
   </script>
 </body>
 </html>
