@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1768674591" />
+  <link rel="stylesheet" href="index.css?v=1768675755" />
 </head>
 
 <body>
@@ -24,6 +24,7 @@
        SITE HEADER - Navigation
        ======================================================================== -->
   <header class="site-header">
+    <div class="header-matrix-bg" id="headerMatrix"></div>
     <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
       <a href="index.html">Home</a>
@@ -32,6 +33,101 @@
       <a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220">Music</a>
     </nav>
   </header>
+
+  <!-- Header Matrix Animation Script -->
+  <script>
+    (function() {
+      const container = document.getElementById('headerMatrix');
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { alpha: true });
+      container.appendChild(canvas);
+      
+      const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
+      const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+      
+      let columns, rows, drops, charGrid, brightness, speeds, charAge, cycleSpeeds;
+      
+      function resize() {
+        const rect = container.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        
+        const columnWidth = 20;
+        columns = Math.ceil(canvas.width / columnWidth);
+        rows = Math.ceil(canvas.height / columnWidth) + 1;
+        
+        drops = Array(columns).fill(0).map(() => Math.random() * -10);
+        speeds = Array(columns).fill(0).map(() => 0.08 + Math.random() * 0.1);
+        charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => musicalNotes[Math.floor(Math.random() * musicalNotes.length)]));
+        brightness = Array(columns).fill(null).map(() => Array(rows).fill(0));
+        charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
+        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.08 + Math.random() * 0.12));
+      }
+      
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const columnWidth = canvas.width / columns;
+        const fontSize = Math.floor(columnWidth * 0.85);
+        
+        ctx.font = `900 ${fontSize}px Courier New`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        for (let i = 0; i < columns; i++) {
+          const currentDrop = Math.floor(drops[i]);
+          const x = i * columnWidth + columnWidth / 2;
+          
+          for (let j = 0; j < rows; j++) {
+            const distance = currentDrop - j;
+            
+            if (distance === 0) {
+              brightness[i][j] = 1.5;
+            } else if (distance > 0 && distance < 15) {
+              const targetBrightness = 1 - (distance / 15);
+              brightness[i][j] = Math.max(brightness[i][j], targetBrightness);
+            }
+            
+            brightness[i][j] *= 0.93;
+            
+            // Cycle characters that are visible
+            if (brightness[i][j] > 0.01) {
+              charAge[i][j] += cycleSpeeds[i][j];
+              if (charAge[i][j] >= 1.0) {
+                charGrid[i][j] = musicalNotes[Math.floor(Math.random() * musicalNotes.length)];
+                charAge[i][j] = 0;
+              }
+            }
+            
+            if (brightness[i][j] > 0.01) {
+              const green = Math.floor(100 + Math.min(brightness[i][j], 1) * 156);
+              const alpha = Math.min(1, brightness[i][j] * 0.8);
+              
+              ctx.shadowBlur = 10 * Math.min(brightness[i][j], 1);
+              ctx.shadowColor = `rgba(0, ${green}, 0, ${Math.min(brightness[i][j], 1) * 0.6})`;
+              
+              ctx.fillStyle = `rgba(0, ${green}, 0, ${alpha})`;
+              ctx.fillText(chars[charGrid[i][j]], x, j * columnWidth + columnWidth / 2);
+              
+              ctx.shadowBlur = 0;
+            }
+          }
+          
+          drops[i] += speeds[i];
+          if (drops[i] * columnWidth > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+        }
+        
+        requestAnimationFrame(draw);
+      }
+      
+      resize();
+      window.addEventListener('resize', resize);
+      draw();
+    })();
+  </script>
 
   <!-- ========================================================================
        MAIN CONTENT
@@ -170,7 +266,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768674591"></script>
+  <script src="content.js?v=1768675755"></script>
 
   <!-- ========================================================================
        Before & After Playlist Player

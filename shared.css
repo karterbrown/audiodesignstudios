@@ -481,12 +481,31 @@ blockquote footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 4vw;
-  background: rgba(25, 172, 91, 0.25);
+  padding: 3rem 4vw;
+  background: rgba(15, 15, 15, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(6px);
   z-index: 10;
   min-height: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-matrix-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.header-matrix-bg canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .logo {
@@ -497,12 +516,16 @@ blockquote footer {
   color: #cbcb83;
   line-height: 1;
   text-decoration: none;
+  position: relative;
+  z-index: 1;
 }
 
 .nav {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .nav a {
@@ -565,7 +588,7 @@ blockquote footer {
   opacity: 0.85;
   margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
-  background: rgba(25, 172, 91, 0.25);
+  background: rgba(15, 15, 15, 0.95);
   backdrop-filter: blur(6px);
   font-weight: 400;
   letter-spacing: 0.01em;
