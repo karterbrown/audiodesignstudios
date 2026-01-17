@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1768671850" />
+  <link rel="stylesheet" href="index.css?v=1768672734" />
 </head>
 
 <body>
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768671850"></script>
+  <script src="content.js?v=1768672734"></script>
 
   <!-- ========================================================================
        Before & After Playlist Player
@@ -563,7 +563,7 @@
     let animationId;
     let lastFrameTime = 0;
     const frameInterval = 30;
-    const numColumns = window.innerWidth < 600 ? 30 : 50;
+    const numColumns = window.innerWidth < 600 ? 30 : window.innerWidth < 1200 ? 60 : 80; // More columns for larger screens
     const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000]; // Binary, Japanese, Math, Musical(8s+2s), Greek, Currency
     let phaseStartTime = Date.now();
     
@@ -612,7 +612,7 @@
       const columnWidth = canvas.width / numColumns;
       columns = numColumns;
       const newRows = Math.ceil(canvas.height / columnWidth);
-      if (!drops || drops.length !== columns || rows !== newRows) {
+      if (!drops || !charGrid || drops.length !== columns || rows !== newRows) {
         rows = newRows;
         drops = Array(columns).fill(0).map(() => Math.random() * -20);
         speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
@@ -631,6 +631,11 @@
         return;
       }
       lastFrameTime = timestamp;
+      
+      if (!charGrid || !brightness || !columns || !rows) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
       
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);

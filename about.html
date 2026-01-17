@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="about.css?v=1768671850" />
+  <link rel="stylesheet" href="about.css?v=1768672734" />
 </head>
 
 <body>
@@ -86,7 +86,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768671850"></script>
+  <script src="content.js?v=1768672734"></script>
 
   <!-- ========================================================================
        Blue Matrix Terminal Effect (Musical Notes)
@@ -109,7 +109,7 @@
     let animationIdBlue;
     let lastFrameTimeBlue = 0;
     const frameIntervalBlue = 30;
-    const numColumnsBlue = window.innerWidth < 600 ? 30 : 50;
+    const numColumnsBlue = window.innerWidth < 600 ? 30 : window.innerWidth < 1200 ? 60 : 80;
     const phaseDurationsBlue = [7000, 7000, 7000, 10000, 7000, 7000];
     let phaseStartTimeBlue = Date.now();
     
@@ -158,7 +158,7 @@
       const columnWidth = canvasBlue.width / numColumnsBlue;
       columnsBlue = numColumnsBlue;
       const newRows = Math.ceil(canvasBlue.height / columnWidth);
-      if (!dropsBlue || dropsBlue.length !== columnsBlue || rowsBlue !== newRows) {
+      if (!dropsBlue || !charGridBlue || dropsBlue.length !== columnsBlue || rowsBlue !== newRows) {
         rowsBlue = newRows;
         dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -20);
         speedsBlue = Array(columnsBlue).fill(0).map(() => 0.2 + Math.random() * 0.4);

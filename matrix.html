@@ -16,7 +16,7 @@
   <title>Matrix - Audio Design Studios</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="matrix.css?v=1768671850" />
+  <link rel="stylesheet" href="matrix.css?v=1768672734" />
 </head>
 
 <body>
@@ -97,21 +97,27 @@
       canvas.style.top = '0';
       canvas.style.left = '0';
       
-      // Calculate columns to fill screen width - with reasonable limits
-      // Adapt column width based on screen size for better mobile scaling
-      const desiredColumnWidth = window.innerWidth < 600 ? 12 : 18; // Smaller column width on phones for denser matrix
-      columns = Math.floor(canvas.width / desiredColumnWidth);
+      // Calculate columns to fill screen width - adapt to screen size
+      let desiredColumnWidth;
+      if (window.innerWidth < 600) {
+        desiredColumnWidth = 12; // Dense matrix on phones
+      } else if (window.innerWidth < 1200) {
+        desiredColumnWidth = 18; // Medium density on tablets
+      } else {
+        desiredColumnWidth = 20; // Slightly larger on big screens for better visibility
+      }
+      
+      columns = Math.ceil(canvas.width / desiredColumnWidth);
       if (columns > 150) columns = 150; // Reasonable performance cap
-      const columnWidth = canvas.width / columns; // Use exact width to fill screen
-      rows = Math.ceil(canvas.height / columnWidth);
-      if (!drops || drops.length !== columns) {
+      const columnWidth = canvas.width / columns;
+      rows = Math.ceil(canvas.height / columnWidth) + 1;
+      
+      if (!drops || !charGrid || drops.length !== columns) {
         drops = Array(columns).fill(0).map(() => Math.random() * -20);
         speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
-        // Full grid of characters - always present, always cycling
         charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
         charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
         cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.1 + Math.random() * 0.15));
-        // Brightness grid - 0 to 1, creates the falling effect
         brightness = Array(columns).fill(null).map(() => Array(rows).fill(0));
       }
       ctx.fillStyle = '#000000';
@@ -125,11 +131,16 @@
       }
       lastFrameTime = timestamp;
       
+      if (!charGrid || !brightness || !columns || !rows) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+      
       // Solid black background
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      const columnWidth = Math.floor(canvas.width / columns);
+      const columnWidth = canvas.width / columns;
       let fontSize = Math.floor(columnWidth * 0.85);
       
       ctx.font = `900 ${fontSize}px Courier New`;

@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1768671850" />
+  <link rel="stylesheet" href="portfolio.css?v=1768672734" />
 </head>
 
 <body>
@@ -141,7 +141,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768671850"></script>
+  <script src="content.js?v=1768672734"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -537,7 +537,7 @@
     let animationIdRed;
     let lastFrameTimeRed = 0;
     const frameIntervalRed = 30;
-    const numColumnsRed = window.innerWidth < 600 ? 30 : 50;
+    const numColumnsRed = window.innerWidth < 600 ? 30 : window.innerWidth < 1200 ? 60 : 80;
     const phaseDurationsRed = [7000, 7000, 7000, 10000, 7000, 7000];
     let phaseStartTimeRed = Date.now();
     
@@ -586,7 +586,7 @@
       const columnWidth = canvasRed.width / numColumnsRed;
       columnsRed = numColumnsRed;
       const newRows = Math.ceil(canvasRed.height / columnWidth);
-      if (!dropsRed || dropsRed.length !== columnsRed || rowsRed !== newRows) {
+      if (!dropsRed || !charGridRed || dropsRed.length !== columnsRed || rowsRed !== newRows) {
         rowsRed = newRows;
         dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -20);
         speedsRed = Array(columnsRed).fill(0).map(() => 0.2 + Math.random() * 0.4);
