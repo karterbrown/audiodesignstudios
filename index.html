@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1768594838" />
+  <link rel="stylesheet" href="index.css?v=1768671850" />
 </head>
 
 <body>
@@ -170,7 +170,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768594838"></script>
+  <script src="content.js?v=1768671850"></script>
 
   <!-- ========================================================================
        Before & After Playlist Player
@@ -551,71 +551,55 @@
     const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
     terminal.appendChild(canvas);
     
-    const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜';
+    const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
     const binaryChars = [0, 1];
-    const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    const japaneseChars = [22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65];
-    const mathChars = [66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84];
+    const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    const japaneseChars = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
+    const mathChars = [64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82];
+    const greekChars = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
+    const currencyChars = [134,135,136,137,138,139,140,141,142,143,144,145];
     
     let columns, rows, drops, charGrid, charAge, brightness, speeds, cycleSpeeds;
     let animationId;
     let lastFrameTime = 0;
     const frameInterval = 30;
-    const numColumns = 50;
-    const phaseDuration = 15000;
+    const numColumns = window.innerWidth < 600 ? 30 : 50;
+    const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000]; // Binary, Japanese, Math, Musical(8s+2s), Greek, Currency
     let phaseStartTime = Date.now();
     
     function getCurrentPhase() {
       const elapsed = Date.now() - phaseStartTime;
-      const totalCycle = phaseDuration * 5;
+      const totalCycle = phaseDurations.reduce((a, b) => a + b, 0);
       const cyclePosition = elapsed % totalCycle;
-      const phase = Math.floor(cyclePosition / phaseDuration);
-      const phaseProgress = (cyclePosition % phaseDuration) / phaseDuration;
-      return { phase, progress: phaseProgress };
+      
+      let accumulatedTime = 0;
+      let phase = 0;
+      for (let i = 0; i < phaseDurations.length; i++) {
+        if (cyclePosition < accumulatedTime + phaseDurations[i]) {
+          phase = i;
+          break;
+        }
+        accumulatedTime += phaseDurations[i];
+      }
+      
+      const phaseElapsed = cyclePosition - accumulatedTime;
+      return { phase, phaseElapsed };
     }
     
     function randomChar(isLeading = false) {
-      const { phase, progress } = getCurrentPhase();
-      let charSet = binaryChars; // Default to binary
+      const { phase, phaseElapsed } = getCurrentPhase();
+      let charSet = binaryChars;
       
-      if (phase === 0) {
-        if (Math.random() < progress) {
-          charSet = japaneseChars;
-        } else {
-          charSet = binaryChars;
-        }
-      } else if (phase === 1) {
-        if (Math.random() < progress) {
-          charSet = mathChars;
-        } else {
-          charSet = japaneseChars;
-        }
-      } else if (phase === 2) {
-        if (Math.random() < progress) {
-          charSet = musicalNotes;
-        } else {
-          charSet = mathChars;
-        }
-      } else if (phase === 3) {
-        if (Math.random() < progress) {
-          const rand = Math.random();
-          if (rand < 0.3) charSet = binaryChars;
-          else if (rand < 0.5) charSet = musicalNotes;
-          else if (rand < 0.7) charSet = japaneseChars;
-          else charSet = mathChars;
-        } else {
-          charSet = musicalNotes;
-        }
+      const phaseCharSets = [binaryChars, japaneseChars, mathChars, musicalNotes, greekChars, currencyChars];
+      const pureDuration = phase === 3 ? 8000 : 5000;
+      const transitionDuration = 2000;
+      
+      if (phaseElapsed < pureDuration) {
+        charSet = phaseCharSets[phase];
       } else {
-        if (Math.random() < progress) {
-          charSet = binaryChars;
-        } else {
-          const rand = Math.random();
-          if (rand < 0.3) charSet = binaryChars;
-          else if (rand < 0.5) charSet = musicalNotes;
-          else if (rand < 0.7) charSet = japaneseChars;
-          else charSet = mathChars;
-        }
+        const transitionProgress = (phaseElapsed - pureDuration) / transitionDuration;
+        const nextPhase = (phase + 1) % 6;
+        charSet = Math.random() < transitionProgress ? phaseCharSets[nextPhase] : phaseCharSets[phase];
       }
       
       const index = charSet[Math.floor(Math.random() * charSet.length)];
@@ -634,7 +618,7 @@
         speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
         charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
         charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
-        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.08 + Math.random() * 0.15));
+        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.15 + Math.random() * 0.2));
         brightness = Array(columns).fill(null).map(() => Array(rows).fill(0));
       }
       ctx.fillStyle = '#000000';
@@ -652,9 +636,9 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       const columnWidth = canvas.width / numColumns;
-      const fontSize = Math.floor(columnWidth * 0.85);
+      let fontSize = Math.floor(columnWidth * 0.85);
       
-      ctx.font = `bold ${fontSize}px Courier New`;
+      ctx.font = `900 ${fontSize}px Courier New`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
@@ -690,8 +674,20 @@
             ctx.shadowBlur = 15 * glowIntensity;
             ctx.shadowColor = `rgba(0, ${green}, 0, ${glowIntensity * 0.8})`;
             
+            // Make musical notes larger
+            const charIndex = charGrid[i][j];
+            if (charIndex >= 2 && charIndex <= 19) {
+              const largeFontSize = Math.floor(columnWidth * 1.1);
+              ctx.font = `900 ${largeFontSize}px Courier New`;
+            }
+            
             ctx.fillStyle = `rgba(0, ${green}, 0, ${alpha})`;
             ctx.fillText(chars[charGrid[i][j]], x, j * columnWidth + columnWidth / 2);
+            
+            // Reset font size if changed
+            if (charIndex >= 2 && charIndex <= 19) {
+              ctx.font = `900 ${fontSize}px Courier New`;
+            }
             
             ctx.shadowBlur = 0;
           }
