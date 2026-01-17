@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1768675755" />
+  <link rel="stylesheet" href="portfolio.css?v=1768677474" />
 </head>
 
 <body>
@@ -27,12 +27,36 @@
     <div class="header-matrix-bg" id="headerMatrix"></div>
     <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+        <span class="theme-icon">Light</span>
+      </button>
       <a href="index.html">Home</a>
       <a href="portfolio.html">Portfolio</a>
       <a href="about.html">About</a>
       <a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220">Music</a>
     </nav>
   </header>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    (function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const savedTheme = localStorage.getItem('theme');
+      
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        themeIcon.textContent = 'Dark';
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        themeIcon.textContent = isLight ? 'Dark' : 'Light';
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      });
+    })();
+  </script>
 
   <!-- Header Matrix Animation Script -->
   <script>
@@ -237,7 +261,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768675755"></script>
+  <script src="content.js?v=1768677474"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
