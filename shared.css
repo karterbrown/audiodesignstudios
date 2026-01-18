@@ -487,25 +487,6 @@ blockquote footer {
   backdrop-filter: blur(6px);
   z-index: 10;
   min-height: 80px;
-  position: relative;
-  overflow: hidden;
-}
-
-.header-matrix-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.header-matrix-bg canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
 }
 
 .logo {
@@ -530,14 +511,10 @@ blockquote footer {
 
 .theme-toggle {
   background: none;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: none;
   color: #e8e8e8;
   cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 0.5rem;
   border-radius: 6px;
   transition: all 0.3s ease;
   display: flex;
@@ -549,7 +526,13 @@ blockquote footer {
 
 .theme-toggle:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.theme-toggle .theme-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .nav a {
@@ -876,13 +859,12 @@ body.light-mode .nav a:focus {
 }
 
 body.light-mode .theme-toggle {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #e8e8e8;
+  color: #2a2a2a;
 }
 
 body.light-mode .theme-toggle:hover {
   background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
 }
 
 body.light-mode h1,
@@ -1045,11 +1027,6 @@ body.light-mode a:not(.nav a):not(.logo):not(.btn):hover {
 
 body.light-mode .footer-copy {
   color: #d0d0d0;
-}
-
-/* Hide or adjust matrix effects in light mode */
-body.light-mode .header-matrix-bg {
-  opacity: 0.5;
 }
 
 body.light-mode .matrix-terminal {

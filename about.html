@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="about.css?v=1768677474" />
+  <link rel="stylesheet" href="about.css?v=1768755647" />
 </head>
 
 <body>
@@ -25,11 +25,20 @@
        SITE HEADER - Navigation
        ======================================================================== -->
   <header class="site-header">
-    <div class="header-matrix-bg" id="headerMatrix"></div>
     <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
-        <span class="theme-icon">Light</span>
+        <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
       </button>
       <a href="index.html">Home</a>
       <a href="portfolio.html">Portfolio</a>
@@ -45,112 +54,31 @@
       const themeIcon = themeToggle.querySelector('.theme-icon');
       const savedTheme = localStorage.getItem('theme');
       
+      // Sun icon SVG for light mode
+      const sunIcon = `<circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+      
+      // Moon icon SVG for dark mode
+      const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+      
       if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
-        themeIcon.textContent = 'Dark';
+        themeIcon.innerHTML = moonIcon;
       }
       
       themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('light-mode');
         const isLight = document.body.classList.contains('light-mode');
-        themeIcon.textContent = isLight ? 'Dark' : 'Light';
+        themeIcon.innerHTML = isLight ? moonIcon : sunIcon;
         localStorage.setItem('theme', isLight ? 'light' : 'dark');
       });
-    })();
-  </script>
-
-  <!-- Header Matrix Animation Script -->
-  <script>
-    (function() {
-      const container = document.getElementById('headerMatrix');
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d', { alpha: true });
-      container.appendChild(canvas);
-      
-      const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
-      const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-      
-      let columns, rows, drops, charGrid, brightness, speeds, charAge, cycleSpeeds;
-      
-      function resize() {
-        const rect = container.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-        
-        const columnWidth = 20;
-        columns = Math.ceil(canvas.width / columnWidth);
-        rows = Math.ceil(canvas.height / columnWidth) + 1;
-        
-        drops = Array(columns).fill(0).map(() => Math.random() * -10);
-        speeds = Array(columns).fill(0).map(() => 0.08 + Math.random() * 0.1);
-        charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => musicalNotes[Math.floor(Math.random() * musicalNotes.length)]));
-        brightness = Array(columns).fill(null).map(() => Array(rows).fill(0));
-        charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
-        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.08 + Math.random() * 0.12));
-      }
-      
-      function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        const columnWidth = canvas.width / columns;
-        const fontSize = Math.floor(columnWidth * 0.85);
-        
-        ctx.font = `900 ${fontSize}px Courier New`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        
-        for (let i = 0; i < columns; i++) {
-          const currentDrop = Math.floor(drops[i]);
-          const x = i * columnWidth + columnWidth / 2;
-          
-          for (let j = 0; j < rows; j++) {
-            const distance = currentDrop - j;
-            
-            if (distance === 0) {
-              brightness[i][j] = 1.5;
-            } else if (distance > 0 && distance < 15) {
-              const targetBrightness = 1 - (distance / 15);
-              brightness[i][j] = Math.max(brightness[i][j], targetBrightness);
-            }
-            
-            brightness[i][j] *= 0.93;
-            
-            // Cycle characters that are visible
-            if (brightness[i][j] > 0.01) {
-              charAge[i][j] += cycleSpeeds[i][j];
-              if (charAge[i][j] >= 1.0) {
-                charGrid[i][j] = musicalNotes[Math.floor(Math.random() * musicalNotes.length)];
-                charAge[i][j] = 0;
-              }
-            }
-            
-            if (brightness[i][j] > 0.01) {
-              const green = Math.floor(100 + Math.min(brightness[i][j], 1) * 156);
-              const alpha = Math.min(1, brightness[i][j] * 0.8);
-              
-              ctx.shadowBlur = 10 * Math.min(brightness[i][j], 1);
-              ctx.shadowColor = `rgba(0, ${green}, 0, ${Math.min(brightness[i][j], 1) * 0.6})`;
-              
-              ctx.fillStyle = `rgba(0, ${green}, 0, ${alpha})`;
-              ctx.fillText(chars[charGrid[i][j]], x, j * columnWidth + columnWidth / 2);
-              
-              ctx.shadowBlur = 0;
-            }
-          }
-          
-          drops[i] += speeds[i];
-          if (drops[i] * columnWidth > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-          }
-        }
-        
-        requestAnimationFrame(draw);
-      }
-      
-      resize();
-      window.addEventListener('resize', resize);
-      draw();
     })();
   </script>
 
@@ -206,7 +134,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1768677474"></script>
+  <script src="content.js?v=1768755647"></script>
 
   <!-- ========================================================================
        Blue Matrix Terminal Effect (Musical Notes)
