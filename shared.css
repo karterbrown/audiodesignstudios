@@ -510,23 +510,55 @@ blockquote footer {
 }
 
 .theme-toggle {
-  background: none;
-  border: none;
-  color: #e8e8e8;
+  background: none !important;
+  border: none !important;
+  color: #e8e8e8 !important;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-  display: flex;
+  padding: 0 !important;
+  margin: 0;
+  transition: transform 0.3s ease, color 0.3s ease;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   margin-right: 0.5rem;
   font-family: inherit;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
   transform: scale(1.1);
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: #e8e8e8 !important;
+}
+
+.theme-toggle:focus {
+  outline: none !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  color: #e8e8e8 !important;
+}
+
+.theme-toggle:focus-visible {
+  outline: none !important;
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  color: #e8e8e8 !important;
+}
+
+.theme-toggle:active {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: #e8e8e8 !important;
 }
 
 .theme-toggle .theme-icon {
@@ -550,6 +582,19 @@ blockquote footer {
 .nav a:focus {
   color: #7ec98f;
   border-bottom-color: #7ec98f;
+}
+
+/* Special header link for A+B (hidden tracks) */
+.nav a.special-link {
+  color: #ff6b6b;
+  font-weight: 600;
+  border-bottom-color: transparent;
+}
+
+.nav a.special-link:hover,
+.nav a.special-link:focus {
+  color: #ff8787;
+  border-bottom-color: #ff6b6b;
 }
 
 
@@ -612,6 +657,10 @@ blockquote footer {
   color: #ffffff;
 }
 
+.site-footer p {
+  margin: 0.4rem 0;
+}
+
 .site-footer a {
   color: #cfcfd8;
   text-decoration: none;
@@ -620,6 +669,18 @@ blockquote footer {
 
 .site-footer a:hover {
   opacity: 1;
+}
+
+/* Special footer link for Off World Depot */
+.footer-special-link {
+  color: #7ec98f !important;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.footer-special-link:hover {
+  color: #9fe4b0 !important;
+  opacity: 1 !important;
 }
 
 .footer-copy {
@@ -719,6 +780,9 @@ button:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   transition: all 0.3s ease;
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .card:hover {
@@ -858,13 +922,43 @@ body.light-mode .nav a:focus {
   border-bottom-color: #7ec98f;
 }
 
+body.light-mode .nav a.special-link {
+  color: #ff6b6b;
+}
+
+body.light-mode .nav a.special-link:hover,
+body.light-mode .nav a.special-link:focus {
+  color: #ff8787;
+  border-bottom-color: #ff6b6b;
+}
+
+body.light-mode .footer-special-link {
+  color: #7ec98f !important;
+}
+
+body.light-mode .footer-special-link:hover {
+  color: #6ab87d !important;
+}
+
 body.light-mode .theme-toggle {
   color: #2a2a2a;
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 body.light-mode .theme-toggle:hover {
-  background: rgba(0, 0, 0, 0.05);
   transform: scale(1.1);
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+body.light-mode .theme-toggle:focus,
+body.light-mode .theme-toggle:active {
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 body.light-mode h1,

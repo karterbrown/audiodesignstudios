@@ -7,7 +7,7 @@
 
 /* About Page Background */
 .env-about {
-  background-image: url('../Photos/about800.webp');
+  background-image: url('Photos/about800.webp');
   min-height: 60vh;
   background-size: cover;
   background-position: center;
@@ -18,13 +18,13 @@
 
 @media (min-width: 720px) {
   .env-about {
-    background-image: url('../Photos/about1400.webp');
+    background-image: url('Photos/about1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-about {
-    background-image: url('../Photos/about2000.webp');
+    background-image: url('Photos/about2000.webp');
   }
 }
 
