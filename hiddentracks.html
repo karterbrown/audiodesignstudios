@@ -16,8 +16,8 @@
   <title>Hidden Tracks - Audio Design Studios</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1769629191" />
-  <link rel="stylesheet" href="matrix.css?v=1769629191" />
+  <link rel="stylesheet" href="shared.css?v=1769629986" />
+  <link rel="stylesheet" href="matrix.css?v=1769629986" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1453,6 +1453,7 @@
       let knobStartAngle = 0;
       let knobMoved = false;
 
+      // Mouse events
       baVolumeKnob.addEventListener('mousedown', (e) => {
         isDraggingKnob = true;
         knobMoved = false;
@@ -1481,6 +1482,43 @@
       document.addEventListener('mouseup', () => {
         if (isDraggingKnob && !knobMoved) {
           // Single click - reset to 0 dB
+          volumeDb = 0;
+          knobAngle = 360;
+          updateVolumeDisplay();
+        }
+        isDraggingKnob = false;
+      });
+
+      // Touch events for mobile
+      baVolumeKnob.addEventListener('touchstart', (e) => {
+        isDraggingKnob = true;
+        knobMoved = false;
+        knobStartY = e.touches[0].clientY;
+        knobStartAngle = knobAngle;
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!isDraggingKnob) return;
+        
+        const deltaY = knobStartY - e.touches[0].clientY;
+        if (Math.abs(deltaY) > 2) {
+          knobMoved = true;
+        }
+        
+        const newAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+        knobAngle = newAngle;
+        
+        // Map angle (180° to 420°) to dB (-40 to +12)
+        volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+        
+        updateVolumeDisplay();
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => {
+        if (isDraggingKnob && !knobMoved) {
+          // Single tap - reset to 0 dB
           volumeDb = 0;
           knobAngle = 360;
           updateVolumeDisplay();
