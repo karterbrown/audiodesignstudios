@@ -699,9 +699,9 @@ blockquote footer {
 .btn,
 button {
   padding: 0.75rem 1.75rem;
-  background: linear-gradient(135deg, rgba(49, 196, 159, 0.25), rgba(45, 212, 160, 0.15));
-  color: #f4f4ff;
-  border: 1.5px solid rgba(49, 196, 159, 0.4);
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.15), rgba(0, 255, 0, 0.08));
+  color: #0f0;
+  border: 1.5px solid rgba(0, 255, 0, 0.3);
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
@@ -716,21 +716,21 @@ button {
 
 .btn:hover,
 button:hover {
-  background: linear-gradient(135deg, rgba(49, 196, 159, 0.35), rgba(45, 212, 160, 0.25));
-  border-color: rgba(49, 196, 159, 0.6);
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.25), rgba(0, 255, 0, 0.15));
+  border-color: rgba(0, 255, 0, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(49, 196, 159, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
 }
 
 .btn:active,
 button:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(0) scale(0.95);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .btn:focus-visible,
 button:focus-visible {
-  outline: 3px solid rgba(49, 196, 159, 0.4);
+  outline: 3px solid rgba(0, 255, 0, 0.4);
   outline-offset: 2px;
 }
 
