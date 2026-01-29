@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1769720852" />
+  <link rel="stylesheet" href="portfolio.css?v=1769722675" />
 </head>
 
 <body>
@@ -112,8 +112,94 @@
             <h3>Daughter of the Plains</h3>
           </div>
           
-          <!-- Progress Bar -->
-          <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
+          <!-- VU Meter and Volume Control -->
+          <div class="portfolio-meter-section">
+            <div class="portfolio-meter-container">
+              <div class="portfolio-meter-display">
+                <div class="portfolio-meter-scale">
+                  <!-- Main VU line -->
+                  <div class="portfolio-meter-vu-line"></div>
+                  
+                  <!-- Top VU scale -->
+                  <div class="portfolio-meter-tick" style="left: 0%;"></div>
+                  <span class="portfolio-meter-label" style="left: 0%;">20</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 7.7%;"></div>
+                  <span class="portfolio-meter-label" style="left: 7.7%;">10</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 15.4%;"></div>
+                  <span class="portfolio-meter-label" style="left: 15.4%;">7</span>
+                  
+                  <div class="portfolio-meter-tick small" style="left: 23%;"></div>
+                  
+                  <div class="portfolio-meter-tick" style="left: 30.8%;"></div>
+                  <span class="portfolio-meter-label" style="left: 30.8%;">5</span>
+                  
+                  <div class="portfolio-meter-tick small" style="left: 38.5%;"></div>
+                  
+                  <div class="portfolio-meter-tick" style="left: 46.2%;"></div>
+                  <span class="portfolio-meter-label" style="left: 46.2%;">3</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 53.8%;"></div>
+                  <span class="portfolio-meter-label" style="left: 53.8%;">2</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 61.5%;"></div>
+                  <span class="portfolio-meter-label" style="left: 61.5%;">1</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 76.9%;"></div>
+                  <span class="portfolio-meter-label" style="left: 76.9%;">0</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 84.6%;"></div>
+                  <span class="portfolio-meter-label red" style="left: 84.6%;">1</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 92.3%;"></div>
+                  <span class="portfolio-meter-label red" style="left: 92.3%;">2</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 100%;"></div>
+                  <span class="portfolio-meter-label red" style="left: 100%;">3</span>
+                  
+                  <!-- Bottom percentage line -->
+                  <div class="portfolio-meter-percent-line"></div>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 0%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 7.7%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 15.4%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 15.4%;">20</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 23%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 30.8%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 30.8%;">40</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 38.5%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 46.2%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 46.2%;">60</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 53.8%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 61.5%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 61.5%;">80</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 76.9%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 76.9%;">100</span>
+                </div>
+                <div class="portfolio-meter-needle" id="dotpMeterNeedle"></div>
+                <div class="portfolio-meter-branding">AUDIO DESIGN STUDIOS</div>
+              </div>
+            </div>
+            <div class="portfolio-controls-row">
+              <div class="portfolio-volume-control">
+                <div class="portfolio-volume-knob-container">
+                  <div class="portfolio-volume-tick"></div>
+                  <div class="portfolio-volume-tick"></div>
+                  <div class="portfolio-volume-tick"></div>
+                  <div class="portfolio-volume-db-label">-40</div>
+                  <div class="portfolio-volume-db-label">0</div>
+                  <div class="portfolio-volume-db-label">+12</div>
+                  <div class="portfolio-volume-knob" id="dotpVolumeKnob" aria-label="Volume Control"></div>
+                  <div class="portfolio-volume-arc"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <!-- Now Playing Display -->
           <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
@@ -125,8 +211,11 @@
             <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
           </div>
           
+          <!-- Progress Bar -->
+          <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
+          
           <!-- Track List -->
-          <div class="playlist-content" id="dotpPlaylist">
+          <div class="playlist-scroll" id="dotpPlaylist">
             <!-- Tracks injected via JavaScript -->
           </div>
         </div>
@@ -136,13 +225,103 @@
           <!-- Album Art & Title -->
           <div class="playlist-card-header">
             <div class="playlist-album-art">
-              <img src="Photos/headshot.webp" alt="All Works">
+              <picture>
+                <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+                <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+                <img src="Photos/headshot2_800.webp" alt="All Works">
+              </picture>
             </div>
-            <h3>Sample Music</h3>
+            <h3>All Works</h3>
           </div>
           
-          <!-- Progress Bar -->
-          <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
+          <!-- VU Meter and Volume Control -->
+          <div class="portfolio-meter-section">
+            <div class="portfolio-meter-container">
+              <div class="portfolio-meter-display">
+                <div class="portfolio-meter-scale">
+                  <!-- Main VU line -->
+                  <div class="portfolio-meter-vu-line"></div>
+                  
+                  <!-- Top VU scale -->
+                  <div class="portfolio-meter-tick" style="left: 0%;"></div>
+                  <span class="portfolio-meter-label" style="left: 0%;">20</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 7.7%;"></div>
+                  <span class="portfolio-meter-label" style="left: 7.7%;">10</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 15.4%;"></div>
+                  <span class="portfolio-meter-label" style="left: 15.4%;">7</span>
+                  
+                  <div class="portfolio-meter-tick small" style="left: 23%;"></div>
+                  
+                  <div class="portfolio-meter-tick" style="left: 30.8%;"></div>
+                  <span class="portfolio-meter-label" style="left: 30.8%;">5</span>
+                  
+                  <div class="portfolio-meter-tick small" style="left: 38.5%;"></div>
+                  
+                  <div class="portfolio-meter-tick" style="left: 46.2%;"></div>
+                  <span class="portfolio-meter-label" style="left: 46.2%;">3</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 53.8%;"></div>
+                  <span class="portfolio-meter-label" style="left: 53.8%;">2</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 61.5%;"></div>
+                  <span class="portfolio-meter-label" style="left: 61.5%;">1</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 76.9%;"></div>
+                  <span class="portfolio-meter-label" style="left: 76.9%;">0</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 84.6%;"></div>
+                  <span class="portfolio-meter-label red" style="left: 84.6%;">1</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 92.3%;"></div>
+                  <span class="portfolio-meter-label red" style="left: 92.3%;">2</span>
+                  
+                  <div class="portfolio-meter-tick" style="left: 100%;"></div>
+                  <span class="portfolio-meter-label red" style="left: 100%;">3</span>
+                  
+                  <!-- Bottom percentage line -->
+                  <div class="portfolio-meter-percent-line"></div>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 0%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 7.7%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 15.4%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 15.4%;">20</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 23%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 30.8%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 30.8%;">40</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 38.5%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 46.2%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 46.2%;">60</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 53.8%;"></div>
+                  <div class="portfolio-meter-percent-tick" style="left: 61.5%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 61.5%;">80</span>
+                  
+                  <div class="portfolio-meter-percent-tick" style="left: 76.9%;"></div>
+                  <span class="portfolio-meter-percent-label" style="left: 76.9%;">100</span>
+                </div>
+                <div class="portfolio-meter-needle" id="allWorksMeterNeedle"></div>
+                <div class="portfolio-meter-branding">AUDIO DESIGN STUDIOS</div>
+              </div>
+            </div>
+            <div class="portfolio-controls-row">
+              <div class="portfolio-volume-control">
+                <div class="portfolio-volume-knob-container">
+                  <div class="portfolio-volume-tick"></div>
+                  <div class="portfolio-volume-tick"></div>
+                  <div class="portfolio-volume-tick"></div>
+                  <div class="portfolio-volume-db-label">-40</div>
+                  <div class="portfolio-volume-db-label">0</div>
+                  <div class="portfolio-volume-db-label">+12</div>
+                  <div class="portfolio-volume-knob" id="allWorksVolumeKnob" aria-label="Volume Control"></div>
+                  <div class="portfolio-volume-arc"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <!-- Now Playing Display -->
           <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
@@ -153,6 +332,9 @@
             <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
             <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
           </div>
+          
+          <!-- Progress Bar -->
+          <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
           
           <!-- Track List (Scrollable) -->
           <div class="playlist-scroll" id="allWorksPlaylist">
@@ -190,7 +372,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769720852"></script>
+  <script src="content.js?v=1769722675"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -200,12 +382,188 @@
       let activeDrag = null; // Shared drag state for all players
 
       // ======================================================================
+      // WEB AUDIO API SETUP FOR VU METERS
+      // ======================================================================
+      
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create analysers and gain nodes for both players
+      const dotpAnalyser = audioContext.createAnalyser();
+      const allWorksAnalyser = audioContext.createAnalyser();
+      const dotpGain = audioContext.createGain();
+      const allWorksGain = audioContext.createGain();
+      
+      dotpAnalyser.fftSize = 256;
+      allWorksAnalyser.fftSize = 256;
+      dotpAnalyser.smoothingTimeConstant = 0.92;
+      allWorksAnalyser.smoothingTimeConstant = 0.92;
+      
+      dotpGain.gain.value = 1;
+      allWorksGain.gain.value = 1;
+      
+      const dotpDataArray = new Uint8Array(dotpAnalyser.frequencyBinCount);
+      const allWorksDataArray = new Uint8Array(allWorksAnalyser.frequencyBinCount);
+      
+      // VU Meter state
+      let dotpCurrentNeedleAngle = -50;
+      let allWorksCurrentNeedleAngle = -50;
+      let dotpVolumeDb = 0;
+      let allWorksVolumeDb = 0;
+      let dotpKnobAngle = 360;
+      let allWorksKnobAngle = 360;
+
+      // ======================================================================
       // MAIN PLAYLIST PLAYERS (Daughter of the Plains & All Works)
       // ======================================================================
       
       // Audio instances
       const mainAudio = new Audio();
       const allMainAudio = new Audio();
+      
+      // Set preload for better performance
+      mainAudio.preload = 'metadata';
+      allMainAudio.preload = 'metadata';
+      
+      // Connect audio to Web Audio API
+      let dotpSourceConnected = false;
+      let allWorksSourceConnected = false;
+
+      // VU Meter Elements
+      const dotpMeterNeedle = document.getElementById('dotpMeterNeedle');
+      const allWorksMeterNeedle = document.getElementById('allWorksMeterNeedle');
+      const dotpVolumeKnob = document.getElementById('dotpVolumeKnob');
+      const allWorksVolumeKnob = document.getElementById('allWorksVolumeKnob');
+      
+      // VU Meter Animation Loop
+      function updateVUMeters() {
+        requestAnimationFrame(updateVUMeters);
+        
+        // Update DOTP VU Meter
+        dotpAnalyser.getByteFrequencyData(dotpDataArray);
+        let dotpSum = 0;
+        for (let i = 0; i < dotpDataArray.length; i++) {
+          dotpSum += dotpDataArray[i] * dotpDataArray[i];
+        }
+        const dotpRms = Math.sqrt(dotpSum / dotpDataArray.length);
+        const dotpNormalized = Math.max(dotpRms / 255, 0.001);
+        let dotpDb = 20 * Math.log10(dotpNormalized) + 6 + dotpVolumeDb;
+        
+        const vuMin = -20;
+        const vuMax = 3;
+        const angleMin = -50;
+        const angleMax = 50;
+        const dotpClampedVU = Math.max(vuMin, Math.min(vuMax, dotpDb));
+        let dotpNormalizedVU = (dotpClampedVU - vuMin) / (vuMax - vuMin);
+        if (dotpClampedVU < -5) {
+          dotpNormalizedVU = Math.pow(dotpNormalizedVU, 1.5);
+        }
+        const dotpTargetAngle = angleMin + dotpNormalizedVU * (angleMax - angleMin);
+        dotpCurrentNeedleAngle += (dotpTargetAngle - dotpCurrentNeedleAngle) * 0.1;
+        dotpMeterNeedle.style.transform = `translateX(-50%) rotate(${dotpCurrentNeedleAngle}deg)`;
+        
+        // Update All Works VU Meter
+        allWorksAnalyser.getByteFrequencyData(allWorksDataArray);
+        let allWorksSum = 0;
+        for (let i = 0; i < allWorksDataArray.length; i++) {
+          allWorksSum += allWorksDataArray[i] * allWorksDataArray[i];
+        }
+        const allWorksRms = Math.sqrt(allWorksSum / allWorksDataArray.length);
+        const allWorksNormalized = Math.max(allWorksRms / 255, 0.001);
+        let allWorksDb = 20 * Math.log10(allWorksNormalized) + 6 + allWorksVolumeDb;
+        
+        const allWorksClampedVU = Math.max(vuMin, Math.min(vuMax, allWorksDb));
+        let allWorksNormalizedVU = (allWorksClampedVU - vuMin) / (vuMax - vuMin);
+        if (allWorksClampedVU < -5) {
+          allWorksNormalizedVU = Math.pow(allWorksNormalizedVU, 1.5);
+        }
+        const allWorksTargetAngle = angleMin + allWorksNormalizedVU * (angleMax - angleMin);
+        allWorksCurrentNeedleAngle += (allWorksTargetAngle - allWorksCurrentNeedleAngle) * 0.1;
+        allWorksMeterNeedle.style.transform = `translateX(-50%) rotate(${allWorksCurrentNeedleAngle}deg)`;
+      }
+      
+      updateVUMeters();
+      
+      // Volume Control Functions
+      function updateDotpVolumeDisplay() {
+        dotpVolumeKnob.style.transform = `rotate(${dotpKnobAngle - 360}deg)`;
+        const gain = Math.pow(10, dotpVolumeDb / 20);
+        dotpGain.gain.value = gain;
+      }
+      
+      function updateAllWorksVolumeDisplay() {
+        allWorksVolumeKnob.style.transform = `rotate(${allWorksKnobAngle - 360}deg)`;
+        const gain = Math.pow(10, allWorksVolumeDb / 20);
+        allWorksGain.gain.value = gain;
+      }
+      
+      // DOTP Volume Knob Events
+      let dotpDraggingKnob = false;
+      let dotpKnobStartY = 0;
+      let dotpKnobStartAngle = 0;
+      let dotpKnobMoved = false;
+      
+      dotpVolumeKnob.addEventListener('mousedown', (e) => {
+        dotpDraggingKnob = true;
+        dotpKnobMoved = false;
+        dotpKnobStartY = e.clientY;
+        dotpKnobStartAngle = dotpKnobAngle;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!dotpDraggingKnob) return;
+        const deltaY = dotpKnobStartY - e.clientY;
+        if (Math.abs(deltaY) > 2) dotpKnobMoved = true;
+        const newAngle = Math.max(180, Math.min(420, dotpKnobStartAngle + deltaY));
+        dotpKnobAngle = newAngle;
+        dotpVolumeDb = -40 + ((dotpKnobAngle - 180) / 240) * 52;
+        updateDotpVolumeDisplay();
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (dotpDraggingKnob && !dotpKnobMoved) {
+          dotpVolumeDb = 0;
+          dotpKnobAngle = 360;
+          updateDotpVolumeDisplay();
+        }
+        dotpDraggingKnob = false;
+      });
+      
+      // All Works Volume Knob Events
+      let allWorksDraggingKnob = false;
+      let allWorksKnobStartY = 0;
+      let allWorksKnobStartAngle = 0;
+      let allWorksKnobMoved = false;
+      
+      allWorksVolumeKnob.addEventListener('mousedown', (e) => {
+        allWorksDraggingKnob = true;
+        allWorksKnobMoved = false;
+        allWorksKnobStartY = e.clientY;
+        allWorksKnobStartAngle = allWorksKnobAngle;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!allWorksDraggingKnob) return;
+        const deltaY = allWorksKnobStartY - e.clientY;
+        if (Math.abs(deltaY) > 2) allWorksKnobMoved = true;
+        const newAngle = Math.max(180, Math.min(420, allWorksKnobStartAngle + deltaY));
+        allWorksKnobAngle = newAngle;
+        allWorksVolumeDb = -40 + ((allWorksKnobAngle - 180) / 240) * 52;
+        updateAllWorksVolumeDisplay();
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (allWorksDraggingKnob && !allWorksKnobMoved) {
+          allWorksVolumeDb = 0;
+          allWorksKnobAngle = 360;
+          updateAllWorksVolumeDisplay();
+        }
+        allWorksDraggingKnob = false;
+      });
+      
+      updateDotpVolumeDisplay();
+      updateAllWorksVolumeDisplay();
 
       // Control buttons
       const playPauseBtn = document.getElementById('playPauseBtn');
@@ -327,6 +685,26 @@
         audio.addEventListener('play', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.classList.add('playing');
           if (ctx.current?.btn) ctx.current.btn.classList.add('playing');
+          
+          // Resume AudioContext and connect source on first play
+          if (audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+          
+          // Connect Web Audio API source for VU meter
+          if (playerKey === 'dotp' && !dotpSourceConnected) {
+            const dotpSource = audioContext.createMediaElementSource(audio);
+            dotpSource.connect(dotpAnalyser);
+            dotpAnalyser.connect(dotpGain);
+            dotpGain.connect(audioContext.destination);
+            dotpSourceConnected = true;
+          } else if (playerKey === 'allWorks' && !allWorksSourceConnected) {
+            const allWorksSource = audioContext.createMediaElementSource(audio);
+            allWorksSource.connect(allWorksAnalyser);
+            allWorksAnalyser.connect(allWorksGain);
+            allWorksGain.connect(audioContext.destination);
+            allWorksSourceConnected = true;
+          }
         });
 
         audio.addEventListener('pause', () => {
