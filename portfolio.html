@@ -16,7 +16,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1769722872" />
+  <link rel="stylesheet" href="portfolio.css?v=1769724412" />
 </head>
 
 <body>
@@ -199,23 +199,23 @@
                 </div>
               </div>
             </div>
+            
+            <!-- Now Playing Display -->
+            <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
+            
+            <!-- Progress Bar -->
+            <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
+            
+            <!-- Transport Controls -->
+            <div class="playlist-player-controls">
+              <button id="prevBtn" class="control-btn" aria-label="Back to beginning"></button>
+              <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+              <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
+            </div>
           </div>
-          
-          <!-- Now Playing Display -->
-          <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
-          
-          <!-- Transport Controls -->
-          <div class="playlist-player-controls">
-            <button id="prevBtn" class="control-btn" aria-label="Back to beginning"></button>
-            <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
-            <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
-          </div>
-          
-          <!-- Progress Bar -->
-          <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
           
           <!-- Track List -->
-          <div class="playlist-scroll" id="dotpPlaylist">
+          <div class="track-list" id="dotpPlaylist">
             <!-- Tracks injected via JavaScript -->
           </div>
         </div>
@@ -321,23 +321,23 @@
                 </div>
               </div>
             </div>
+            
+            <!-- Now Playing Display -->
+            <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
+            
+            <!-- Progress Bar -->
+            <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
+            
+            <!-- Transport Controls -->
+            <div class="playlist-player-controls">
+              <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+              <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+              <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
+            </div>
           </div>
           
-          <!-- Now Playing Display -->
-          <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
-          
-          <!-- Transport Controls -->
-          <div class="playlist-player-controls">
-            <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
-            <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
-            <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
-          </div>
-          
-          <!-- Progress Bar -->
-          <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
-          
-          <!-- Track List (Scrollable) -->
-          <div class="playlist-scroll" id="allWorksPlaylist">
+          <!-- Track List -->
+          <div class="track-list" id="allWorksPlaylist">
             <!-- Tracks injected via JavaScript -->
           </div>
         </div>
@@ -372,7 +372,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769722872"></script>
+  <script src="content.js?v=1769724412"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -420,9 +420,9 @@
       const mainAudio = new Audio();
       const allMainAudio = new Audio();
       
-      // Set preload for better performance
-      mainAudio.preload = 'metadata';
-      allMainAudio.preload = 'metadata';
+      // Set preload='auto' for better performance - preloads entire audio file
+      mainAudio.preload = 'auto';
+      allMainAudio.preload = 'auto';
       
       // Connect audio to Web Audio API
       let dotpSourceConnected = false;
@@ -623,12 +623,17 @@
         ctx.scrubber = scrubber;
       });
 
+      // Debounce helper for preventing rapid track switching lag
+      let trackLoadDebounceTimer = null;
+      const TRACK_LOAD_DEBOUNCE_MS = 150;
+
       function loadAndPlayInPlayer(playerKey, track, btn, itemProgressEl, timeEl) {
         const ctx = players[playerKey];
         if (!ctx) return;
         const url = typeof track === 'string' ? track : track.url || track;
         if (!url) return;
 
+        // If same track, just toggle play/pause
         if (ctx.current && ctx.current.btn === btn) {
           if (ctx.audio.paused) {
             ctx.audio.play();
@@ -638,19 +643,23 @@
           return;
         }
 
-        if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
-        const itemScrubber = itemProgressEl?.parentElement?.querySelector('.track-item-scrubber');
-        ctx.current = { btn, itemProgressEl, itemScrubber, timeEl, track };
+        // Debounce rapid track switching to prevent lag
+        clearTimeout(trackLoadDebounceTimer);
+        trackLoadDebounceTimer = setTimeout(() => {
+          if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
+          const itemScrubber = itemProgressEl?.parentElement?.querySelector('.track-item-scrubber');
+          ctx.current = { btn, itemProgressEl, itemScrubber, timeEl, track };
 
-        // Update now playing info
-        if (ctx.nowPlayingEl) {
-          const trackTitle = track.title || 'Unknown Track';
-          ctx.nowPlayingEl.textContent = trackTitle;
-        }
+          // Update now playing info
+          if (ctx.nowPlayingEl) {
+            const trackTitle = track.title || 'Unknown Track';
+            ctx.nowPlayingEl.textContent = trackTitle;
+          }
 
-        ctx.audio.src = url;
-        ctx.audio.load();
-        ctx.audio.play().catch(e => console.warn('play failed', e));
+          ctx.audio.src = url;
+          ctx.audio.load();
+          ctx.audio.play().catch(e => console.warn('play failed', e));
+        }, TRACK_LOAD_DEBOUNCE_MS);
       }
 
       function attachAudioEvents(playerKey) {
