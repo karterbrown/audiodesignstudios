@@ -484,7 +484,6 @@ blockquote footer {
   padding: 3rem 4vw;
   background: rgba(25, 35, 28, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(6px);
   z-index: 10;
   min-height: 80px;
 }
@@ -641,7 +640,6 @@ blockquote footer {
   margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
   background: rgba(12, 18, 14, 0.95);
-  backdrop-filter: blur(6px);
   font-weight: 400;
   letter-spacing: 0.01em;
   min-height: 80px;

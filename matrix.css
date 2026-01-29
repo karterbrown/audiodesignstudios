@@ -107,7 +107,6 @@ main {
   font-family: 'Courier New', monospace;
   letter-spacing: 50px;
   animation: matrixFall 10s linear infinite;
-  will-change: transform, opacity;
 }
 
 @keyframes matrixFall {
