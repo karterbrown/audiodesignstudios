@@ -16,8 +16,8 @@
   <title>Hidden Tracks - Audio Design Studios</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1769637450" />
-  <link rel="stylesheet" href="matrix.css?v=1769637450" />
+  <link rel="stylesheet" href="shared.css?v=1769719585" />
+  <link rel="stylesheet" href="matrix.css?v=1769719585" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -401,6 +401,13 @@
       box-shadow: 
         inset 0 -2px 4px rgba(0, 0, 0, 0.5),
         0 2px 8px rgba(0, 255, 0, 0.4);
+    }
+
+    .ba-toggle-button:not(.active):hover {
+      border-color: #333;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .ba-toggle-button:active {
@@ -1320,6 +1327,11 @@
 
       const baBeforeAudio = new Audio();
       const baAfterAudio = new Audio();
+      
+      // Set preload to metadata only for faster initial page load
+      baBeforeAudio.preload = 'metadata';
+      baAfterAudio.preload = 'metadata';
+      
       const baPlaylistContainer = document.getElementById('baPlaylistTracks');
       const baToggleButton = document.getElementById('baToggleButton');
       const baMeterNeedle = document.getElementById('baMeterNeedle');
@@ -1333,7 +1345,7 @@
 
       let baCurrentTrackIndex = -1;
       let isPlaying = false;
-      let isAfterMode = false;
+      let isAfterMode = true;
       let volumeDb = 0; // Volume in dB (-40 to +12)
       let knobAngle = 360; // Knob rotation angle at 0 dB (180° = -40dB, 360° = 0dB, 420° = +12dB)
       let currentNeedleAngle = -50; // Start at more dramatic left position
@@ -1365,9 +1377,9 @@
       afterAnalyser.connect(afterGain);
       afterGain.connect(audioContext.destination);
       
-      // Set initial gain values
-      beforeGain.gain.value = 1;
-      afterGain.gain.value = 0;
+      // Set initial gain values (wet mode by default)
+      beforeGain.gain.value = 0;
+      afterGain.gain.value = 1;
       
       const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
       const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
@@ -1854,12 +1866,10 @@
         
         baNowPlaying.textContent = track.title;
         
+        // Set source URLs but don't call load() - let them load on demand
+        // This significantly improves initial page load performance
         baBeforeAudio.src = track.before;
         baAfterAudio.src = track.after;
-        
-        // Preload both tracks
-        baBeforeAudio.load();
-        baAfterAudio.load();
 
         // Mark first track as active
         document.querySelectorAll('#baPlaylistTracks .track-item').forEach((item, i) => {
@@ -1869,6 +1879,20 @@
 
       // Initialize the first track when page loads
       initFirstTrack();
+      
+      // Set initial UI state for wet mode (active by default)
+      const beforeLabel = document.querySelector('.ba-toggle-before');
+      const afterLabel = document.querySelector('.ba-toggle-after');
+      const bypassLabel = document.getElementById('baBypassLabel');
+      
+      // Since isAfterMode=true (wet mode), highlight the "Wet" label (afterLabel)
+      beforeLabel.style.opacity = '0.6';
+      beforeLabel.style.fontWeight = '500';
+      afterLabel.style.opacity = '1';
+      afterLabel.style.fontWeight = '600';
+      baToggleButton.classList.add('active');
+      bypassLabel.classList.add('active');
+      bypassLabel.textContent = 'Active';
     });
   </script>
 
