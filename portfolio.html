@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1769798740" />
+  <link rel="stylesheet" href="portfolio.css?v=1769799440" />
 </head>
 
 <body>
@@ -379,7 +379,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769798740"></script>
+  <script src="content.js?v=1769799440"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -661,7 +661,8 @@
           key: 'dotp',
           progressWrap: document.getElementById('mainWave'),
           nowPlayingEl: document.getElementById('dotpNowPlaying'),
-          scrubber: null
+          scrubber: null,
+          progressRAF: null
         },
         allWorks: {
           audio: allMainAudio,
@@ -670,7 +671,8 @@
           key: 'allWorks',
           progressWrap: document.getElementById('allMainWave'),
           nowPlayingEl: document.getElementById('allWorksNowPlaying'),
-          scrubber: null
+          scrubber: null,
+          progressRAF: null
         }
       };
 
@@ -691,6 +693,47 @@
       // Debounce helper for preventing rapid track switching lag
       let trackLoadDebounceTimer = null;
       const TRACK_LOAD_DEBOUNCE_MS = 150;
+
+      function renderProgress(ctx) {
+        if (!ctx || !ctx.current) return;
+        const audio = ctx.audio;
+        const cur = audio.currentTime || 0;
+        const dur = audio.duration || 0;
+        const pct = dur ? (cur / dur) : 0;
+        const percent = pct * 100;
+        if (ctx.current.itemProgressEl) ctx.current.itemProgressEl.style.width = `${percent}%`;
+        if (ctx.current.itemScrubber) ctx.current.itemScrubber.style.left = `${percent}%`;
+        if (ctx.current.timeEl) ctx.current.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+
+        if (ctx.progressFill) ctx.progressFill.style.width = `${percent}%`;
+        if (ctx.scrubber) ctx.scrubber.style.left = `${percent}%`;
+
+        if (ctx.nowPlayingEl && ctx.current.track) {
+          const trackTitle = ctx.current.track.title || 'Unknown Track';
+          ctx.nowPlayingEl.textContent = trackTitle;
+        }
+      }
+
+      function startProgressLoop(ctx) {
+        if (!ctx) return;
+        if (ctx.progressRAF) cancelAnimationFrame(ctx.progressRAF);
+        const step = () => {
+          if (!ctx.current || ctx.audio.paused || !ctx.audio.duration) {
+            ctx.progressRAF = null;
+            return;
+          }
+          renderProgress(ctx);
+          ctx.progressRAF = requestAnimationFrame(step);
+        };
+        ctx.progressRAF = requestAnimationFrame(step);
+      }
+
+      function stopProgressLoop(ctx) {
+        if (ctx?.progressRAF) {
+          cancelAnimationFrame(ctx.progressRAF);
+          ctx.progressRAF = null;
+        }
+      }
 
       function loadAndPlayInPlayer(playerKey, track, btn, itemProgressEl, timeEl) {
         const ctx = players[playerKey];
@@ -732,30 +775,6 @@
         if (!ctx) return;
         const { audio, controls } = ctx;
 
-        audio.addEventListener('timeupdate', () => {
-          if (!ctx.current) return;
-          const cur = audio.currentTime || 0;
-          const dur = audio.duration || 0;
-          const pct = dur ? (cur / dur) : 0;
-          if (ctx.current.itemProgressEl) ctx.current.itemProgressEl.style.width = `${pct * 100}%`;
-          if (ctx.current.itemScrubber) ctx.current.itemScrubber.style.left = `${pct * 100}%`;
-          if (ctx.current.timeEl) ctx.current.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
-          
-          // Update main player progress fill and scrubber position
-          if (ctx.progressFill) {
-            ctx.progressFill.style.width = `${pct * 100}%`;
-          }
-          if (ctx.scrubber) {
-            ctx.scrubber.style.left = `${pct * 100}%`;
-          }
-          
-          // Update now playing title only (no time counter)
-          if (ctx.nowPlayingEl && ctx.current.track) {
-            const trackTitle = ctx.current.track.title || 'Unknown Track';
-            ctx.nowPlayingEl.textContent = trackTitle;
-          }
-        });
-
         audio.addEventListener('play', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.classList.add('playing');
           if (ctx.current?.btn) ctx.current.btn.classList.add('playing');
@@ -779,11 +798,14 @@
             allWorksGain.connect(audioContext.destination);
             allWorksSourceConnected = true;
           }
+
+          startProgressLoop(ctx);
         });
 
         audio.addEventListener('pause', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.classList.remove('playing');
           if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
+          stopProgressLoop(ctx);
         });
 
         audio.addEventListener('ended', () => {
@@ -793,6 +815,7 @@
           if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
           if (ctx.progressFill) ctx.progressFill.style.width = '0%';
           if (ctx.scrubber) ctx.scrubber.style.left = '0%';
+          stopProgressLoop(ctx);
           
           // Auto-play next track, loop back to first track at the end
           const buttons = getTrackButtons(playerKey);
@@ -818,6 +841,7 @@
           const rect = ctx.progressWrap.getBoundingClientRect();
           const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
           audio.currentTime = pct * audio.duration;
+          renderProgress(ctx);
         };
 
         ctx.progressWrap.addEventListener('mousedown', (e) => {
@@ -930,6 +954,7 @@
           const targetAudio = players[playlistKey]?.audio;
           if (targetAudio && targetAudio.duration) {
             targetAudio.currentTime = pct * targetAudio.duration;
+            renderProgress(players[playlistKey]);
           }
         };
 

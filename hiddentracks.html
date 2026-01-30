@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1769798740" />
-  <link rel="stylesheet" href="matrix.css?v=1769798740" />
+  <link rel="stylesheet" href="shared.css?v=1769799440" />
+  <link rel="stylesheet" href="matrix.css?v=1769799440" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -776,7 +776,7 @@
       border-radius: 1px;
       box-shadow: 0 0 15px rgba(49, 196, 159, 1),
                   0 0 25px rgba(49, 196, 159, 0.5);
-      transition: margin-left 0.2s ease-out;
+      transition: left 0.2s ease-out;
       pointer-events: none;
       border: none;
     }
@@ -1990,6 +1990,7 @@
         return `${mins}:${secs.toString().padStart(2, '0')}`;
       }
 
+      let baProgressRAF = null;
       const baProgressFill = document.createElement('div');
       baProgressFill.className = 'main-player-progress-fill';
       baProgressFill.style.width = '0%';
@@ -1998,6 +1999,45 @@
       const baScrubber = document.createElement('div');
       baScrubber.className = 'main-player-scrubber';
       baProgressWrap.appendChild(baScrubber);
+
+      function baRenderProgress() {
+        const cur = baBeforeAudio.currentTime || 0;
+        const dur = baBeforeAudio.duration || 0;
+        const pct = dur ? (cur / dur) : 0;
+        const percent = pct * 100;
+
+        baProgressFill.style.width = percent + '%';
+        baScrubber.style.left = percent + '%';
+
+        if (baCurrentTrackIndex >= 0) {
+          const track = baTracks[baCurrentTrackIndex];
+          if (track._uiRefs) {
+            track._uiRefs.progressFill.style.width = percent + '%';
+            track._uiRefs.itemScrubber.style.left = percent + '%';
+            track._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+          }
+        }
+      }
+
+      function baStartProgressLoop() {
+        if (baProgressRAF) cancelAnimationFrame(baProgressRAF);
+        const step = () => {
+          if (baBeforeAudio.paused || !baBeforeAudio.duration) {
+            baProgressRAF = null;
+            return;
+          }
+          baRenderProgress();
+          baProgressRAF = requestAnimationFrame(step);
+        };
+        baProgressRAF = requestAnimationFrame(step);
+      }
+
+      function baStopProgressLoop() {
+        if (baProgressRAF) {
+          cancelAnimationFrame(baProgressRAF);
+          baProgressRAF = null;
+        }
+      }
 
       baTracks.forEach((track, index) => {
         const trackRow = document.createElement('div');
@@ -2060,6 +2100,7 @@
             const newTime = pct * baBeforeAudio.duration;
             baBeforeAudio.currentTime = newTime;
             baAfterAudio.currentTime = newTime;
+            baRenderProgress();
           }
         };
 
@@ -2151,25 +2192,9 @@
         }, TRACK_LOAD_DEBOUNCE_MS);
       }
 
-      baBeforeAudio.addEventListener('timeupdate', () => {
-        const cur = baBeforeAudio.currentTime || 0;
-        const dur = baBeforeAudio.duration || 0;
-        const pct = dur ? (cur / dur) : 0;
-        const percent = pct * 100;
-        
-        baProgressFill.style.width = percent + '%';
-        baScrubber.style.marginLeft = (percent / 100 * baProgressWrap.offsetWidth) + 'px';
-
-        if (baCurrentTrackIndex >= 0) {
-          const track = baTracks[baCurrentTrackIndex];
-          if (track._uiRefs) {
-            track._uiRefs.progressFill.style.width = percent + '%';
-            const progressWrap = track._uiRefs.itemScrubber.parentElement;
-            track._uiRefs.itemScrubber.style.marginLeft = (percent / 100 * progressWrap.offsetWidth) + 'px';
-            track._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
-          }
-        }
-      });
+      baBeforeAudio.addEventListener('play', baStartProgressLoop);
+      baBeforeAudio.addEventListener('pause', baStopProgressLoop);
+      baBeforeAudio.addEventListener('ended', baStopProgressLoop);
 
       baProgressWrap.addEventListener('click', (e) => {
         if (baBeforeAudio.duration) {
@@ -2178,6 +2203,7 @@
           const newTime = percent * baBeforeAudio.duration;
           baBeforeAudio.currentTime = newTime;
           baAfterAudio.currentTime = newTime;
+          baRenderProgress();
         }
       });
 
@@ -2266,10 +2292,11 @@
           baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
           baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
           baTracks[baCurrentTrackIndex]._uiRefs.progressFill.style.width = '0%';
-          baTracks[baCurrentTrackIndex]._uiRefs.itemScrubber.style.marginLeft = '0px';
+          baTracks[baCurrentTrackIndex]._uiRefs.itemScrubber.style.left = '0%';
         }
         baProgressFill.style.width = '0%';
-        baScrubber.style.marginLeft = '0px';
+        baScrubber.style.left = '0%';
+        baStopProgressLoop();
         
         if (baCurrentTrackIndex < baTracks.length - 1) {
           loadBATrack(baCurrentTrackIndex + 1);

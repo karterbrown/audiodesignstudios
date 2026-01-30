@@ -230,7 +230,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769798740"></script>
+  <script src="content.js?v=1769799440"></script>
 
   <!-- Year display script -->
   <script>
@@ -255,6 +255,7 @@
     let designVolumeRotation = 0;
     let designProgressFill = null;
     let designScrubber = null;
+    let designProgressRAF = null;
     let designCurrentNeedleAngle = -50;
     let designSourceConnected = false;
 
@@ -325,12 +326,33 @@
       }
     }
 
+    function designStartProgressLoop() {
+      if (designProgressRAF) cancelAnimationFrame(designProgressRAF);
+      const step = () => {
+        if (designIsPlaying) {
+          designUpdateProgress();
+          designProgressRAF = requestAnimationFrame(step);
+        } else {
+          designProgressRAF = null;
+        }
+      };
+      designProgressRAF = requestAnimationFrame(step);
+    }
+
+    function designStopProgressLoop() {
+      if (designProgressRAF) {
+        cancelAnimationFrame(designProgressRAF);
+        designProgressRAF = null;
+      }
+    }
+
     // Seek
     function designSeek(e) {
       const progressBar = e.currentTarget;
       const rect = progressBar.getBoundingClientRect();
       const percent = (e.clientX - rect.left) / rect.width;
       designAudio.currentTime = percent * designAudio.duration;
+      designUpdateProgress();
     }
 
     // VU Meter animation
@@ -475,7 +497,10 @@
       mainWave.addEventListener('click', designSeek);
       
       designAudio.addEventListener('timeupdate', designUpdateProgress);
-      designAudio.addEventListener('ended', designNextTrack);
+      designAudio.addEventListener('ended', () => {
+        designStopProgressLoop();
+        designNextTrack();
+      });
       
       // Connect Web Audio API source on first play
       designAudio.addEventListener('play', () => {
@@ -490,7 +515,10 @@
           designGain.connect(designAudioContext.destination);
           designSourceConnected = true;
         }
+        designStartProgressLoop();
       });
+
+      designAudio.addEventListener('pause', designStopProgressLoop);
       
       // Volume knob
       const knob = document.getElementById('designVolumeKnob');
