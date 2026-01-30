@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1769802525" />
+  <link rel="stylesheet" href="portfolio.css?v=1769802753" />
 </head>
 
 <body>
@@ -379,7 +379,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769802525"></script>
+  <script src="content.js?v=1769802753"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -718,7 +718,7 @@
         if (!ctx) return;
         if (ctx.progressRAF) cancelAnimationFrame(ctx.progressRAF);
         const step = () => {
-          if (!ctx.current || ctx.audio.paused || !ctx.audio.duration) {
+          if (!ctx.current || ctx.audio.paused) {
             ctx.progressRAF = null;
             return;
           }
