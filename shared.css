@@ -3,7 +3,7 @@
    Common styles used across all pages
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* =============================================================================
    1. BASE STYLES & RESET
@@ -27,6 +27,7 @@ body {
 
 html {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 a:focus,
@@ -46,7 +47,6 @@ button:focus {
 }
 
 .section-alt {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 0%, transparent 100%);
   padding-bottom: 2rem;
   margin-bottom: 2rem;
 }
@@ -299,9 +299,9 @@ img {
 }
 
 .control-btn {
-  background: linear-gradient(135deg, rgba(49, 196, 159, 0.15), rgba(45, 212, 160, 0.08));
-  border: 1.5px solid rgba(49, 196, 159, 0.3);
-  color: #f4f4ff;
+  background: linear-gradient(135deg, rgba(0, 80, 40, 0.25), rgba(0, 80, 40, 0.15));
+  border: 1.5px solid rgba(0, 80, 40, 0.5);
+  color: #5fba7d;
   padding: 0.75rem 1rem;
   border-radius: 50px;
   cursor: pointer;
@@ -316,6 +316,7 @@ img {
   line-height: 1;
   text-align: center;
   position: relative;
+  will-change: transform;
 }
 
 /* Play icon - triangle pointing right */
@@ -386,9 +387,9 @@ img {
 }
 
 .control-btn:hover {
-  background: linear-gradient(135deg, rgba(49, 196, 159, 0.25), rgba(45, 212, 160, 0.15));
-  border-color: rgba(49, 196, 159, 0.5);
-  box-shadow: 0 4px 12px rgba(49, 196, 159, 0.3);
+  background: linear-gradient(135deg, rgba(0, 80, 40, 0.35), rgba(0, 80, 40, 0.25));
+  border-color: rgba(0, 80, 40, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 80, 40, 0.4);
   transform: translateY(-2px);
 }
 
@@ -398,7 +399,7 @@ img {
 }
 
 .control-btn:focus-visible {
-  outline: 3px solid rgba(49, 196, 159, 0.4);
+  outline: 3px solid rgba(0, 80, 40, 0.6);
   outline-offset: 2px;
 }
 
@@ -407,7 +408,7 @@ img {
   font-size: 1.25rem;
   min-width: 56px;
   min-height: 56px;
-  background: linear-gradient(135deg, rgba(49, 196, 159, 0.25), rgba(45, 212, 160, 0.15));
+  background: linear-gradient(135deg, rgba(0, 80, 40, 0.35), rgba(0, 80, 40, 0.25));
   border-width: 2px;
   line-height: 1;
 }
@@ -610,8 +611,6 @@ blockquote footer {
   margin: 0 auto;
   width: 100%;
   background: radial-gradient(circle at 10% 10%, rgba(25, 172, 91, 0.25), rgba(6, 6, 19, 0.85));
-  mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
   opacity: 0;
   transform: translateY(10px);
   animation: fadeInHero 0.6s ease-out forwards;
@@ -697,9 +696,9 @@ blockquote footer {
 .btn,
 button {
   padding: 0.75rem 1.75rem;
-  background: linear-gradient(135deg, rgba(0, 255, 0, 0.15), rgba(0, 255, 0, 0.08));
-  color: #0f0;
-  border: 1.5px solid rgba(0, 255, 0, 0.3);
+  background: linear-gradient(135deg, rgba(0, 80, 40, 0.25), rgba(0, 80, 40, 0.15));
+  color: #5fba7d;
+  border: 1.5px solid rgba(0, 80, 40, 0.5);
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
@@ -714,10 +713,10 @@ button {
 
 .btn:hover,
 button:hover {
-  background: linear-gradient(135deg, rgba(0, 255, 0, 0.25), rgba(0, 255, 0, 0.15));
-  border-color: rgba(0, 255, 0, 0.5);
+  background: linear-gradient(135deg, rgba(0, 80, 40, 0.35), rgba(0, 80, 40, 0.25));
+  border-color: rgba(0, 80, 40, 0.7);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 80, 40, 0.4);
 }
 
 .btn:active,
@@ -728,7 +727,7 @@ button:active {
 
 .btn:focus-visible,
 button:focus-visible {
-  outline: 3px solid rgba(0, 255, 0, 0.4);
+  outline: 3px solid rgba(0, 80, 40, 0.6);
   outline-offset: 2px;
 }
 
@@ -781,6 +780,7 @@ button:focus-visible {
   display: block;
   text-decoration: none;
   color: inherit;
+  contain: layout style paint;
 }
 
 .card:hover {
@@ -984,13 +984,8 @@ body.light-mode button:hover {
   background: linear-gradient(135deg, #3d6a4d, #5a9c6f);
 }
 
-body.light-mode .section-alt {
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 0%, transparent 100%);
-}
-
 body.light-mode .card,
-body.light-mode .service-card,
-body.light-mode .playlist-card {
+body.light-mode .service-card {
   background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(0, 0, 0, 0.15);
   color: #1a1a1a;
@@ -999,21 +994,17 @@ body.light-mode .playlist-card {
 body.light-mode .card h2,
 body.light-mode .card h3,
 body.light-mode .service-card h2,
-body.light-mode .service-card h3,
-body.light-mode .playlist-card h2,
-body.light-mode .playlist-card h3 {
+body.light-mode .service-card h3 {
   color: #1a1a1a;
 }
 
 body.light-mode .card p,
-body.light-mode .service-card p,
-body.light-mode .playlist-card p {
+body.light-mode .service-card p {
   color: #333;
 }
 
 body.light-mode .card:hover,
-body.light-mode .service-card:hover,
-body.light-mode .playlist-card:hover {
+body.light-mode .service-card:hover {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(0, 0, 0, 0.25);
 }
@@ -1052,26 +1043,6 @@ body.light-mode .main-player-progress {
 
 body.light-mode .main-player-progress:hover {
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.15));
-}
-
-body.light-mode .track-item {
-  color: #1a1a1a;
-}
-
-body.light-mode .track-item-info {
-  color: #1a1a1a;
-}
-
-body.light-mode .track-number {
-  color: #666;
-}
-
-body.light-mode .track-title {
-  color: #1a1a1a;
-}
-
-body.light-mode .track-duration {
-  color: #666;
 }
 
 /* Comprehensive text readability for light mode */
@@ -1132,24 +1103,8 @@ body.light-mode .matrix-terminal canvas {
 }
 
 /* Player controls visibility in light mode */
-body.light-mode .playlist-card {
-  background: rgba(255, 255, 255, 0.9);
-}
-
 body.light-mode .playlist-content {
   color: #1a1a1a;
-}
-
-body.light-mode .track-item {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-body.light-mode .track-item:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-body.light-mode .track-item.playing {
-  background: rgba(45, 140, 111, 0.15);
 }
 
 body.light-mode .audio-player,
@@ -1207,11 +1162,6 @@ body.light-mode .track-item-play-btn:hover {
   border-color: rgba(45, 140, 111, 0.6);
 }
 
-body.light-mode .playlist-card h3,
-body.light-mode .playlist-card h2 {
-  color: #1a1a1a;
-}
-
 body.light-mode .playlist-scroll {
   color: #1a1a1a;
 }
@@ -1238,6 +1188,261 @@ body.light-mode .about-section h1,
 body.light-mode .about-section h2,
 body.light-mode .about-section p {
   color: #1a1a1a;
+}
+
+/* Portfolio page light mode - enhanced readability */
+body.light-mode .playlist-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode .playlist-card h3 {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+body.light-mode .track-item {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+body.light-mode .track-item:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+body.light-mode .track-item.active {
+  background: rgba(45, 140, 111, 0.2);
+  border-color: rgba(45, 140, 111, 0.6);
+}
+
+body.light-mode .track-item-number {
+  color: #2d5a3d;
+  font-weight: 700;
+}
+
+body.light-mode .track-item-title {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+body.light-mode .track-item-time {
+  color: #333;
+  font-weight: 500;
+}
+
+body.light-mode .now-playing-info {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+body.light-mode .playlist-card .main-player-progress {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .playlist-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .playlist-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+body.light-mode .playlist-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode .control-btn {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.25);
+  color: #1a1a1a;
+}
+
+body.light-mode .control-btn:hover {
+  background: rgba(0, 0, 0, 0.12);
+  border-color: rgba(0, 0, 0, 0.35);
+}
+
+/* Portfolio VU meter section light mode */
+body.light-mode .portfolio-meter-section {
+  background: 
+    linear-gradient(145deg, rgba(240, 245, 242, 0.98), rgba(235, 240, 237, 0.98)),
+    radial-gradient(ellipse at 20% 30%, rgba(200, 230, 210, 0.4) 0%, transparent 40%),
+    linear-gradient(135deg, #f5f5f5 0%, #e8f0ec 50%, #f0f5f2 100%);
+  border: 3px solid rgba(45, 140, 111, 0.6);
+  box-shadow: 
+    0 0 30px rgba(45, 140, 111, 0.3),
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .portfolio-meter-section::before {
+  background: 
+    radial-gradient(circle at 15% 20%, rgba(200, 230, 210, 0.3) 0%, transparent 15%),
+    radial-gradient(circle at 85% 15%, rgba(180, 220, 200, 0.35) 0%, transparent 12%);
+  opacity: 0.5;
+}
+
+body.light-mode .portfolio-meter-section::after {
+  background: 
+    radial-gradient(circle at 35% 25%, rgba(200, 240, 220, 0.2) 0%, transparent 8%),
+    linear-gradient(180deg, rgba(45, 140, 111, 0.08) 0%, transparent 100%);
+  opacity: 0.4;
+}
+
+body.light-mode .portfolio-meter-display {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #2d8c6f;
+}
+
+body.light-mode .portfolio-meter-display::before {
+  background: 
+    radial-gradient(circle at 15% 20%, rgba(200, 240, 220, 0.25) 0%, transparent 2%),
+    radial-gradient(circle at 50% 50%, rgba(220, 250, 235, 0.2) 0%, transparent 2%);
+  opacity: 0.5;
+}
+
+body.light-mode .portfolio-meter-branding {
+  color: rgba(60, 60, 60, 0.8);
+  text-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.5),
+    0 0 4px rgba(45, 140, 111, 0.3);
+}
+
+body.light-mode .portfolio-meter-scale::before,
+body.light-mode .portfolio-meter-scale::after {
+  color: #1a1a1a;
+  font-weight: 800;
+}
+
+body.light-mode .portfolio-meter-scale::after {
+  color: #cc0000;
+}
+
+body.light-mode .portfolio-meter-label {
+  color: #2d5a3d;
+  font-weight: 700;
+  text-shadow: 0 0 3px rgba(45, 140, 111, 0.4);
+}
+
+body.light-mode .portfolio-meter-label.red {
+  color: #cc0000;
+  text-shadow: 0 0 3px rgba(204, 0, 0, 0.4);
+}
+
+body.light-mode .portfolio-meter-tick {
+  background: #555;
+}
+
+body.light-mode .portfolio-meter-needle {
+  filter: drop-shadow(0 0 6px rgba(45, 140, 111, 0.8));
+}
+
+body.light-mode .portfolio-volume-knob-container,
+body.light-mode .portfolio-volume-knob {
+  filter: brightness(1.3) contrast(1.1);
+}
+
+body.light-mode .power-button {
+  background: linear-gradient(145deg, #e8e8e8, #d0d0d0);
+  border: 3px solid rgba(0, 0, 0, 0.3);
+  color: #1a5a3d;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(26, 122, 90, 0.6), 0 0 3px rgba(26, 122, 90, 0.8);
+  box-shadow: 
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode .power-button:hover {
+  border-color: #1a7a5a;
+  box-shadow: 
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(26, 122, 90, 0.4);
+}
+
+body.light-mode .power-button:active {
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(26, 122, 90, 0.2);
+}
+
+/* Portfolio page - darken cyan/teal colors for visibility in light mode */
+body.light-mode .playlist-card .main-player-progress-fill {
+  background: linear-gradient(90deg, #1a7a5a, #15664a);
+}
+
+body.light-mode .playlist-card .main-player-scrubber {
+  background: radial-gradient(circle, #1a7a5a, #15664a);
+  border: 1px solid #1a7a5a;
+  box-shadow: 0 0 10px rgba(26, 122, 90, 0.6);
+}
+
+body.light-mode .playlist-card .control-btn {
+  background: linear-gradient(135deg, rgba(26, 122, 90, 0.25), rgba(26, 122, 90, 0.15));
+  border: 1.5px solid rgba(26, 122, 90, 0.5);
+  color: #1a5a3d;
+}
+
+body.light-mode .playlist-card .control-btn:hover {
+  background: linear-gradient(135deg, rgba(26, 122, 90, 0.35), rgba(26, 122, 90, 0.25));
+  border-color: rgba(26, 122, 90, 0.7);
+  box-shadow: 0 4px 12px rgba(26, 122, 90, 0.4);
+}
+
+body.light-mode .playlist-card .control-btn-play {
+  background: linear-gradient(135deg, rgba(26, 122, 90, 0.35), rgba(26, 122, 90, 0.25));
+}
+
+body.light-mode .track-item-number,
+body.light-mode .track-item-title,
+body.light-mode .now-playing-info {
+  color: #1a5a3d;
+}
+
+body.light-mode .playlist-card .now-playing-info {
+  color: #1a5a3d;
+  font-weight: 600;
+}
+
+body.light-mode .portfolio-meter-display {
+  border: 2px solid #1a7a5a;
+}
+
+body.light-mode .portfolio-volume-label,
+body.light-mode .portfolio-controls-time {
+  color: #1a5a3d;
+  font-weight: 600;
+}
+
+/* Portfolio volume knob arc - darker in light mode */
+body.light-mode .portfolio-volume-arc::before {
+  background: 
+    conic-gradient(
+      from 180deg,
+      transparent 0deg,
+      rgba(26, 122, 90, 0.8) 0deg,
+      rgba(26, 122, 90, 1) 120deg,
+      rgba(26, 122, 90, 0.8) 240deg,
+      transparent 240deg
+    );
+}
+
+body.light-mode .portfolio-volume-tick {
+  background: rgba(26, 122, 90, 0.9);
+}
+
+body.light-mode .portfolio-volume-db-label {
+  color: rgba(26, 122, 90, 1);
+  font-weight: 700;
+  text-shadow: 0 0 3px rgba(26, 122, 90, 0.4);
+}
+
+body.light-mode .portfolio-volume-value {
+  color: #1a5a3d;
+  font-weight: 700;
+  text-shadow: 0 0 4px rgba(26, 122, 90, 0.3);
 }
 
 

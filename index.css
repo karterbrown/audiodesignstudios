@@ -29,11 +29,14 @@
   background-repeat: no-repeat;
   max-width: 1600px;
   margin: 0 auto;
+  position: relative;
+  isolation: isolate;
 }
 
 .env-home {
   background-image: url('../Photos/homepiano800.webp');
   background-position: center top;
+  background-color: #0f0f0f;
 }
 
 @media (min-width: 720px) {
@@ -46,6 +49,58 @@
   .env-home {
     background-image: url('../Photos/homepiano2000.webp');
   }
+}
+
+/* About Page Background */
+.env-about {
+  background-image: url('Photos/about800.webp');
+  min-height: 60vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+@media (min-width: 720px) {
+  .env-about {
+    background-image: url('Photos/about1400.webp');
+  }
+}
+
+@media (min-width: 1200px) {
+  .env-about {
+    background-image: url('Photos/about2000.webp');
+  }
+}
+
+/* Testimonial/Quote Section */
+blockquote {
+  margin: 0 0 1.5rem 0;
+  padding: 1rem;
+  border-left: 4px solid #31c49f;
+  background: rgba(120, 154, 186, 0.04);
+  color: #f4f4ff;
+  border-radius: 6px;
+}
+
+blockquote p,
+blockquote footer {
+  letter-spacing: 0.1rem;
+  font-style: italic;
+  font-family: "Sans Serif", serif;
+  font-size: 1rem;
+}
+
+blockquote p {
+  margin: 0;
+  font-weight: 100;
+}
+
+blockquote footer {
+  margin-top: 1rem;
+  color: #f4f4ff;
+  font-weight: 600;
 }
 
 /* Highlights 3-Column Hero Section */

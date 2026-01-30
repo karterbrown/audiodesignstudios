@@ -10,13 +10,17 @@
   <!-- Meta Information -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1769725229" />
+  <link rel="stylesheet" href="portfolio.css?v=1769797160" />
 </head>
 
 <body>
@@ -41,7 +45,7 @@
       </button>
       <a href="index.html">Home</a>
       <a href="portfolio.html">Portfolio</a>
-      <a href="about.html">About</a>
+      <a href="design.html">Design</a>
       <a href="hiddentracks.html" class="special-link">A+B</a>
     </nav>
   </header>
@@ -106,14 +110,19 @@
               <picture>
                 <source media="(min-width:1200px)" srcset="daughteroftheplains/daughteroftheplains2000.webp">
                 <source media="(min-width:720px)" srcset="daughteroftheplains/daughteroftheplains1400.webp">
-                <img src="daughteroftheplains/daughteroftheplains800.webp" alt="Daughter of the Plains">
+                <img src="daughteroftheplains/daughteroftheplains800.webp" alt="Daughter of the Plains" loading="eager" fetchpriority="high">
               </picture>
             </div>
             <h3>Daughter of the Plains</h3>
           </div>
           
-          <!-- VU Meter and Volume Control -->
+          <!-- Module: VU Meter and Volume Control -->
           <div class="portfolio-meter-section">
+            <!-- Power Button -->
+            <div class="power-button-container">
+              <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+            </div>
+            
             <div class="portfolio-meter-container">
               <div class="portfolio-meter-display">
                 <div class="portfolio-meter-scale">
@@ -199,19 +208,20 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Now Playing Display -->
-            <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
-            
-            <!-- Progress Bar -->
-            <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
-            
-            <!-- Transport Controls -->
-            <div class="playlist-player-controls">
-              <button id="prevBtn" class="control-btn" aria-label="Back to beginning"></button>
-              <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
-              <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
-            </div>
+          </div>
+          
+          <!-- Track Controls: Now Playing, Progress, Transport -->
+          <!-- Now Playing Display -->
+          <div id="dotpNowPlaying" class="now-playing-info">No track playing</div>
+          
+          <!-- Progress Bar -->
+          <div id="mainWave" class="main-player-progress" aria-hidden="true"></div>
+          
+          <!-- Transport Controls -->
+          <div class="playlist-player-controls">
+            <button id="prevBtn" class="control-btn" aria-label="Back to beginning"></button>
+            <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+            <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
           </div>
           
           <!-- Track List -->
@@ -228,14 +238,19 @@
               <picture>
                 <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
                 <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
-                <img src="Photos/headshot2_800.webp" alt="All Works">
+                <img src="Photos/headshot2_800.webp" alt="All Works" loading="eager" fetchpriority="high">
               </picture>
             </div>
             <h3>All Works</h3>
           </div>
           
-          <!-- VU Meter and Volume Control -->
+          <!-- Module: VU Meter and Volume Control -->
           <div class="portfolio-meter-section">
+            <!-- Power Button -->
+            <div class="power-button-container">
+              <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+            </div>
+            
             <div class="portfolio-meter-container">
               <div class="portfolio-meter-display">
                 <div class="portfolio-meter-scale">
@@ -321,19 +336,20 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Now Playing Display -->
-            <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
-            
-            <!-- Progress Bar -->
-            <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
-            
-            <!-- Transport Controls -->
-            <div class="playlist-player-controls">
-              <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
-              <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
-              <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
-            </div>
+          </div>
+          
+          <!-- Track Controls: Now Playing, Progress, Transport -->
+          <!-- Now Playing Display -->
+          <div id="allWorksNowPlaying" class="now-playing-info">No track playing</div>
+          
+          <!-- Progress Bar -->
+          <div id="allMainWave" class="main-player-progress" aria-hidden="true"></div>
+          
+          <!-- Transport Controls -->
+          <div class="playlist-player-controls">
+            <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+            <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+            <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
           </div>
           
           <!-- Track List -->
@@ -344,15 +360,6 @@
         
       </div>
     </section>
-
-    <!-- ======================================================================
-         SECTION 3: Red Matrix Animation (Musical Notes)
-         ====================================================================== -->
-    <a href="about.html" class="matrix-link">
-      <section class="matrix-section">
-        <div class="matrix-terminal" id="matrixTerminalRed"></div>
-      </section>
-    </a>
   </main>
 
   <!-- ========================================================================
@@ -372,7 +379,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769725229"></script>
+  <script src="content.js?v=1769797160"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -528,6 +535,35 @@
         }
         dotpDraggingKnob = false;
       });
+
+      // Touch events for mobile - DOTP
+      dotpVolumeKnob.addEventListener('touchstart', (e) => {
+        dotpDraggingKnob = true;
+        dotpKnobMoved = false;
+        dotpKnobStartY = e.touches[0].clientY;
+        dotpKnobStartAngle = dotpKnobAngle;
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!dotpDraggingKnob) return;
+        const deltaY = dotpKnobStartY - e.touches[0].clientY;
+        if (Math.abs(deltaY) > 2) dotpKnobMoved = true;
+        const newAngle = Math.max(180, Math.min(420, dotpKnobStartAngle + deltaY));
+        dotpKnobAngle = newAngle;
+        dotpVolumeDb = -40 + ((dotpKnobAngle - 180) / 240) * 52;
+        updateDotpVolumeDisplay();
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => {
+        if (dotpDraggingKnob && !dotpKnobMoved) {
+          dotpVolumeDb = 0;
+          dotpKnobAngle = 360;
+          updateDotpVolumeDisplay();
+        }
+        dotpDraggingKnob = false;
+      });
       
       // All Works Volume Knob Events
       let allWorksDraggingKnob = false;
@@ -554,6 +590,35 @@
       });
       
       document.addEventListener('mouseup', () => {
+        if (allWorksDraggingKnob && !allWorksKnobMoved) {
+          allWorksVolumeDb = 0;
+          allWorksKnobAngle = 360;
+          updateAllWorksVolumeDisplay();
+        }
+        allWorksDraggingKnob = false;
+      });
+
+      // Touch events for mobile - All Works
+      allWorksVolumeKnob.addEventListener('touchstart', (e) => {
+        allWorksDraggingKnob = true;
+        allWorksKnobMoved = false;
+        allWorksKnobStartY = e.touches[0].clientY;
+        allWorksKnobStartAngle = allWorksKnobAngle;
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!allWorksDraggingKnob) return;
+        const deltaY = allWorksKnobStartY - e.touches[0].clientY;
+        if (Math.abs(deltaY) > 2) allWorksKnobMoved = true;
+        const newAngle = Math.max(180, Math.min(420, allWorksKnobStartAngle + deltaY));
+        allWorksKnobAngle = newAngle;
+        allWorksVolumeDb = -40 + ((allWorksKnobAngle - 180) / 240) * 52;
+        updateAllWorksVolumeDisplay();
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => {
         if (allWorksDraggingKnob && !allWorksKnobMoved) {
           allWorksVolumeDb = 0;
           allWorksKnobAngle = 360;
@@ -949,172 +1014,47 @@
       attachTransportHandlers('dotp');
       attachTransportHandlers('allWorks');
 
+      // ======================================================================
+      // INITIALIZE FIRST TRACK ON PAGE LOAD
+      // ======================================================================
+      function initFirstTrack(playerKey) {
+        const ctx = players[playerKey];
+        if (!ctx) return;
+        
+        const data = playerKey === 'dotp' ? daughterOfPlainsData : allWorksData;
+        if (data.length === 0) return;
+        
+        const firstTrack = data[0];
+        
+        // Update now playing display with first track title
+        if (ctx.nowPlayingEl) {
+          ctx.nowPlayingEl.textContent = firstTrack.title;
+        }
+        
+        // Set audio source but don't load - let it load on demand when user clicks play
+        // This significantly improves initial page load performance
+        ctx.audio.src = firstTrack.url;
+        
+        // Mark first track as active in the track list
+        const trackItems = document.querySelectorAll(
+          playerKey === 'dotp' ? '#dotpPlaylist .track-item' : '#allWorksPlaylist .track-item'
+        );
+        if (trackItems.length > 0) {
+          trackItems[0].classList.add('active');
+        }
+      }
+
+      // Initialize first track for both playlists when page loads
+      initFirstTrack('dotp');
+      initFirstTrack('allWorks');
+
     });
   </script>
 
-  <!-- ========================================================================
-       Red Matrix Terminal Effect (Musical Notes)
-       ======================================================================== -->
+  <!-- Year display script -->
   <script>
-    const terminalRed = document.getElementById('matrixTerminalRed');
-    const canvasRed = document.createElement('canvas');
-    const ctxRed = canvasRed.getContext('2d', { alpha: false, desynchronized: true });
-    terminalRed.appendChild(canvasRed);
-    
-    const charsRed = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
-    const binaryCharsRed = [0, 1];
-    const musicalNotesRed = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-    const japaneseCharsRed = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
-    const mathCharsRed = [64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82];
-    const greekCharsRed = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
-    const currencyCharsRed = [134,135,136,137,138,139,140,141,142,143,144,145];
-    
-    let columnsRed, rowsRed, dropsRed, charGridRed, charAgeRed, brightnessRed, speedsRed, cycleSpeedsRed;
-    let animationIdRed;
-    let lastFrameTimeRed = 0;
-    const frameIntervalRed = 30;
-    const numColumnsRed = window.innerWidth < 600 ? 30 : window.innerWidth < 1200 ? 60 : 80;
-    const phaseDurationsRed = [7000, 7000, 7000, 10000, 7000, 7000];
-    let phaseStartTimeRed = Date.now();
-    
-    function getCurrentPhaseRed() {
-      const elapsed = Date.now() - phaseStartTimeRed;
-      const totalCycle = phaseDurationsRed.reduce((a, b) => a + b, 0);
-      const cyclePosition = elapsed % totalCycle;
-      
-      let accumulatedTime = 0;
-      let phase = 0;
-      for (let i = 0; i < phaseDurationsRed.length; i++) {
-        if (cyclePosition < accumulatedTime + phaseDurationsRed[i]) {
-          phase = i;
-          break;
-        }
-        accumulatedTime += phaseDurationsRed[i];
-      }
-      
-      const phaseElapsed = cyclePosition - accumulatedTime;
-      return { phase, phaseElapsed };
-    }
-    
-    function randomCharRed(isLeading = false) {
-      const { phase, phaseElapsed } = getCurrentPhaseRed();
-      let charSet = binaryCharsRed;
-      
-      const phaseCharSets = [binaryCharsRed, japaneseCharsRed, mathCharsRed, musicalNotesRed, greekCharsRed, currencyCharsRed];
-      const pureDuration = phase === 3 ? 8000 : 5000;
-      const transitionDuration = 2000;
-      
-      if (phaseElapsed < pureDuration) {
-        charSet = phaseCharSets[phase];
-      } else {
-        const transitionProgress = (phaseElapsed - pureDuration) / transitionDuration;
-        const nextPhase = (phase + 1) % 6;
-        charSet = Math.random() < transitionProgress ? phaseCharSets[nextPhase] : phaseCharSets[phase];
-      }
-      
-      const index = charSet[Math.floor(Math.random() * charSet.length)];
-      return index !== undefined ? index : 0;
-    }
-    
-    function resizeRed() {
-      canvasRed.width = terminalRed.offsetWidth;
-      canvasRed.height = terminalRed.offsetHeight;
-      const columnWidth = canvasRed.width / numColumnsRed;
-      columnsRed = numColumnsRed;
-      const newRows = Math.ceil(canvasRed.height / columnWidth);
-      if (!dropsRed || !charGridRed || dropsRed.length !== columnsRed || rowsRed !== newRows) {
-        rowsRed = newRows;
-        dropsRed = Array(columnsRed).fill(0).map(() => Math.random() * -20);
-        speedsRed = Array(columnsRed).fill(0).map(() => 0.2 + Math.random() * 0.4);
-        charGridRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(null).map(() => randomCharRed()));
-        charAgeRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(null).map(() => Math.random()));
-        cycleSpeedsRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(null).map(() => 0.15 + Math.random() * 0.2));
-        brightnessRed = Array(columnsRed).fill(null).map(() => Array(rowsRed).fill(0));
-      }
-      ctxRed.fillStyle = '#000000';
-      ctxRed.fillRect(0, 0, canvasRed.width, canvasRed.height);
-    }
-    
-    function drawRed(timestamp) {
-      if (timestamp - lastFrameTimeRed < frameIntervalRed) {
-        animationIdRed = requestAnimationFrame(drawRed);
-        return;
-      }
-      lastFrameTimeRed = timestamp;
-      
-      ctxRed.fillStyle = '#000000';
-      ctxRed.fillRect(0, 0, canvasRed.width, canvasRed.height);
-      
-      const columnWidth = canvasRed.width / numColumnsRed;
-      const fontSize = Math.floor(columnWidth * 0.85);
-      
-      ctxRed.font = `900 ${fontSize}px Courier New`;
-      ctxRed.textAlign = 'center';
-      ctxRed.textBaseline = 'middle';
-      
-      for (let i = 0; i < columnsRed; i++) {
-        const currentDrop = Math.floor(dropsRed[i]);
-        const x = i * columnWidth + columnWidth / 2;
-        
-        for (let j = 0; j < rowsRed; j++) {
-          charAgeRed[i][j] += cycleSpeedsRed[i][j];
-          if (charAgeRed[i][j] >= 1.0) {
-            const distance = currentDrop - j;
-            const isLeading = distance === 0;
-            charGridRed[i][j] = randomCharRed(isLeading);
-            charAgeRed[i][j] = 0;
-          }
-          
-          const distance = currentDrop - j;
-          
-          if (distance === 0) {
-            brightnessRed[i][j] = 1.5;
-          } else if (distance > 0 && distance < 30) {
-            const targetBrightness = 1 - (distance / 30);
-            brightnessRed[i][j] = Math.max(brightnessRed[i][j], targetBrightness);
-          }
-          
-          brightnessRed[i][j] *= 0.95;
-          
-          if (brightnessRed[i][j] > 0.01) {
-            const red = Math.floor(120 + Math.min(brightnessRed[i][j], 1) * 136);
-            const alpha = Math.min(1, brightnessRed[i][j] * 0.9);
-            
-            const glowIntensity = Math.min(brightnessRed[i][j], 1);
-            ctxRed.shadowBlur = 15 * glowIntensity;
-            ctxRed.shadowColor = `rgba(${red}, 0, 0, ${glowIntensity * 0.8})`;
-            
-            ctxRed.fillStyle = `rgba(${red}, 0, 0, ${alpha})`;
-            ctxRed.fillText(charsRed[charGridRed[i][j]], x, j * columnWidth + columnWidth / 2);
-            
-            ctxRed.shadowBlur = 0;
-          }
-        }
-        
-        dropsRed[i] += speedsRed[i];
-        
-        if (dropsRed[i] > rowsRed && Math.random() > 0.975) {
-          dropsRed[i] = 0;
-          speedsRed[i] = 0.2 + Math.random() * 0.4;
-        }
-      }
-      
-      animationIdRed = requestAnimationFrame(drawRed);
-    }
-    
-    resizeRed();
-    let resizeTimeoutRed;
-    let lastWidthRed = terminalRed.offsetWidth;
-    let lastHeightRed = terminalRed.offsetHeight;
-    window.addEventListener('resize', () => {
-      if (terminalRed.offsetWidth === lastWidthRed && terminalRed.offsetHeight === lastHeightRed) return;
-      lastWidthRed = terminalRed.offsetWidth;
-      lastHeightRed = terminalRed.offsetHeight;
-      clearTimeout(resizeTimeoutRed);
-      resizeTimeoutRed = setTimeout(resizeRed, 150);
-    });
-    requestAnimationFrame(drawRed);
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
   
 </body>
-</html>   
+</html>

@@ -54,7 +54,7 @@ function init() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+  document.addEventListener('DOMContentLoaded', init, { passive: true });
 } else {
   init();
 }

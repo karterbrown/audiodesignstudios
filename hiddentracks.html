@@ -15,9 +15,13 @@
   <meta http-equiv="Expires" content="0" />
   <title>Hidden Tracks - Audio Design Studios</title>
   
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1769725229" />
-  <link rel="stylesheet" href="matrix.css?v=1769725229" />
+  <link rel="stylesheet" href="shared.css?v=1769797160" />
+  <link rel="stylesheet" href="matrix.css?v=1769797160" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -31,7 +35,6 @@
       overflow-x: hidden;
       background-color: #0f0f0f;
       color: #fff;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
     }
 
     /* Full-screen Matrix Background */
@@ -59,6 +62,15 @@
       max-width: 600px;
       width: 100%;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .hidden-player-title {
+      font-size: 1.5rem;
+      color: #f4f4ff;
+      text-align: center;
+      margin: 0 0 1.5rem 0;
+      font-weight: 300;
+      letter-spacing: 0.05em;
     }
 
     /* VU Meter Style Toggle */
@@ -645,8 +657,8 @@
     .ba-volume-knob {
       width: 85px;
       height: 85px;
-      background: linear-gradient(145deg, #5a3333, #3a1818);
-      border: 2px solid #776;
+      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+      border: 3px solid #555;
       clip-path: polygon(
         50% 15%,
         calc(50% + 25px) 40%,
@@ -655,9 +667,9 @@
         calc(50% - 25px) 40%
       );
       box-shadow: 
-        0 4px 10px rgba(0, 0, 0, 0.6),
-        inset 0 -2px 4px rgba(192, 15, 15, 0.5),
-        0 2px 4px rgba(255, 0, 0, 0.692);
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
       cursor: pointer;
       position: relative;
       transition: transform 0.1s;
@@ -887,8 +899,8 @@
     /* Power Button */
     .power-button-container {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      bottom: 10px;
+      right: 10px;
     }
 
     .power-button {
@@ -934,6 +946,27 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .track-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .track-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
+    }
+
+    .track-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 80, 40, 0.3);
+      border-radius: 3px;
+    }
+
+    .track-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 80, 40, 0.5);
     }
 
     .track-item {
@@ -942,21 +975,21 @@
       gap: 1rem;
       align-items: center;
       padding: 0.75rem;
-      background: rgba(49, 196, 159, 0.05);
-      border: 1px solid rgba(49, 196, 159, 0.2);
+      background: rgba(0, 80, 40, 0.1);
+      border: 1px solid rgba(0, 80, 40, 0.4);
       border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s;
     }
 
     .track-item:hover {
-      background: rgba(49, 196, 159, 0.1);
-      border-color: rgba(49, 196, 159, 0.4);
+      background: rgba(0, 80, 40, 0.15);
+      border-color: rgba(0, 80, 40, 0.5);
     }
 
     .track-item.active {
-      background: rgba(49, 196, 159, 0.15);
-      border-color: rgba(49, 196, 159, 0.6);
+      background: rgba(0, 80, 40, 0.2);
+      border-color: rgba(0, 80, 40, 0.7);
     }
 
     .track-item-info {
@@ -968,12 +1001,12 @@
 
     .track-item-number {
       font-weight: 600;
-      color: #31c49f;
+      color: #5fba7d;
       min-width: 1.5rem;
     }
 
     .track-item-title {
-      color: #31c49f;
+      color: #5fba7d;
       font-size: 0.95rem;
     }
 
@@ -988,7 +1021,7 @@
 
     .track-item-time {
       font-size: 0.85rem;
-      color: rgba(49, 196, 159, 0.8);
+      color: rgba(95, 186, 125, 0.8);
       font-family: 'Courier New', monospace;
       grid-column: 3 / 4;
     }
@@ -1036,6 +1069,292 @@
         font-size: 0.75rem;
       }
     }
+
+    /* ==========================================================================
+       LIGHT MODE STYLES - Hidden Tracks Page
+       ========================================================================== */
+    
+    body.light-mode .hidden-player-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(0, 0, 0, 0.2);
+    }
+
+    body.light-mode .ba-global-toggle-section {
+      background: 
+        linear-gradient(145deg, rgba(240, 245, 242, 0.98), rgba(235, 240, 237, 0.98)),
+        radial-gradient(ellipse at 20% 30%, rgba(200, 230, 210, 0.4) 0%, transparent 40%),
+        linear-gradient(135deg, #f5f5f5 0%, #e8f0ec 50%, #f0f5f2 100%);
+      border: 3px solid rgba(45, 140, 111, 0.6);
+      box-shadow: 
+        0 0 30px rgba(45, 140, 111, 0.3),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    body.light-mode .ba-global-toggle-section::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(200, 230, 210, 0.3) 0%, transparent 15%),
+        radial-gradient(circle at 85% 15%, rgba(180, 220, 200, 0.35) 0%, transparent 12%);
+      opacity: 0.5;
+    }
+
+    body.light-mode .ba-global-toggle-section::after {
+      background: 
+        radial-gradient(circle at 35% 25%, rgba(200, 240, 220, 0.2) 0%, transparent 8%),
+        linear-gradient(180deg, rgba(45, 140, 111, 0.08) 0%, transparent 100%);
+      opacity: 0.4;
+    }
+
+    body.light-mode .ba-meter-display {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #2d8c6f;
+    }
+
+    body.light-mode .ba-meter-display::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(200, 240, 220, 0.25) 0%, transparent 2%),
+        radial-gradient(circle at 50% 50%, rgba(220, 250, 235, 0.2) 0%, transparent 2%);
+      opacity: 0.5;
+    }
+
+    body.light-mode .ba-meter-branding {
+      color: rgba(60, 60, 60, 0.8);
+      text-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.5),
+        0 0 4px rgba(45, 140, 111, 0.3);
+    }
+
+    body.light-mode .ba-meter-scale::before,
+    body.light-mode .ba-meter-scale::after {
+      color: #1a1a1a;
+      font-weight: 800;
+    }
+
+    body.light-mode .ba-meter-scale::after {
+      color: #cc0000;
+    }
+
+    body.light-mode .ba-meter-label {
+      color: #2d5a3d;
+      font-weight: 700;
+      text-shadow: 0 0 3px rgba(45, 140, 111, 0.4);
+    }
+
+    body.light-mode .ba-meter-label.red {
+      color: #cc0000;
+      text-shadow: 0 0 3px rgba(204, 0, 0, 0.4);
+    }
+
+    body.light-mode .ba-meter-tick {
+      background: #555;
+    }
+
+    body.light-mode .ba-toggle-label {
+      color: #1a5a3d;
+      font-weight: 700;
+    }
+
+    body.light-mode .ba-toggle-labels::after {
+      background: rgba(26, 122, 90, 0.4);
+    }
+
+    body.light-mode .ba-toggle-labels {
+      border-bottom-color: rgba(26, 122, 90, 0.5);
+    }
+
+    body.light-mode .track-item {
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      color: #1a1a1a;
+    }
+
+    body.light-mode .track-item:hover {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.35);
+    }
+
+    body.light-mode .track-item.active,
+    body.light-mode .track-item.playing {
+      background: rgba(45, 140, 111, 0.2);
+      border-color: rgba(45, 140, 111, 0.6);
+    }
+
+    body.light-mode .track-item-number {
+      color: #2d5a3d;
+      font-weight: 700;
+    }
+
+    body.light-mode .track-item-title {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+
+    body.light-mode .track-item-time {
+      color: #333;
+      font-weight: 500;
+    }
+
+    body.light-mode .track-item-progress-fill {
+      background: linear-gradient(90deg, #1a7a5a, #15664a);
+    }
+
+    body.light-mode .main-player-progress {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    body.light-mode .main-player-progress-fill {
+      background: linear-gradient(90deg, #1a7a5a, #15664a);
+    }
+
+    body.light-mode .main-player-scrubber {
+      background: radial-gradient(circle, #1a7a5a, #15664a);
+      border: 1px solid #1a7a5a;
+      box-shadow: 0 0 10px rgba(26, 122, 90, 0.6);
+    }
+
+    body.light-mode .control-btn {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.25);
+      color: #1a1a1a;
+    }
+
+    body.light-mode .control-btn:hover {
+      background: rgba(0, 0, 0, 0.12);
+      border-color: rgba(0, 0, 0, 0.35);
+    }
+
+    body.light-mode .ba-toggle-button {
+      background: linear-gradient(145deg, #e8e8e8, #d0d0d0);
+      border: 2px solid rgba(0, 0, 0, 0.3);
+      color: #333;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    body.light-mode .ba-toggle-button:hover {
+      border-color: #1a7a5a;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(26, 122, 90, 0.4);
+    }
+
+    body.light-mode .ba-toggle-button:not(.active):hover {
+      border-color: rgba(0, 0, 0, 0.4);
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    body.light-mode .ba-toggle-button:active {
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.25),
+        0 1px 2px rgba(26, 122, 90, 0.2);
+    }
+
+    body.light-mode .ba-toggle-button.active {
+      background: linear-gradient(145deg, #c8e6d7, #b0d4c2);
+      border-color: #1a7a5a;
+      box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.2),
+        0 0 15px rgba(26, 122, 90, 0.4);
+      color: #1a5a3d;
+      font-weight: 700;
+    }
+
+    body.light-mode .ba-toggle-button::after {
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
+
+    body.light-mode .ba-toggle-button.active::after {
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    body.light-mode .power-button {
+      background: linear-gradient(145deg, #e8e8e8, #d0d0d0);
+      border: 3px solid rgba(0, 0, 0, 0.3);
+      color: #1a5a3d;
+      font-weight: 700;
+      text-shadow: 0 0 6px rgba(26, 122, 90, 0.6), 0 0 3px rgba(26, 122, 90, 0.8);
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    body.light-mode .power-button:hover {
+      border-color: #1a7a5a;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 2px 8px rgba(26, 122, 90, 0.4);
+    }
+
+    body.light-mode .power-button:active {
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.25),
+        0 1px 2px rgba(26, 122, 90, 0.2);
+    }
+
+    body.light-mode .ba-volume-meter-arc {
+      border-image: conic-gradient(
+        from 180deg,
+        transparent 0deg,
+        rgba(26, 122, 90, 0.8) 0deg,
+        rgba(26, 122, 90, 1) 120deg,
+        rgba(26, 122, 90, 0.8) 240deg,
+        transparent 240deg
+      ) 1;
+    }
+
+    body.light-mode .ba-volume-meter-arc::before {
+      background: 
+        conic-gradient(
+          from 180deg,
+          transparent 0deg,
+          rgba(26, 122, 90, 0.6) 0.5deg,
+          transparent 1deg,
+          transparent 119deg,
+          rgba(26, 122, 90, 0.8) 119.5deg,
+          transparent 120.5deg,
+          transparent 239deg,
+          rgba(26, 122, 90, 0.6) 239.5deg,
+          transparent 240.5deg
+        );
+    }
+
+    body.light-mode .ba-volume-db-label {
+      color: rgba(26, 122, 90, 1);
+      font-weight: 700;
+      text-shadow: 0 0 3px rgba(26, 122, 90, 0.4);
+    }
+
+    body.light-mode .ba-volume-value {
+      color: #1a5a3d;
+      font-weight: 700;
+      text-shadow: 0 0 4px rgba(26, 122, 90, 0.3);
+    }
+
+    body.light-mode .ba-bypass-label {
+      color: #cc0000;
+      text-shadow: 0 0 6px rgba(204, 0, 0, 0.6);
+    }
+
+    body.light-mode .ba-bypass-label.active {
+      color: #1a7a5a;
+      text-shadow: 0 0 6px rgba(26, 122, 90, 0.6);
+    }
+
+    body.light-mode .track-list::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .track-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    body.light-mode .track-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.6);
+    }
   </style>
 </head>
 
@@ -1046,12 +1365,60 @@
   <header class="site-header">
     <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark/light mode">
+        <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
       <a href="index.html">Home</a>
       <a href="portfolio.html">Portfolio</a>
-      <a href="about.html">About</a>
+      <a href="design.html">Design</a>
       <a href="hiddentracks.html" class="special-link">A+B</a>
     </nav>
   </header>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    (function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const savedTheme = localStorage.getItem('theme');
+      
+      // Sun icon SVG for light mode
+      const sunIcon = `<circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+      
+      // Moon icon SVG for dark mode
+      const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+      
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        themeIcon.innerHTML = moonIcon;
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        themeIcon.innerHTML = isLight ? moonIcon : sunIcon;
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      });
+    })();
+  </script>
 
   <!-- Full-screen Matrix Background -->
   <div class="matrix-background" id="matrixBackground"></div>
@@ -1059,6 +1426,7 @@
   <!-- Content Wrapper -->
   <div class="content-wrapper">
     <div class="hidden-player-card">
+      <h2 class="hidden-player-title">Analog Processing</h2>
       <!-- VU Meter Style Toggle -->
       <div class="ba-global-toggle-section">
         <!-- Power Button -->

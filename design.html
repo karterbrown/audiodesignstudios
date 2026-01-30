@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- ============================================================================
+     ABOUT PAGE - Audio Design Studios
+     Professional bio and testimonials
+     ============================================================================ -->
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Audio Design Studios – Karter G. Brown</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="design.css?v=1769725229" />
+</head>
+
+<body>
+  
+  <!-- ========================================================================
+       SITE HEADER - Navigation
+       ======================================================================== -->
+  <header class="site-header">
+    <a href="matrix.html" class="logo">Audio Design Studios</a>
+    <nav class="nav">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+        <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+      <a href="index.html">Home</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="design.html">Design</a>
+      <a href="hiddentracks.html" class="special-link">A+B</a>
+    </nav>
+  </header>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    (function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const savedTheme = localStorage.getItem('theme');
+      
+      // Sun icon SVG for light mode
+      const sunIcon = `<circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+      
+      // Moon icon SVG for dark mode
+      const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+      
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        themeIcon.innerHTML = moonIcon;
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        themeIcon.innerHTML = isLight ? moonIcon : sunIcon;
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      });
+    })();
+  </script>
+
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
+  <main>
+    <!-- Audio Player -->
+    <div class="content-wrapper">
+      <div class="design-player-card">
+        <h2 class="design-player-title">Sound Design and FX</h2>
+        
+        <!-- Module: VU Meter and Volume Control -->
+        <div class="design-meter-section">
+          <!-- Power Button -->
+          <div class="power-button-container">
+            <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+          </div>
+          
+          <div class="design-meter-container">
+            <div class="design-meter-display">
+              <div class="design-meter-scale">
+                <!-- Main VU line -->
+                <div class="design-meter-vu-line"></div>
+                
+                <!-- Top VU scale -->
+                <div class="design-meter-tick" style="left: 0%;"></div>
+                <span class="design-meter-label" style="left: 0%;">20</span>
+                
+                <div class="design-meter-tick" style="left: 7.7%;"></div>
+                <span class="design-meter-label" style="left: 7.7%;">10</span>
+                
+                <div class="design-meter-tick" style="left: 15.4%;"></div>
+                <span class="design-meter-label" style="left: 15.4%;">7</span>
+                
+                <div class="design-meter-tick small" style="left: 23%;"></div>
+                
+                <div class="design-meter-tick" style="left: 30.8%;"></div>
+                <span class="design-meter-label" style="left: 30.8%;">5</span>
+                
+                <div class="design-meter-tick small" style="left: 38.5%;"></div>
+                
+                <div class="design-meter-tick" style="left: 46.2%;"></div>
+                <span class="design-meter-label" style="left: 46.2%;">3</span>
+                
+                <div class="design-meter-tick" style="left: 53.8%;"></div>
+                <span class="design-meter-label" style="left: 53.8%;">2</span>
+                
+                <div class="design-meter-tick" style="left: 61.5%;"></div>
+                <span class="design-meter-label" style="left: 61.5%;">1</span>
+                
+                <div class="design-meter-tick" style="left: 76.9%;"></div>
+                <span class="design-meter-label" style="left: 76.9%;">0</span>
+                
+                <div class="design-meter-tick" style="left: 84.6%;"></div>
+                <span class="design-meter-label red" style="left: 84.6%;">1</span>
+                
+                <div class="design-meter-tick" style="left: 92.3%;"></div>
+                <span class="design-meter-label red" style="left: 92.3%;">2</span>
+                
+                <div class="design-meter-tick" style="left: 100%;"></div>
+                <span class="design-meter-label red" style="left: 100%;">3</span>
+                
+                <!-- Bottom percentage line -->
+                <div class="design-meter-percent-line"></div>
+                
+                <div class="design-meter-percent-tick" style="left: 0%;"></div>
+                <div class="design-meter-percent-tick" style="left: 7.7%;"></div>
+                <div class="design-meter-percent-tick" style="left: 15.4%;"></div>
+                <span class="design-meter-percent-label" style="left: 15.4%;">20</span>
+                
+                <div class="design-meter-percent-tick" style="left: 23%;"></div>
+                <div class="design-meter-percent-tick" style="left: 30.8%;"></div>
+                <span class="design-meter-percent-label" style="left: 30.8%;">40</span>
+                
+                <div class="design-meter-percent-tick" style="left: 38.5%;"></div>
+                <div class="design-meter-percent-tick" style="left: 46.2%;"></div>
+                <span class="design-meter-percent-label" style="left: 46.2%;">60</span>
+                
+                <div class="design-meter-percent-tick" style="left: 53.8%;"></div>
+                <div class="design-meter-percent-tick" style="left: 61.5%;"></div>
+                <span class="design-meter-percent-label" style="left: 61.5%;">80</span>
+                
+                <div class="design-meter-percent-tick" style="left: 76.9%;"></div>
+                <span class="design-meter-percent-label" style="left: 76.9%;">100</span>
+              </div>
+              <div class="design-meter-needle" id="designMeterNeedle"></div>
+              <div class="design-meter-branding">AUDIO DESIGN STUDIOS</div>
+            </div>
+          </div>
+          <div class="design-controls-row">
+            <div class="design-volume-control">
+              <div class="design-volume-knob-container">
+                <div class="design-volume-tick"></div>
+                <div class="design-volume-tick"></div>
+                <div class="design-volume-tick"></div>
+                <div class="design-volume-db-label">-40</div>
+                <div class="design-volume-db-label">0</div>
+                <div class="design-volume-db-label">+12</div>
+                <div class="design-volume-knob" id="designVolumeKnob" aria-label="Volume Control"></div>
+                <div class="design-volume-arc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Track Controls -->
+        <!-- Now Playing Display -->
+        <div id="designNowPlaying" class="now-playing-info">No track playing</div>
+
+        <!-- Progress Bar -->
+        <div id="designMainWave" class="main-player-progress" aria-hidden="true"></div>
+
+        <!-- Transport Controls -->
+        <div class="playlist-player-controls">
+          <button id="designPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+          <button id="designPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+          <button id="designNextBtn" class="control-btn" aria-label="Next track"></button>
+        </div>
+
+        <!-- Track List -->
+        <div class="track-list" id="designPlaylistTracks">
+          <!-- Tracks will be injected via JavaScript -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       SITE FOOTER - Contact Information
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+      <p><a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="footer-special-link">Off World Depot</a></p>
+      <p class="footer-copy">
+        © <span id="year"></span> Audio Design Studios. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       SCRIPTS
+       ======================================================================== -->
+  
+  <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
+  <script src="content.js?v=1769797160"></script>
+
+  <!-- Year display script -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Design Page Player Script -->
+  <script>
+    // Design page audio player
+    const designTracks = [
+      { title: 'ADS Sound Demo', url: 'allworks/ADS_Sound Demo.mp3' }
+    ];
+
+    let designCurrentTrack = 0;
+    let designIsPlaying = false;
+    let designAudio = new Audio();
+    let designAudioContext = null;
+    let designAnalyser = null;
+    let designGain = null;
+    let designVolumeDb = 0;
+    let designVolume = 1.0;
+    let designVolumeRotation = 0;
+    let designProgressFill = null;
+    let designScrubber = null;
+    let designCurrentNeedleAngle = -50;
+    let designSourceConnected = false;
+
+    // Set preload for better performance
+    designAudio.preload = 'auto';
+
+    // Create audio context and setup
+    designAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    designAnalyser = designAudioContext.createAnalyser();
+    designGain = designAudioContext.createGain();
+    
+    designAnalyser.fftSize = 256;
+    designAnalyser.smoothingTimeConstant = 0.92;
+    designGain.gain.value = 1;
+
+    // Load track
+    function designLoadTrack(index) {
+      if (index < 0 || index >= designTracks.length) return;
+      
+      designCurrentTrack = index;
+      const track = designTracks[index];
+      
+      designAudio.src = track.url;
+      designAudio.volume = designVolume;
+      
+      document.getElementById('designNowPlaying').textContent = track.title;
+      
+      // Update active state
+      document.querySelectorAll('#designPlaylistTracks .track-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+    }
+
+    // Play/pause
+    function designTogglePlay() {
+      const playBtn = document.getElementById('designPlayPauseBtn');
+      if (designIsPlaying) {
+        designAudio.pause();
+        designIsPlaying = false;
+        playBtn.classList.remove('playing');
+      } else {
+        designAudio.play().catch(e => console.warn('Audio play failed:', e));
+        designIsPlaying = true;
+        playBtn.classList.add('playing');
+      }
+    }
+
+    // Previous track
+    function designPrevTrack() {
+      designCurrentTrack = (designCurrentTrack - 1 + designTracks.length) % designTracks.length;
+      designLoadTrack(designCurrentTrack);
+      if (designIsPlaying) designAudio.play();
+    }
+
+    // Next track
+    function designNextTrack() {
+      designCurrentTrack = (designCurrentTrack + 1) % designTracks.length;
+      designLoadTrack(designCurrentTrack);
+      if (designIsPlaying) designAudio.play();
+    }
+
+    // Update progress
+    function designUpdateProgress() {
+      if (designAudio.duration && designProgressFill && designScrubber) {
+        const progress = (designAudio.currentTime / designAudio.duration) * 100;
+        designProgressFill.style.width = progress + '%';
+        designScrubber.style.left = progress + '%';
+      }
+    }
+
+    // Seek
+    function designSeek(e) {
+      const progressBar = e.currentTarget;
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      designAudio.currentTime = percent * designAudio.duration;
+    }
+
+    // VU Meter animation
+    function designAnimateVU() {
+      requestAnimationFrame(designAnimateVU);
+      
+      if (!designAnalyser) return;
+
+      const dataArray = new Uint8Array(designAnalyser.frequencyBinCount);
+      designAnalyser.getByteFrequencyData(dataArray);
+      
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        sum += dataArray[i] * dataArray[i];
+      }
+      const rms = Math.sqrt(sum / dataArray.length);
+      const normalized = Math.max(rms / 255, 0.001);
+      let db = 20 * Math.log10(normalized) + 6 + designVolumeDb;
+      
+      const vuMin = -20;
+      const vuMax = 3;
+      const angleMin = -50;
+      const angleMax = 50;
+      const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
+      let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
+      if (clampedVU < -5) {
+        normalizedVU = Math.pow(normalizedVU, 1.5);
+      }
+      const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
+      designCurrentNeedleAngle += (targetAngle - designCurrentNeedleAngle) * 0.1;
+      
+      const needle = document.getElementById('designMeterNeedle');
+      if (needle) {
+        needle.style.transform = `translateX(-50%) rotate(${designCurrentNeedleAngle}deg)`;
+      }
+    }
+
+    // Volume knob control
+    let designDragging = false;
+    let designKnobStartY = 0;
+    let designKnobStartAngle = 0;
+    let designKnobMoved = false;
+
+    function designStartDrag(e) {
+      designDragging = true;
+      designKnobMoved = false;
+      designKnobStartY = e.touches ? e.touches[0].clientY : e.clientY;
+      designKnobStartAngle = designVolumeRotation;
+      e.preventDefault();
+    }
+
+    function designDrag(e) {
+      if (!designDragging) return;
+      
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const deltaY = designKnobStartY - clientY;
+      
+      if (Math.abs(deltaY) > 2) {
+        designKnobMoved = true;
+      }
+      
+      const newRotation = Math.max(-120, Math.min(120, designKnobStartAngle + deltaY));
+      designVolumeRotation = newRotation;
+      
+      const knob = document.querySelector('.design-volume-knob');
+      knob.style.transform = `rotate(${designVolumeRotation}deg)`;
+      
+      // Map rotation to volume (0.0 to 1.0)
+      designVolume = (designVolumeRotation + 120) / 240;
+      designAudio.volume = designVolume;
+      
+      e.preventDefault();
+    }
+
+    function designStopDrag() {
+      if (designDragging && !designKnobMoved) {
+        // Single click - reset to center (0.5 volume)
+        designVolumeRotation = 0;
+        const knob = document.querySelector('.design-volume-knob');
+        knob.style.transform = `rotate(0deg)`;
+        designVolume = 0.5;
+        designAudio.volume = designVolume;
+      }
+      designDragging = false;
+    }
+
+    // Populate track list
+    function designPopulateTrackList() {
+      const trackList = document.getElementById('designPlaylistTracks');
+      trackList.innerHTML = '';
+      
+      designTracks.forEach((track, index) => {
+        const trackItem = document.createElement('div');
+        trackItem.className = 'track-item';
+        trackItem.innerHTML = `
+          <div class="track-item-number">${index + 1}</div>
+          <div class="track-item-title">${track.title}</div>
+          <div class="track-item-time">0:00</div>
+        `;
+        trackItem.addEventListener('click', () => {
+          designLoadTrack(index);
+          if (!designIsPlaying) designTogglePlay();
+        });
+        trackList.appendChild(trackItem);
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create progress fill and scrubber elements
+      const mainWave = document.getElementById('designMainWave');
+      designProgressFill = document.createElement('div');
+      designProgressFill.className = 'main-player-progress-fill';
+      designProgressFill.style.width = '0%';
+      mainWave.appendChild(designProgressFill);
+      
+      designScrubber = document.createElement('div');
+      designScrubber.className = 'main-player-scrubber';
+      mainWave.appendChild(designScrubber);
+      
+      designPopulateTrackList();
+      
+      // Initialize first track
+      if (designTracks.length > 0) {
+        const firstTrack = designTracks[0];
+        document.getElementById('designNowPlaying').textContent = firstTrack.title;
+        
+        // Set up audio
+        designAudio.src = firstTrack.url;
+        designAudio.preload = 'auto';
+        
+        const trackItems = document.querySelectorAll('#designPlaylistTracks .track-item');
+        if (trackItems.length > 0) {
+          trackItems[0].classList.add('active');
+        }
+      }
+      
+      // Event listeners
+      document.getElementById('designPlayPauseBtn').addEventListener('click', designTogglePlay);
+      document.getElementById('designPrevBtn').addEventListener('click', designPrevTrack);
+      document.getElementById('designNextBtn').addEventListener('click', designNextTrack);
+      mainWave.addEventListener('click', designSeek);
+      
+      designAudio.addEventListener('timeupdate', designUpdateProgress);
+      designAudio.addEventListener('ended', designNextTrack);
+      
+      // Connect Web Audio API source on first play
+      designAudio.addEventListener('play', () => {
+        if (designAudioContext.state === 'suspended') {
+          designAudioContext.resume();
+        }
+        
+        if (!designSourceConnected) {
+          const source = designAudioContext.createMediaElementSource(designAudio);
+          source.connect(designAnalyser);
+          designAnalyser.connect(designGain);
+          designGain.connect(designAudioContext.destination);
+          designSourceConnected = true;
+        }
+      });
+      
+      // Volume knob
+      const knob = document.getElementById('designVolumeKnob');
+      knob.addEventListener('mousedown', designStartDrag);
+      knob.addEventListener('touchstart', designStartDrag);
+      document.addEventListener('mousemove', designDrag);
+      document.addEventListener('touchmove', designDrag);
+      document.addEventListener('mouseup', designStopDrag);
+      document.addEventListener('touchend', designStopDrag);
+      
+      // Start VU animation
+      designAnimateVU();
+    });
+  </script>
+
+</body>
+</html>

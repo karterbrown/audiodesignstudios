@@ -10,13 +10,17 @@
   <!-- Meta Information -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="about.css?v=1769725229" />
+  <link rel="stylesheet" href="about.css?v=1769797160" />
 </head>
 
 <body>
@@ -42,7 +46,7 @@
       </button>
       <a href="index.html">Home</a>
       <a href="portfolio.html">Portfolio</a>
-      <a href="about.html">About</a>
+      <a href="about.html">Design</a>
       <a href="hiddentracks.html" class="special-link">A+B</a>
     </nav>
   </header>
@@ -87,33 +91,6 @@
        ======================================================================== -->
   <main>
 
-    <!-- ======================================================================
-         SECTION 1: Hero Image Banner
-         ====================================================================== -->
-    <section class="env-image env-about"></section>
-
-    <!-- ======================================================================
-         SECTION 2: About Section with Professional Testimonial
-         ====================================================================== -->
-    <section id="about" class="section section-alt">
-      <h2>About</h2>
-
-      <!-- Professional Testimonial Quote -->
-      <blockquote>
-        <p>"After 50 years in the music business, one tends to think you've just about heard it all, especially in the classical and acoustic worlds, where traditional boundaries of what sounds 'good' are fairly well‑defined. But then on rare occasion a Karter Brown comes along. His music is fresh and full of delightful sonic surprises, yet he uses traditional tonalities. He's far deeper and sensitive than others who resort to odd modalities and awkward rhythms in order to be "new" or "fresh". With his delightful imagination and musical intuition he's invented "new" within the bounds of pleasant tradition. He uses that to great effect in support of his primary compositional interest, film scoring. Setting mood and tension is a mainstay of that artform, and Karter does those very well. And yet, one can listen to a Graham composition without the film, and sit back in happy wonderment at what you're hearing. Chromatic and rhythmic easter eggs abound; each one is an unexpected delight. Devote four to ten minutes to one of his compositions; it will be time well spent. Go back for additional listens to savor again what you heard, or pick up on the things you missed the first time."</p>
-        <footer>— <cite>Frank Stearns, Recording Producer / Audio Engineer</cite></footer>
-      </blockquote>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 3: Blue Matrix Animation (Musical Notes)
-         ====================================================================== -->
-    <a href="index.html" class="matrix-link">
-      <section class="matrix-section">
-        <div class="matrix-terminal" id="matrixTerminalBlue"></div>
-      </section>
-    </a>
-
   </main>
 
   <!-- ========================================================================
@@ -135,170 +112,11 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769725229"></script>
+  <script src="content.js?v=1769797160"></script>
 
-  <!-- ========================================================================
-       Blue Matrix Terminal Effect (Musical Notes)
-       ======================================================================== -->
+  <!-- Year display script -->
   <script>
-    const terminalBlue = document.getElementById('matrixTerminalBlue');
-    const canvasBlue = document.createElement('canvas');
-    const ctxBlue = canvasBlue.getContext('2d', { alpha: false, desynchronized: true });
-    terminalBlue.appendChild(canvasBlue);
-    
-    const charsBlue = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
-    const binaryCharsBlue = [0, 1];
-    const musicalNotesBlue = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-    const japaneseCharsBlue = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
-    const mathCharsBlue = [64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82];
-    const greekCharsBlue = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
-    const currencyCharsBlue = [134,135,136,137,138,139,140,141,142,143,144,145];
-    
-    let columnsBlue, rowsBlue, dropsBlue, charGridBlue, charAgeBlue, brightnessBlue, speedsBlue, cycleSpeedsBlue;
-    let animationIdBlue;
-    let lastFrameTimeBlue = 0;
-    const frameIntervalBlue = 30;
-    const numColumnsBlue = window.innerWidth < 600 ? 30 : window.innerWidth < 1200 ? 60 : 80;
-    const phaseDurationsBlue = [7000, 7000, 7000, 10000, 7000, 7000];
-    let phaseStartTimeBlue = Date.now();
-    
-    function getCurrentPhaseBlue() {
-      const elapsed = Date.now() - phaseStartTimeBlue;
-      const totalCycle = phaseDurationsBlue.reduce((a, b) => a + b, 0);
-      const cyclePosition = elapsed % totalCycle;
-      
-      let accumulatedTime = 0;
-      let phase = 0;
-      for (let i = 0; i < phaseDurationsBlue.length; i++) {
-        if (cyclePosition < accumulatedTime + phaseDurationsBlue[i]) {
-          phase = i;
-          break;
-        }
-        accumulatedTime += phaseDurationsBlue[i];
-      }
-      
-      const phaseElapsed = cyclePosition - accumulatedTime;
-      return { phase, phaseElapsed };
-    }
-    
-    function randomCharBlue(isLeading = false) {
-      const { phase, phaseElapsed } = getCurrentPhaseBlue();
-      let charSet = binaryCharsBlue;
-      
-      const phaseCharSets = [binaryCharsBlue, japaneseCharsBlue, mathCharsBlue, musicalNotesBlue, greekCharsBlue, currencyCharsBlue];
-      const pureDuration = phase === 3 ? 8000 : 5000;
-      const transitionDuration = 2000;
-      
-      if (phaseElapsed < pureDuration) {
-        charSet = phaseCharSets[phase];
-      } else {
-        const transitionProgress = (phaseElapsed - pureDuration) / transitionDuration;
-        const nextPhase = (phase + 1) % 6;
-        charSet = Math.random() < transitionProgress ? phaseCharSets[nextPhase] : phaseCharSets[phase];
-      }
-      
-      const index = charSet[Math.floor(Math.random() * charSet.length)];
-      return index !== undefined ? index : 0;
-    }
-    
-    function resizeBlue() {
-      canvasBlue.width = terminalBlue.offsetWidth;
-      canvasBlue.height = terminalBlue.offsetHeight;
-      const columnWidth = canvasBlue.width / numColumnsBlue;
-      columnsBlue = numColumnsBlue;
-      const newRows = Math.ceil(canvasBlue.height / columnWidth);
-      if (!dropsBlue || !charGridBlue || dropsBlue.length !== columnsBlue || rowsBlue !== newRows) {
-        rowsBlue = newRows;
-        dropsBlue = Array(columnsBlue).fill(0).map(() => Math.random() * -20);
-        speedsBlue = Array(columnsBlue).fill(0).map(() => 0.2 + Math.random() * 0.4);
-        charGridBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(null).map(() => randomCharBlue()));
-        charAgeBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(null).map(() => Math.random()));
-        cycleSpeedsBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(null).map(() => 0.15 + Math.random() * 0.2));
-        brightnessBlue = Array(columnsBlue).fill(null).map(() => Array(rowsBlue).fill(0));
-      }
-      ctxBlue.fillStyle = '#000000';
-      ctxBlue.fillRect(0, 0, canvasBlue.width, canvasBlue.height);
-    }
-    
-    function drawBlue(timestamp) {
-      if (timestamp - lastFrameTimeBlue < frameIntervalBlue) {
-        animationIdBlue = requestAnimationFrame(drawBlue);
-        return;
-      }
-      lastFrameTimeBlue = timestamp;
-      
-      ctxBlue.fillStyle = '#000000';
-      ctxBlue.fillRect(0, 0, canvasBlue.width, canvasBlue.height);
-      
-      const columnWidth = canvasBlue.width / numColumnsBlue;
-      const fontSize = Math.floor(columnWidth * 0.85);
-      
-      ctxBlue.font = `900 ${fontSize}px Courier New`;
-      ctxBlue.textAlign = 'center';
-      ctxBlue.textBaseline = 'middle';
-      
-      for (let i = 0; i < columnsBlue; i++) {
-        const currentDrop = Math.floor(dropsBlue[i]);
-        const x = i * columnWidth + columnWidth / 2;
-        
-        for (let j = 0; j < rowsBlue; j++) {
-          charAgeBlue[i][j] += cycleSpeedsBlue[i][j];
-          if (charAgeBlue[i][j] >= 1.0) {
-            const distance = currentDrop - j;
-            const isLeading = distance === 0;
-            charGridBlue[i][j] = randomCharBlue(isLeading);
-            charAgeBlue[i][j] = 0;
-          }
-          
-          const distance = currentDrop - j;
-          
-          if (distance === 0) {
-            brightnessBlue[i][j] = 1.5;
-          } else if (distance > 0 && distance < 30) {
-            const targetBrightness = 1 - (distance / 30);
-            brightnessBlue[i][j] = Math.max(brightnessBlue[i][j], targetBrightness);
-          }
-          
-          brightnessBlue[i][j] *= 0.95;
-          
-          if (brightnessBlue[i][j] > 0.01) {
-            const blue = Math.floor(120 + Math.min(brightnessBlue[i][j], 1) * 136);
-            const alpha = Math.min(1, brightnessBlue[i][j] * 0.9);
-            
-            const glowIntensity = Math.min(brightnessBlue[i][j], 1);
-            ctxBlue.shadowBlur = 15 * glowIntensity;
-            ctxBlue.shadowColor = `rgba(0, ${Math.floor(blue * 0.5)}, ${blue}, ${glowIntensity * 0.8})`;
-            
-            ctxBlue.fillStyle = `rgba(0, ${Math.floor(blue * 0.5)}, ${blue}, ${alpha})`;
-            ctxBlue.fillText(charsBlue[charGridBlue[i][j]], x, j * columnWidth + columnWidth / 2);
-            
-            ctxBlue.shadowBlur = 0;
-          }
-        }
-        
-        dropsBlue[i] += speedsBlue[i];
-        
-        if (dropsBlue[i] > rowsBlue && Math.random() > 0.975) {
-          dropsBlue[i] = 0;
-          speedsBlue[i] = 0.2 + Math.random() * 0.4;
-        }
-      }
-      
-      animationIdBlue = requestAnimationFrame(drawBlue);
-    }
-    
-    resizeBlue();
-    let resizeTimeoutBlue;
-    let lastWidthBlue = terminalBlue.offsetWidth;
-    let lastHeightBlue = terminalBlue.offsetHeight;
-    window.addEventListener('resize', () => {
-      if (terminalBlue.offsetWidth === lastWidthBlue && terminalBlue.offsetHeight === lastHeightBlue) return;
-      lastWidthBlue = terminalBlue.offsetWidth;
-      lastHeightBlue = terminalBlue.offsetHeight;
-      clearTimeout(resizeTimeoutBlue);
-      resizeTimeoutBlue = setTimeout(resizeBlue, 150);
-    });
-    requestAnimationFrame(drawBlue);
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
 </body>
