@@ -799,7 +799,7 @@ blockquote footer {
   border-radius: 4px;
   margin-bottom: 1rem;
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   transition: none;
 }
 
@@ -823,16 +823,22 @@ blockquote footer {
   position: absolute;
   top: 50%;
   left: 0;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  background: radial-gradient(circle, #31c49f, #24b886);
-  border-radius: 50%;
-  box-shadow: 0 0 15px rgba(49, 196, 159, 0.9);
-  transition: margin-left 0.1s linear;
+  transform: translateY(-50%) translateX(-50%);
+  width: 2px;
+  height: 300%;
+  background: linear-gradient(to bottom, 
+    rgba(49, 196, 159, 0.2), 
+    rgba(49, 196, 159, 0.8),
+    #31c49f, 
+    #31c49f, 
+    rgba(49, 196, 159, 0.8),
+    rgba(49, 196, 159, 0.2));
+  border-radius: 1px;
+  box-shadow: 0 0 15px rgba(49, 196, 159, 1),
+              0 0 25px rgba(49, 196, 159, 0.5);
+  transition: left 0.2s ease-out;
   pointer-events: none;
-  margin-left: -8px;
-  border: 1px solid #31c49f;
+  border: none;
 }
 
 .design-player-card .playlist-player-controls {
