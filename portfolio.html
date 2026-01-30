@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="portfolio.css?v=1769799440" />
+  <link rel="stylesheet" href="portfolio.css?v=1769802525" />
 </head>
 
 <body>
@@ -379,7 +379,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1769799440"></script>
+  <script src="content.js?v=1769802525"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -754,7 +754,17 @@
         // Debounce rapid track switching to prevent lag
         clearTimeout(trackLoadDebounceTimer);
         trackLoadDebounceTimer = setTimeout(() => {
-          if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
+          // Stop current playback and reset progress
+          if (ctx.current?.btn) {
+            ctx.current.btn.classList.remove('playing');
+            if (ctx.current.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
+            if (ctx.current.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
+          }
+          
+          // Reset main progress bars
+          if (ctx.progressFill) ctx.progressFill.style.width = '0%';
+          if (ctx.scrubber) ctx.scrubber.style.left = '0%';
+          
           const itemScrubber = itemProgressEl?.parentElement?.querySelector('.track-item-scrubber');
           ctx.current = { btn, itemProgressEl, itemScrubber, timeEl, track };
 
@@ -811,11 +821,13 @@
         audio.addEventListener('ended', () => {
           if (controls.playPauseBtn) controls.playPauseBtn.classList.remove('playing');
           if (ctx.current?.btn) ctx.current.btn.classList.remove('playing');
+          stopProgressLoop(ctx);
+          
+          // Reset progress bars before auto-playing next track
           if (ctx.current?.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
           if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
           if (ctx.progressFill) ctx.progressFill.style.width = '0%';
           if (ctx.scrubber) ctx.scrubber.style.left = '0%';
-          stopProgressLoop(ctx);
           
           // Auto-play next track, loop back to first track at the end
           const buttons = getTrackButtons(playerKey);
@@ -1027,7 +1039,14 @@
         const handleNext = () => {
           const buttons = getTrackButtons(playerKey);
           const currentIdx = buttons.findIndex((btn) => btn === ctx.current?.btn);
-          if (currentIdx >= 0 && currentIdx < buttons.length - 1) buttons[currentIdx + 1].click();
+          if (currentIdx >= 0 && currentIdx < buttons.length - 1) {
+            // Reset progress bars before loading next track
+            if (ctx.current?.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
+            if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
+            if (ctx.progressFill) ctx.progressFill.style.width = '0%';
+            if (ctx.scrubber) ctx.scrubber.style.left = '0%';
+            buttons[currentIdx + 1].click();
+          }
         };
 
         if (controls.playPauseBtn) controls.playPauseBtn.addEventListener('click', handlePlayPause);
