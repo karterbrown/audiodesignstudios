@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1769802753" />
-  <link rel="stylesheet" href="matrix.css?v=1769802753" />
+  <link rel="stylesheet" href="shared.css?v=1770052695" />
+  <link rel="stylesheet" href="matrix.css?v=1770052695" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -35,6 +35,65 @@
       overflow-x: hidden;
       background-color: #0f0f0f;
       color: #fff;
+    }
+
+    /* Hidden Tracks Banner Image */
+    .banner-link {
+      display: block;
+      position: relative;
+      text-decoration: none;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .env-hiddentracks {
+      background-image: url('Photos/staticcurrents800.webp');
+      background-position: center;
+      background-size: cover;
+      min-height: 60vh;
+      background-repeat: no-repeat;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 3rem;
+    }
+
+    @media (min-width: 720px) {
+      .env-hiddentracks {
+        background-image: url('Photos/staticcurrents1400.webp');
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .env-hiddentracks {
+        background-image: url('Photos/staticcurrents2000.webp');
+      }
+    }
+
+    .banner-text {
+      color: #f4f4ff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+
+    .banner-link:hover .banner-text {
+      transform: translateY(-2px);
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    @media (min-width: 720px) {
+      .banner-text {
+        font-size: 1rem;
+      }
     }
 
     /* Full-screen Matrix Background */
@@ -1385,9 +1444,9 @@
         </svg>
       </button>
       <a href="index.html">Home</a>
-      <a href="portfolio.html">Portfolio</a>
       <a href="design.html">Design</a>
-      <a href="hiddentracks.html" class="special-link">A+B</a>
+      <a href="compose.html">Compose</a>
+      <a href="music.html" class="special-link">Music</a>
     </nav>
   </header>
 
@@ -1428,6 +1487,15 @@
 
   <!-- Full-screen Matrix Background -->
   <div class="matrix-background" id="matrixBackground"></div>
+
+  <!-- ======================================================================
+       Hero Image Banner
+       ====================================================================== -->
+  <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music" class="banner-link">
+    <section class="env-image env-hiddentracks">
+      <span class="banner-text">on Apple Music</span>
+    </section>
+  </a>
 
   <!-- Content Wrapper -->
   <div class="content-wrapper">

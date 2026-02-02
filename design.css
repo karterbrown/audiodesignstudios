@@ -1,30 +1,30 @@
 /* =============================================================================
-   AUDIO DESIGN STUDIOS - ABOUT PAGE (about.html)
-   Page-specific styles for the about page
+   AUDIO DESIGN STUDIOS - DESIGN PAGE (design.html)
+   Page-specific styles for the design page
    ============================================================================= */
 
 @import url('./shared.css');
 
-/* About Page Background */
-.env-about {
-  background-image: url('Photos/about800.webp');
-  min-height: 60vh;
-  background-size: cover;
+/* Design Page Background */
+.env-design {
+  background-image: url('Photos/design800.webp');
   background-position: center;
+  background-size: cover;
+  min-height: 60vh;
   background-repeat: no-repeat;
   max-width: 1600px;
   margin: 0 auto;
 }
 
 @media (min-width: 720px) {
-  .env-about {
-    background-image: url('Photos/about1400.webp');
+  .env-design {
+    background-image: url('Photos/design1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
-  .env-about {
-    background-image: url('Photos/about2000.webp');
+  .env-design {
+    background-image: url('Photos/design2000.webp');
   }
 }
 

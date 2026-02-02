@@ -11,8 +11,8 @@ echo "Updating cache-busting version to: $NEW_VERSION"
 
 # Update all CSS file versions in HTML files
 sed -i '' "s/index\.css?v=[0-9]*/index.css?v=$NEW_VERSION/g" *.html
-sed -i '' "s/portfolio\.css?v=[0-9]*/portfolio.css?v=$NEW_VERSION/g" *.html
-sed -i '' "s/about\.css?v=[0-9]*/about.css?v=$NEW_VERSION/g" *.html
+sed -i '' "s/compose\.css?v=[0-9]*/compose.css?v=$NEW_VERSION/g" *.html
+sed -i '' "s/design\.css?v=[0-9]*/design.css?v=$NEW_VERSION/g" *.html
 sed -i '' "s/matrix\.css?v=[0-9]*/matrix.css?v=$NEW_VERSION/g" *.html
 sed -i '' "s/shared\.css?v=[0-9]*/shared.css?v=$NEW_VERSION/g" *.html
 
