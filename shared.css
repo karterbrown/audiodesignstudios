@@ -98,6 +98,58 @@ button:focus {
   mask-composite: intersect;
 }
 
+/* Banner Navigation Arrows */
+.banner-nav-arrow {
+  position: absolute;
+  top: 2rem;
+  color: #f4f4ff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  transition: transform 0.3s ease, text-shadow 0.3s ease, background 0.3s ease;
+  z-index: 10;
+}
+
+.banner-nav-left {
+  left: 2rem;
+}
+
+.banner-nav-right {
+  right: 2rem;
+}
+
+.banner-nav-arrow:hover {
+  transform: translateY(-2px);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 720px) {
+  .banner-nav-arrow {
+    top: 1rem;
+  }
+  
+  .banner-nav-left {
+    left: 1rem;
+  }
+  
+  .banner-nav-right {
+    right: 1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .banner-nav-arrow {
+    font-size: 1rem;
+    padding: 0.35rem 0.7rem;
+  }
+}
+
 .matrix-link {
   display: block;
   text-decoration: none;
