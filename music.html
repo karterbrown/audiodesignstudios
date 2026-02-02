@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1770058937" />
-  <link rel="stylesheet" href="matrix.css?v=1770058937" />
+  <link rel="stylesheet" href="shared.css?v=1770067509" />
+  <link rel="stylesheet" href="matrix.css?v=1770067509" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -206,6 +206,8 @@
     /* Full-screen Matrix Background */
     .matrix-background {
       display: none;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     /* Content Container */
@@ -535,6 +537,7 @@
       background: linear-gradient(to top, #31c49f, rgba(49, 196, 159, 0.3));
       transform-origin: bottom center;
       transform: translateX(-50%) rotate(-35deg);
+      will-change: transform;
       transition: none;
       box-shadow: 0 0 10px rgba(49, 196, 159, 0.6);
     }
@@ -839,6 +842,7 @@
       cursor: pointer;
       position: relative;
       transition: transform 0.1s;
+      will-change: transform;
     }
 
     .ba-volume-knob:active {
@@ -1759,6 +1763,8 @@
     const frameInterval = 40;
     const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000];
     let phaseStartTime = Date.now();
+    let isMatrixPaused = false;
+    let isMatrixPaused = false;
     
     function getCurrentPhase() {
       const elapsed = Date.now() - phaseStartTime;
@@ -1800,8 +1806,12 @@
     }
     
     function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      // Limit canvas size for performance on very large displays
+      const maxWidth = Math.min(window.innerWidth, 3840);
+      const maxHeight = Math.min(window.innerHeight, 2160);
+      
+      canvas.width = maxWidth;
+      canvas.height = maxHeight;
       canvas.style.width = '100vw';
       canvas.style.height = '100vh';
       canvas.style.display = 'block';
@@ -1836,6 +1846,9 @@
     }
     
     function draw(timestamp) {
+      if (isMatrixPaused) {
+        return;
+      }
       if (timestamp - lastFrameTime < frameInterval) {
         animationId = requestAnimationFrame(draw);
         return;
@@ -1893,8 +1906,27 @@
     resize();
     draw(0);
     
+    let resizeTimeout;
     window.addEventListener('resize', () => {
-      resize();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        resize();
+      }, 150);
+    });
+
+    // Pause/resume animation based on page visibility to improve performance
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        isMatrixPaused = true;
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      } else {
+        isMatrixPaused = false;
+        lastFrameTime = performance.now();
+        animationId = requestAnimationFrame(draw);
+      }
     });
 
     // Click matrix background to go home
@@ -1993,9 +2025,25 @@
       const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
       const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
       
+      let vuMeterAnimationId = null;
+      let isVUPaused = false;
+      let lastVUFrameTime = 0;
+      const vuFrameInterval = 16.67; // ~60fps for smooth VU meter
+      
       // VU meter animation loop
-      function updateVUMeter() {
-        requestAnimationFrame(updateVUMeter);
+      function updateVUMeter(timestamp) {
+        if (isVUPaused) {
+          return;
+        }
+        
+        // Throttle to 60fps max for VU meter
+        if (timestamp - lastVUFrameTime < vuFrameInterval) {
+          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+          return;
+        }
+        lastVUFrameTime = timestamp;
+        
+        vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
         
         const analyser = isAfterMode ? afterAnalyser : beforeAnalyser;
         const dataArray = isAfterMode ? afterDataArray : beforeDataArray;
@@ -2054,7 +2102,21 @@
         baMeterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
       }
       
-      updateVUMeter();
+      updateVUMeter(performance.now());
+
+      // Pause/resume VU meter based on page visibility
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          isVUPaused = true;
+          if (vuMeterAnimationId) {
+            cancelAnimationFrame(vuMeterAnimationId);
+            vuMeterAnimationId = null;
+          }
+        } else {
+          isVUPaused = false;
+          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+        }
+      });
 
       // Volume Knob Control
       function updateVolumeDisplay() {
