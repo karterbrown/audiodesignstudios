@@ -179,7 +179,7 @@
 
 /* Portfolio Playlists Container */
 .playlists-section {
-  padding: 4rem 8vw;
+  padding: 2rem;
 }
 
 /* Track List */
@@ -682,7 +682,7 @@
 @media (max-width: 720px) {
   .section,
   .playlists-section {
-    padding: 2rem 2vw;
+    padding: 1rem;
   }
 
   .playlists-container {
