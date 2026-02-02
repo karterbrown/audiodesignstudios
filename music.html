@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1770070378" />
-  <link rel="stylesheet" href="matrix.css?v=1770070378" />
+  <link rel="stylesheet" href="shared.css?v=1770072582" />
+  <link rel="stylesheet" href="matrix.css?v=1770072582" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -41,7 +41,7 @@
     .env-hiddentracks {
       background-image: url('Photos/staticcurrents800.webp');
       background-position: center;
-      background-size: cover;
+      background-size: contain;
       min-height: 60vh;
       background-repeat: no-repeat;
       position: relative;
@@ -53,6 +53,12 @@
       padding-bottom: 3rem;
       max-width: 1600px;
       margin: 0 auto;
+    }
+    
+    @media (min-width: 600px) {
+      .env-hiddentracks {
+        background-size: cover;
+      }
     }
 
     .banner-title-music {
