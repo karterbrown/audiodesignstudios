@@ -4,6 +4,7 @@
    ============================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* =============================================================================
    1. BASE STYLES & RESET
@@ -488,10 +489,12 @@ img {
 
 .section h2,
 .section-title {
+  font-family: 'Cinzel', Georgia, serif;
   font-size: 1.8rem;
   margin-bottom: 1.25rem;
   color: #f4f4ff;
   text-align: center;
+  letter-spacing: 0.05em;
 }
 
 blockquote {

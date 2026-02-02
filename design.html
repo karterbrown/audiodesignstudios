@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="design.css?v=1770055941" />
+  <link rel="stylesheet" href="design.css?v=1770058937" />
 </head>
 
 <body>
@@ -29,7 +29,7 @@
        SITE HEADER - Navigation
        ======================================================================== -->
   <header class="site-header">
-    <a href="matrix.html" class="logo">Audio Design Studios</a>
+    <a href="index.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
         <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -96,6 +96,7 @@
          ====================================================================== -->
     <section class="env-image env-design">
       <a href="index.html" class="banner-nav-arrow banner-nav-left" aria-label="Previous: Home">←</a>
+      <h1 class="banner-title">DESIGN</h1>
       <a href="compose.html" class="banner-nav-arrow banner-nav-right" aria-label="Next: Compose">→</a>
     </section>
 
@@ -218,6 +219,51 @@
         </div>
       </div>
     </div>
+
+    <!-- ======================================================================
+         SECTION 2: Highlights Hero (3-Column Layout)
+         Left: Album art | Center: Title, description, cycling word | Right: Headshot
+         Bottom: Track players spanning full width
+         ====================================================================== -->
+    <section id="portfolio" class="hero hero-highlights-3col">
+      <!-- Left Column: Headshot -->
+      <div class="hero-left-highlights">
+        <div class="headshot-wrapper-portrait">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+          </picture>
+        </div>
+      </div>
+
+      <!-- Center Column: Contact Form -->
+      <div class="hero-center-highlights">
+        <div class="contact-wrapper">
+          <h1>Get In Touch</h1>
+          <p>Send a message and I'll get back to you with next steps.</p>
+          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Describe your project..." required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Album Art -->
+      <div class="hero-right-highlights">
+        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+          <div class="album-cover-centered" aria-hidden="true">
+            <picture>
+              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+            </picture>
+          </div>
+        </a>
+      </div>
+    </section>
   </main>
 
   <!-- ========================================================================
@@ -239,7 +285,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770055941"></script>
+  <script src="content.js?v=1770058937"></script>
 
   <!-- Year display script -->
   <script>

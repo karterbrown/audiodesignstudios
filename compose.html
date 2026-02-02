@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1770055941" />
+  <link rel="stylesheet" href="compose.css?v=1770058937" />
 </head>
 
 <body>
@@ -28,7 +28,7 @@
        SITE HEADER - Navigation
        ======================================================================== -->
   <header class="site-header">
-    <a href="matrix.html" class="logo">Audio Design Studios</a>
+    <a href="index.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
         <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -95,6 +95,7 @@
          ====================================================================== -->
     <section class="env-image env-portfolio">
       <a href="design.html" class="banner-nav-arrow banner-nav-left" aria-label="Previous: Design">←</a>
+      <h1 class="banner-title">COMPOSE</h1>
       <a href="music.html" class="banner-nav-arrow banner-nav-right" aria-label="Next: Music">→</a>
     </section>
 
@@ -363,6 +364,51 @@
         
       </div>
     </section>
+
+    <!-- ======================================================================
+         SECTION 3: Highlights Hero (3-Column Layout)
+         Left: Album art | Center: Title, description, cycling word | Right: Headshot
+         Bottom: Track players spanning full width
+         ====================================================================== -->
+    <section id="portfolio" class="hero hero-highlights-3col">
+      <!-- Left Column: Headshot -->
+      <div class="hero-left-highlights">
+        <div class="headshot-wrapper-portrait">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+          </picture>
+        </div>
+      </div>
+
+      <!-- Center Column: Contact Form -->
+      <div class="hero-center-highlights">
+        <div class="contact-wrapper">
+          <h1>Get In Touch</h1>
+          <p>Send a message and I'll get back to you with next steps.</p>
+          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Describe your project..." required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Album Art -->
+      <div class="hero-right-highlights">
+        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+          <div class="album-cover-centered" aria-hidden="true">
+            <picture>
+              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+            </picture>
+          </div>
+        </a>
+      </div>
+    </section>
   </main>
 
   <!-- ========================================================================
@@ -382,7 +428,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770055941"></script>
+  <script src="content.js?v=1770058937"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
@@ -771,6 +817,13 @@
           const itemScrubber = itemProgressEl?.parentElement?.querySelector('.track-item-scrubber');
           ctx.current = { btn, itemProgressEl, itemScrubber, timeEl, track };
 
+          // Update active state in track list
+          const buttons = getTrackButtons(playerKey);
+          const trackItems = buttons.map(b => b.closest('.track-item'));
+          trackItems.forEach(item => item?.classList.remove('active'));
+          const activeItem = btn.closest('.track-item');
+          if (activeItem) activeItem.classList.add('active');
+
           // Update now playing info
           if (ctx.nowPlayingEl) {
             const trackTitle = track.title || 'Unknown Track';
@@ -1042,13 +1095,19 @@
         const handleNext = () => {
           const buttons = getTrackButtons(playerKey);
           const currentIdx = buttons.findIndex((btn) => btn === ctx.current?.btn);
-          if (currentIdx >= 0 && currentIdx < buttons.length - 1) {
+          if (currentIdx >= 0) {
             // Reset progress bars before loading next track
             if (ctx.current?.itemProgressEl) ctx.current.itemProgressEl.style.width = '0%';
             if (ctx.current?.itemScrubber) ctx.current.itemScrubber.style.left = '0%';
             if (ctx.progressFill) ctx.progressFill.style.width = '0%';
             if (ctx.scrubber) ctx.scrubber.style.left = '0%';
-            buttons[currentIdx + 1].click();
+            
+            // Cycle to next track, or loop back to first
+            if (currentIdx < buttons.length - 1) {
+              buttons[currentIdx + 1].click();
+            } else {
+              buttons[0].click();
+            }
           }
         };
 

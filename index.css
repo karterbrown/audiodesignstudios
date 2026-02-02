@@ -4,6 +4,7 @@
    ============================================================================= */
 
 @import url('./shared.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* =============================================================================
    PAGE-SPECIFIC: HOME PAGE LAYOUTS
@@ -134,8 +135,10 @@ blockquote footer {
 }
 
 .hero-center-highlights h1 {
+  font-family: 'Cinzel', Georgia, serif;
   font-size: 2.2rem;
   margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
 }
 
 .hero-center-highlights p {

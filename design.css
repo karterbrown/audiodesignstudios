@@ -4,6 +4,7 @@
    ============================================================================= */
 
 @import url('./shared.css');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* Design Page Background */
 .env-design {
@@ -15,6 +16,22 @@
   max-width: 1600px;
   margin: 0 auto;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+  z-index: 5;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 @media (min-width: 720px) {
@@ -56,6 +73,71 @@ blockquote footer {
   margin-top: 1rem;
   color: #f4f4ff;
   font-weight: 600;
+}
+
+/* Highlights 3-Column Hero Section */
+.hero-highlights-3col {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 2rem 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 1200px) {
+  .hero-highlights-3col {
+    padding-bottom: 3rem;
+  }
+}
+
+.hero-left-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-center-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.hero-center-highlights h1 {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.hero-center-highlights p {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-right-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.album-cover-centered,
+.headshot-wrapper-portrait {
+  width: 240px;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.album-cover-centered img,
+.headshot-wrapper-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* About Page Hero Section */
@@ -163,6 +245,37 @@ blockquote footer {
    ============================================================================= */
 
 @media (max-width: 800px) {
+  .hero,
+  .hero-highlights-3col {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-highlights-3col {
+    grid-template-rows: auto;
+  }
+
+  .hero-left-highlights,
+  .hero-center-highlights,
+  .hero-right-highlights {
+    max-width: 100%;
+  }
+
+  /* Hide album cover on small screens */
+  .hero-right-highlights {
+    display: none;
+  }
+
+  .album-cover-centered {
+    width: 200px;
+    height: 200px;
+  }
+
+  .headshot-wrapper-portrait {
+    width: 200px;
+    height: 200px;
+  }
+
   .hero {
     grid-template-columns: 1fr;
     text-align: center;
