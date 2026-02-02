@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1770067509" />
-  <link rel="stylesheet" href="matrix.css?v=1770067509" />
+  <link rel="stylesheet" href="shared.css?v=1770068581" />
+  <link rel="stylesheet" href="matrix.css?v=1770068581" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1746,7 +1746,11 @@
   <script>
     const terminal = document.getElementById('matrixBackground');
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+    const ctx = canvas.getContext('2d', { 
+      alpha: false, 
+      desynchronized: true,
+      willReadFrequently: false 
+    });
     terminal.appendChild(canvas);
     
     const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
@@ -1757,14 +1761,19 @@
     const greekChars = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
     const currencyChars = [134,135,136,137,138,139,140,141,142,143,144,145];
     
-    let columns, rows, drops, charGrid, charAge, brightness, speeds, cycleSpeeds;
+    let columns, rows, drops, charGrid, charAge, speeds, cycleSpeeds;
     let animationId;
     let lastFrameTime = 0;
-    const frameInterval = 40;
+    const frameInterval = 50; // Reduced to 20fps for better performance
     const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000];
     let phaseStartTime = Date.now();
     let isMatrixPaused = false;
-    let isMatrixPaused = false;
+    
+    // Performance monitoring
+    let frameCount = 0;
+    let lastFpsCheck = Date.now();
+    let currentTrailLength = 15;
+    let performanceMode = 'normal'; // 'normal' or 'low'
     
     function getCurrentPhase() {
       const elapsed = Date.now() - phaseStartTime;
@@ -1821,15 +1830,15 @@
       
       let desiredColumnWidth;
       if (window.innerWidth < 600) {
-        desiredColumnWidth = 12;
-      } else if (window.innerWidth < 1200) {
-        desiredColumnWidth = 18;
-      } else {
         desiredColumnWidth = 20;
+      } else if (window.innerWidth < 1200) {
+        desiredColumnWidth = 28;
+      } else {
+        desiredColumnWidth = 32;
       }
       
       columns = Math.ceil(canvas.width / desiredColumnWidth);
-      if (columns > 150) columns = 150;
+      if (columns > 80) columns = 80; // Reduced from 150 to 80
       const columnWidth = canvas.width / columns;
       rows = Math.ceil(canvas.height / columnWidth) + 1;
       
@@ -1839,7 +1848,6 @@
         charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
         charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
         cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.1 + Math.random() * 0.15));
-        brightness = Array(columns).fill(null).map(() => Array(rows).fill(0));
       }
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1855,41 +1863,59 @@
       }
       lastFrameTime = timestamp;
       
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      // Performance monitoring - check FPS every 2 seconds
+      frameCount++;
+      if (Date.now() - lastFpsCheck > 2000) {
+        const fps = frameCount / 2;
+        frameCount = 0;
+        lastFpsCheck = Date.now();
+        
+        // If FPS drops below 15, reduce trail length
+        if (fps < 15 && performanceMode === 'normal') {
+          performanceMode = 'low';
+          currentTrailLength = 8;
+          console.log('Matrix: Switching to low performance mode');
+        } else if (fps > 18 && performanceMode === 'low') {
+          performanceMode = 'normal';
+          currentTrailLength = 15;
+        }
+      }
+      
+      // Fade effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       const columnWidth = canvas.width / columns;
-      ctx.font = `${columnWidth * 0.9}px 'Courier New', monospace`;
+      ctx.font = `${columnWidth * 0.85}px monospace`;
       ctx.textBaseline = 'top';
       
+      // Only draw the active trail - much more efficient
       for (let col = 0; col < columns; col++) {
         const y = drops[col];
         const row = Math.floor(y);
         
         if (row >= 0 && row < rows) {
+          // Update character at current position
           charAge[col][row] += cycleSpeeds[col][row];
           if (charAge[col][row] > 1) {
             charAge[col][row] = 0;
             charGrid[col][row] = randomChar(false);
           }
           
-          for (let r = 0; r < rows; r++) {
-            const distance = row - r;
-            if (distance >= 0 && distance < 20) {
-              const alpha = distance === 0 ? 1.0 : Math.max(0, 1.0 - (distance / 20));
-              brightness[col][r] = Math.max(brightness[col][r] * 0.95, alpha);
-            } else {
-              brightness[col][r] *= 0.95;
-            }
-            
-            if (brightness[col][r] > 0.01) {
-              const b = brightness[col][r];
-              const green = Math.floor(255 * b);
-              ctx.fillStyle = `rgb(0, ${green}, 0)`;
-              const character = chars[charGrid[col][r]];
-              const x = col * columnWidth;
-              const yPos = r * columnWidth;
-              ctx.fillText(character, x, yPos);
+          // Draw only the trail (adaptive length based on performance)
+          for (let i = 0; i < currentTrailLength; i++) {
+            const r = row - i;
+            if (r >= 0 && r < rows) {
+              const alpha = i === 0 ? 1.0 : Math.max(0, 1.0 - (i / currentTrailLength));
+              
+              if (alpha > 0.05) {
+                const green = Math.floor(255 * alpha);
+                ctx.fillStyle = `rgb(0, ${green}, 0)`;
+                const character = chars[charGrid[col][r]];
+                const x = col * columnWidth;
+                const yPos = r * columnWidth;
+                ctx.fillText(character, x, yPos);
+              }
             }
           }
         }
@@ -2028,7 +2054,7 @@
       let vuMeterAnimationId = null;
       let isVUPaused = false;
       let lastVUFrameTime = 0;
-      const vuFrameInterval = 16.67; // ~60fps for smooth VU meter
+      const vuFrameInterval = 33; // ~30fps for VU meter - sufficient for visual smoothness
       
       // VU meter animation loop
       function updateVUMeter(timestamp) {
@@ -2036,7 +2062,7 @@
           return;
         }
         
-        // Throttle to 60fps max for VU meter
+        // Throttle to 30fps max for VU meter
         if (timestamp - lastVUFrameTime < vuFrameInterval) {
           vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
           return;
