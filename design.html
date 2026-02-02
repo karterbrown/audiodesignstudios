@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="design.css?v=1770053874" />
+  <link rel="stylesheet" href="design.css?v=1770055941" />
 </head>
 
 <body>
@@ -239,7 +239,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770053874"></script>
+  <script src="content.js?v=1770055941"></script>
 
   <!-- Year display script -->
   <script>
@@ -250,7 +250,7 @@
   <script>
     // Design page audio player
     const designTracks = [
-      { title: 'Bass Stinger (Design Demo)', url: 'allworks/ADS_Sound Demo.mp3' }
+      { title: 'Bass Stinger (Design Demo)', url: 'allworks/Shifting of Khamsin Wind.mp3' }
     ];
 
     let designCurrentTrack = 0;
@@ -332,7 +332,25 @@
         const progress = (designAudio.currentTime / designAudio.duration) * 100;
         designProgressFill.style.width = progress + '%';
         designScrubber.style.left = progress + '%';
+        
+        // Update track time display
+        const trackItems = document.querySelectorAll('.track-item');
+        if (trackItems[designCurrentTrack]) {
+          const timeEl = trackItems[designCurrentTrack].querySelector('.track-item-time');
+          if (timeEl) {
+            const current = formatTime(designAudio.currentTime);
+            const duration = formatTime(designAudio.duration);
+            timeEl.textContent = `${current} / ${duration}`;
+          }
+        }
       }
+    }
+
+    function formatTime(seconds) {
+      const safeSec = Math.max(0, Math.floor(seconds || 0));
+      const m = Math.floor(safeSec / 60);
+      const s = safeSec % 60;
+      return `${m}:${s.toString().padStart(2, '0')}`;
     }
 
     function designStartProgressLoop() {
@@ -457,7 +475,7 @@
         const trackItem = document.createElement('div');
         trackItem.className = 'track-item';
         trackItem.innerHTML = `
-          <div class="track-item-number">${index + 1}</div>
+          <div class="track-item-number">${(index + 1)}</div>
           <div class="track-item-title">${track.title}</div>
           <div class="track-item-time">0:00</div>
         `;

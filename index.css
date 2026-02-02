@@ -492,10 +492,10 @@ blockquote footer {
 }
 
 .track-item-number {
-  display: none;
   font-size: 0.75rem;
   color: #cbcb83;
   font-weight: 600;
+  min-width: 1.5rem;
 }
 
 .track-item-title {
