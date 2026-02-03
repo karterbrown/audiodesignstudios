@@ -189,6 +189,12 @@
   padding: 2rem;
 }
 
+@media (min-width: 1200px) {
+  .playlists-section {
+    padding: 4rem 2rem;
+  }
+}
+
 /* Track List */
 .track-list {
   display: flex;

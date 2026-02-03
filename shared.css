@@ -111,6 +111,7 @@ button:focus {
   width: 3rem;
   height: 3rem;
   padding: 0;
+  line-height: 1;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
   backdrop-filter: blur(4px);
@@ -157,9 +158,9 @@ button:focus {
 
 @media (min-width: 1200px) {
   .banner-nav-arrow {
-    font-size: 2.5rem;
-    width: 5rem;
-    height: 5rem;
+    font-size: 1.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 }
 
