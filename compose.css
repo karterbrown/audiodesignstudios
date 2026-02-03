@@ -1167,43 +1167,44 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 115px;
-  height: 115px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
+  border: 2px solid rgba(208, 208, 208, 0.7);
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 100%,
+    50% 100%,
+    50% 90%,
+    10% 90%,
+    10% 10%,
+    90% 10%,
+    90% 90%,
+    50% 90%,
+    50% 100%,
+    0% 100%
+  );
+  mask-image: conic-gradient(
+    from 180deg,
+    black 0deg,
+    black 240deg,
+    transparent 240deg,
+    transparent 360deg
+  );
+  -webkit-mask-image: conic-gradient(
+    from 180deg,
+    black 0deg,
+    black 240deg,
+    transparent 240deg,
+    transparent 360deg
+  );
   pointer-events: none;
+  box-shadow: 0 0 4px rgba(208, 208, 208, 0.5);
 }
 
 .portfolio-volume-arc::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: 
-    conic-gradient(
-      from 180deg,
-      transparent 0deg,
-      rgba(208, 208, 208, 0.6) 0deg,
-      rgba(208, 208, 208, 0.8) 120deg,
-      rgba(208, 208, 208, 0.6) 240deg,
-      transparent 240deg
-    );
-  mask-image: radial-gradient(
-    circle,
-    transparent 34px,
-    black 34px,
-    black 36px,
-    transparent 36px
-  );
-  -webkit-mask-image: radial-gradient(
-    circle,
-    transparent 34px,
-    black 34px,
-    black 36px,
-    transparent 36px
-  );
+  content: none;
 }
 
 /* =============================================================================
