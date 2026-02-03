@@ -376,7 +376,7 @@ blockquote footer {
 
 .ambient-player-section {
   background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-  padding: 3rem 1.5rem;
+  padding: 3rem 4rem;
   border-top: 1px solid rgba(126, 201, 143, 0.2);
   border-bottom: 1px solid rgba(126, 201, 143, 0.2);
 }
@@ -384,7 +384,6 @@ blockquote footer {
 .ambient-player-container {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 0 4vw;
 }
 
 .ambient-player-header {
@@ -561,9 +560,15 @@ blockquote footer {
 }
 
 /* Mobile responsive */
+@media (max-width: 800px) {
+  .ambient-player-section {
+    padding: 2rem 2vw;
+  }
+}
+
 @media (max-width: 600px) {
   .ambient-player-section {
-    padding: 2rem 1rem;
+    padding: 2rem 4vw;
   }
 
   .ambient-player-header h3 {
