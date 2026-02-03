@@ -332,6 +332,12 @@ blockquote footer {
   padding: 2rem;
 }
 
+@media (min-width: 1200px) {
+  .content-wrapper {
+    padding: 4rem 2rem;
+  }
+}
+
 /* Player Card */
 .design-player-card {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
