@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="design.css?v=1770139940" />
+  <link rel="stylesheet" href="design.css?v=1770141436" />
 </head>
 
 <body>
@@ -237,7 +237,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770139940"></script>
+  <script src="content.js?v=1770141436"></script>
 
   <!-- Year display script -->
   <script>
@@ -418,14 +418,24 @@
     // Volume knob control
     let designDragging = false;
     let designKnobStartY = 0;
-    let designKnobStartAngle = 0;
+    let designKnobStartAngle = 360;
+    let designKnobAngle = 360;
     let designKnobMoved = false;
+
+    function updateDesignVolumeDisplay() {
+      const knob = document.getElementById('designVolumeKnob');
+      if (knob) {
+        knob.style.transform = `rotate(${designKnobAngle - 360}deg)`;
+      }
+      const gain = Math.pow(10, designVolumeDb / 20);
+      designGain.gain.value = gain;
+    }
 
     function designStartDrag(e) {
       designDragging = true;
       designKnobMoved = false;
       designKnobStartY = e.touches ? e.touches[0].clientY : e.clientY;
-      designKnobStartAngle = designVolumeRotation;
+      designKnobStartAngle = designKnobAngle;
       e.preventDefault();
     }
 
@@ -439,27 +449,20 @@
         designKnobMoved = true;
       }
       
-      const newRotation = Math.max(-120, Math.min(120, designKnobStartAngle + deltaY));
-      designVolumeRotation = newRotation;
-      
-      const knob = document.querySelector('.design-volume-knob');
-      knob.style.transform = `rotate(${designVolumeRotation}deg)`;
-      
-      // Map rotation to volume (0.0 to 1.0)
-      designVolume = (designVolumeRotation + 120) / 240;
-      designAudio.volume = designVolume;
+      const newAngle = Math.max(180, Math.min(420, designKnobStartAngle + deltaY));
+      designKnobAngle = newAngle;
+      designVolumeDb = -40 + ((designKnobAngle - 180) / 240) * 52;
+      updateDesignVolumeDisplay();
       
       e.preventDefault();
     }
 
     function designStopDrag() {
       if (designDragging && !designKnobMoved) {
-        // Single click - reset to center (0.5 volume)
-        designVolumeRotation = 0;
-        const knob = document.querySelector('.design-volume-knob');
-        knob.style.transform = `rotate(0deg)`;
-        designVolume = 0.5;
-        designAudio.volume = designVolume;
+        // Single click - reset to 0 dB
+        designVolumeDb = 0;
+        designKnobAngle = 360;
+        updateDesignVolumeDisplay();
       }
       designDragging = false;
     }
@@ -487,6 +490,12 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
+      // Initialize volume knob rotation
+      const knob = document.getElementById('designVolumeKnob');
+      if (knob) {
+        knob.style.transform = `rotate(${designVolumeRotation}deg)`;
+      }
+      
       // Create progress fill and scrubber elements
       const mainWave = document.getElementById('designMainWave');
       designProgressFill = document.createElement('div');
@@ -545,12 +554,17 @@
 
       designAudio.addEventListener('pause', designStopProgressLoop);
       
-      // Volume knob
-      const knob = document.getElementById('designVolumeKnob');
-      knob.addEventListener('mousedown', designStartDrag);
-      knob.addEventListener('touchstart', designStartDrag);
+      // Initialize volume display
+      updateDesignVolumeDisplay();
+      
+      // Volume knob - attach event listeners
+      const volumeKnob = document.getElementById('designVolumeKnob');
+      if (volumeKnob) {
+        volumeKnob.addEventListener('mousedown', designStartDrag);
+        volumeKnob.addEventListener('touchstart', designStartDrag, { passive: false });
+      }
       document.addEventListener('mousemove', designDrag);
-      document.addEventListener('touchmove', designDrag);
+      document.addEventListener('touchmove', designDrag, { passive: false });
       document.addEventListener('mouseup', designStopDrag);
       document.addEventListener('touchend', designStopDrag);
       
