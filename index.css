@@ -379,6 +379,9 @@ blockquote footer {
   padding: 3rem 4rem;
   border-top: 1px solid rgba(126, 201, 143, 0.2);
   border-bottom: 1px solid rgba(126, 201, 143, 0.2);
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .ambient-player-container {
