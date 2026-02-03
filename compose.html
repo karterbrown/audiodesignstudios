@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1770072888" />
+  <link rel="stylesheet" href="compose.css?v=1770137300" />
 </head>
 
 <body>
@@ -30,60 +30,12 @@
   <header class="site-header">
     <a href="index.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
-        <svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
-      </button>
       <a href="index.html">Home</a>
       <a href="design.html">Design</a>
       <a href="compose.html">Compose</a>
       <a href="music.html" class="special-link">Music</a>
     </nav>
   </header>
-
-  <!-- Theme Toggle Script -->
-  <script>
-    (function() {
-      const themeToggle = document.getElementById('themeToggle');
-      const themeIcon = themeToggle.querySelector('.theme-icon');
-      const savedTheme = localStorage.getItem('theme');
-      
-      // Sun icon SVG for light mode
-      const sunIcon = `<circle cx="12" cy="12" r="5"></circle>
-          <line x1="12" y1="1" x2="12" y2="3"></line>
-          <line x1="12" y1="21" x2="12" y2="23"></line>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-          <line x1="1" y1="12" x2="3" y2="12"></line>
-          <line x1="21" y1="12" x2="23" y2="12"></line>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
-      
-      // Moon icon SVG for dark mode
-      const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
-      
-      if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-        themeIcon.innerHTML = moonIcon;
-      }
-      
-      themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('light-mode');
-        const isLight = document.body.classList.contains('light-mode');
-        themeIcon.innerHTML = isLight ? moonIcon : sunIcon;
-        localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      });
-    })();
-  </script>
 
   <!-- ========================================================================
        MAIN CONTENT
@@ -428,7 +380,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770072888"></script>
+  <script src="content.js?v=1770137300"></script>
   
   <!-- ========================================================================
        Audio Player System (Main Playlists Only)
