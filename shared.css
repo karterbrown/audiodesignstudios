@@ -102,7 +102,8 @@ button:focus {
 /* Banner Navigation Arrows */
 .banner-nav-arrow {
   position: absolute;
-  top: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
   color: #f4f4ff;
   font-size: 1.2rem;
   font-weight: 700;
@@ -114,6 +115,9 @@ button:focus {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   transition: transform 0.3s ease, text-shadow 0.3s ease, background 0.3s ease;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .banner-nav-left {
@@ -125,14 +129,19 @@ button:focus {
 }
 
 .banner-nav-arrow:hover {
-  transform: translateY(-2px);
+  transform: translateY(-50%) translateY(-2px);
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
   background: rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 720px) {
   .banner-nav-arrow {
-    top: 1rem;
+    top: 2rem;
+    transform: none;
+  }
+  
+  .banner-nav-arrow:hover {
+    transform: translateY(-2px);
   }
   
   .banner-nav-left {
@@ -146,8 +155,8 @@ button:focus {
 
 @media (min-width: 1200px) {
   .banner-nav-arrow {
-    font-size: 1rem;
-    padding: 0.35rem 0.7rem;
+    font-size: 2rem;
+    padding: 0.75rem 1.25rem;
   }
 }
 
