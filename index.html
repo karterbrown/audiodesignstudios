@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1770145447" />
+  <link rel="stylesheet" href="index.css?v=1770145975" />
 </head>
 
 <body>
@@ -177,7 +177,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770145447"></script>
+  <script src="content.js?v=1770145975"></script>
 
   <!-- Year display script -->
   <script>
@@ -215,14 +215,66 @@
     let ambientCurrentTrack = Math.floor(Math.random() * ambientPlaylist.length);
     let ambientAudio = null;
     let ambientIsPlaying = false;
+    let playedTracks = []; // Track which songs have been played in current cycle
+    let shuffledPlaylist = []; // Shuffled order for current cycle
 
-    // Get random track index (different from current)
+    // Shuffle array helper function
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // Initialize shuffled playlist
+    function initShuffledPlaylist() {
+      // Create array of indices [0, 1, 2, 3, 4]
+      const indices = Array.from({ length: ambientPlaylist.length }, (_, i) => i);
+      shuffledPlaylist = shuffleArray(indices);
+      
+      // Make sure the current track is first in the shuffle
+      const currentIndex = shuffledPlaylist.indexOf(ambientCurrentTrack);
+      if (currentIndex !== 0) {
+        [shuffledPlaylist[0], shuffledPlaylist[currentIndex]] = 
+        [shuffledPlaylist[currentIndex], shuffledPlaylist[0]];
+      }
+      playedTracks = [ambientCurrentTrack];
+    }
+
+    // Initialize the shuffled playlist on load
+    initShuffledPlaylist();
+
+    // Get next track from shuffled playlist
     function getRandomTrack() {
-      let randomIndex;
-      do {
-        randomIndex = Math.floor(Math.random() * ambientPlaylist.length);
-      } while (randomIndex === ambientCurrentTrack && ambientPlaylist.length > 1);
-      return randomIndex;
+      // If we've played all tracks in this cycle, create a new shuffle
+      if (playedTracks.length >= ambientPlaylist.length) {
+        const indices = Array.from({ length: ambientPlaylist.length }, (_, i) => i);
+        shuffledPlaylist = shuffleArray(indices);
+        
+        // Ensure first track of new cycle isn't the same as last track of previous cycle
+        if (shuffledPlaylist[0] === ambientCurrentTrack && ambientPlaylist.length > 1) {
+          // Swap with a track from the middle/end of the shuffle for maximum distance
+          const swapIndex = Math.floor(ambientPlaylist.length / 2);
+          [shuffledPlaylist[0], shuffledPlaylist[swapIndex]] = 
+          [shuffledPlaylist[swapIndex], shuffledPlaylist[0]];
+        }
+        
+        playedTracks = [];
+      }
+      
+      // Get the next unplayed track from the shuffled list
+      for (let i = 0; i < shuffledPlaylist.length; i++) {
+        const trackIndex = shuffledPlaylist[i];
+        if (!playedTracks.includes(trackIndex)) {
+          playedTracks.push(trackIndex);
+          return trackIndex;
+        }
+      }
+      
+      // Fallback (shouldn't reach here)
+      return 0;
     }
 
     // Initialize audio element
