@@ -20,7 +20,7 @@
   <title>Audio Design Studios – Karter G. Brown</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1770141436" />
+  <link rel="stylesheet" href="index.css?v=1770144656" />
 </head>
 
 <body>
@@ -71,7 +71,36 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 3: Highlights Hero (3-Column Layout)
+         SECTION 3: Ambient Music Player
+         Simple horizontal player with classical pieces
+         ====================================================================== -->
+    <section class="ambient-player-section">
+      <div class="ambient-player-container">
+        <div class="ambient-player-header">
+          <h3>Relax & Listen</h3>
+          <p class="ambient-player-subtitle">Classical performances to accompany your visit</p>
+        </div>
+        <div class="ambient-player-controls">
+          <button id="ambientPlayPause" class="ambient-play-btn" aria-label="Play/Pause"></button>
+          <button id="ambientSkip" class="ambient-skip-btn" aria-label="Skip to random track">Skip</button>
+          <div class="ambient-track-info">
+            <div id="ambientTrackTitle" class="ambient-track-title">Loading...</div>
+            <div class="ambient-progress-container">
+              <div class="ambient-progress-bar">
+                <div id="ambientProgressFill" class="ambient-progress-fill"></div>
+              </div>
+              <div class="ambient-time-display">
+                <span id="ambientCurrentTime">0:00</span>
+                <span id="ambientDuration">0:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 4: Highlights Hero (3-Column Layout)
          Left: Album art | Center: Title, description, cycling word | Right: Headshot
          Bottom: Track players spanning full width
          ====================================================================== -->
@@ -116,7 +145,7 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 4: About Banner and Testimonial
+         SECTION 5: About Banner and Testimonial
          ====================================================================== -->
     <section class="env-image env-about"></section>
 
@@ -148,11 +177,161 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1770141436"></script>
+  <script src="content.js?v=1770144656"></script>
 
   <!-- Year display script -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- ========================================================================
+       AMBIENT MUSIC PLAYER
+       ======================================================================== -->
+  <script>
+    // Classical tracks playlist
+    const ambientPlaylist = [
+      {
+        title: "Chopin - Étude Op. 25, No. 12",
+        src: "allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3"
+      },
+      {
+        title: "Chime and Glimmer",
+        src: "allworks/chimeandglimmer.mp3"
+      },
+      {
+        title: "Hopeful",
+        src: "allworks/hopeful.mp3"
+      },
+      {
+        title: "Cavalry March",
+        src: "allworks/cavalrymarch.mp3"
+      },
+      {
+        title: "One Step Closer",
+        src: "allworks/onestepcloser.mp3"
+      }
+    ];
+
+    let ambientCurrentTrack = Math.floor(Math.random() * ambientPlaylist.length);
+    let ambientAudio = null;
+    let ambientIsPlaying = false;
+
+    // Get random track index (different from current)
+    function getRandomTrack() {
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * ambientPlaylist.length);
+      } while (randomIndex === ambientCurrentTrack && ambientPlaylist.length > 1);
+      return randomIndex;
+    }
+
+    // Initialize audio element
+    function initAmbientPlayer() {
+      ambientAudio = new Audio(ambientPlaylist[ambientCurrentTrack].src);
+      
+      // Update duration when loaded
+      ambientAudio.addEventListener('loadedmetadata', () => {
+        updateDuration();
+      });
+
+      // Update progress as track plays
+      ambientAudio.addEventListener('timeupdate', () => {
+        updateProgress();
+      });
+
+      // Auto-advance to next track when current ends
+      ambientAudio.addEventListener('ended', () => {
+        nextTrack();
+      });
+
+      // Set volume to comfortable level
+      ambientAudio.volume = 0.7;
+    }
+
+    // Play/Pause toggle
+    document.getElementById('ambientPlayPause').addEventListener('click', () => {
+      if (!ambientAudio) {
+        initAmbientPlayer();
+      }
+
+      if (ambientIsPlaying) {
+        ambientAudio.pause();
+        ambientIsPlaying = false;
+        document.getElementById('ambientPlayPause').classList.remove('playing');
+      } else {
+        ambientAudio.play();
+        ambientIsPlaying = true;
+        document.getElementById('ambientPlayPause').classList.add('playing');
+      }
+    });
+
+    // Next track function (random shuffle)
+    function nextTrack() {
+      ambientCurrentTrack = getRandomTrack();
+      loadTrack();
+      if (ambientIsPlaying) {
+        ambientAudio.play();
+      }
+    }
+
+    // Skip button handler
+    document.getElementById('ambientSkip').addEventListener('click', () => {
+      if (!ambientAudio) {
+        initAmbientPlayer();
+      }
+      nextTrack();
+    });
+
+    // Load track
+    function loadTrack() {
+      if (!ambientAudio) {
+        initAmbientPlayer();
+        return;
+      }
+
+      const track = ambientPlaylist[ambientCurrentTrack];
+      ambientAudio.src = track.src;
+      document.getElementById('ambientTrackTitle').textContent = track.title;
+      updateProgress();
+    }
+
+    // Update progress bar and time
+    function updateProgress() {
+      if (!ambientAudio) return;
+      
+      const progress = (ambientAudio.currentTime / ambientAudio.duration) * 100 || 0;
+      document.getElementById('ambientProgressFill').style.width = progress + '%';
+      
+      const currentMinutes = Math.floor(ambientAudio.currentTime / 60);
+      const currentSeconds = Math.floor(ambientAudio.currentTime % 60);
+      document.getElementById('ambientCurrentTime').textContent = 
+        `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Update duration display
+    function updateDuration() {
+      if (!ambientAudio) return;
+      
+      const durationMinutes = Math.floor(ambientAudio.duration / 60);
+      const durationSeconds = Math.floor(ambientAudio.duration % 60);
+      document.getElementById('ambientDuration').textContent = 
+        `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Make progress bar clickable to seek
+    document.querySelector('.ambient-progress-bar').addEventListener('click', (e) => {
+      if (!ambientAudio) return;
+      
+      const bar = e.currentTarget;
+      const clickX = e.clientX - bar.getBoundingClientRect().left;
+      const width = bar.offsetWidth;
+      const seekTime = (clickX / width) * ambientAudio.duration;
+      
+      ambientAudio.currentTime = seekTime;
+    });
+
+    // Display the random track title on page load
+    document.getElementById('ambientTrackTitle').textContent = ambientPlaylist[ambientCurrentTrack].title;
   </script>
 
 </body>

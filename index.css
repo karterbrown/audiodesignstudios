@@ -371,6 +371,231 @@ blockquote footer {
 }
 
 /* =============================================================================
+   AMBIENT MUSIC PLAYER - Horizontal minimalist player
+   ============================================================================= */
+
+.ambient-player-section {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  padding: 3rem 1.5rem;
+  border-top: 1px solid rgba(126, 201, 143, 0.2);
+  border-bottom: 1px solid rgba(126, 201, 143, 0.2);
+}
+
+.ambient-player-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ambient-player-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ambient-player-header h3 {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #7ec98f;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+}
+
+.ambient-player-subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  margin: 0;
+  font-style: italic;
+}
+
+.ambient-player-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(126, 201, 143, 0.15);
+  transition: all 0.3s ease;
+}
+
+.ambient-player-controls:hover {
+  border-color: rgba(126, 201, 143, 0.3);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.ambient-play-btn {
+  background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f0f0f;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(126, 201, 143, 0.3);
+  position: relative;
+}
+
+.ambient-play-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(126, 201, 143, 0.5);
+  background: linear-gradient(135deg, #8ed99f 0%, #7ac68c 100%);
+}
+
+.ambient-play-btn:active {
+  transform: scale(0.98);
+}
+
+/* Play icon - triangle pointing right */
+.ambient-play-btn::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 12px solid currentColor;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  margin-left: 3px;
+}
+
+/* Pause icon - two vertical bars */
+.ambient-play-btn.playing::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-5px);
+  width: 4px;
+  height: 16px;
+  background: currentColor;
+  box-shadow: 8px 0 0 currentColor;
+  border: none;
+  margin-left: 0;
+}
+
+.ambient-skip-btn {
+  background: rgba(126, 201, 143, 0.15);
+  border: 1px solid rgba(126, 201, 143, 0.3);
+  color: #7ec98f;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ambient-skip-btn:hover {
+  background: rgba(126, 201, 143, 0.25);
+  border-color: rgba(126, 201, 143, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(126, 201, 143, 0.3);
+}
+
+.ambient-skip-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ambient-track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ambient-track-title {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ambient-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ambient-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: height 0.2s ease;
+}
+
+.ambient-progress-bar:hover {
+  height: 8px;
+}
+
+.ambient-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7ec98f 0%, #6ab67c 100%);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(126, 201, 143, 0.4);
+}
+
+.ambient-time-display {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  min-width: 90px;
+  justify-content: flex-end;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .ambient-player-section {
+    padding: 2rem 1rem;
+  }
+
+  .ambient-player-header h3 {
+    font-size: 1.4rem;
+  }
+
+  .ambient-player-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .ambient-play-btn,
+  .ambient-skip-btn {
+    align-self: center;
+  }
+
+  .ambient-track-title {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .ambient-progress-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ambient-time-display {
+    justify-content: center;
+  }
+}
+
+/* =============================================================================
    RESPONSIVE DESIGN
    ============================================================================= */
 
