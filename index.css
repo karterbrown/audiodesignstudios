@@ -103,15 +103,16 @@ blockquote {
 
 blockquote p,
 blockquote footer {
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.02em;
   font-style: italic;
-  font-family: "Sans Serif", serif;
-  font-size: 1rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.05rem;
+  line-height: 1.7;
 }
 
 blockquote p {
   margin: 0;
-  font-weight: 100;
+  font-weight: 400;
 }
 
 blockquote footer {

@@ -1054,6 +1054,7 @@
   cursor: pointer;
   position: relative;
   transition: transform 0.1s;
+  will-change: transform;
 }
 
 .portfolio-volume-knob:active {
@@ -1097,7 +1098,7 @@
     inset 0 2px 3px rgba(0, 0, 0, 0.6),
     inset 0 -1px 2px rgba(255, 255, 255, 0.05),
     0 0 6px rgba(208, 208, 208, 0.4),
-    0 1px 0 rgba(0, 0, 0, 0.8);
+    0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .portfolio-volume-tick {
