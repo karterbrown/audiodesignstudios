@@ -663,6 +663,10 @@ blockquote footer {
     font-size: 1rem;
   }
 
+  .ambient-volume-control {
+    display: none;
+  }
+
   .ambient-progress-container {
     flex-direction: column;
     gap: 0.5rem;
