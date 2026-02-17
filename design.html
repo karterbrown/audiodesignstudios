@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- ============================================================================
+     ABOUT PAGE - Audio Design Studios
+     Professional bio and testimonials
+     ============================================================================ -->
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Audio Design Studios – Karter G. Brown</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="design.css?v=1771358945" />
+</head>
+
+<body>
+  
+  <!-- ========================================================================
+       SITE HEADER - Navigation
+       ======================================================================== -->
+  <header class="site-header">
+    <a href="index.html" class="logo">Audio Design Studios</a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="editorial.html">Editorial</a>
+      <a href="design.html">Design</a>
+      <a href="compose.html">Compose</a>
+      <a href="music.html" class="special-link">Design & Compose</a>
+    </nav>
+  </header>
+
+  <!-- ========================================================================
+       MAIN CONTENT
+       ======================================================================== -->
+  <main>
+    
+    <!-- ======================================================================
+         SECTION 1: Hero Image Banner
+         ====================================================================== -->
+    <section class="env-image env-design">
+      <a href="editorial.html" class="banner-nav-arrow banner-nav-left" aria-label="Previous: Editorial">←</a>
+      <h1 class="banner-title">DESIGN</h1>
+      <a href="compose.html" class="banner-nav-arrow banner-nav-right" aria-label="Next: Compose">→</a>
+    </section>
+
+    <!-- Audio Player -->
+    <div class="content-wrapper">
+      <div class="design-player-card">
+        <h2 class="design-player-title">Cinematic Sound Design & FX</h2>
+        
+        <!-- Module: VU Meter and Volume Control -->
+        <div class="design-meter-section">
+          <!-- Power Button -->
+          <div class="power-button-container">
+            <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+          </div>
+          
+          <div class="design-meter-container">
+            <div class="design-meter-display">
+              <div class="design-meter-scale">
+                <!-- Main VU line -->
+                <div class="design-meter-vu-line"></div>
+                
+                <!-- Top VU scale -->
+                <div class="design-meter-tick" style="left: 0%;"></div>
+                <span class="design-meter-label" style="left: 0%;">20</span>
+                
+                <div class="design-meter-tick" style="left: 7.7%;"></div>
+                <span class="design-meter-label" style="left: 7.7%;">10</span>
+                
+                <div class="design-meter-tick" style="left: 15.4%;"></div>
+                <span class="design-meter-label" style="left: 15.4%;">7</span>
+                
+                <div class="design-meter-tick small" style="left: 23%;"></div>
+                
+                <div class="design-meter-tick" style="left: 30.8%;"></div>
+                <span class="design-meter-label" style="left: 30.8%;">5</span>
+                
+                <div class="design-meter-tick small" style="left: 38.5%;"></div>
+                
+                <div class="design-meter-tick" style="left: 46.2%;"></div>
+                <span class="design-meter-label" style="left: 46.2%;">3</span>
+                
+                <div class="design-meter-tick" style="left: 53.8%;"></div>
+                <span class="design-meter-label" style="left: 53.8%;">2</span>
+                
+                <div class="design-meter-tick" style="left: 61.5%;"></div>
+                <span class="design-meter-label" style="left: 61.5%;">1</span>
+                
+                <div class="design-meter-tick" style="left: 76.9%;"></div>
+                <span class="design-meter-label" style="left: 76.9%;">0</span>
+                
+                <div class="design-meter-tick" style="left: 84.6%;"></div>
+                <span class="design-meter-label red" style="left: 84.6%;">1</span>
+                
+                <div class="design-meter-tick" style="left: 92.3%;"></div>
+                <span class="design-meter-label red" style="left: 92.3%;">2</span>
+                
+                <div class="design-meter-tick" style="left: 100%;"></div>
+                <span class="design-meter-label red" style="left: 100%;">3</span>
+                
+                <!-- Bottom percentage line -->
+                <div class="design-meter-percent-line"></div>
+                
+                <div class="design-meter-percent-tick" style="left: 0%;"></div>
+                <div class="design-meter-percent-tick" style="left: 7.7%;"></div>
+                <div class="design-meter-percent-tick" style="left: 15.4%;"></div>
+                <span class="design-meter-percent-label" style="left: 15.4%;">20</span>
+                
+                <div class="design-meter-percent-tick" style="left: 23%;"></div>
+                <div class="design-meter-percent-tick" style="left: 30.8%;"></div>
+                <span class="design-meter-percent-label" style="left: 30.8%;">40</span>
+                
+                <div class="design-meter-percent-tick" style="left: 38.5%;"></div>
+                <div class="design-meter-percent-tick" style="left: 46.2%;"></div>
+                <span class="design-meter-percent-label" style="left: 46.2%;">60</span>
+                
+                <div class="design-meter-percent-tick" style="left: 53.8%;"></div>
+                <div class="design-meter-percent-tick" style="left: 61.5%;"></div>
+                <span class="design-meter-percent-label" style="left: 61.5%;">80</span>
+                
+                <div class="design-meter-percent-tick" style="left: 76.9%;"></div>
+                <span class="design-meter-percent-label" style="left: 76.9%;">100</span>
+              </div>
+              <div class="design-meter-needle" id="designMeterNeedle"></div>
+              <div class="design-meter-branding">AUDIO DESIGN STUDIOS</div>
+            </div>
+          </div>
+          <div class="design-controls-row">
+            <div class="design-volume-control">
+              <div class="design-volume-knob-container">
+                <div class="design-volume-tick"></div>
+                <div class="design-volume-tick"></div>
+                <div class="design-volume-tick"></div>
+                <div class="design-volume-db-label">-40</div>
+                <div class="design-volume-db-label">0</div>
+                <div class="design-volume-db-label">+12</div>
+                <div class="design-volume-knob" id="designVolumeKnob" aria-label="Volume Control"></div>
+                <div class="design-volume-arc"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Track Controls -->
+        <!-- Now Playing Display -->
+        <div id="designNowPlaying" class="now-playing-info">No track playing</div>
+
+        <!-- Progress Bar -->
+        <div id="designMainWave" class="main-player-progress" aria-hidden="true"></div>
+
+        <!-- Transport Controls -->
+        <div class="playlist-player-controls">
+          <button id="designPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+          <button id="designPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+          <button id="designNextBtn" class="control-btn" aria-label="Next track"></button>
+        </div>
+
+        <!-- Track List -->
+        <div class="track-list" id="designPlaylistTracks">
+          <!-- Tracks will be injected via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SECTION 2: Highlights Hero (3-Column Layout)
+         Left: Album art | Center: Title, description, cycling word | Right: Headshot
+         Bottom: Track players spanning full width
+         ====================================================================== -->
+    <section id="portfolio" class="hero hero-highlights-3col">
+      <!-- Left Column: Headshot -->
+      <div class="hero-left-highlights">
+        <div class="headshot-wrapper-portrait">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+          </picture>
+        </div>
+      </div>
+
+      <!-- Center Column: Contact Form -->
+      <div class="hero-center-highlights">
+        <div class="contact-wrapper">
+          <h1>Get In Touch</h1>
+          <p>Send a message and I'll get back to you with next steps.</p>
+          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Describe your project..." required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Column: Album Art -->
+      <div class="hero-right-highlights">
+        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+          <div class="album-cover-centered" aria-hidden="true">
+            <picture>
+              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+            </picture>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       SITE FOOTER - Contact Information
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+      <p><a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="footer-special-link">Off World Depot</a></p>
+      <p class="footer-copy">
+        © <span id="year"></span> Audio Design Studios. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       SCRIPTS
+       ======================================================================== -->
+  
+  <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
+  <script src="content.js?v=1771358945"></script>
+
+  <!-- Year display script -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Design Page Player Script -->
+  <script>
+    // Design page audio player
+    const designTracks = [
+      { title: 'Bass Stinger (Design Demo)', url: 'allworks/Shifting of Khamsin Wind.mp3' }
+    ];
+
+    let designCurrentTrack = 0;
+    let designIsPlaying = false;
+    let designAudio = new Audio();
+    let designAudioContext = null;
+    let designAnalyser = null;
+    let designGain = null;
+    let designVolumeDb = 0;
+    let designVolume = 1.0;
+    let designVolumeRotation = 0;
+    let designProgressFill = null;
+    let designScrubber = null;
+    let designProgressRAF = null;
+    let designCurrentNeedleAngle = -50;
+    let designSourceConnected = false;
+
+    // Set preload for better performance
+    designAudio.preload = 'auto';
+
+    // Create audio context and setup
+    designAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    designAnalyser = designAudioContext.createAnalyser();
+    designGain = designAudioContext.createGain();
+    
+    designAnalyser.fftSize = 256;
+    designAnalyser.smoothingTimeConstant = 0.92;
+    designGain.gain.value = 1;
+
+    // Load track
+    function designLoadTrack(index) {
+      if (index < 0 || index >= designTracks.length) return;
+      
+      designCurrentTrack = index;
+      const track = designTracks[index];
+      
+      designAudio.src = track.url;
+      designAudio.volume = designVolume;
+      
+      document.getElementById('designNowPlaying').textContent = track.title;
+      
+      // Update active state
+      document.querySelectorAll('#designPlaylistTracks .track-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+    }
+
+    // Play/pause
+    function designTogglePlay() {
+      const playBtn = document.getElementById('designPlayPauseBtn');
+      if (designIsPlaying) {
+        designAudio.pause();
+        designIsPlaying = false;
+        playBtn.classList.remove('playing');
+      } else {
+        designAudio.play().catch(e => console.warn('Audio play failed:', e));
+        designIsPlaying = true;
+        playBtn.classList.add('playing');
+      }
+    }
+
+    // Previous track
+    function designPrevTrack() {
+      designCurrentTrack = (designCurrentTrack - 1 + designTracks.length) % designTracks.length;
+      designLoadTrack(designCurrentTrack);
+      if (designIsPlaying) designAudio.play();
+    }
+
+    // Next track
+    function designNextTrack() {
+      designCurrentTrack = (designCurrentTrack + 1) % designTracks.length;
+      designLoadTrack(designCurrentTrack);
+      if (designIsPlaying) designAudio.play();
+    }
+
+    // Update progress
+    function designUpdateProgress() {
+      if (designAudio.duration && designProgressFill && designScrubber) {
+        const progress = (designAudio.currentTime / designAudio.duration) * 100;
+        designProgressFill.style.width = progress + '%';
+        designScrubber.style.left = progress + '%';
+        
+        // Update track time display
+        const trackItems = document.querySelectorAll('.track-item');
+        if (trackItems[designCurrentTrack]) {
+          const timeEl = trackItems[designCurrentTrack].querySelector('.track-item-time');
+          if (timeEl) {
+            const current = formatTime(designAudio.currentTime);
+            const duration = formatTime(designAudio.duration);
+            timeEl.textContent = `${current} / ${duration}`;
+          }
+        }
+      }
+    }
+
+    function formatTime(seconds) {
+      const safeSec = Math.max(0, Math.floor(seconds || 0));
+      const m = Math.floor(safeSec / 60);
+      const s = safeSec % 60;
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function designStartProgressLoop() {
+      if (designProgressRAF) cancelAnimationFrame(designProgressRAF);
+      const step = () => {
+        if (designIsPlaying) {
+          designUpdateProgress();
+          designProgressRAF = requestAnimationFrame(step);
+        } else {
+          designProgressRAF = null;
+        }
+      };
+      designProgressRAF = requestAnimationFrame(step);
+    }
+
+    function designStopProgressLoop() {
+      if (designProgressRAF) {
+        cancelAnimationFrame(designProgressRAF);
+        designProgressRAF = null;
+      }
+    }
+
+    // Seek
+    function designSeek(e) {
+      const progressBar = e.currentTarget;
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      designAudio.currentTime = percent * designAudio.duration;
+      designUpdateProgress();
+    }
+
+    // VU Meter animation
+    function designAnimateVU() {
+      requestAnimationFrame(designAnimateVU);
+      
+      if (!designAnalyser) return;
+
+      const dataArray = new Uint8Array(designAnalyser.frequencyBinCount);
+      designAnalyser.getByteFrequencyData(dataArray);
+      
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        sum += dataArray[i] * dataArray[i];
+      }
+      const rms = Math.sqrt(sum / dataArray.length);
+      const normalized = Math.max(rms / 255, 0.001);
+      let db = 20 * Math.log10(normalized) + 6 + designVolumeDb;
+      
+      const vuMin = -20;
+      const vuMax = 3;
+      const angleMin = -50;
+      const angleMax = 50;
+      const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
+      let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
+      if (clampedVU < -5) {
+        normalizedVU = Math.pow(normalizedVU, 1.5);
+      }
+      const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
+      designCurrentNeedleAngle += (targetAngle - designCurrentNeedleAngle) * 0.1;
+      
+      const needle = document.getElementById('designMeterNeedle');
+      if (needle) {
+        needle.style.transform = `translateX(-50%) rotate(${designCurrentNeedleAngle}deg)`;
+      }
+    }
+
+    // Volume knob control
+    let designDragging = false;
+    let designKnobStartY = 0;
+    let designKnobStartAngle = 360;
+    let designKnobAngle = 360;
+    let designKnobMoved = false;
+
+    function updateDesignVolumeDisplay() {
+      const knob = document.getElementById('designVolumeKnob');
+      if (knob) {
+        knob.style.transform = `rotate(${designKnobAngle - 360}deg)`;
+      }
+      const gain = Math.pow(10, designVolumeDb / 20);
+      designGain.gain.value = gain;
+    }
+
+    function designStartDrag(e) {
+      designDragging = true;
+      designKnobMoved = false;
+      designKnobStartY = e.touches ? e.touches[0].clientY : e.clientY;
+      designKnobStartAngle = designKnobAngle;
+      e.preventDefault();
+    }
+
+    function designDrag(e) {
+      if (!designDragging) return;
+      
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const deltaY = designKnobStartY - clientY;
+      
+      if (Math.abs(deltaY) > 2) {
+        designKnobMoved = true;
+      }
+      
+      const newAngle = Math.max(180, Math.min(420, designKnobStartAngle + deltaY));
+      designKnobAngle = newAngle;
+      designVolumeDb = -40 + ((designKnobAngle - 180) / 240) * 52;
+      updateDesignVolumeDisplay();
+      
+      e.preventDefault();
+    }
+
+    function designStopDrag() {
+      if (designDragging && !designKnobMoved) {
+        // Single click - reset to 0 dB
+        designVolumeDb = 0;
+        designKnobAngle = 360;
+        updateDesignVolumeDisplay();
+      }
+      designDragging = false;
+    }
+
+    // Populate track list
+    function designPopulateTrackList() {
+      const trackList = document.getElementById('designPlaylistTracks');
+      trackList.innerHTML = '';
+      
+      designTracks.forEach((track, index) => {
+        const trackItem = document.createElement('div');
+        trackItem.className = 'track-item';
+        trackItem.innerHTML = `
+          <div class="track-item-number">${(index + 1)}</div>
+          <div class="track-item-title">${track.title}</div>
+          <div class="track-item-time">0:00</div>
+        `;
+        trackItem.addEventListener('click', () => {
+          designLoadTrack(index);
+          if (!designIsPlaying) designTogglePlay();
+        });
+        trackList.appendChild(trackItem);
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize volume knob rotation
+      const knob = document.getElementById('designVolumeKnob');
+      if (knob) {
+        knob.style.transform = `rotate(${designVolumeRotation}deg)`;
+      }
+      
+      // Create progress fill and scrubber elements
+      const mainWave = document.getElementById('designMainWave');
+      designProgressFill = document.createElement('div');
+      designProgressFill.className = 'main-player-progress-fill';
+      designProgressFill.style.width = '0%';
+      mainWave.appendChild(designProgressFill);
+      
+      designScrubber = document.createElement('div');
+      designScrubber.className = 'main-player-scrubber';
+      mainWave.appendChild(designScrubber);
+      
+      designPopulateTrackList();
+      
+      // Initialize first track
+      if (designTracks.length > 0) {
+        const firstTrack = designTracks[0];
+        document.getElementById('designNowPlaying').textContent = firstTrack.title;
+        
+        // Set up audio
+        designAudio.src = firstTrack.url;
+        designAudio.preload = 'auto';
+        
+        const trackItems = document.querySelectorAll('#designPlaylistTracks .track-item');
+        if (trackItems.length > 0) {
+          trackItems[0].classList.add('active');
+        }
+      }
+      
+      // Event listeners
+      document.getElementById('designPlayPauseBtn').addEventListener('click', designTogglePlay);
+      document.getElementById('designPrevBtn').addEventListener('click', designPrevTrack);
+      document.getElementById('designNextBtn').addEventListener('click', designNextTrack);
+      mainWave.addEventListener('click', designSeek);
+      
+      designAudio.addEventListener('timeupdate', designUpdateProgress);
+      designAudio.addEventListener('ended', () => {
+        designStopProgressLoop();
+        designNextTrack();
+      });
+      
+      // Connect Web Audio API source on first play
+      designAudio.addEventListener('play', () => {
+        if (designAudioContext.state === 'suspended') {
+          designAudioContext.resume();
+        }
+        
+        if (!designSourceConnected) {
+          const source = designAudioContext.createMediaElementSource(designAudio);
+          source.connect(designAnalyser);
+          designAnalyser.connect(designGain);
+          designGain.connect(designAudioContext.destination);
+          designSourceConnected = true;
+        }
+        designStartProgressLoop();
+      });
+
+      designAudio.addEventListener('pause', designStopProgressLoop);
+      
+      // Initialize volume display
+      updateDesignVolumeDisplay();
+      
+      // Volume knob - attach event listeners
+      const volumeKnob = document.getElementById('designVolumeKnob');
+      if (volumeKnob) {
+        volumeKnob.addEventListener('mousedown', designStartDrag);
+        volumeKnob.addEventListener('touchstart', designStartDrag, { passive: false });
+      }
+      document.addEventListener('mousemove', designDrag);
+      document.addEventListener('touchmove', designDrag, { passive: false });
+      document.addEventListener('mouseup', designStopDrag);
+      document.addEventListener('touchend', designStopDrag);
+      
+      // Start VU animation
+      designAnimateVU();
+    });
+  </script>
+
+</body>
+</html>
