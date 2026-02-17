@@ -6,8 +6,9 @@ Static portfolio website for audio design services, deployed via GitHub Pages to
 ## Architecture
 
 ### Page Structure
-- **4 main pages**: `index.html` (Home), `design.html` (About), `compose.html` (Portfolio), `music.html` (Hidden Tracks)
+- **2 main pages**: `index.html` (Home with Editorial content), `music.html` (Design & Compose)
 - **Easter egg**: `matrix.html` - Secret full-screen Matrix animation (accessed via logo click on home)
+- Editorial content is now integrated into the home page with an `#editorial` anchor
 - Each page follows pattern: HTML + page-specific CSS + imports `shared.css`
 
 ### CSS Architecture
@@ -15,8 +16,11 @@ All page-specific CSS files import `shared.css` first:
 ```css
 @import url('./shared.css');
 ```
-- `shared.css` (1092 lines) - All common styles, fonts, header, footer, utilities
-- Page-specific CSS - Only unique layouts for that page (e.g., grid in `index.css`, audio players in `compose.css`)
+- `shared.css` (1105 lines) - All common styles, fonts, header, footer, utilities
+- `editorial.css` (240 lines) - Editorial page-specific styles
+- `index.css` (975 lines) - Home page grid and unique layouts
+- `music.css` (combined Design + Compose, ~1400 lines) - Audio players, portfolios, VU meters
+- `matrix.css` (227 lines) - Matrix animation styles
 
 ### JavaScript Organization
 - `content.js` - Minimal utilities (copyright year, lazy loading, debounce)
@@ -97,10 +101,10 @@ After changes:
 
 ## Common Tasks
 
-**Add new audio track to portfolio**: Add `<div class="audio-card">` in `compose.html`, include both MP3 and inline `<script>` for player controls
+**Add new audio track to music page**: Add track to appropriate section (`#design` or `#compose`) in `music.html` with inline player controls
 
 **Update Matrix character sets**: Modify `MATRIX_CONFIG` in `matrix-shared.js` - indexes must match `chars` string positions
 
 **Change site colors**: Edit CSS custom properties in `shared.css` - look for color hex values like `#7ec98f` (green accent) and `#0f0f0f` (dark background)
 
-**Add new page**: Create `newpage.html` + `newpage.css`, import `shared.css`, add nav link to all existing headers
+**Add new page**: Create `newpage.html` + `newpage.css`, import `shared.css`, add nav link to headers on index.html and music.html
