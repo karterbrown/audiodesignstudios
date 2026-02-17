@@ -20,10 +20,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1771356625" />
-  <link rel="stylesheet" href="design.css?v=1771356625" />
-  <link rel="stylesheet" href="compose.css?v=1771356625" />
-  <link rel="stylesheet" href="matrix.css?v=1771356625" />
+  <link rel="stylesheet" href="shared.css?v=1771358776" />
+  <link rel="stylesheet" href="design.css?v=1771358776" />
+  <link rel="stylesheet" href="compose.css?v=1771358776" />
+  <link rel="stylesheet" href="matrix.css?v=1771358776" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1852,9 +1852,6 @@
       <div class="track-list" id="baPlaylistTracks">
         <!-- Tracks will be injected via JavaScript -->
       </div>
-
-      <!-- Home Link -->
-      <a href="index.html" class="home-link">Home</a>
     </div>
   </div>
 
@@ -2081,203 +2078,12 @@
     });
   </script>
 
-  <!-- Before & After Player Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      let activeDrag = null;
-
-      // Global drag handlers for all progress scrubbing
-      document.addEventListener('mousemove', (e) => {
-        if (activeDrag) {
-          e.preventDefault();
-          activeDrag.update(e);
-        }
-      });
-      
-      document.addEventListener('mouseup', () => {
-        if (activeDrag) {
-          activeDrag.element.style.cursor = 'pointer';
-          activeDrag = null;
-        }
-      });
-
-      // Before & After Tracks (from hiddentracks folder)
-      const baTracks = [
-        { id: 1, title: 'Particle Ladder (Mix/Master)', before: 'hiddentracks/Particle Ladder-KB-01-28-26_RAW.mp3', after: 'hiddentracks/Particle Ladder-KB-01-28-26_FullMix.mp3' },
-        { id: 2, title: 'Reggae Lights (Mix)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' },
-        { id: 3, title: 'Near Wild Heaven (Mix)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
-        { id: 4, title: 'Ocean Etude (Master)', before: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_Unmixed.mp3', after: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
-        { id: 5, title: 'Heavy Demo (Mix/Master)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
-        { id: 6, title: 'Were In This Together (Drum Mix)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
-        { id: 7, title: 'Hysteria (Drum Mix)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
-      ];
-
-      const baBeforeAudio = new Audio();
-      const baAfterAudio = new Audio();
-      
-      // Set preload='auto' for better performance - preloads entire audio file
-      baBeforeAudio.preload = 'auto';
-      baAfterAudio.preload = 'auto';
-      
-      const baPlaylistContainer = document.getElementById('baPlaylistTracks');
-      const baToggleButton = document.getElementById('baToggleButton');
-      const baMeterNeedle = document.getElementById('baMeterNeedle');
-      const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
-      const baPrevBtn = document.getElementById('baPrevBtn');
-      const baNextBtn = document.getElementById('baNextBtn');
-      const baNowPlaying = document.getElementById('baNowPlaying');
-      const baProgressWrap = document.getElementById('baWave');
-      const baVolumeKnob = document.getElementById('baVolumeKnob');
-      const baVolumeValue = document.getElementById('baVolumeValue');
-
-      let baCurrentTrackIndex = -1;
-      let isPlaying = false;
-      let isAfterMode = true;
-      let volumeDb = 0; // Volume in dB (-40 to +12)
-      let knobAngle = 360; // Knob rotation angle at 0 dB (180° = -40dB, 360° = 0dB, 420° = +12dB)
-      let currentNeedleAngle = -50; // Start at more dramatic left position
-      
-      // Don't use muted property - we'll use Web Audio gain nodes instead
-
-      // Web Audio API for VU meter
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const beforeAnalyser = audioContext.createAnalyser();
-      const afterAnalyser = audioContext.createAnalyser();
-      const beforeSource = audioContext.createMediaElementSource(baBeforeAudio);
-      const afterSource = audioContext.createMediaElementSource(baAfterAudio);
-      
-      // Create gain nodes for muting control
-      const beforeGain = audioContext.createGain();
-      const afterGain = audioContext.createGain();
-      
-      beforeAnalyser.fftSize = 256;
-      afterAnalyser.fftSize = 256;
-      beforeAnalyser.smoothingTimeConstant = 0.92;
-      afterAnalyser.smoothingTimeConstant = 0.92;
-      
-      // Connect audio graph
-      beforeSource.connect(beforeAnalyser);
-      beforeAnalyser.connect(beforeGain);
-      beforeGain.connect(audioContext.destination);
-      
-      afterSource.connect(afterAnalyser);
-      afterAnalyser.connect(afterGain);
-      afterGain.connect(audioContext.destination);
-      
-      // Set initial gain values (wet mode by default)
-      beforeGain.gain.value = 0;
-      afterGain.gain.value = 1;
-      
-      const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
-      const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
-      
-      let vuMeterAnimationId = null;
-      let isVUPaused = false;
-      let lastVUFrameTime = 0;
-      const vuFrameInterval = 33; // ~30fps for VU meter - sufficient for visual smoothness
-      
-      // VU meter animation loop
-      function updateVUMeter(timestamp) {
-        if (isVUPaused) {
-          return;
-        }
-        
-        // Throttle to 30fps max for VU meter
-        if (timestamp - lastVUFrameTime < vuFrameInterval) {
-          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
-          return;
-        }
-        lastVUFrameTime = timestamp;
-        
-        vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
-        
-        const analyser = isAfterMode ? afterAnalyser : beforeAnalyser;
-        const dataArray = isAfterMode ? afterDataArray : beforeDataArray;
-        
-        analyser.getByteFrequencyData(dataArray);
-        
-        // Calculate RMS (root mean square) for accurate VU metering
-        let sum = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          sum += dataArray[i] * dataArray[i];
-        }
-        const rms = Math.sqrt(sum / dataArray.length);
-        
-        // Convert to dB scale (20 * log10(rms/255))
-        const normalized = Math.max(rms / 255, 0.001);
-        let db = 20 * Math.log10(normalized);
-        
-        // Apply different gain compensation for Before vs After
-        if (isAfterMode) {
-          // After mode: boost signal to read closer to 0
-          db += 8;
-        } else {
-          // Before mode: reduce signal to show more of left side
-          db -= 2;
-        }
-        
-        // Add volume knob effect to the meter reading
-        db += volumeDb;
-        
-        // VU meter scale: -20 VU (left) to +3 VU (right)
-        // Map to -50° to +50° needle angle (more dramatic range)
-        const vuMin = -20;
-        const vuMax = 3;
-        const angleMin = -50;
-        const angleMax = 50;
-        
-        // Clamp dB to VU range
-        const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
-        
-        // Non-linear mapping for more dramatic response at low volumes
-        let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
-        
-        // Apply curve: compress low end, expand high end
-        // When volume is low (around -10dB and below), needle drops more dramatically
-        // When volume is above 0dB, needle moves into red zone
-        if (clampedVU < -5) {
-          // Below -5 VU: compress more (needle stays lower)
-          normalizedVU = Math.pow(normalizedVU, 1.5);
-        }
-        
-        const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
-        
-        // Smooth the needle movement (VU meter ballistics) - slower response
-        currentNeedleAngle += (targetAngle - currentNeedleAngle) * 0.1;
-        
-        baMeterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
-      }
-      
-      updateVUMeter(performance.now());
-
-      // Pause/resume VU meter based on page visibility
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          isVUPaused = true;
-          if (vuMeterAnimationId) {
-            cancelAnimationFrame(vuMeterAnimationId);
-            vuMeterAnimationId = null;
-          }
-        } else {
-          isVUPaused = false;
-          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
-        }
-      });
-
-      // Volume Knob Control
-      function updateVolumeDisplay() {
-        const displayDb = volumeDb >= 0 ? `+${volumeDb.toFixed(1)}` : volumeDb.toFixed(1);
-        baVolumeValue.textContent = `${displayDb} dB`;
-        // Offset rotation so that 360° (0 dB) points straight up (0°)
-        baVolumeKnob.style.transform = `rotate(${knobAngle - 360}deg)`;
-        
-        // Convert dB to linear gain
   <!-- ========================================================================
        SCRIPTS (Combined: Matrix + Design + Compose + Music)
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771356625"></script>
+  <script src="content.js?v=1771358776"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3458,21 +3264,12 @@
       
       const baAudioContext = new (window.AudioContext || window.webkitAudioContext)();
       const baTracks = [
-        { 
-          title: 'Bass Stinger',
-          before: 'hiddentracks/Bass_Stinger_DRY.mp3',
-          after: 'hiddentracks/Bass_Stinger_FullMix.mp3'
-        },
-        {
-          title: 'Dune Runner (Intro)',
-          before: 'hiddentracks/Dune_Runner_intro_DRY.mp3',
-          after: 'hiddentracks/Dune_Runner_intro_FullMix.mp3'
-        },
-        {
-          title: 'Dune Runner (Verse)',
-          before: 'hiddentracks/Dune_Runner_verse_DRY.mp3',
-          after: 'hiddentracks/Dune_Runner_verse_FullMix.mp3'
-        }
+        { id: 1, title: 'Hysteria (Drum Mix)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
+        { id: 2, title: 'Near Wild Heaven (Mix)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
+        { id: 3, title: 'Were In This Together (Drum Mix)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
+        { id: 4, title: 'Heavy Demo (Mix/Master)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
+        { id: 5, title: 'Ocean Etude (Master)', before: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_Unmixed.mp3', after: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
+        { id: 6, title: 'Reggae Lights (Mix)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' }
       ];
 
       const baBeforeAudio = new Audio();
@@ -3528,12 +3325,12 @@
       const baMeterNeedle = document.getElementById('baMeterNeedle');
       const baVolumeKnob = document.getElementById('baVolumeKnob');
       const baVolumeValue = document.getElementById('baVolumeValue');
-      const baToggleButton = document.getElementById('baToggle');
+      const baToggleButton = document.getElementById('baToggleButton');
       const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
       const baPrevBtn = document.getElementById('baPrevBtn');
       const baNextBtn = document.getElementById('baNextBtn');
       const baNowPlaying = document.getElementById('baNowPlaying');
-      const baProgressWrap = document.getElementById('baProgressWrap');
+      const baProgressWrap = document.getElementById('baWave');
       const baPlaylistContainer = document.getElementById('baPlaylistTracks');
 
       let volumeDb = 0;
@@ -3758,6 +3555,7 @@
         }
       }
 
+      // Create track list items
       baTracks.forEach((track, index) => {
         const trackRow = document.createElement('div');
         trackRow.className = 'track-item';
