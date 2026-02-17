@@ -109,35 +109,20 @@
 .editorial-values .card p {
   color: #dcdcdc;
   line-height: 1.6;
-}
-
-/* ============================================================================
-   REEL SECTION
-   ============================================================================ */
-.editorial-reel {
-  padding: 4rem 2rem;
-  text-align: center;
-}
-
-.editorial-reel h2 {
-  font-size: 2rem;
-  color: #7ec98f;
   margin-bottom: 1.5rem;
 }
 
-.reel-coming-soon {
-  font-size: 1.15rem;
-  color: #dcdcdc;
-  font-style: italic;
+/* Video within cards */
+.card-video {
+  margin-top: 1.5rem;
 }
 
-.reel-player {
-  max-width: 600px;
-  margin: 2rem auto 0;
-}
-
-.reel-player audio {
+.card-video video {
   width: 100%;
+  border-radius: 4px;
+  background: #000;
+  display: block;
+  border: 1px solid rgba(126, 201, 143, 0.2);
 }
 
 /* ============================================================================
