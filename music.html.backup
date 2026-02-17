@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- ============================================================================
+     HIDDEN TRACKS PAGE - Audio Design Studios
+     Secret page with matrix background and before/after player
+     ============================================================================ -->
+
+<head>
+  <!-- Meta Information -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Hidden Tracks - Audio Design Studios</title>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="shared.css?v=1771345769" />
+  <link rel="stylesheet" href="matrix.css?v=1771345769" />
+  
+  <style>
+    /* Hidden Tracks Page Specific Styles */
+    html {
+      background-color: #0f0f0f;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background-color: #0f0f0f;
+      color: #fff;
+    }
+
+    /* Hidden Tracks Banner Image */
+    .env-hiddentracks {
+      background-image: url('Photos/staticcurrents800.webp');
+      background-position: center;
+      background-size: contain;
+      min-height: 60vh;
+      background-repeat: no-repeat;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+    
+    @media (min-width: 600px) {
+      .env-hiddentracks {
+        background-size: cover;
+      }
+    }
+
+    .banner-title-music {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0;
+      z-index: 5;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    @media (min-width: 720px) {
+      .env-hiddentracks {
+        background-image: url('Photos/staticcurrents1400.webp');
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .env-hiddentracks {
+        background-image: url('Photos/staticcurrents2000.webp');
+      }
+    }
+
+    .env-hiddentracks .banner-text {
+      font-family: 'Cinzel', Georgia, serif;
+      color: #f4f4ff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+      text-decoration: none;
+    }
+
+    .env-hiddentracks .banner-text:hover {
+      transform: translateY(-2px);
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    @media (min-width: 720px) {
+      .env-hiddentracks .banner-text {
+        font-size: 1rem;
+      }
+    }
+
+    /* Highlights 3-Column Hero Section */
+    .hero-highlights-3col {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      gap: 2rem 2rem;
+      padding-bottom: 2rem;
+    }
+
+    @media (min-width: 1200px) {
+      .hero-highlights-3col {
+        padding-bottom: 3rem;
+      }
+    }
+
+    .hero-left-highlights {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-center-highlights {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .hero-center-highlights h1 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-center-highlights p {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-right-highlights {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .album-cover-centered,
+    .headshot-wrapper-portrait {
+      width: 240px;
+      height: 240px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .album-cover-centered img,
+    .headshot-wrapper-portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (max-width: 800px) {
+      .hero,
+      .hero-highlights-3col {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-highlights-3col {
+        grid-template-rows: auto;
+      }
+
+      .hero-left-highlights,
+      .hero-center-highlights,
+      .hero-right-highlights {
+        max-width: 100%;
+      }
+
+      /* Hide album cover on small screens */
+      .hero-right-highlights {
+        display: none;
+      }
+
+      .album-cover-centered {
+        width: 200px;
+        height: 200px;
+      }
+
+      .headshot-wrapper-portrait {
+        width: 200px;
+        height: 200px;
+      }
+    }
+
+    /* Full-screen Matrix Background */
+    .matrix-background {
+      display: none;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    /* Content Container */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* Player Card */
+    .hidden-player-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .hidden-player-title {
+      font-size: 1.5rem;
+      color: #f4f4ff;
+      text-align: center;
+      margin: 0 0 1.5rem 0;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+
+    /* VU Meter Style Toggle */
+    .ba-global-toggle-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      background: 
+        linear-gradient(145deg, rgba(15, 25, 20, 0.95), rgba(8, 15, 12, 0.95)),
+        radial-gradient(ellipse at 20% 30%, rgba(30, 30, 30, 0.4) 0%, transparent 40%),
+        radial-gradient(ellipse at 75% 60%, rgba(25, 25, 25, 0.5) 0%, transparent 35%),
+        radial-gradient(ellipse at 50% 80%, rgba(35, 35, 35, 0.3) 0%, transparent 30%),
+        linear-gradient(135deg, #1a1a1a 0%, #0a150f 50%, #151a18 100%);
+      border: 3px solid rgba(208, 208, 208, 0.5);
+      border-radius: 8px;
+      box-shadow: 
+        0 0 30px rgba(208, 208, 208, 0.2),
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        inset 0 -2px 4px rgba(35, 35, 35, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.8);
+      position: relative;
+    }
+    
+    .ba-global-toggle-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 6px;
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(40, 40, 40, 0.4) 0%, transparent 15%),
+        radial-gradient(circle at 85% 15%, rgba(35, 35, 35, 0.5) 0%, transparent 12%),
+        radial-gradient(circle at 40% 70%, rgba(45, 45, 45, 0.35) 0%, transparent 18%),
+        radial-gradient(circle at 70% 85%, rgba(30, 30, 30, 0.45) 0%, transparent 14%),
+        radial-gradient(circle at 30% 45%, rgba(40, 40, 40, 0.3) 0%, transparent 16%),
+        radial-gradient(circle at 60% 30%, rgba(28, 28, 28, 0.4) 0%, transparent 10%),
+        radial-gradient(circle at 25% 80%, rgba(22, 22, 22, 0.35) 0%, transparent 12%),
+        radial-gradient(circle at 90% 50%, rgba(30, 30, 30, 0.5) 0%, transparent 11%);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    .ba-global-toggle-section::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 6px;
+      background: 
+        radial-gradient(circle at 35% 25%, rgba(50, 50, 50, 0.15) 0%, transparent 8%),
+        radial-gradient(circle at 70% 65%, rgba(42, 42, 42, 0.12) 0%, transparent 7%),
+        radial-gradient(circle at 20% 60%, rgba(55, 55, 55, 0.1) 0%, transparent 9%),
+        linear-gradient(180deg, rgba(208, 208, 208, 0.05) 0%, transparent 100%);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .ba-meter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .ba-toggle-labels {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      position: relative;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid rgba(208, 208, 208, 0.3);
+      width: 280px;
+    }
+    
+    .ba-toggle-labels::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(208, 208, 208, 0.2);
+      transform: translateX(-50%);
+    }
+
+    .ba-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .ba-toggle-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #d0d0d0;
+      transition: opacity 0.3s, font-weight 0.3s;
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ba-toggle-before {
+      opacity: 1;
+    }
+
+    .ba-toggle-after {
+      opacity: 0.6;
+      font-weight: 500;
+    }
+
+    .ba-meter-display {
+      position: relative;
+      width: 280px;
+      height: 155px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #d0d0d0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .ba-meter-display::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 6px;
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(0, 100, 0, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(0, 120, 0, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(0, 80, 0, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(0, 140, 0, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(0, 100, 0, 0.28) 0%, transparent 2%);
+      pointer-events: none;
+      opacity: 0.6;
+      z-index: 0;
+    }
+    
+    .ba-meter-branding {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      font-weight: 600;
+      line-height: 1;
+      color: rgba(160, 160, 160, 0.7);
+      text-shadow: 
+        0 1px 0 rgba(0, 0, 0, 0.9),
+        0 0 4px rgba(208, 208, 208, 0.2);
+      text-align: center;
+      letter-spacing: 2.5px;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.8;
+      white-space: nowrap;
+    }
+
+    /* VU Meter Scale */
+    .ba-meter-scale {
+      position: absolute;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 80px;
+    }
+
+    /* Minus sign on left */
+    .ba-meter-scale::before {
+      content: '−';
+      position: absolute;
+      left: -10px;
+      top: 20px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: #d0d0d0;
+      text-shadow: 0 0 4px rgba(208, 208, 208, 0.8);
+    }
+
+    /* Plus sign on right */
+    .ba-meter-scale::after {
+      content: '+';
+      position: absolute;
+      right: -10px;
+      top: 20px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: #ff0000;
+      text-shadow: 0 0 4px rgba(255, 0, 0, 0.8);
+    }
+
+    /* Main VU line (green until 0, then red) - curved arc */
+    .ba-meter-vu-line {
+      position: absolute;
+      top: 30px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(to right, 
+        #d0d0d0 0%, 
+        #d0d0d0 76.9%, 
+        #ff0000 76.9%, 
+        #ff0000 100%);
+      box-shadow: 0 0 6px rgba(208, 208, 208, 0.5);
+      border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+      transform: translateY(-10px);
+    }
+
+    /* Top VU numbers and ticks */
+    .ba-meter-tick {
+      position: absolute;
+      top: 30px;
+      height: 7px;
+      width: 2px;
+      background: #333;
+      transform-origin: bottom center;
+    }
+
+    .ba-meter-tick.small {
+      height: 4px;
+      width: 1.5px;
+    }
+
+    .ba-meter-label {
+      position: absolute;
+      top: 5px;
+      font-size: 10px;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: #d0d0d0;
+      text-shadow: 0 0 3px rgba(208, 208, 208, 0.6);
+      transform: translateX(-50%);
+    }
+
+    .ba-meter-label.red {
+      color: #ff0000;
+      text-shadow: 0 0 3px rgba(255, 0, 0, 0.6);
+    }
+
+    /* Bottom percentage line - curved arc */
+    .ba-meter-percent-line {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: 76.9%;
+      height: 2px;
+      background: #d0d0d0;
+      box-shadow: 0 0 4px rgba(208, 208, 208, 0.4);
+      border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+      transform: translateY(-7px);
+    }
+
+    .ba-meter-percent-tick {
+      position: absolute;
+      top: 40px;
+      height: 5px;
+      width: 1.5px;
+      background: #333;
+      transform-origin: bottom center;
+    }
+
+    .ba-meter-percent-label {
+      position: absolute;
+      top: 48px;
+      font-size: 8px;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: #d0d0d0;
+      text-shadow: 0 0 2px rgba(208, 208, 208, 0.6);
+      transform: translateX(-50%);
+    }
+
+    .ba-meter-needle {
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      width: 3px;
+      height: 120px;
+      background: linear-gradient(to top, #d0d0d0, rgba(208, 208, 208, 0.3));
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(-35deg);
+      will-change: transform;
+      transition: none;
+      box-shadow: 0 0 10px rgba(208, 208, 208, 0.6);
+    }
+
+    /* Equipment Style Button */
+    .ba-toggle-button {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+      border: 2px solid #333;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 4px rgba(208, 208, 208, 0.2);
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .ba-toggle-button::after {
+      content: 'BYP';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    .ba-toggle-button:hover {
+      border-color: #d0d0d0;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(208, 208, 208, 0.4);
+    }
+
+    .ba-toggle-button:not(.active):hover {
+      border-color: #333;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .ba-toggle-button:active {
+      transform: translateY(1px);
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 1px 2px rgba(208, 208, 208, 0.1);
+    }
+
+    .ba-toggle-button.active {
+      background: linear-gradient(145deg, #0a0a0a, #000);
+      border-color: #d0d0d0;
+      box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(208, 208, 208, 0.3);
+      color: #d0d0d0;
+    }
+
+    .ba-toggle-button.active::after {
+      content: 'IN';
+    }
+
+    .ba-toggle-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: #222;
+      border-radius: 2px;
+      transition: all 0.15s;
+      opacity: 0;
+    }
+
+    .ba-toggle-button.active::before {
+      background: #d0d0d0;
+      box-shadow: 0 0 10px rgba(208, 208, 208, 0.8);
+      opacity: 0;
+    }
+
+    .ba-bypass-label {
+      font-size: 0.75rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-top: 0.5rem;
+      text-align: center;
+      transition: all 0.15s;
+      color: #f00;
+      text-shadow: 0 0 8px rgba(255, 0, 0, 0.8), 0 0 4px rgba(255, 0, 0, 1);
+      text-transform: uppercase;
+    }
+
+    .ba-bypass-label.active {
+      color: #d0d0d0;
+      text-shadow: 0 0 8px rgba(208, 208, 208, 0.8), 0 0 4px rgba(208, 208, 208, 1);
+    }
+
+    /* Volume Knob (API/CAPI 500 series style) */
+    .ba-volume-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0rem;
+      margin-top: -12px;
+    }
+
+    .ba-volume-knob-container {
+      position: relative;
+      width: 85px;
+      height: 85px;
+    }
+
+    .ba-volume-meter-arc {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 115px;
+      height: 115px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-image: conic-gradient(
+        from 180deg,
+        transparent 0deg,
+        rgba(208, 208, 208, 0.6) 0deg,
+        rgba(208, 208, 208, 0.8) 120deg,
+        rgba(208, 208, 208, 0.6) 240deg,
+        transparent 240deg
+      ) 1;
+      clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 100%,
+        50% 100%,
+        50% 90%,
+        10% 90%,
+        10% 10%,
+        90% 10%,
+        90% 90%,
+        50% 90%,
+        50% 100%,
+        0% 100%
+      );
+      pointer-events: none;
+    }
+
+    .ba-volume-meter-arc::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: 
+        conic-gradient(
+          from 180deg,
+          transparent 0deg,
+          rgba(208, 208, 208, 0.3) 0.5deg,
+          transparent 1deg,
+          transparent 119deg,
+          rgba(208, 208, 208, 0.5) 119.5deg,
+          transparent 120.5deg,
+          transparent 239deg,
+          rgba(208, 208, 208, 0.3) 239.5deg,
+          transparent 240.5deg
+        );
+      mask-image: radial-gradient(
+        circle,
+        transparent 49px,
+        black 49px,
+        black 57px,
+        transparent 57px
+      );
+      -webkit-mask-image: radial-gradient(
+        circle,
+        transparent 49px,
+        black 49px,
+        black 57px,
+        transparent 57px
+      );
+    }
+
+    .ba-volume-arc {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid rgba(208, 208, 208, 0.7);
+      clip-path: polygon(
+        0% 0%,
+        100% 0%,
+        100% 100%,
+        50% 100%,
+        50% 90%,
+        10% 90%,
+        10% 10%,
+        90% 10%,
+        90% 90%,
+        50% 90%,
+        50% 100%,
+        0% 100%
+      );
+      mask-image: conic-gradient(
+        from 180deg,
+        black 0deg,
+        black 240deg,
+        transparent 240deg,
+        transparent 360deg
+      );
+      -webkit-mask-image: conic-gradient(
+        from 180deg,
+        black 0deg,
+        black 240deg,
+        transparent 240deg,
+        transparent 360deg
+      );
+      pointer-events: none;
+      box-shadow: 0 0 4px rgba(208, 208, 208, 0.5);
+    }
+
+    .ba-volume-tick {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 8px;
+      background: rgba(208, 208, 208, 0.8);
+      transform-origin: center 43px;
+      pointer-events: none;
+    }
+
+    .ba-volume-tick:nth-child(1) {
+      transform: translate(-50%, -43px) rotate(180deg);
+    }
+
+    .ba-volume-tick:nth-child(2) {
+      transform: translate(-50%, -43px) rotate(360deg);
+    }
+
+    .ba-volume-tick:nth-child(3) {
+      transform: translate(-50%, -43px) rotate(420deg);
+    }
+
+    .ba-volume-db-label {
+      position: absolute;
+      font-size: 0.6rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      color: rgba(208, 208, 208, 0.9);
+      transform-origin: center;
+      pointer-events: none;
+      text-shadow: 0 0 4px rgba(208, 208, 208, 0.5);
+    }
+
+    .ba-volume-db-label:nth-child(4) {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, 50px) rotate(0deg);
+    }
+
+    .ba-volume-db-label:nth-child(5) {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58px) rotate(0deg);
+    }
+
+    .ba-volume-db-label:nth-child(6) {
+      top: 50%;
+      left: 50%;
+      transform: translate(28px, -36px) rotate(0deg);
+    }
+
+    .ba-volume-knob {
+      width: 85px;
+      height: 85px;
+      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+      border: 3px solid #555;
+      clip-path: polygon(
+        50% 15%,
+        calc(50% + 25px) 40%,
+        calc(50% + 15px) 75%,
+        calc(50% - 15px) 75%,
+        calc(50% - 25px) 40%
+      );
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s;
+      will-change: transform;
+    }
+
+    .ba-volume-knob:active {
+      transform: scale(0.98);
+    }
+
+    /* Knob indicator dot */
+    .ba-volume-knob::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, #d0d0d0, rgba(208, 208, 208, 0.6));
+      border-radius: 50%;
+      box-shadow: 
+        0 0 8px rgba(208, 208, 208, 0.8),
+        0 0 4px rgba(208, 208, 208, 1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Center cap with ridges */
+    .ba-volume-knob::after {
+      content: '';
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 32px;
+      background: 
+        repeating-conic-gradient(
+          from 0deg,
+          #2a2a2a 0deg 10deg,
+          #1a1a1a 10deg 20deg
+        ),
+        radial-gradient(circle, #333, #0a0a0a);
+      border-radius: 50%;
+      border: 2px solid rgba(208, 208, 208, 0.5);
+      box-shadow: 
+        inset 0 2px 3px rgba(0, 0, 0, 0.6),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.05),
+        0 0 6px rgba(208, 208, 208, 0.4),
+        0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Now Playing Display */
+    .now-playing-info {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #d0d0d0;
+      margin-bottom: 1rem;
+      min-height: 1.5rem;
+      font-weight: 500;
+    }
+
+    /* Progress Bar */
+    .main-player-progress {
+      position: relative;
+      height: 8px;
+      background: rgba(208, 208, 208, 0.2);
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      overflow: visible;
+      transition: none;
+    }
+
+    .main-player-progress:hover {
+      transform: none;
+      height: 8px;
+    }
+
+    .main-player-progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #d0d0d0, #b8b8b8);
+      border-radius: 4px;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(208, 208, 208, 0.6);
+    }
+
+    .main-player-scrubber {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%) translateX(-50%);
+      width: 2px;
+      height: 300%;
+      background: linear-gradient(to bottom, 
+        rgba(208, 208, 208, 0.2), 
+        rgba(208, 208, 208, 0.8),
+        #d0d0d0, 
+        #d0d0d0, 
+        rgba(208, 208, 208, 0.8),
+        rgba(208, 208, 208, 0.2));
+      border-radius: 1px;
+      box-shadow: 0 0 15px rgba(208, 208, 208, 1),
+                  0 0 25px rgba(208, 208, 208, 0.5);
+      transition: left 0.2s ease-out;
+      pointer-events: none;
+      border: none;
+    }
+
+    /* Transport Controls */
+    .playlist-player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .control-btn {
+      background: linear-gradient(135deg, rgba(208, 208, 208, 0.15), rgba(208, 208, 208, 0.08));
+      border: 1.5px solid rgba(208, 208, 208, 0.3);
+      color: #d0d0d0;
+      padding: 0.75rem 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0;
+      min-width: 48px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      line-height: 1;
+      text-align: center;
+      position: relative;
+    }
+
+    .control-btn:hover {
+      background: linear-gradient(135deg, rgba(208, 208, 208, 0.25), rgba(208, 208, 208, 0.15));
+      border-color: rgba(208, 208, 208, 0.5);
+      box-shadow: 0 4px 12px rgba(208, 208, 208, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .control-btn:active {
+      transform: translateY(0) scale(0.95);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .control-btn:focus-visible {
+      outline: 3px solid rgba(208, 208, 208, 0.4);
+      outline-offset: 2px;
+    }
+
+    .control-btn-play {
+      padding: 0.85rem 1.15rem;
+      font-size: 1.25rem;
+      min-width: 56px;
+      min-height: 56px;
+      background: linear-gradient(135deg, rgba(208, 208, 208, 0.25), rgba(208, 208, 208, 0.15));
+    }
+
+    /* Previous/Back icon - two triangles pointing left */
+    .control-btn[aria-label*="beginning"]::before,
+    .control-btn[aria-label*="Back"]::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-right: 8px solid currentColor;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+    }
+
+    .control-btn[aria-label*="beginning"]::after,
+    .control-btn[aria-label*="Back"]::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-right: 8px solid currentColor;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      margin-left: -2px;
+    }
+
+    /* Play icon - triangle pointing right */
+    .control-btn[aria-label*="Play"]::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 10px solid currentColor;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      margin-left: 2px;
+    }
+
+    /* Pause icon - two vertical bars */
+    .control-btn.playing::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-4.5px);
+      width: 3px;
+      height: 14px;
+      background: currentColor;
+      box-shadow: 6px 0 0 currentColor;
+      border: none;
+      margin-left: 0;
+    }
+
+    /* Next/Forward icon - two triangles pointing right */
+    .control-btn[aria-label*="Next"]::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 8px solid currentColor;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+    }
+
+    .control-btn[aria-label*="Next"]::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 8px solid currentColor;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      margin-left: -2px;
+    }
+
+    /* Power Button */
+    .power-button-container {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
+
+    .power-button {
+      width: 42px;
+      height: 42px;
+      border: 3px solid #333;
+      border-radius: 4px;
+      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #d0d0d0;
+      font-size: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 8px rgba(208, 208, 208, 0.8), 0 0 4px rgba(208, 208, 208, 1);
+    }
+
+    .power-button:hover {
+      border-color: #d0d0d0;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+        0 2px 8px rgba(208, 208, 208, 0.4);
+    }
+
+    .power-button:active {
+      transform: translateY(1px);
+      box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 1px 2px rgba(208, 208, 208, 0.1);
+    }
+
+    /* Track List */
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .track-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .track-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
+    }
+
+    .track-list::-webkit-scrollbar-thumb {
+      background: rgba(208, 208, 208, 0.3);
+      border-radius: 3px;
+    }
+
+    .track-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(208, 208, 208, 0.5);
+    }
+
+    .track-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.75rem;
+      background: rgba(208, 208, 208, 0.1);
+      border: 1px solid rgba(208, 208, 208, 0.4);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .track-item:hover {
+      background: rgba(208, 208, 208, 0.15);
+      border-color: rgba(208, 208, 208, 0.5);
+    }
+
+    .track-item.active {
+      background: rgba(208, 208, 208, 0.2);
+      border-color: rgba(208, 208, 208, 0.7);
+    }
+
+    .track-item-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      grid-column: 1 / 2;
+    }
+
+    .track-item-number {
+      font-weight: 600;
+      color: #e8e8e8;
+      min-width: 1.5rem;
+    }
+
+    .track-item-title {
+      color: #e8e8e8;
+      font-size: 0.95rem;
+    }
+
+    .track-item-progress-wrap,
+    .track-item-progress-wrap:hover,
+    .track-item-progress-fill,
+    .track-item-scrubber,
+    .track-item-play-btn,
+    .ba-volume-value {
+      display: none;
+    }
+
+    .track-item-time {
+      font-size: 0.85rem;
+      color: rgba(232, 232, 232, 0.8);
+      font-family: 'Courier New', monospace;
+      grid-column: 3 / 4;
+    }
+
+    /* Home Link */
+    .home-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(208, 208, 208, 0.2);
+      color: #d0d0d0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: opacity 0.3s;
+    }
+
+    .home-link:hover {
+      opacity: 0.7;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .content-wrapper {
+        padding: 1rem;
+      }
+
+      .hidden-player-card {
+        padding: 1.5rem;
+      }
+
+      .track-item {
+        grid-template-columns: auto 1fr;
+        gap: 0.5rem;
+      }
+
+      .track-item-progress-wrap {
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+      }
+
+      .track-item-time {
+        grid-column: 1 / 3;
+        grid-row: 3 / 4;
+        font-size: 0.75rem;
+      }
+    }
+
+    /* ==========================================================================
+       LIGHT MODE STYLES - Hidden Tracks Page
+       ========================================================================== */
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </style>
+</head>
+
+<body>
+  <!-- ========================================================================
+       SITE HEADER - Navigation
+       ======================================================================== -->
+  <header class="site-header">
+    <a href="index.html" class="logo">Audio Design Studios</a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="editorial.html">Editorial</a>
+      <a href="design.html">Design</a>
+      <a href="compose.html">Compose</a>
+      <a href="music.html" class="special-link">Music</a>
+    </nav>
+  </header>
+
+  <!-- Full-screen Matrix Background -->
+  <div class="matrix-background" id="matrixBackground"></div>
+
+  <!-- ======================================================================
+       Hero Image Banner
+       ====================================================================== -->
+  <section class="env-image env-hiddentracks">
+    <h1 class="banner-title-music">MUSIC</h1>
+    <a href="compose.html" class="banner-nav-arrow banner-nav-left" aria-label="Previous: Compose">←</a>
+    <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" class="banner-text">on Apple Music</a>
+  </section>
+
+  <!-- Content Wrapper -->
+  <div class="content-wrapper">
+    <div class="hidden-player-card">
+      <h2 class="hidden-player-title">Analog Processing</h2>
+      <!-- VU Meter Style Toggle -->
+      <div class="ba-global-toggle-section">
+        <!-- Power Button -->
+        <div class="power-button-container">
+          <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+        </div>
+        
+        <div class="ba-meter-container">
+          <div class="ba-toggle-labels">
+            <span class="ba-toggle-label ba-toggle-before">Dry</span>
+            <span class="ba-toggle-label ba-toggle-after">Wet</span>
+          </div>
+          <div class="ba-meter-display">
+            <div class="ba-meter-scale">
+              <!-- Main VU line -->
+              <div class="ba-meter-vu-line"></div>
+              
+              <!-- Top VU scale: -20, -10, -7, -5, -3, -2, -1, 0, +1, +2, +3 -->
+              <div class="ba-meter-tick" style="left: 0%;"></div>
+              <span class="ba-meter-label" style="left: 0%;">20</span>
+              
+              <div class="ba-meter-tick" style="left: 7.7%;"></div>
+              <span class="ba-meter-label" style="left: 7.7%;">10</span>
+              
+              <div class="ba-meter-tick" style="left: 15.4%;"></div>
+              <span class="ba-meter-label" style="left: 15.4%;">7</span>
+              
+              <div class="ba-meter-tick small" style="left: 23%;"></div>
+              
+              <div class="ba-meter-tick" style="left: 30.8%;"></div>
+              <span class="ba-meter-label" style="left: 30.8%;">5</span>
+              
+              <div class="ba-meter-tick small" style="left: 38.5%;"></div>
+              
+              <div class="ba-meter-tick" style="left: 46.2%;"></div>
+              <span class="ba-meter-label" style="left: 46.2%;">3</span>
+              
+              <div class="ba-meter-tick" style="left: 53.8%;"></div>
+              <span class="ba-meter-label" style="left: 53.8%;">2</span>
+              
+              <div class="ba-meter-tick" style="left: 61.5%;"></div>
+              <span class="ba-meter-label" style="left: 61.5%;">1</span>
+              
+              <div class="ba-meter-tick" style="left: 76.9%;"></div>
+              <span class="ba-meter-label" style="left: 76.9%;">0</span>
+              
+              <div class="ba-meter-tick" style="left: 84.6%;"></div>
+              <span class="ba-meter-label red" style="left: 84.6%;">1</span>
+              
+              <div class="ba-meter-tick" style="left: 92.3%;"></div>
+              <span class="ba-meter-label red" style="left: 92.3%;">2</span>
+              
+              <div class="ba-meter-tick" style="left: 100%;"></div>
+              <span class="ba-meter-label red" style="left: 100%;">3</span>
+              
+              <!-- Bottom percentage line (0-100%) -->
+              <div class="ba-meter-percent-line"></div>
+              
+              <div class="ba-meter-percent-tick" style="left: 0%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 7.7%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 15.4%;"></div>
+              <span class="ba-meter-percent-label" style="left: 15.4%;">20</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 23%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 30.8%;"></div>
+              <span class="ba-meter-percent-label" style="left: 30.8%;">40</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 38.5%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 46.2%;"></div>
+              <span class="ba-meter-percent-label" style="left: 46.2%;">60</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 53.8%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 61.5%;"></div>
+              <span class="ba-meter-percent-label" style="left: 61.5%;">80</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 76.9%;"></div>
+              <span class="ba-meter-percent-label" style="left: 76.9%;">100</span>
+            </div>
+            <div class="ba-meter-needle" id="baMeterNeedle"></div>
+            <div class="ba-meter-branding">AUDIO DESIGN STUDIOS</div>
+          </div>
+        </div>
+        <div class="ba-controls-row">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <button class="ba-toggle-button" id="baToggleButton" aria-label="Toggle Before/After"></button>
+            <div class="ba-bypass-label" id="baBypassLabel">Bypass</div>
+          </div>
+          <div class="ba-volume-control">
+            <div class="ba-volume-knob-container">
+              <div class="ba-volume-tick"></div>
+              <div class="ba-volume-tick"></div>
+              <div class="ba-volume-tick"></div>
+              <div class="ba-volume-db-label">-40</div>
+              <div class="ba-volume-db-label">0</div>
+              <div class="ba-volume-db-label">+12</div>
+              <div class="ba-volume-knob" id="baVolumeKnob" aria-label="Volume Control"></div>
+              <div class="ba-volume-arc"></div>
+            </div>
+            <div class="ba-volume-value" id="baVolumeValue">0 dB</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Now Playing Display -->
+      <div id="baNowPlaying" class="now-playing-info">No track playing</div>
+
+      <!-- Progress Bar -->
+      <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
+
+      <!-- Transport Controls -->
+      <div class="playlist-player-controls">
+        <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+        <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+        <button id="baNextBtn" class="control-btn" aria-label="Next track"></button>
+      </div>
+
+      <!-- Track List -->
+      <div class="track-list" id="baPlaylistTracks">
+        <!-- Tracks will be injected via JavaScript -->
+      </div>
+
+      <!-- Home Link -->
+      <a href="index.html" class="home-link">Home</a>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       SCRIPTS
+       ======================================================================== -->
+
+  <!-- Matrix Animation Script -->
+  <script>
+    const terminal = document.getElementById('matrixBackground');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { 
+      alpha: false, 
+      desynchronized: true,
+      willReadFrequently: false 
+    });
+    terminal.appendChild(canvas);
+    
+    const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
+    const binaryChars = [0, 1];
+    const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
+    const japaneseChars = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
+    const mathChars = [64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82];
+    const greekChars = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
+    const currencyChars = [134,135,136,137,138,139,140,141,142,143,144,145];
+    
+    let columns, rows, drops, charGrid, charAge, speeds, cycleSpeeds;
+    let animationId;
+    let lastFrameTime = 0;
+    const frameInterval = 50; // Reduced to 20fps for better performance
+    const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000];
+    let phaseStartTime = Date.now();
+    let isMatrixPaused = false;
+    
+    // Performance monitoring
+    let frameCount = 0;
+    let lastFpsCheck = Date.now();
+    let currentTrailLength = 15;
+    let performanceMode = 'normal'; // 'normal' or 'low'
+    
+    function getCurrentPhase() {
+      const elapsed = Date.now() - phaseStartTime;
+      const totalCycle = phaseDurations.reduce((a, b) => a + b, 0);
+      const cyclePosition = elapsed % totalCycle;
+      
+      let accumulatedTime = 0;
+      let phase = 0;
+      for (let i = 0; i < phaseDurations.length; i++) {
+        if (cyclePosition < accumulatedTime + phaseDurations[i]) {
+          phase = i;
+          break;
+        }
+        accumulatedTime += phaseDurations[i];
+      }
+      
+      const phaseElapsed = cyclePosition - accumulatedTime;
+      return { phase, phaseElapsed };
+    }
+    
+    function randomChar(isLeading = false) {
+      const { phase, phaseElapsed } = getCurrentPhase();
+      let charSet = binaryChars;
+      
+      const phaseCharSets = [binaryChars, japaneseChars, mathChars, musicalNotes, greekChars, currencyChars];
+      const pureDuration = phase === 3 ? 8000 : 5000;
+      const transitionDuration = 2000;
+      
+      if (phaseElapsed < pureDuration) {
+        charSet = phaseCharSets[phase];
+      } else {
+        const transitionProgress = (phaseElapsed - pureDuration) / transitionDuration;
+        const nextPhase = (phase + 1) % 6;
+        charSet = Math.random() < transitionProgress ? phaseCharSets[nextPhase] : phaseCharSets[phase];
+      }
+      
+      const index = charSet[Math.floor(Math.random() * charSet.length)];
+      return index !== undefined ? index : 0;
+    }
+    
+    function resize() {
+      // Limit canvas size for performance on very large displays
+      const maxWidth = Math.min(window.innerWidth, 3840);
+      const maxHeight = Math.min(window.innerHeight, 2160);
+      
+      canvas.width = maxWidth;
+      canvas.height = maxHeight;
+      canvas.style.width = '100vw';
+      canvas.style.height = '100vh';
+      canvas.style.display = 'block';
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      
+      let desiredColumnWidth;
+      if (window.innerWidth < 600) {
+        desiredColumnWidth = 20;
+      } else if (window.innerWidth < 1200) {
+        desiredColumnWidth = 28;
+      } else {
+        desiredColumnWidth = 32;
+      }
+      
+      columns = Math.ceil(canvas.width / desiredColumnWidth);
+      if (columns > 80) columns = 80; // Reduced from 150 to 80
+      const columnWidth = canvas.width / columns;
+      rows = Math.ceil(canvas.height / columnWidth) + 1;
+      
+      if (!drops || !charGrid || drops.length !== columns) {
+        drops = Array(columns).fill(0).map(() => Math.random() * -20);
+        speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
+        charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
+        charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
+        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.1 + Math.random() * 0.15));
+      }
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    function draw(timestamp) {
+      if (isMatrixPaused) {
+        return;
+      }
+      if (timestamp - lastFrameTime < frameInterval) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = timestamp;
+      
+      // Performance monitoring - check FPS every 2 seconds
+      frameCount++;
+      if (Date.now() - lastFpsCheck > 2000) {
+        const fps = frameCount / 2;
+        frameCount = 0;
+        lastFpsCheck = Date.now();
+        
+        // If FPS drops below 15, reduce trail length
+        if (fps < 15 && performanceMode === 'normal') {
+          performanceMode = 'low';
+          currentTrailLength = 8;
+          console.log('Matrix: Switching to low performance mode');
+        } else if (fps > 18 && performanceMode === 'low') {
+          performanceMode = 'normal';
+          currentTrailLength = 15;
+        }
+      }
+      
+      // Fade effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      const columnWidth = canvas.width / columns;
+      ctx.font = `${columnWidth * 0.85}px monospace`;
+      ctx.textBaseline = 'top';
+      
+      // Only draw the active trail - much more efficient
+      for (let col = 0; col < columns; col++) {
+        const y = drops[col];
+        const row = Math.floor(y);
+        
+        if (row >= 0 && row < rows) {
+          // Update character at current position
+          charAge[col][row] += cycleSpeeds[col][row];
+          if (charAge[col][row] > 1) {
+            charAge[col][row] = 0;
+            charGrid[col][row] = randomChar(false);
+          }
+          
+          // Draw only the trail (adaptive length based on performance)
+          for (let i = 0; i < currentTrailLength; i++) {
+            const r = row - i;
+            if (r >= 0 && r < rows) {
+              const alpha = i === 0 ? 1.0 : Math.max(0, 1.0 - (i / currentTrailLength));
+              
+              if (alpha > 0.05) {
+                const green = Math.floor(255 * alpha);
+                ctx.fillStyle = `rgb(0, ${green}, 0)`;
+                const character = chars[charGrid[col][r]];
+                const x = col * columnWidth;
+                const yPos = r * columnWidth;
+                ctx.fillText(character, x, yPos);
+              }
+            }
+          }
+        }
+        
+        drops[col] += speeds[col];
+        if (drops[col] * columnWidth > canvas.height && Math.random() > 0.975) {
+          drops[col] = 0;
+        }
+      }
+      
+      animationId = requestAnimationFrame(draw);
+    }
+    
+    resize();
+    draw(0);
+    
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        resize();
+      }, 150);
+    });
+
+    // Pause/resume animation based on page visibility to improve performance
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        isMatrixPaused = true;
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      } else {
+        isMatrixPaused = false;
+        lastFrameTime = performance.now();
+        animationId = requestAnimationFrame(draw);
+      }
+    });
+
+    // Click matrix background to go home
+    terminal.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+  </script>
+
+  <!-- Before & After Player Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let activeDrag = null;
+
+      // Global drag handlers for all progress scrubbing
+      document.addEventListener('mousemove', (e) => {
+        if (activeDrag) {
+          e.preventDefault();
+          activeDrag.update(e);
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (activeDrag) {
+          activeDrag.element.style.cursor = 'pointer';
+          activeDrag = null;
+        }
+      });
+
+      // Before & After Tracks (from hiddentracks folder)
+      const baTracks = [
+        { id: 1, title: 'Particle Ladder (Mix/Master)', before: 'hiddentracks/Particle Ladder-KB-01-28-26_RAW.mp3', after: 'hiddentracks/Particle Ladder-KB-01-28-26_FullMix.mp3' },
+        { id: 2, title: 'Reggae Lights (Mix)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' },
+        { id: 3, title: 'Near Wild Heaven (Mix)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
+        { id: 4, title: 'Ocean Etude (Master)', before: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_Unmixed.mp3', after: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
+        { id: 5, title: 'Heavy Demo (Mix/Master)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
+        { id: 6, title: 'Were In This Together (Drum Mix)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
+        { id: 7, title: 'Hysteria (Drum Mix)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
+      ];
+
+      const baBeforeAudio = new Audio();
+      const baAfterAudio = new Audio();
+      
+      // Set preload='auto' for better performance - preloads entire audio file
+      baBeforeAudio.preload = 'auto';
+      baAfterAudio.preload = 'auto';
+      
+      const baPlaylistContainer = document.getElementById('baPlaylistTracks');
+      const baToggleButton = document.getElementById('baToggleButton');
+      const baMeterNeedle = document.getElementById('baMeterNeedle');
+      const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
+      const baPrevBtn = document.getElementById('baPrevBtn');
+      const baNextBtn = document.getElementById('baNextBtn');
+      const baNowPlaying = document.getElementById('baNowPlaying');
+      const baProgressWrap = document.getElementById('baWave');
+      const baVolumeKnob = document.getElementById('baVolumeKnob');
+      const baVolumeValue = document.getElementById('baVolumeValue');
+
+      let baCurrentTrackIndex = -1;
+      let isPlaying = false;
+      let isAfterMode = true;
+      let volumeDb = 0; // Volume in dB (-40 to +12)
+      let knobAngle = 360; // Knob rotation angle at 0 dB (180° = -40dB, 360° = 0dB, 420° = +12dB)
+      let currentNeedleAngle = -50; // Start at more dramatic left position
+      
+      // Don't use muted property - we'll use Web Audio gain nodes instead
+
+      // Web Audio API for VU meter
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const beforeAnalyser = audioContext.createAnalyser();
+      const afterAnalyser = audioContext.createAnalyser();
+      const beforeSource = audioContext.createMediaElementSource(baBeforeAudio);
+      const afterSource = audioContext.createMediaElementSource(baAfterAudio);
+      
+      // Create gain nodes for muting control
+      const beforeGain = audioContext.createGain();
+      const afterGain = audioContext.createGain();
+      
+      beforeAnalyser.fftSize = 256;
+      afterAnalyser.fftSize = 256;
+      beforeAnalyser.smoothingTimeConstant = 0.92;
+      afterAnalyser.smoothingTimeConstant = 0.92;
+      
+      // Connect audio graph
+      beforeSource.connect(beforeAnalyser);
+      beforeAnalyser.connect(beforeGain);
+      beforeGain.connect(audioContext.destination);
+      
+      afterSource.connect(afterAnalyser);
+      afterAnalyser.connect(afterGain);
+      afterGain.connect(audioContext.destination);
+      
+      // Set initial gain values (wet mode by default)
+      beforeGain.gain.value = 0;
+      afterGain.gain.value = 1;
+      
+      const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
+      const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
+      
+      let vuMeterAnimationId = null;
+      let isVUPaused = false;
+      let lastVUFrameTime = 0;
+      const vuFrameInterval = 33; // ~30fps for VU meter - sufficient for visual smoothness
+      
+      // VU meter animation loop
+      function updateVUMeter(timestamp) {
+        if (isVUPaused) {
+          return;
+        }
+        
+        // Throttle to 30fps max for VU meter
+        if (timestamp - lastVUFrameTime < vuFrameInterval) {
+          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+          return;
+        }
+        lastVUFrameTime = timestamp;
+        
+        vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+        
+        const analyser = isAfterMode ? afterAnalyser : beforeAnalyser;
+        const dataArray = isAfterMode ? afterDataArray : beforeDataArray;
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        // Calculate RMS (root mean square) for accurate VU metering
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          sum += dataArray[i] * dataArray[i];
+        }
+        const rms = Math.sqrt(sum / dataArray.length);
+        
+        // Convert to dB scale (20 * log10(rms/255))
+        const normalized = Math.max(rms / 255, 0.001);
+        let db = 20 * Math.log10(normalized);
+        
+        // Apply different gain compensation for Before vs After
+        if (isAfterMode) {
+          // After mode: boost signal to read closer to 0
+          db += 8;
+        } else {
+          // Before mode: reduce signal to show more of left side
+          db -= 2;
+        }
+        
+        // Add volume knob effect to the meter reading
+        db += volumeDb;
+        
+        // VU meter scale: -20 VU (left) to +3 VU (right)
+        // Map to -50° to +50° needle angle (more dramatic range)
+        const vuMin = -20;
+        const vuMax = 3;
+        const angleMin = -50;
+        const angleMax = 50;
+        
+        // Clamp dB to VU range
+        const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
+        
+        // Non-linear mapping for more dramatic response at low volumes
+        let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
+        
+        // Apply curve: compress low end, expand high end
+        // When volume is low (around -10dB and below), needle drops more dramatically
+        // When volume is above 0dB, needle moves into red zone
+        if (clampedVU < -5) {
+          // Below -5 VU: compress more (needle stays lower)
+          normalizedVU = Math.pow(normalizedVU, 1.5);
+        }
+        
+        const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
+        
+        // Smooth the needle movement (VU meter ballistics) - slower response
+        currentNeedleAngle += (targetAngle - currentNeedleAngle) * 0.1;
+        
+        baMeterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
+      }
+      
+      updateVUMeter(performance.now());
+
+      // Pause/resume VU meter based on page visibility
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          isVUPaused = true;
+          if (vuMeterAnimationId) {
+            cancelAnimationFrame(vuMeterAnimationId);
+            vuMeterAnimationId = null;
+          }
+        } else {
+          isVUPaused = false;
+          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+        }
+      });
+
+      // Volume Knob Control
+      function updateVolumeDisplay() {
+        const displayDb = volumeDb >= 0 ? `+${volumeDb.toFixed(1)}` : volumeDb.toFixed(1);
+        baVolumeValue.textContent = `${displayDb} dB`;
+        // Offset rotation so that 360° (0 dB) points straight up (0°)
+        baVolumeKnob.style.transform = `rotate(${knobAngle - 360}deg)`;
+        
+        // Convert dB to linear gain
+        const gain = Math.pow(10, volumeDb / 20);
+        beforeGain.gain.value = isAfterMode ? 0 : gain;
+        afterGain.gain.value = isAfterMode ? gain : 0;
+      }
+
+      let isDraggingKnob = false;
+      let knobStartY = 0;
+      let knobStartAngle = 0;
+      let knobMoved = false;
+
+      // Mouse events
+      baVolumeKnob.addEventListener('mousedown', (e) => {
+        isDraggingKnob = true;
+        knobMoved = false;
+        knobStartY = e.clientY;
+        knobStartAngle = knobAngle;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingKnob) return;
+        
+        const deltaY = knobStartY - e.clientY;
+        if (Math.abs(deltaY) > 2) {
+          knobMoved = true;
+        }
+        
+        const newAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+        knobAngle = newAngle;
+        
+        // Map angle (180° to 420°) to dB (-40 to +12)
+        volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+        
+        updateVolumeDisplay();
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDraggingKnob && !knobMoved) {
+          // Single click - reset to 0 dB
+          volumeDb = 0;
+          knobAngle = 360;
+          updateVolumeDisplay();
+        }
+        isDraggingKnob = false;
+      });
+
+      // Touch events for mobile
+      baVolumeKnob.addEventListener('touchstart', (e) => {
+        isDraggingKnob = true;
+        knobMoved = false;
+        knobStartY = e.touches[0].clientY;
+        knobStartAngle = knobAngle;
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!isDraggingKnob) return;
+        
+        const deltaY = knobStartY - e.touches[0].clientY;
+        if (Math.abs(deltaY) > 2) {
+          knobMoved = true;
+        }
+        
+        const newAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+        knobAngle = newAngle;
+        
+        // Map angle (180° to 420°) to dB (-40 to +12)
+        volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+        
+        updateVolumeDisplay();
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => {
+        if (isDraggingKnob && !knobMoved) {
+          // Single tap - reset to 0 dB
+          volumeDb = 0;
+          knobAngle = 360;
+          updateVolumeDisplay();
+        }
+        isDraggingKnob = false;
+      });
+
+      updateVolumeDisplay();
+
+      function waitForReady(audio) {
+        return new Promise(resolve => {
+          if (audio.readyState >= 3) {
+            resolve();
+          } else {
+            audio.addEventListener('canplaythrough', resolve, { once: true });
+          }
+        });
+      }
+
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      let baProgressRAF = null;
+      const baProgressFill = document.createElement('div');
+      baProgressFill.className = 'main-player-progress-fill';
+      baProgressFill.style.width = '0%';
+      baProgressWrap.appendChild(baProgressFill);
+
+      const baScrubber = document.createElement('div');
+      baScrubber.className = 'main-player-scrubber';
+      baProgressWrap.appendChild(baScrubber);
+
+      function baRenderProgress() {
+        const cur = baBeforeAudio.currentTime || 0;
+        const dur = baBeforeAudio.duration || 0;
+        const pct = dur ? (cur / dur) : 0;
+        const percent = pct * 100;
+
+        baProgressFill.style.width = percent + '%';
+        baScrubber.style.left = percent + '%';
+
+        if (baCurrentTrackIndex >= 0) {
+          const track = baTracks[baCurrentTrackIndex];
+          if (track._uiRefs) {
+            track._uiRefs.progressFill.style.width = percent + '%';
+            track._uiRefs.itemScrubber.style.left = percent + '%';
+            track._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+          }
+        }
+      }
+
+      function baStartProgressLoop() {
+        if (baProgressRAF) cancelAnimationFrame(baProgressRAF);
+        const step = () => {
+          if (baBeforeAudio.paused || !baBeforeAudio.duration) {
+            baProgressRAF = null;
+            return;
+          }
+          baRenderProgress();
+          baProgressRAF = requestAnimationFrame(step);
+        };
+        baProgressRAF = requestAnimationFrame(step);
+      }
+
+      function baStopProgressLoop() {
+        if (baProgressRAF) {
+          cancelAnimationFrame(baProgressRAF);
+          baProgressRAF = null;
+        }
+      }
+
+      baTracks.forEach((track, index) => {
+        const trackRow = document.createElement('div');
+        trackRow.className = 'track-item';
+        trackRow.dataset.trackIndex = index;
+        trackRow.style.cursor = 'pointer';
+
+        const info = document.createElement('div');
+        info.className = 'track-item-info';
+
+        const num = document.createElement('span');
+        num.className = 'track-item-number';
+        num.textContent = index + 1;
+
+        const title = document.createElement('span');
+        title.className = 'track-item-title';
+        title.textContent = track.title;
+
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'track-item-progress-wrap';
+
+        const progressFill = document.createElement('div');
+        progressFill.className = 'track-item-progress-fill';
+        progressFill.style.width = '0%';
+        progressWrap.appendChild(progressFill);
+
+        const itemScrubber = document.createElement('div');
+        itemScrubber.className = 'track-item-scrubber';
+        progressWrap.appendChild(itemScrubber);
+
+        const timeEl = document.createElement('div');
+        timeEl.className = 'track-item-time';
+        timeEl.textContent = '0:00 / 0:00';
+
+        info.appendChild(num);
+        info.appendChild(title);
+
+        const btn = document.createElement('button');
+        btn.className = 'track-item-play-btn';
+        btn.setAttribute('aria-label', `Play ${track.title}`);
+        btn.textContent = '';
+
+        track._uiRefs = { btn, progressFill, itemScrubber, timeEl };
+
+        trackRow.addEventListener('click', (e) => {
+          if (!e.target.closest('.track-item-progress-wrap') && !e.target.closest('.track-item-play-btn')) {
+            loadBATrack(index);
+          }
+        });
+
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          loadBATrack(index);
+        });
+
+        const updateProgress = (e) => {
+          const rect = progressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          if (baBeforeAudio.duration) {
+            const newTime = pct * baBeforeAudio.duration;
+            baBeforeAudio.currentTime = newTime;
+            baAfterAudio.currentTime = newTime;
+            baRenderProgress();
+          }
+        };
+
+        progressWrap.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          activeDrag = { element: progressWrap, update: updateProgress };
+          updateProgress(e);
+          progressWrap.style.cursor = 'grabbing';
+        });
+
+        progressWrap.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!activeDrag) updateProgress(e);
+        });
+
+        trackRow.appendChild(info);
+        trackRow.appendChild(progressWrap);
+        trackRow.appendChild(timeEl);
+        trackRow.appendChild(btn);
+        baPlaylistContainer.appendChild(trackRow);
+      });
+
+      // Debounce helper for preventing rapid track switching lag
+      let trackLoadDebounceTimer = null;
+      const TRACK_LOAD_DEBOUNCE_MS = 150;
+
+      function loadBATrack(index) {
+        const track = baTracks[index];
+        
+        // Resume audio context on user interaction
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        
+        if (baCurrentTrackIndex === index) {
+          if (isPlaying) {
+            baBeforeAudio.pause();
+            baAfterAudio.pause();
+            isPlaying = false;
+          } else {
+            Promise.all([
+              baBeforeAudio.play(),
+              baAfterAudio.play()
+            ]).catch(e => console.warn('play failed', e));
+            isPlaying = true;
+          }
+          return;
+        }
+
+        // Debounce rapid track switching to prevent lag
+        clearTimeout(trackLoadDebounceTimer);
+        trackLoadDebounceTimer = setTimeout(() => {
+          if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+            baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+            baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+          }
+
+          baCurrentTrackIndex = index;
+
+          document.querySelectorAll('#baPlaylistTracks .track-item').forEach((item, i) => {
+            item.classList.toggle('active', i === index);
+          });
+
+          if (track._uiRefs) {
+            track._uiRefs.btn.textContent = '';
+          }
+
+          baNowPlaying.textContent = track.title;
+
+          baBeforeAudio.src = track.before;
+          baAfterAudio.src = track.after;
+          
+          Promise.all([
+            waitForReady(baBeforeAudio),
+            waitForReady(baAfterAudio)
+          ]).then(() => {
+            return Promise.all([
+              baBeforeAudio.play(),
+              baAfterAudio.play()
+            ]);
+          }).then(() => {
+            isPlaying = true;
+            if (track._uiRefs) {
+              track._uiRefs.btn.classList.add('playing');
+              track._uiRefs.btn.textContent = '';
+            }
+          }).catch(e => console.warn('play failed', e));
+        }, TRACK_LOAD_DEBOUNCE_MS);
+      }
+
+      baBeforeAudio.addEventListener('play', baStartProgressLoop);
+      baBeforeAudio.addEventListener('pause', baStopProgressLoop);
+      baBeforeAudio.addEventListener('ended', baStopProgressLoop);
+
+      baProgressWrap.addEventListener('click', (e) => {
+        if (baBeforeAudio.duration) {
+          const rect = baProgressWrap.getBoundingClientRect();
+          const percent = (e.clientX - rect.left) / rect.width;
+          const newTime = percent * baBeforeAudio.duration;
+          baBeforeAudio.currentTime = newTime;
+          baAfterAudio.currentTime = newTime;
+          baRenderProgress();
+        }
+      });
+
+      baToggleButton.addEventListener('click', () => {
+        isAfterMode = !isAfterMode;
+        const beforeLabel = document.querySelector('.ba-toggle-before');
+        const afterLabel = document.querySelector('.ba-toggle-after');
+        const bypassLabel = document.getElementById('baBypassLabel');
+        
+        // Update gain with volume control
+        updateVolumeDisplay();
+        
+        if (isAfterMode) {
+          beforeLabel.style.opacity = '0.6';
+          beforeLabel.style.fontWeight = '500';
+          afterLabel.style.opacity = '1';
+          afterLabel.style.fontWeight = '600';
+          baToggleButton.classList.add('active');
+          bypassLabel.classList.add('active');
+          bypassLabel.textContent = 'Active';
+          
+          if (baCurrentTrackIndex >= 0) {
+            const track = baTracks[baCurrentTrackIndex];
+            baNowPlaying.textContent = track.title;
+          }
+        } else {
+          beforeLabel.style.opacity = '1';
+          beforeLabel.style.fontWeight = '600';
+          afterLabel.style.opacity = '0.6';
+          afterLabel.style.fontWeight = '500';
+          baToggleButton.classList.remove('active');
+          bypassLabel.classList.remove('active');
+          bypassLabel.textContent = 'Bypass';
+          
+          if (baCurrentTrackIndex >= 0) {
+            const track = baTracks[baCurrentTrackIndex];
+            baNowPlaying.textContent = track.title;
+          }
+        }
+      });
+
+      baPlayPauseBtn.addEventListener('click', () => {
+        if (baCurrentTrackIndex === -1) {
+          loadBATrack(0);
+        } else if (isPlaying) {
+          baBeforeAudio.pause();
+          baAfterAudio.pause();
+          isPlaying = false;
+        } else {
+          // Resume audio context on user interaction
+          if (audioContext.state === 'suspended') {
+            audioContext.resume();
+          }
+          Promise.all([
+            baBeforeAudio.play(),
+            baAfterAudio.play()
+          ]).then(() => {
+            isPlaying = true;
+          }).catch(e => console.warn('play failed', e));
+        }
+      });
+
+      baBeforeAudio.addEventListener('play', () => {
+        baPlayPauseBtn.classList.add('playing');
+        baPlayPauseBtn.textContent = '';
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.add('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+        }
+      });
+
+      baBeforeAudio.addEventListener('pause', () => {
+        baPlayPauseBtn.classList.remove('playing');
+        baPlayPauseBtn.textContent = '';
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+        }
+      });
+
+      baBeforeAudio.addEventListener('ended', () => {
+        baPlayPauseBtn.classList.remove('playing');
+        baPlayPauseBtn.textContent = '';
+        isPlaying = false;
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+          baTracks[baCurrentTrackIndex]._uiRefs.progressFill.style.width = '0%';
+          baTracks[baCurrentTrackIndex]._uiRefs.itemScrubber.style.left = '0%';
+        }
+        baProgressFill.style.width = '0%';
+        baScrubber.style.left = '0%';
+        baStopProgressLoop();
+        
+        if (baCurrentTrackIndex < baTracks.length - 1) {
+          loadBATrack(baCurrentTrackIndex + 1);
+        } else {
+          loadBATrack(0);
+        }
+      });
+
+      baBeforeAudio.addEventListener('loadedmetadata', () => {
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '⏸';
+        }
+      });
+
+      baPrevBtn.addEventListener('click', () => {
+        if (baBeforeAudio.currentTime > 3) {
+          baBeforeAudio.currentTime = 0;
+          baAfterAudio.currentTime = 0;
+        } else if (baCurrentTrackIndex > 0) {
+          loadBATrack(baCurrentTrackIndex - 1);
+        }
+      });
+
+      baNextBtn.addEventListener('click', () => {
+        if (baCurrentTrackIndex < baTracks.length - 1) {
+          loadBATrack(baCurrentTrackIndex + 1);
+        } else {
+          loadBATrack(0);
+        }
+      });
+
+      // Load the first track on page load (ready to play, but paused)
+      function initFirstTrack() {
+        const track = baTracks[0];
+        baCurrentTrackIndex = 0;
+        
+        baNowPlaying.textContent = track.title;
+        
+        // Set source URLs but don't call load() - let them load on demand
+        // This significantly improves initial page load performance
+        baBeforeAudio.src = track.before;
+        baAfterAudio.src = track.after;
+
+        // Mark first track as active
+        document.querySelectorAll('#baPlaylistTracks .track-item').forEach((item, i) => {
+          item.classList.toggle('active', i === 0);
+        });
+      }
+
+      // Initialize the first track when page loads
+      initFirstTrack();
+      
+      // Set initial UI state for wet mode (active by default)
+      const beforeLabel = document.querySelector('.ba-toggle-before');
+      const afterLabel = document.querySelector('.ba-toggle-after');
+      const bypassLabel = document.getElementById('baBypassLabel');
+      
+      // Add click listeners to Dry/Wet labels
+      beforeLabel.addEventListener('click', () => {
+        // Before label is "Dry" - switch to dry mode (isAfterMode = false)
+        if (isAfterMode) {
+          baToggleButton.click();
+        }
+      });
+      
+      afterLabel.addEventListener('click', () => {
+        // After label is "Wet" - switch to wet mode (isAfterMode = true)
+        if (!isAfterMode) {
+          baToggleButton.click();
+        }
+      });
+      
+      // Since isAfterMode=true (wet mode), highlight the "Wet" label (afterLabel)
+      beforeLabel.style.opacity = '0.6';
+      beforeLabel.style.fontWeight = '500';
+      afterLabel.style.opacity = '1';
+      afterLabel.style.fontWeight = '600';
+      baToggleButton.classList.add('active');
+      bypassLabel.classList.add('active');
+      bypassLabel.textContent = 'Active';
+    });
+  </script>
+
+  <!-- ======================================================================
+       Highlights Hero (3-Column Layout)
+       Left: Album art | Center: Title, description, cycling word | Right: Headshot
+       Bottom: Track players spanning full width
+       ====================================================================== -->
+  <section id="portfolio" class="hero hero-highlights-3col">
+    <!-- Left Column: Headshot -->
+    <div class="hero-left-highlights">
+      <div class="headshot-wrapper-portrait">
+        <picture>
+          <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+          <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+          <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+        </picture>
+      </div>
+    </div>
+
+    <!-- Center Column: Contact Form -->
+    <div class="hero-center-highlights">
+      <div class="contact-wrapper">
+        <h1>Get In Touch</h1>
+        <p>Send a message and I'll get back to you with next steps.</p>
+        <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <textarea name="message" placeholder="Describe your project..." required></textarea>
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Album Art -->
+    <div class="hero-right-highlights">
+      <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+        <div class="album-cover-centered" aria-hidden="true">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+            <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+          </picture>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
+      <p><a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="footer-special-link">Off World Depot</a></p>
+      <p class="footer-copy">© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Year Update Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const yearEl = document.getElementById('year');
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -58,26 +58,26 @@
 }
 
 .env-home {
-  background-image: url('../Photos/homepiano800.webp');
+  background-image: url('Photos/about800.webp');
   background-position: center top;
   background-color: #0f0f0f;
 }
 
 @media (min-width: 720px) {
   .env-home {
-    background-image: url('../Photos/homepiano1400.webp');
+    background-image: url('Photos/about1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-home {
-    background-image: url('../Photos/homepiano2000.webp');
+    background-image: url('Photos/about2000.webp');
   }
 }
 
 /* About Page Background */
 .env-about {
-  background-image: url('Photos/about800.webp');
+  background-image: url('../Photos/homepiano800.webp');
   min-height: 60vh;
   background-size: cover;
   background-position: center;
@@ -88,13 +88,13 @@
 
 @media (min-width: 720px) {
   .env-about {
-    background-image: url('Photos/about1400.webp');
+    background-image: url('../Photos/homepiano1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-about {
-    background-image: url('Photos/about2000.webp');
+    background-image: url('../Photos/homepiano2000.webp');
   }
 }
 

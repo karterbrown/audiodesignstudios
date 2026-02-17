@@ -9,20 +9,49 @@
    HERO IMAGE - Editorial Page
    ============================================================================ */
 .env-editorial {
-  background-image: url('./Photos/homepiano800.webp');
+  background-image: url('./Photos/portraitbridge800.webp');
   background-position: center;
   background-size: cover;
+  min-height: 60vh;
+  background-repeat: no-repeat;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (min-width: 720px) {
   .env-editorial {
-    background-image: url('./Photos/homepiano1400.webp');
+    background-image: url('./Photos/portraitbridge1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-editorial {
-    background-image: url('./Photos/homepiano2000.webp');
+    background-image: url('./Photos/portraitbridge2000.webp');
+  }
+}
+
+/* Banner Title */
+.banner-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0 8rem;
+  z-index: 5;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+@media (min-width: 720px) {
+  .banner-title {
+    font-size: 2.5rem;
   }
 }
 
