@@ -1,0 +1,232 @@
+/* ============================================================================
+   EDITORIAL PAGE - Audio Design Studios
+   Editorial & Brand Audio page styles
+   ============================================================================ */
+
+@import url('./shared.css');
+
+/* ============================================================================
+   HERO IMAGE - Editorial Page
+   ============================================================================ */
+.env-editorial {
+  background-image: url('./Photos/homepiano800.webp');
+  background-position: center;
+  background-size: cover;
+}
+
+@media (min-width: 720px) {
+  .env-editorial {
+    background-image: url('./Photos/homepiano1400.webp');
+  }
+}
+
+@media (min-width: 1200px) {
+  .env-editorial {
+    background-image: url('./Photos/homepiano2000.webp');
+  }
+}
+
+/* ============================================================================
+   EDITORIAL INTRO SECTION
+   ============================================================================ */
+.editorial-intro {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.editorial-intro h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #7ec98f;
+  font-weight: 600;
+}
+
+.editorial-tagline {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  max-width: 900px;
+  margin: 0 auto;
+  color: #dcdcdc;
+}
+
+/* ============================================================================
+   EDITORIAL VALUES SECTION (3 cards)
+   ============================================================================ */
+.editorial-values {
+  padding: 3rem 2rem;
+}
+
+.editorial-values .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.editorial-values .card {
+  background: rgba(20, 20, 20, 0.8);
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(126, 201, 143, 0.3);
+}
+
+.editorial-values .card h3 {
+  color: #7ec98f;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.editorial-values .card p {
+  color: #dcdcdc;
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   REEL SECTION
+   ============================================================================ */
+.editorial-reel {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.editorial-reel h2 {
+  font-size: 2rem;
+  color: #7ec98f;
+  margin-bottom: 1.5rem;
+}
+
+.reel-coming-soon {
+  font-size: 1.15rem;
+  color: #dcdcdc;
+  font-style: italic;
+}
+
+.reel-player {
+  max-width: 600px;
+  margin: 2rem auto 0;
+}
+
+.reel-player audio {
+  width: 100%;
+}
+
+/* ============================================================================
+   SERVICES DETAIL SECTION
+   ============================================================================ */
+.editorial-services {
+  padding: 4rem 2rem;
+}
+
+.editorial-services h2 {
+  font-size: 2rem;
+  color: #7ec98f;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.services-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.service-item h4 {
+  color: #7ec98f;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.service-item p {
+  color: #dcdcdc;
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   AUDIENCE SECTION
+   ============================================================================ */
+.editorial-audience {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.editorial-audience h2 {
+  font-size: 2rem;
+  color: #7ec98f;
+  margin-bottom: 1.5rem;
+}
+
+.editorial-audience p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  color: #dcdcdc;
+}
+
+/* ============================================================================
+   CONTACT/CTA SECTION
+   ============================================================================ */
+.editorial-contact {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.editorial-contact h2 {
+  font-size: 2rem;
+  color: #7ec98f;
+  margin-bottom: 1.5rem;
+}
+
+.editorial-contact p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto 2rem;
+  color: #dcdcdc;
+}
+
+.contact-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.contact-button {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: rgba(126, 201, 143, 0.2);
+  border: 2px solid #7ec98f;
+  border-radius: 4px;
+  color: #7ec98f;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.contact-button:hover {
+  background: rgba(126, 201, 143, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+@media (max-width: 768px) {
+  .editorial-intro h2,
+  .editorial-reel h2,
+  .editorial-services h2,
+  .editorial-audience h2,
+  .editorial-contact h2 {
+    font-size: 1.5rem;
+  }
+
+  .editorial-tagline,
+  .editorial-audience p,
+  .editorial-contact p {
+    font-size: 1rem;
+  }
+}
