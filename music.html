@@ -20,10 +20,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="shared.css?v=1771358945" />
-  <link rel="stylesheet" href="design.css?v=1771358945" />
-  <link rel="stylesheet" href="compose.css?v=1771358945" />
-  <link rel="stylesheet" href="matrix.css?v=1771358945" />
+  <link rel="stylesheet" href="shared.css?v=1771359027" />
+  <link rel="stylesheet" href="design.css?v=1771359027" />
+  <link rel="stylesheet" href="compose.css?v=1771359027" />
+  <link rel="stylesheet" href="matrix.css?v=1771359027" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -2083,7 +2083,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771358945"></script>
+  <script src="content.js?v=1771359027"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3563,84 +3563,84 @@
           trackRow.dataset.trackIndex = index;
           trackRow.style.cursor = 'pointer';
 
-        const info = document.createElement('div');
-        info.className = 'track-item-info';
+          const info = document.createElement('div');
+          info.className = 'track-item-info';
 
-        const num = document.createElement('span');
-        num.className = 'track-item-number';
-        num.textContent = index + 1;
+          const num = document.createElement('span');
+          num.className = 'track-item-number';
+          num.textContent = index + 1;
 
-        const title = document.createElement('span');
-        title.className = 'track-item-title';
-        title.textContent = track.title;
+          const title = document.createElement('span');
+          title.className = 'track-item-title';
+          title.textContent = track.title;
 
-        const progressWrap = document.createElement('div');
-        progressWrap.className = 'track-item-progress-wrap';
+          const progressWrap = document.createElement('div');
+          progressWrap.className = 'track-item-progress-wrap';
 
-        const progressFill = document.createElement('div');
-        progressFill.className = 'track-item-progress-fill';
-        progressFill.style.width = '0%';
-        progressWrap.appendChild(progressFill);
+          const progressFill = document.createElement('div');
+          progressFill.className = 'track-item-progress-fill';
+          progressFill.style.width = '0%';
+          progressWrap.appendChild(progressFill);
 
-        const itemScrubber = document.createElement('div');
-        itemScrubber.className = 'track-item-scrubber';
-        progressWrap.appendChild(itemScrubber);
+          const itemScrubber = document.createElement('div');
+          itemScrubber.className = 'track-item-scrubber';
+          progressWrap.appendChild(itemScrubber);
 
-        const timeEl = document.createElement('div');
-        timeEl.className = 'track-item-time';
-        timeEl.textContent = '0:00 / 0:00';
+          const timeEl = document.createElement('div');
+          timeEl.className = 'track-item-time';
+          timeEl.textContent = '0:00 / 0:00';
 
-        info.appendChild(num);
-        info.appendChild(title);
+          info.appendChild(num);
+          info.appendChild(title);
 
-        const btn = document.createElement('button');
-        btn.className = 'track-item-play-btn';
-        btn.setAttribute('aria-label', `Play ${track.title}`);
-        btn.textContent = '';
+          const btn = document.createElement('button');
+          btn.className = 'track-item-play-btn';
+          btn.setAttribute('aria-label', `Play ${track.title}`);
+          btn.textContent = '';
 
-        track._uiRefs = { btn, progressFill, itemScrubber, timeEl };
+          track._uiRefs = { btn, progressFill, itemScrubber, timeEl };
 
-        trackRow.addEventListener('click', (e) => {
-          if (!e.target.closest('.track-item-progress-wrap') && !e.target.closest('.track-item-play-btn')) {
+          trackRow.addEventListener('click', (e) => {
+            if (!e.target.closest('.track-item-progress-wrap') && !e.target.closest('.track-item-play-btn')) {
+              loadBATrack(index);
+            }
+          });
+
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             loadBATrack(index);
-          }
+          });
+
+          const updateProgress = (e) => {
+            const rect = progressWrap.getBoundingClientRect();
+            const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            if (baBeforeAudio.duration) {
+              const newTime = pct * baBeforeAudio.duration;
+              baBeforeAudio.currentTime = newTime;
+              baAfterAudio.currentTime = newTime;
+              baRenderProgress();
+            }
+          };
+
+          progressWrap.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            activeDrag = { element: progressWrap, update: updateProgress };
+            updateProgress(e);
+            progressWrap.style.cursor = 'grabbing';
+          });
+
+          progressWrap.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!activeDrag) updateProgress(e);
+          });
+
+          trackRow.appendChild(info);
+          trackRow.appendChild(progressWrap);
+          trackRow.appendChild(timeEl);
+          trackRow.appendChild(btn);
+          baPlaylistContainer.appendChild(trackRow);
         });
-
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          loadBATrack(index);
-        });
-
-        const updateProgress = (e) => {
-          const rect = progressWrap.getBoundingClientRect();
-          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-          if (baBeforeAudio.duration) {
-            const newTime = pct * baBeforeAudio.duration;
-            baBeforeAudio.currentTime = newTime;
-            baAfterAudio.currentTime = newTime;
-            baRenderProgress();
-          }
-        };
-
-        progressWrap.addEventListener('mousedown', (e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          activeDrag = { element: progressWrap, update: updateProgress };
-          updateProgress(e);
-          progressWrap.style.cursor = 'grabbing';
-        });
-
-        progressWrap.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (!activeDrag) updateProgress(e);
-        });
-
-        trackRow.appendChild(info);
-        trackRow.appendChild(progressWrap);
-        trackRow.appendChild(timeEl);
-        trackRow.appendChild(btn);
-        baPlaylistContainer.appendChild(trackRow);
-      });
       } else {
         console.error('BA PLAYER ERROR:', {
           containerFound: !!baPlaylistContainer,
