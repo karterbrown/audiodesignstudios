@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="music.css?v=1771535133" />
-  <link rel="stylesheet" href="matrix.css?v=1771535133" />
+  <link rel="stylesheet" href="music.css?v=1771539651" />
+  <link rel="stylesheet" href="matrix.css?v=1771539651" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1046,18 +1046,25 @@
       margin-left: 2px;
     }
 
-    /* Pause icon - two vertical bars */
-    .control-btn.playing::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      transform: translateX(-4.5px);
-      width: 3px;
-      height: 14px;
-      background: currentColor;
-      box-shadow: 6px 0 0 currentColor;
-      border: none;
-      margin-left: 0;
+    /* Pause icon - two vertical bars - THIS MUST COME AFTER PLAY ICON */
+    .control-btn[aria-label*="Play"].playing::before {
+      content: '' !important;
+      position: absolute !important;
+      left: 50% !important;
+      transform: translateX(-4.5px) !important;
+      width: 3px !important;
+      height: 14px !important;
+      background: currentColor !important;
+      box-shadow: 6px 0 0 currentColor !important;
+      border: 0 !important;
+      border-left: 0 !important;
+      border-top: 0 !important;
+      border-bottom: 0 !important;
+      border-right: 0 !important;
+      margin-left: 0 !important;
+      margin-top: 0 !important;
+      margin-right: 0 !important;
+      margin-bottom: 0 !important;
     }
 
     /* Next/Forward icon - two triangles pointing right */
@@ -1324,6 +1331,91 @@
 
 
 
+    /* Unique VU Meter Background Colors for Each Player */
+    /* Design Player - Bright Green */
+    .design-meter-display#designMeterDisplay::before,
+    #designMeterDisplay.design-meter-display::before,
+    #designMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(0, 220, 100, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(0, 240, 120, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(0, 200, 80, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(0, 255, 140, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(0, 220, 100, 0.28) 0%, transparent 2%) !important;
+    }
+
+    /* BA Player - Orange */
+    .ba-meter-display#baMeterDisplay::before,
+    #baMeterDisplay.ba-meter-display::before,
+    #baMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(255, 140, 0, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(255, 160, 0, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(255, 120, 0, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(255, 180, 0, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(255, 140, 0, 0.28) 0%, transparent 2%) !important;
+    }
+
+    /* AI Player - Cyan */
+    .ba-meter-display#aiMeterDisplay::before,
+    #aiMeterDisplay.ba-meter-display::before,
+    #aiMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(0, 200, 255, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(0, 220, 255, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(0, 180, 255, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(0, 240, 255, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.28) 0%, transparent 2%) !important;
+    }
+
+    /* Daughter of the Plains - Purple */
+    .portfolio-meter-display#daughterMeterDisplay::before,
+    #daughterMeterDisplay.portfolio-meter-display::before,
+    #daughterMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(200, 0, 255, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(220, 0, 255, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(180, 0, 255, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(240, 0, 255, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(200, 0, 255, 0.28) 0%, transparent 2%) !important;
+    }
+
+    /* All Works - Red/Pink */
+    .portfolio-meter-display#allWorksMeterDisplay::before,
+    #allWorksMeterDisplay.portfolio-meter-display::before,
+    #allWorksMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(255, 0, 100, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(255, 0, 120, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(255, 0, 80, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(255, 0, 140, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(255, 0, 100, 0.28) 0%, transparent 2%) !important;
+    }
+
+    /* Daughter of Plains - Purple */
+    .portfolio-meter-display#daughterMeterDisplay::before,
+    #daughterMeterDisplay.portfolio-meter-display::before,
+    #daughterMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(200, 0, 255, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(220, 0, 255, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(180, 0, 255, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(240, 0, 255, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(200, 0, 255, 0.28) 0%, transparent 2%) !important;
+    }
+
+    /* All Works - Red */
+    .portfolio-meter-display#allWorksMeterDisplay::before,
+    #allWorksMeterDisplay.portfolio-meter-display::before,
+    #allWorksMeterDisplay::before {
+      background: 
+        radial-gradient(circle at 15% 20%, rgba(255, 0, 100, 0.35) 0%, transparent 2%),
+        radial-gradient(circle at 85% 15%, rgba(255, 0, 120, 0.3) 0%, transparent 1.5%),
+        radial-gradient(circle at 70% 85%, rgba(255, 0, 80, 0.25) 0%, transparent 2.5%),
+        radial-gradient(circle at 30% 90%, rgba(255, 0, 140, 0.33) 0%, transparent 1.8%),
+        radial-gradient(circle at 50% 50%, rgba(255, 0, 100, 0.28) 0%, transparent 2%) !important;
+    }
+
   </style>
 </head>
 
@@ -1363,7 +1455,7 @@
         </div>
         
         <div class="design-meter-container">
-          <div class="design-meter-display">
+          <div class="design-meter-display" id="designMeterDisplay">
             <div class="design-meter-scale">
               <!-- Main VU line -->
               <div class="design-meter-vu-line"></div>
@@ -1483,7 +1575,7 @@
             <span class="ba-toggle-label ba-toggle-before">Dry</span>
             <span class="ba-toggle-label ba-toggle-after">Wet</span>
           </div>
-          <div class="ba-meter-display">
+          <div class="ba-meter-display" id="baMeterDisplay">
             <div class="ba-meter-scale">
               <!-- Main VU line -->
               <div class="ba-meter-vu-line"></div>
@@ -1593,7 +1685,7 @@
       </div>
     </div>
 
-      <div class="hidden-player-card">
+      <div class="playlist-card">
         <h2 class="hidden-player-title">AI Reconstruction Demos</h2>
         <div class="ba-global-toggle-section">
           <div class="power-button-container">
@@ -1605,7 +1697,7 @@
               <span class="ba-toggle-label ai-toggle-before">Raw</span>
               <span class="ba-toggle-label ai-toggle-after">Mix</span>
             </div>
-            <div class="ba-meter-display">
+            <div class="ba-meter-display" id="aiMeterDisplay">
               <div class="ba-meter-scale">
                 <div class="ba-meter-vu-line"></div>
                 <div class="ba-meter-tick" style="left: 0%;"></div><span class="ba-meter-label" style="left: 0%;">20</span>
@@ -1707,7 +1799,7 @@
           </div>
           
           <div class="portfolio-meter-container">
-            <div class="portfolio-meter-display">
+            <div class="portfolio-meter-display" id="daughterMeterDisplay">
               <div class="portfolio-meter-scale">
                 <!-- Main VU line -->
                 <div class="portfolio-meter-vu-line"></div>
@@ -1835,7 +1927,7 @@
           </div>
           
           <div class="portfolio-meter-container">
-            <div class="portfolio-meter-display">
+            <div class="portfolio-meter-display" id="allWorksMeterDisplay">
               <div class="portfolio-meter-scale">
                 <!-- Main VU line -->
                 <div class="portfolio-meter-vu-line"></div>
@@ -1949,7 +2041,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771535133"></script>
+  <script src="content.js?v=1771539651"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -4407,14 +4499,57 @@
       const wave = document.getElementById('aiWave');
       const list = document.getElementById('aiPlaylistTracks');
 
+      console.log('[AI PLAYER] Initializing...', {
+        meterNeedle: !!meterNeedle,
+        toggleButton: !!toggleButton,
+        bypassLabel: !!bypassLabel,
+        beforeLabel: !!beforeLabel,
+        afterLabel: !!afterLabel,
+        volumeKnob: !!volumeKnob,
+        volumeValue: !!volumeValue,
+        playPauseBtn: !!playPauseBtn,
+        prevBtn: !!prevBtn,
+        nextBtn: !!nextBtn,
+        nowPlaying: !!nowPlaying,
+        wave: !!wave,
+        list: !!list
+      });
+
       if (!meterNeedle || !toggleButton || !bypassLabel || !beforeLabel || !afterLabel || !volumeKnob || !volumeValue || !playPauseBtn || !prevBtn || !nextBtn || !nowPlaying || !wave || !list) {
+        console.error('[AI PLAYER] Missing required elements, aborting initialization');
         return;
       }
+
+      console.log('[AI PLAYER] All elements found, setting up player...');
 
       const beforeAudio = new Audio();
       const afterAudio = new Audio();
       beforeAudio.preload = 'auto';
       afterAudio.preload = 'auto';
+
+      // Sync playing state with actual audio playback
+      beforeAudio.addEventListener('play', () => {
+        console.log('[AI PLAYER] beforeAudio PLAY event fired - adding .playing class');
+        playPauseBtn.classList.add('playing');
+      });
+      beforeAudio.addEventListener('pause', () => {
+        console.log('[AI PLAYER] beforeAudio PAUSE event fired - removing .playing class');
+        // Only remove if both audio elements are paused
+        if (beforeAudio.paused && afterAudio.paused) {
+          playPauseBtn.classList.remove('playing');
+        }
+      });
+      afterAudio.addEventListener('play', () => {
+        console.log('[AI PLAYER] afterAudio PLAY event fired - adding .playing class');
+        playPauseBtn.classList.add('playing');
+      });
+      afterAudio.addEventListener('pause', () => {
+        console.log('[AI PLAYER] afterAudio PAUSE event fired - removing .playing class');
+        // Only remove if both audio elements are paused
+        if (beforeAudio.paused && afterAudio.paused) {
+          playPauseBtn.classList.remove('playing');
+        }
+      });
 
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const beforeAnalyser = ctx.createAnalyser();
@@ -4564,16 +4699,21 @@
       }
 
       async function playBoth() {
+        console.log('[AI PLAYER] playBoth called - starting playback');
         ensureGraph();
-        await Promise.all([beforeAudio.play(), afterAudio.play()]);
-        playing = true;
-        playPauseBtn.classList.add('playing');
-        startProgress();
-        startVU();
-        
-        // Update Media Session for lock screen controls
-        if (idx >= 0 && tracks[idx]) {
-          updateMediaSession(tracks[idx].title);
+        try {
+          await Promise.all([beforeAudio.play(), afterAudio.play()]);
+          playing = true;
+          
+          console.log('[AI PLAYER] SUCCESS - Playing state set to TRUE');
+          console.log('[AI PLAYER] Button classList:', playPauseBtn.classList.toString());
+          
+          startProgress();
+          startVU();
+        } catch (err) {
+          console.error('[AI PLAYER] Play failed:', err);
+          playing = false;
+          throw err;
         }
       }
 
@@ -4681,25 +4821,45 @@
       });
       document.addEventListener('touchcancel', () => { drag = false; });
 
-      playPauseBtn.addEventListener('click', () => {
+      playPauseBtn.addEventListener('click', async () => {
+        console.log('[AI PLAYER] ========== BUTTON CLICKED ==========');
+        console.log('[AI PLAYER] Current state - idx:', idx, 'playing:', playing);
+        console.log('[AI PLAYER] Button classList:', playPauseBtn.classList.toString());
+        console.log('[AI PLAYER] Before audio paused:', beforeAudio.paused, 'After audio paused:', afterAudio.paused);
+        
         if (idx < 0) {
+          console.log('[AI PLAYER] No track loaded, loading track 0');
           loadTrack(0, true);
           return;
         }
-        if (playing) {
+        
+        // Check actual audio state, not just our variable
+        const isActuallyPlaying = !beforeAudio.paused || !afterAudio.paused;
+        console.log('[AI PLAYER] isActuallyPlaying (based on audio):', isActuallyPlaying);
+        
+        if (isActuallyPlaying) {
+          console.log('[AI PLAYER] PAUSING - Audio is playing, will pause now...');
           beforeAudio.pause();
           afterAudio.pause();
           playing = false;
-          playPauseBtn.classList.remove('playing');
           if (progressRAF) cancelAnimationFrame(progressRAF);
           if (vuRAF) cancelAnimationFrame(vuRAF);
+          console.log('[AI PLAYER] PAUSED - New state - playing:', playing);
         } else {
-          playBoth().catch(() => {
+          console.log('[AI PLAYER] PLAYING - Audio is paused, will play now...');
+          try {
+            await playBoth();
+            console.log('[AI PLAYER] PLAY completed successfully');
+          } catch (err) {
+            console.error('[AI PLAYER] Play failed:', err);
             playing = false;
             playPauseBtn.classList.remove('playing');
-          });
+          }
         }
+        
+        console.log('[AI PLAYER] ========== CLICK HANDLER DONE ==========');
       });
+      console.log('[AI PLAYER] Play/Pause button listener attached');
 
       prevBtn.addEventListener('click', () => {
         if (idx < 0) return loadTrack(0, true);
@@ -4744,6 +4904,8 @@
 
       applyVolume();
       loadTrack(0, false);
+      
+      console.log('[AI PLAYER] Initialization complete!');
       
       // Register AI Player for mobile audio handling
       trackAudioState('ai', beforeAudio, ctx, afterAudio);
