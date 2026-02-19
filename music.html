@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="music.css?v=1771524372" />
-  <link rel="stylesheet" href="matrix.css?v=1771524372" />
+  <link rel="stylesheet" href="music.css?v=1771535133" />
+  <link rel="stylesheet" href="matrix.css?v=1771535133" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1949,7 +1949,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771524372"></script>
+  <script src="content.js?v=1771535133"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -2164,6 +2164,98 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       let activeDrag = null;
+
+      // ====================================================================
+      // MOBILE AUDIO PLAYBACK MANAGER - Handles screen lock & interruptions
+      // ====================================================================
+      const audioStates = {
+        design: { wasPlaying: false, audio: null, context: null },
+        dotp: { wasPlaying: false, audio: null, context: null },
+        allWorks: { wasPlaying: false, audio: null, context: null },
+        beforeAfter: { wasPlaying: false, audio: null, context: null, audioB: null },
+        ai: { wasPlaying: false, audio: null, context: null, audioB: null }
+      };
+
+      // Resume audio contexts and playback after screen lock/interruption
+      function resumeAllAudio() {
+        Object.entries(audioStates).forEach(([key, state]) => {
+          if (state.context && state.context.state === 'suspended') {
+            state.context.resume().catch(e => console.warn(`Failed to resume ${key} context:`, e));
+          }
+          
+          if (state.wasPlaying) {
+            if (state.audio && state.audio.paused) {
+              state.audio.play().catch(e => console.warn(`Failed to resume ${key} audio:`, e));
+            }
+            if (state.audioB && state.audioB.paused) {
+              state.audioB.play().catch(e => console.warn(`Failed to resume ${key} audioB:`, e));
+            }
+          }
+        });
+      }
+
+      // Track playing state for all players
+      function trackAudioState(key, audio, context, audioB = null) {
+        audioStates[key] = { ...audioStates[key], audio, context, audioB };
+        
+        if (audio) {
+          audio.addEventListener('play', () => { audioStates[key].wasPlaying = true; });
+          audio.addEventListener('pause', () => { audioStates[key].wasPlaying = false; });
+          audio.addEventListener('ended', () => { audioStates[key].wasPlaying = false; });
+        }
+        
+        if (audioB) {
+          audioB.addEventListener('play', () => { audioStates[key].wasPlaying = true; });
+          audioB.addEventListener('pause', () => { audioStates[key].wasPlaying = false; });
+          audioB.addEventListener('ended', () => { audioStates[key].wasPlaying = false; });
+        }
+      }
+
+      // Handle visibility changes (screen lock/unlock)
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          // Page became visible - resume audio
+          setTimeout(resumeAllAudio, 100);
+        }
+      });
+
+      // Handle page lifecycle events for mobile
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+          // Page restored from cache (iOS back/forward)
+          setTimeout(resumeAllAudio, 100);
+        }
+      });
+
+      // Media Session API - Enable lock screen controls & background playback
+      function updateMediaSession(title, artist = 'Audio Design Studios') {
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: title,
+            artist: artist,
+            album: 'Audio Design Studios Portfolio'
+          });
+        }
+      }
+
+      // Initialize Media Session API handlers
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => {
+          Object.values(audioStates).forEach(state => {
+            if (state.wasPlaying && state.audio) {
+              state.audio.play().catch(e => console.warn('Media Session play failed:', e));
+            }
+          });
+        });
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+          Object.values(audioStates).forEach(state => {
+            if (state.audio && !state.audio.paused) {
+              state.audio.pause();
+            }
+          });
+        });
+      }
 
       // Global drag handlers for all progress scrubbing
       document.addEventListener('mousemove', (e) => {
@@ -2459,6 +2551,10 @@
           designSourceConnected = true;
         }
         designStartProgressLoop();
+        
+        // Update Media Session for lock screen controls
+        const track = designTracks[designCurrentTrack];
+        if (track) updateMediaSession(track.title);
       });
 
       designAudio.addEventListener('pause', designStopProgressLoop);
@@ -2476,6 +2572,9 @@
       document.addEventListener('touchend', designStopDrag);
       
       designAnimateVU();
+      
+      // Register Design Player for mobile audio handling
+      trackAudioState('design', designAudio, designAudioContext);
 
       // ====================================================================
       // 2. COMPOSE PLAYLISTS (Daughter of the Plains + All Works)
@@ -2874,6 +2973,12 @@
           }
 
           startProgressLoop(ctx);
+          
+          // Update Media Session for lock screen controls
+          if (ctx.current?.track) {
+            const trackTitle = ctx.current.track.title || 'Unknown Track';
+            updateMediaSession(trackTitle);
+          }
         });
 
         audio.addEventListener('pause', () => {
@@ -3123,6 +3228,10 @@
 
       initFirstTrack('dotp');
       initFirstTrack('allWorks');
+      
+      // Register Compose Players for mobile audio handling
+      trackAudioState('dotp', mainAudio, audioContext);
+      trackAudioState('allWorks', allMainAudio, audioContext);
 
       // ====================================================================
       // 3. MUSIC - BEFORE/AFTER PLAYER
@@ -3678,6 +3787,11 @@
           baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.add('playing');
           baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
         }
+        
+        // Update Media Session for lock screen controls
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]) {
+          updateMediaSession(baTracks[baCurrentTrackIndex].title);
+        }
       });
 
       baBeforeAudio.addEventListener('pause', () => {
@@ -3767,6 +3881,9 @@
       });
       
       setBAMode(true);
+      
+      // Register Before/After Player for mobile audio handling
+      trackAudioState('beforeAfter', baBeforeAudio, baAudioContext, baAfterAudio);
     });
   </script>
 
@@ -4453,6 +4570,11 @@
         playPauseBtn.classList.add('playing');
         startProgress();
         startVU();
+        
+        // Update Media Session for lock screen controls
+        if (idx >= 0 && tracks[idx]) {
+          updateMediaSession(tracks[idx].title);
+        }
       }
 
       function loadTrack(next, autoplay = true) {
@@ -4622,6 +4744,9 @@
 
       applyVolume();
       loadTrack(0, false);
+      
+      // Register AI Player for mobile audio handling
+      trackAudioState('ai', beforeAudio, ctx, afterAudio);
     });
   </script>
 
