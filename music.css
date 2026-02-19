@@ -12,33 +12,6 @@
 
 /* Design Section Background */
 .env-design {
-  background-image: url('Photos/design800.webp');
-  background-position: center;
-  background-size: cover;
-  min-height: 60vh;
-  background-repeat: no-repeat;
-  max-width: 1600px;
-  margin: 0 auto;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (min-width: 720px) {
-  .env-design {
-    background-image: url('Photos/design1400.webp');
-  }
-}
-
-@media (min-width: 1200px) {
-  .env-design {
-    background-image: url('Photos/design2000.webp');
-  }
-}
-
-/* Compose/Portfolio Section Background */
-.env-portfolio {
   background-image: url('Photos/bridgetoshinob800.webp');
   background-position: center;
   background-size: cover;
@@ -53,14 +26,41 @@
 }
 
 @media (min-width: 720px) {
-  .env-portfolio {
+  .env-design {
     background-image: url('Photos/bridgetoshinob1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
-  .env-portfolio {
+  .env-design {
     background-image: url('Photos/bridgetoshinob2000.webp');
+  }
+}
+
+/* Compose/Portfolio Section Background */
+.env-portfolio {
+  background-image: url('Photos/design800.webp');
+  background-position: center;
+  background-size: cover;
+  min-height: 60vh;
+  background-repeat: no-repeat;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 720px) {
+  .env-portfolio {
+    background-image: url('Photos/design1400.webp');
+  }
+}
+
+@media (min-width: 1200px) {
+  .env-portfolio {
+    background-image: url('Photos/design2000.webp');
   }
 }
 
@@ -666,6 +666,7 @@ blockquote footer {
   cursor: pointer;
   position: relative;
   transition: transform 0.1s;
+  touch-action: none;
 }
 
 .design-volume-knob:active {
@@ -996,10 +997,20 @@ blockquote footer {
   width: 100%;
 }
 
+.design-analog-container {
+  grid-template-columns: repeat(3, minmax(280px, 520px));
+  max-width: 1900px;
+}
+
 @media (max-width: 1024px) {
   .playlists-container {
     grid-template-columns: 1fr;
     gap: 2rem;
+    max-width: 600px;
+  }
+
+  .design-analog-container {
+    grid-template-columns: 1fr;
     max-width: 600px;
   }
 }
@@ -1709,6 +1720,7 @@ blockquote footer {
   position: relative;
   transition: transform 0.1s;
   will-change: transform;
+  touch-action: none;
 }
 
 .portfolio-volume-knob:active {

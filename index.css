@@ -170,6 +170,15 @@ blockquote footer {
   margin-bottom: 0.5rem;
 }
 
+.hero-center-highlights .contact-buttons {
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.hero-center-highlights .contact-button {
+  padding: 1rem 2.5rem;
+}
+
 .hero-right-highlights {
   display: flex;
   flex-direction: column;

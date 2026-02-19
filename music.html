@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="music.css?v=1771360030" />
-  <link rel="stylesheet" href="matrix.css?v=1771360030" />
+  <link rel="stylesheet" href="music.css?v=1771524372" />
+  <link rel="stylesheet" href="matrix.css?v=1771524372" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1227,6 +1227,31 @@
       opacity: 0.7;
     }
 
+    .contact-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    .contact-button {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: rgba(126, 201, 143, 0.2);
+      border: 2px solid #7ec98f;
+      border-radius: 4px;
+      color: #7ec98f;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .contact-button:hover {
+      background: rgba(126, 201, 143, 0.3);
+      transform: translateY(-2px);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .content-wrapper {
@@ -1324,8 +1349,9 @@
     <h1 class="banner-title">DESIGN</h1>
   </section>
 
-  <!-- Audio Player -->
-  <div class="content-wrapper">
+  <!-- Audio Players: Design + Analog Processing -->
+  <section class="playlists-section">
+    <div class="playlists-container design-analog-container">
     <div class="design-player-card">
       <h2 class="design-player-title">Cinematic Sound Design & FX</h2>
       
@@ -1442,7 +1468,208 @@
         <!-- Tracks will be injected via JavaScript -->
       </div>
     </div>
-  </div>
+
+    <div class="hidden-player-card">
+      <h2 class="hidden-player-title">Analog Processing</h2>
+      <!-- VU Meter Style Toggle -->
+      <div class="ba-global-toggle-section">
+        <!-- Power Button -->
+        <div class="power-button-container">
+          <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+        </div>
+        
+        <div class="ba-meter-container">
+          <div class="ba-toggle-labels">
+            <span class="ba-toggle-label ba-toggle-before">Dry</span>
+            <span class="ba-toggle-label ba-toggle-after">Wet</span>
+          </div>
+          <div class="ba-meter-display">
+            <div class="ba-meter-scale">
+              <!-- Main VU line -->
+              <div class="ba-meter-vu-line"></div>
+              
+              <!-- Top VU scale: -20, -10, -7, -5, -3, -2, -1, 0, +1, +2, +3 -->
+              <div class="ba-meter-tick" style="left: 0%;"></div>
+              <span class="ba-meter-label" style="left: 0%;">20</span>
+              
+              <div class="ba-meter-tick" style="left: 7.7%;"></div>
+              <span class="ba-meter-label" style="left: 7.7%;">10</span>
+              
+              <div class="ba-meter-tick" style="left: 15.4%;"></div>
+              <span class="ba-meter-label" style="left: 15.4%;">7</span>
+              
+              <div class="ba-meter-tick small" style="left: 23%;"></div>
+              
+              <div class="ba-meter-tick" style="left: 30.8%;"></div>
+              <span class="ba-meter-label" style="left: 30.8%;">5</span>
+              
+              <div class="ba-meter-tick small" style="left: 38.5%;"></div>
+              
+              <div class="ba-meter-tick" style="left: 46.2%;"></div>
+              <span class="ba-meter-label" style="left: 46.2%;">3</span>
+              
+              <div class="ba-meter-tick" style="left: 53.8%;"></div>
+              <span class="ba-meter-label" style="left: 53.8%;">2</span>
+              
+              <div class="ba-meter-tick" style="left: 61.5%;"></div>
+              <span class="ba-meter-label" style="left: 61.5%;">1</span>
+              
+              <div class="ba-meter-tick" style="left: 76.9%;"></div>
+              <span class="ba-meter-label" style="left: 76.9%;">0</span>
+              
+              <div class="ba-meter-tick" style="left: 84.6%;"></div>
+              <span class="ba-meter-label red" style="left: 84.6%;">1</span>
+              
+              <div class="ba-meter-tick" style="left: 92.3%;"></div>
+              <span class="ba-meter-label red" style="left: 92.3%;">2</span>
+              
+              <div class="ba-meter-tick" style="left: 100%;"></div>
+              <span class="ba-meter-label red" style="left: 100%;">3</span>
+              
+              <!-- Bottom percentage line (0-100%) -->
+              <div class="ba-meter-percent-line"></div>
+              
+              <div class="ba-meter-percent-tick" style="left: 0%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 7.7%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 15.4%;"></div>
+              <span class="ba-meter-percent-label" style="left: 15.4%;">20</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 23%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 30.8%;"></div>
+              <span class="ba-meter-percent-label" style="left: 30.8%;">40</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 38.5%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 46.2%;"></div>
+              <span class="ba-meter-percent-label" style="left: 46.2%;">60</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 53.8%;"></div>
+              <div class="ba-meter-percent-tick" style="left: 61.5%;"></div>
+              <span class="ba-meter-percent-label" style="left: 61.5%;">80</span>
+              
+              <div class="ba-meter-percent-tick" style="left: 76.9%;"></div>
+              <span class="ba-meter-percent-label" style="left: 76.9%;">100</span>
+            </div>
+            <div class="ba-meter-needle" id="baMeterNeedle"></div>
+            <div class="ba-meter-branding">AUDIO DESIGN STUDIOS</div>
+          </div>
+        </div>
+        <div class="ba-controls-row">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <button class="ba-toggle-button" id="baToggleButton" aria-label="Toggle Before/After"></button>
+            <div class="ba-bypass-label" id="baBypassLabel">Bypass</div>
+          </div>
+          <div class="ba-volume-control">
+            <div class="ba-volume-knob-container">
+              <div class="ba-volume-tick"></div>
+              <div class="ba-volume-tick"></div>
+              <div class="ba-volume-tick"></div>
+              <div class="ba-volume-db-label">-40</div>
+              <div class="ba-volume-db-label">0</div>
+              <div class="ba-volume-db-label">+12</div>
+              <div class="ba-volume-knob" id="baVolumeKnob" aria-label="Volume Control"></div>
+              <div class="ba-volume-arc"></div>
+            </div>
+            <div class="ba-volume-value" id="baVolumeValue">0 dB</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Now Playing Display -->
+      <div id="baNowPlaying" class="now-playing-info">No track playing</div>
+
+      <!-- Progress Bar -->
+      <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
+
+      <!-- Transport Controls -->
+      <div class="playlist-player-controls">
+        <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+        <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+        <button id="baNextBtn" class="control-btn" aria-label="Next track"></button>
+      </div>
+
+      <!-- Track List -->
+      <div class="track-list" id="baPlaylistTracks">
+        <!-- Tracks will be injected via JavaScript -->
+      </div>
+    </div>
+
+      <div class="hidden-player-card">
+        <h2 class="hidden-player-title">AI Reconstruction Demos</h2>
+        <div class="ba-global-toggle-section">
+          <div class="power-button-container">
+            <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
+          </div>
+
+          <div class="ba-meter-container">
+            <div class="ba-toggle-labels">
+              <span class="ba-toggle-label ai-toggle-before">Raw</span>
+              <span class="ba-toggle-label ai-toggle-after">Mix</span>
+            </div>
+            <div class="ba-meter-display">
+              <div class="ba-meter-scale">
+                <div class="ba-meter-vu-line"></div>
+                <div class="ba-meter-tick" style="left: 0%;"></div><span class="ba-meter-label" style="left: 0%;">20</span>
+                <div class="ba-meter-tick" style="left: 7.7%;"></div><span class="ba-meter-label" style="left: 7.7%;">10</span>
+                <div class="ba-meter-tick" style="left: 15.4%;"></div><span class="ba-meter-label" style="left: 15.4%;">7</span>
+                <div class="ba-meter-tick small" style="left: 23%;"></div>
+                <div class="ba-meter-tick" style="left: 30.8%;"></div><span class="ba-meter-label" style="left: 30.8%;">5</span>
+                <div class="ba-meter-tick small" style="left: 38.5%;"></div>
+                <div class="ba-meter-tick" style="left: 46.2%;"></div><span class="ba-meter-label" style="left: 46.2%;">3</span>
+                <div class="ba-meter-tick" style="left: 53.8%;"></div><span class="ba-meter-label" style="left: 53.8%;">2</span>
+                <div class="ba-meter-tick" style="left: 61.5%;"></div><span class="ba-meter-label" style="left: 61.5%;">1</span>
+                <div class="ba-meter-tick" style="left: 76.9%;"></div><span class="ba-meter-label" style="left: 76.9%;">0</span>
+                <div class="ba-meter-tick" style="left: 84.6%;"></div><span class="ba-meter-label red" style="left: 84.6%;">1</span>
+                <div class="ba-meter-tick" style="left: 92.3%;"></div><span class="ba-meter-label red" style="left: 92.3%;">2</span>
+                <div class="ba-meter-tick" style="left: 100%;"></div><span class="ba-meter-label red" style="left: 100%;">3</span>
+                <div class="ba-meter-percent-line"></div>
+                <div class="ba-meter-percent-tick" style="left: 0%;"></div>
+                <div class="ba-meter-percent-tick" style="left: 7.7%;"></div>
+                <div class="ba-meter-percent-tick" style="left: 15.4%;"></div><span class="ba-meter-percent-label" style="left: 15.4%;">20</span>
+                <div class="ba-meter-percent-tick" style="left: 23%;"></div>
+                <div class="ba-meter-percent-tick" style="left: 30.8%;"></div><span class="ba-meter-percent-label" style="left: 30.8%;">40</span>
+                <div class="ba-meter-percent-tick" style="left: 38.5%;"></div>
+                <div class="ba-meter-percent-tick" style="left: 46.2%;"></div><span class="ba-meter-percent-label" style="left: 46.2%;">60</span>
+                <div class="ba-meter-percent-tick" style="left: 53.8%;"></div>
+                <div class="ba-meter-percent-tick" style="left: 61.5%;"></div><span class="ba-meter-percent-label" style="left: 61.5%;">80</span>
+                <div class="ba-meter-percent-tick" style="left: 76.9%;"></div><span class="ba-meter-percent-label" style="left: 76.9%;">100</span>
+              </div>
+              <div class="ba-meter-needle" id="aiMeterNeedle"></div>
+              <div class="ba-meter-branding">AUDIO DESIGN STUDIOS</div>
+            </div>
+          </div>
+
+          <div class="ba-controls-row">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <button class="ba-toggle-button" id="aiToggleButton" aria-label="Toggle Raw/Mix"></button>
+              <div class="ba-bypass-label" id="aiBypassLabel">Bypass</div>
+            </div>
+            <div class="ba-volume-control">
+              <div class="ba-volume-knob-container">
+                <div class="ba-volume-tick"></div>
+                <div class="ba-volume-tick"></div>
+                <div class="ba-volume-tick"></div>
+                <div class="ba-volume-db-label">-40</div>
+                <div class="ba-volume-db-label">0</div>
+                <div class="ba-volume-db-label">+12</div>
+                <div class="ba-volume-knob" id="aiVolumeKnob" aria-label="AI Demo Volume Control"></div>
+                <div class="ba-volume-arc"></div>
+              </div>
+              <div class="ba-volume-value" id="aiVolumeValue">0 dB</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="aiNowPlaying" class="now-playing-info">No track playing</div>
+        <div id="aiWave" class="main-player-progress" aria-hidden="true"></div>
+        <div class="playlist-player-controls">
+          <button id="aiPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+          <button id="aiPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+          <button id="aiNextBtn" class="control-btn" aria-label="Next track"></button>
+        </div>
+        <div class="track-list" id="aiPlaylistTracks"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- ========================================================================
        SECTION 2: COMPOSE - Original Compositions
@@ -1718,369 +1945,11 @@
   </section>
 
   <!-- ========================================================================
-       SECTION 3: MUSIC - Hidden Tracks (Before/After)
-       ======================================================================== -->
-  <section id="music" class="env-image env-hiddentracks">
-    <h1 class="banner-title-music">MUSIC</h1>
-    <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" class="banner-text">on Apple Music</a>
-  </section>
-
-  <!-- Content Wrapper -->
-  <div class="content-wrapper">
-    <div class="hidden-player-card">
-      <h2 class="hidden-player-title">Analog Processing</h2>
-      <!-- VU Meter Style Toggle -->
-      <div class="ba-global-toggle-section">
-        <!-- Power Button -->
-        <div class="power-button-container">
-          <a href="index.html" class="power-button" aria-label="Power - Return to Home">POWER</a>
-        </div>
-        
-        <div class="ba-meter-container">
-          <div class="ba-toggle-labels">
-            <span class="ba-toggle-label ba-toggle-before">Dry</span>
-            <span class="ba-toggle-label ba-toggle-after">Wet</span>
-          </div>
-          <div class="ba-meter-display">
-            <div class="ba-meter-scale">
-              <!-- Main VU line -->
-              <div class="ba-meter-vu-line"></div>
-              
-              <!-- Top VU scale: -20, -10, -7, -5, -3, -2, -1, 0, +1, +2, +3 -->
-              <div class="ba-meter-tick" style="left: 0%;"></div>
-              <span class="ba-meter-label" style="left: 0%;">20</span>
-              
-              <div class="ba-meter-tick" style="left: 7.7%;"></div>
-              <span class="ba-meter-label" style="left: 7.7%;">10</span>
-              
-              <div class="ba-meter-tick" style="left: 15.4%;"></div>
-              <span class="ba-meter-label" style="left: 15.4%;">7</span>
-              
-              <div class="ba-meter-tick small" style="left: 23%;"></div>
-              
-              <div class="ba-meter-tick" style="left: 30.8%;"></div>
-              <span class="ba-meter-label" style="left: 30.8%;">5</span>
-              
-              <div class="ba-meter-tick small" style="left: 38.5%;"></div>
-              
-              <div class="ba-meter-tick" style="left: 46.2%;"></div>
-              <span class="ba-meter-label" style="left: 46.2%;">3</span>
-              
-              <div class="ba-meter-tick" style="left: 53.8%;"></div>
-              <span class="ba-meter-label" style="left: 53.8%;">2</span>
-              
-              <div class="ba-meter-tick" style="left: 61.5%;"></div>
-              <span class="ba-meter-label" style="left: 61.5%;">1</span>
-              
-              <div class="ba-meter-tick" style="left: 76.9%;"></div>
-              <span class="ba-meter-label" style="left: 76.9%;">0</span>
-              
-              <div class="ba-meter-tick" style="left: 84.6%;"></div>
-              <span class="ba-meter-label red" style="left: 84.6%;">1</span>
-              
-              <div class="ba-meter-tick" style="left: 92.3%;"></div>
-              <span class="ba-meter-label red" style="left: 92.3%;">2</span>
-              
-              <div class="ba-meter-tick" style="left: 100%;"></div>
-              <span class="ba-meter-label red" style="left: 100%;">3</span>
-              
-              <!-- Bottom percentage line (0-100%) -->
-              <div class="ba-meter-percent-line"></div>
-              
-              <div class="ba-meter-percent-tick" style="left: 0%;"></div>
-              <div class="ba-meter-percent-tick" style="left: 7.7%;"></div>
-              <div class="ba-meter-percent-tick" style="left: 15.4%;"></div>
-              <span class="ba-meter-percent-label" style="left: 15.4%;">20</span>
-              
-              <div class="ba-meter-percent-tick" style="left: 23%;"></div>
-              <div class="ba-meter-percent-tick" style="left: 30.8%;"></div>
-              <span class="ba-meter-percent-label" style="left: 30.8%;">40</span>
-              
-              <div class="ba-meter-percent-tick" style="left: 38.5%;"></div>
-              <div class="ba-meter-percent-tick" style="left: 46.2%;"></div>
-              <span class="ba-meter-percent-label" style="left: 46.2%;">60</span>
-              
-              <div class="ba-meter-percent-tick" style="left: 53.8%;"></div>
-              <div class="ba-meter-percent-tick" style="left: 61.5%;"></div>
-              <span class="ba-meter-percent-label" style="left: 61.5%;">80</span>
-              
-              <div class="ba-meter-percent-tick" style="left: 76.9%;"></div>
-              <span class="ba-meter-percent-label" style="left: 76.9%;">100</span>
-            </div>
-            <div class="ba-meter-needle" id="baMeterNeedle"></div>
-            <div class="ba-meter-branding">AUDIO DESIGN STUDIOS</div>
-          </div>
-        </div>
-        <div class="ba-controls-row">
-          <div style="display: flex; flex-direction: column; align-items: center;">
-            <button class="ba-toggle-button" id="baToggleButton" aria-label="Toggle Before/After"></button>
-            <div class="ba-bypass-label" id="baBypassLabel">Bypass</div>
-          </div>
-          <div class="ba-volume-control">
-            <div class="ba-volume-knob-container">
-              <div class="ba-volume-tick"></div>
-              <div class="ba-volume-tick"></div>
-              <div class="ba-volume-tick"></div>
-              <div class="ba-volume-db-label">-40</div>
-              <div class="ba-volume-db-label">0</div>
-              <div class="ba-volume-db-label">+12</div>
-              <div class="ba-volume-knob" id="baVolumeKnob" aria-label="Volume Control"></div>
-              <div class="ba-volume-arc"></div>
-            </div>
-            <div class="ba-volume-value" id="baVolumeValue">0 dB</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Now Playing Display -->
-      <div id="baNowPlaying" class="now-playing-info">No track playing</div>
-
-      <!-- Progress Bar -->
-      <div id="baWave" class="main-player-progress" aria-hidden="true"></div>
-
-      <!-- Transport Controls -->
-      <div class="playlist-player-controls">
-        <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
-        <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
-        <button id="baNextBtn" class="control-btn" aria-label="Next track"></button>
-      </div>
-
-      <!-- Track List -->
-      <div class="track-list" id="baPlaylistTracks">
-        <!-- Tracks will be injected via JavaScript -->
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================
-       SCRIPTS
-       ======================================================================== -->
-
-  <!-- Matrix Animation Script -->
-  <script>
-    const terminal = document.getElementById('matrixBackground');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { 
-      alpha: false, 
-      desynchronized: true,
-      willReadFrequently: false 
-    });
-    terminal.appendChild(canvas);
-    
-    const chars = '01♩♪♫♬♭♮♯♩♪♫♬♭♮♯♩♪♫♬ツシミサケアイウエオカキクコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン∴∵†‡§¶∞Ω∑∏∫≈≠∂∇√∛∜αβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ$€¥£₹₿¢₽₩₪₴₦';
-    const binaryChars = [0, 1];
-    const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-    const japaneseChars = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
-    const mathChars = [64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82];
-    const greekChars = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
-    const currencyChars = [134,135,136,137,138,139,140,141,142,143,144,145];
-    
-    let columns, rows, drops, charGrid, charAge, speeds, cycleSpeeds;
-    let animationId;
-    let lastFrameTime = 0;
-    const frameInterval = 50; // Reduced to 20fps for better performance
-    const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000];
-    let phaseStartTime = Date.now();
-    let isMatrixPaused = false;
-    
-    // Performance monitoring
-    let frameCount = 0;
-    let lastFpsCheck = Date.now();
-    let currentTrailLength = 15;
-    let performanceMode = 'normal'; // 'normal' or 'low'
-    
-    function getCurrentPhase() {
-      const elapsed = Date.now() - phaseStartTime;
-      const totalCycle = phaseDurations.reduce((a, b) => a + b, 0);
-      const cyclePosition = elapsed % totalCycle;
-      
-      let accumulatedTime = 0;
-      let phase = 0;
-      for (let i = 0; i < phaseDurations.length; i++) {
-        if (cyclePosition < accumulatedTime + phaseDurations[i]) {
-          phase = i;
-          break;
-        }
-        accumulatedTime += phaseDurations[i];
-      }
-      
-      const phaseElapsed = cyclePosition - accumulatedTime;
-      return { phase, phaseElapsed };
-    }
-    
-    function randomChar(isLeading = false) {
-      const { phase, phaseElapsed } = getCurrentPhase();
-      let charSet = binaryChars;
-      
-      const phaseCharSets = [binaryChars, japaneseChars, mathChars, musicalNotes, greekChars, currencyChars];
-      const pureDuration = phase === 3 ? 8000 : 5000;
-      const transitionDuration = 2000;
-      
-      if (phaseElapsed < pureDuration) {
-        charSet = phaseCharSets[phase];
-      } else {
-        const transitionProgress = (phaseElapsed - pureDuration) / transitionDuration;
-        const nextPhase = (phase + 1) % 6;
-        charSet = Math.random() < transitionProgress ? phaseCharSets[nextPhase] : phaseCharSets[phase];
-      }
-      
-      const index = charSet[Math.floor(Math.random() * charSet.length)];
-      return index !== undefined ? index : 0;
-    }
-    
-    function resize() {
-      // Limit canvas size for performance on very large displays
-      const maxWidth = Math.min(window.innerWidth, 3840);
-      const maxHeight = Math.min(window.innerHeight, 2160);
-      
-      canvas.width = maxWidth;
-      canvas.height = maxHeight;
-      canvas.style.width = '100vw';
-      canvas.style.height = '100vh';
-      canvas.style.display = 'block';
-      canvas.style.position = 'absolute';
-      canvas.style.top = '0';
-      canvas.style.left = '0';
-      
-      let desiredColumnWidth;
-      if (window.innerWidth < 600) {
-        desiredColumnWidth = 20;
-      } else if (window.innerWidth < 1200) {
-        desiredColumnWidth = 28;
-      } else {
-        desiredColumnWidth = 32;
-      }
-      
-      columns = Math.ceil(canvas.width / desiredColumnWidth);
-      if (columns > 80) columns = 80; // Reduced from 150 to 80
-      const columnWidth = canvas.width / columns;
-      rows = Math.ceil(canvas.height / columnWidth) + 1;
-      
-      if (!drops || !charGrid || drops.length !== columns) {
-        drops = Array(columns).fill(0).map(() => Math.random() * -20);
-        speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
-        charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
-        charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
-        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.1 + Math.random() * 0.15));
-      }
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    
-    function draw(timestamp) {
-      if (isMatrixPaused) {
-        return;
-      }
-      if (timestamp - lastFrameTime < frameInterval) {
-        animationId = requestAnimationFrame(draw);
-        return;
-      }
-      lastFrameTime = timestamp;
-      
-      // Performance monitoring - check FPS every 2 seconds
-      frameCount++;
-      if (Date.now() - lastFpsCheck > 2000) {
-        const fps = frameCount / 2;
-        frameCount = 0;
-        lastFpsCheck = Date.now();
-        
-        // If FPS drops below 15, reduce trail length
-        if (fps < 15 && performanceMode === 'normal') {
-          performanceMode = 'low';
-          currentTrailLength = 8;
-          console.log('Matrix: Switching to low performance mode');
-        } else if (fps > 18 && performanceMode === 'low') {
-          performanceMode = 'normal';
-          currentTrailLength = 15;
-        }
-      }
-      
-      // Fade effect
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      const columnWidth = canvas.width / columns;
-      ctx.font = `${columnWidth * 0.85}px monospace`;
-      ctx.textBaseline = 'top';
-      
-      // Only draw the active trail - much more efficient
-      for (let col = 0; col < columns; col++) {
-        const y = drops[col];
-        const row = Math.floor(y);
-        
-        if (row >= 0 && row < rows) {
-          // Update character at current position
-          charAge[col][row] += cycleSpeeds[col][row];
-          if (charAge[col][row] > 1) {
-            charAge[col][row] = 0;
-            charGrid[col][row] = randomChar(false);
-          }
-          
-          // Draw only the trail (adaptive length based on performance)
-          for (let i = 0; i < currentTrailLength; i++) {
-            const r = row - i;
-            if (r >= 0 && r < rows) {
-              const alpha = i === 0 ? 1.0 : Math.max(0, 1.0 - (i / currentTrailLength));
-              
-              if (alpha > 0.05) {
-                const green = Math.floor(255 * alpha);
-                ctx.fillStyle = `rgb(0, ${green}, 0)`;
-                const character = chars[charGrid[col][r]];
-                const x = col * columnWidth;
-                const yPos = r * columnWidth;
-                ctx.fillText(character, x, yPos);
-              }
-            }
-          }
-        }
-        
-        drops[col] += speeds[col];
-        if (drops[col] * columnWidth > canvas.height && Math.random() > 0.975) {
-          drops[col] = 0;
-        }
-      }
-      
-      animationId = requestAnimationFrame(draw);
-    }
-    
-    resize();
-    draw(0);
-    
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        resize();
-      }, 150);
-    });
-
-    // Pause/resume animation based on page visibility to improve performance
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        isMatrixPaused = true;
-        if (animationId) {
-          cancelAnimationFrame(animationId);
-          animationId = null;
-        }
-      } else {
-        isMatrixPaused = false;
-        lastFrameTime = performance.now();
-        animationId = requestAnimationFrame(draw);
-      }
-    });
-
-    // Click matrix background to go home
-    terminal.addEventListener('click', () => {
-      window.location.href = 'index.html';
-    });
-  </script>
-
-  <!-- ========================================================================
        SCRIPTS (Combined: Matrix + Design + Compose + Music)
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771360030"></script>
+  <script src="content.js?v=1771524372"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3261,12 +3130,12 @@
       
       const baAudioContext = new (window.AudioContext || window.webkitAudioContext)();
       const baTracks = [
-        { id: 1, title: 'Hysteria (Drum Mix)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
-        { id: 2, title: 'Near Wild Heaven (Mix)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
-        { id: 3, title: 'Were In This Together (Drum Mix)', before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
-        { id: 4, title: 'Heavy Demo (Mix/Master)', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
-        { id: 5, title: 'Ocean Etude (Master)', before: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_Unmixed.mp3', after: 'allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3' },
-        { id: 6, title: 'Reggae Lights (Mix)', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' }
+        { id: 1, title: 'Particle Ladder', before: 'hiddentracks/Particle Ladder-KB-01-28-26_RAW.mp3', after: 'hiddentracks/Particle Ladder-KB-01-28-26_FullMix.mp3' },
+        { id: 2, title: 'Hysteria (Drum Cover)', before: 'highlights/A_hysteriadrum.mp3', after: 'highlights/B_hysteriadrum.mp3' },
+        { id: 3, title: 'Near Wild Heaven (R.E.M. Cover)', before: 'highlights/A_NearWildHeaven_12072025.mp3', after: 'highlights/B_NearWildHeaven_12072025.mp3' },
+        { id: 4, title: "We're In This Together (NIN Drum Cover)", before: 'highlights/A_wereinthistogetherdrum.mp3', after: 'highlights/B_wereinthistogetherdrum.mp3' },
+        { id: 5, title: 'Fortunate Supportive Thoughts', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
+        { id: 6, title: 'Reggae Lights', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' }
       ];
 
       const baBeforeAudio = new Audio();
@@ -3417,6 +3286,35 @@
         const gain = Math.pow(10, volumeDb / 20);
         beforeGain.gain.value = isAfterMode ? 0 : gain;
         afterGain.gain.value = isAfterMode ? gain : 0;
+      }
+
+      function setBAMode(nextIsAfter) {
+        isAfterMode = nextIsAfter;
+        const beforeLabel = document.querySelector('.ba-toggle-before');
+        const afterLabel = document.querySelector('.ba-toggle-after');
+        const bypassLabel = document.getElementById('baBypassLabel');
+
+        updateVolumeDisplay();
+
+        if (beforeLabel && afterLabel && bypassLabel) {
+          if (isAfterMode) {
+            beforeLabel.style.opacity = '0.6';
+            beforeLabel.style.fontWeight = '500';
+            afterLabel.style.opacity = '1';
+            afterLabel.style.fontWeight = '600';
+            baToggleButton.classList.add('active');
+            bypassLabel.classList.add('active');
+            bypassLabel.textContent = 'Active';
+          } else {
+            beforeLabel.style.opacity = '1';
+            beforeLabel.style.fontWeight = '600';
+            afterLabel.style.opacity = '0.6';
+            afterLabel.style.fontWeight = '500';
+            baToggleButton.classList.remove('active');
+            bypassLabel.classList.remove('active');
+            bypassLabel.textContent = 'Bypass';
+          }
+        }
       }
 
       let isDraggingKnob = false;
@@ -3705,6 +3603,8 @@
             track._uiRefs.btn.textContent = '';
           }
 
+          setBAMode(true);
+
           baNowPlaying.textContent = track.title;
 
           baBeforeAudio.src = track.before;
@@ -3744,39 +3644,10 @@
       });
 
       baToggleButton.addEventListener('click', () => {
-        isAfterMode = !isAfterMode;
-        const beforeLabel = document.querySelector('.ba-toggle-before');
-        const afterLabel = document.querySelector('.ba-toggle-after');
-        const bypassLabel = document.getElementById('baBypassLabel');
-        
-        updateVolumeDisplay();
-        
-        if (isAfterMode) {
-          beforeLabel.style.opacity = '0.6';
-          beforeLabel.style.fontWeight = '500';
-          afterLabel.style.opacity = '1';
-          afterLabel.style.fontWeight = '600';
-          baToggleButton.classList.add('active');
-          bypassLabel.classList.add('active');
-          bypassLabel.textContent = 'Active';
-          
-          if (baCurrentTrackIndex >= 0) {
-            const track = baTracks[baCurrentTrackIndex];
-            baNowPlaying.textContent = track.title;
-          }
-        } else {
-          beforeLabel.style.opacity = '1';
-          beforeLabel.style.fontWeight = '600';
-          afterLabel.style.opacity = '0.6';
-          afterLabel.style.fontWeight = '500';
-          baToggleButton.classList.remove('active');
-          bypassLabel.classList.remove('active');
-          bypassLabel.textContent = 'Bypass';
-          
-          if (baCurrentTrackIndex >= 0) {
-            const track = baTracks[baCurrentTrackIndex];
-            baNowPlaying.textContent = track.title;
-          }
+        setBAMode(!isAfterMode);
+        if (baCurrentTrackIndex >= 0) {
+          const track = baTracks[baCurrentTrackIndex];
+          baNowPlaying.textContent = track.title;
         }
       });
 
@@ -3865,6 +3736,7 @@
       function initFirstTrack() {
         const track = baTracks[0];
         baCurrentTrackIndex = 0;
+        setBAMode(true);
         
         baNowPlaying.textContent = track.title;
         
@@ -3894,13 +3766,7 @@
         }
       });
       
-      beforeLabel.style.opacity = '0.6';
-      beforeLabel.style.fontWeight = '500';
-      afterLabel.style.opacity = '1';
-      afterLabel.style.fontWeight = '600';
-      baToggleButton.classList.add('active');
-      bypassLabel.classList.add('active');
-      bypassLabel.textContent = 'Active';
+      setBAMode(true);
     });
   </script>
 
@@ -3933,14 +3799,17 @@
     <!-- Center Column: Contact Form -->
     <div class="hero-center-highlights">
       <div class="contact-wrapper">
-        <h1>Get In Touch</h1>
-        <p>Send a message and I'll get back to you with next steps.</p>
+        <h1>Let's Talk About Your Project</h1>
+        <p>Whether you're planning a campaign, finishing a cut, or need audio help mid-production — reach out and let's see if it's a good fit.</p>
         <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
           <input type="text" name="name" placeholder="Your Name" required />
           <input type="email" name="email" placeholder="Your Email" required />
           <textarea name="message" placeholder="Describe your project..." required></textarea>
           <button type="submit" class="btn">Send Message</button>
         </form>
+        <div class="contact-buttons">
+          <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
+        </div>
       </div>
     </div>
 
@@ -3957,6 +3826,804 @@
       </a>
     </div>
   </section>
+
+  <!-- ========================================================================
+       SECTION 5: MUSIC - On Apple Music
+       ======================================================================== -->
+  <section id="music" class="env-image env-hiddentracks">
+    <h1 class="banner-title-music">MUSIC</h1>
+    <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" class="banner-text">on Apple Music</a>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const baPlaylistContainer = document.getElementById('baPlaylistTracks');
+        if (!baPlaylistContainer) return;
+        if (baPlaylistContainer.querySelector('.track-item')) return;
+
+        const baTracks = [
+          { id: 1, title: 'Particle Ladder', before: 'hiddentracks/Particle Ladder-KB-01-28-26_RAW.mp3', after: 'hiddentracks/Particle Ladder-KB-01-28-26_FullMix.mp3' },
+          { id: 2, title: 'Hysteria (Drum Cover)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
+          { id: 3, title: 'Near Wild Heaven (R.E.M. Cover)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
+          { id: 4, title: "We're In This Together (NIN Drum Cover)", before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
+          { id: 5, title: 'Fortunate Supportive Thoughts', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
+          { id: 6, title: 'Reggae Lights', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' }
+        ];
+
+        const baBeforeAudio = new Audio();
+        const baAfterAudio = new Audio();
+        baBeforeAudio.preload = 'auto';
+        baAfterAudio.preload = 'auto';
+
+        const baToggleButton = document.getElementById('baToggleButton');
+        const baBypassLabel = document.getElementById('baBypassLabel');
+        const baBeforeLabel = document.querySelector('.ba-toggle-before');
+        const baAfterLabel = document.querySelector('.ba-toggle-after');
+        const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
+        const baPrevBtn = document.getElementById('baPrevBtn');
+        const baNextBtn = document.getElementById('baNextBtn');
+        const baNowPlaying = document.getElementById('baNowPlaying');
+        const baProgressWrap = document.getElementById('baWave');
+        const baMeterNeedle = document.getElementById('baMeterNeedle');
+        const baVolumeKnob = document.getElementById('baVolumeKnob');
+        const baVolumeValue = document.getElementById('baVolumeValue');
+
+        if (!baToggleButton || !baBypassLabel || !baBeforeLabel || !baAfterLabel || !baPlayPauseBtn || !baPrevBtn || !baNextBtn || !baNowPlaying || !baProgressWrap || !baMeterNeedle || !baVolumeKnob || !baVolumeValue) {
+          return;
+        }
+
+        const baAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const beforeAnalyser = baAudioContext.createAnalyser();
+        const afterAnalyser = baAudioContext.createAnalyser();
+        const beforeGain = baAudioContext.createGain();
+        const afterGain = baAudioContext.createGain();
+        beforeAnalyser.fftSize = 256;
+        afterAnalyser.fftSize = 256;
+        beforeAnalyser.smoothingTimeConstant = 0.92;
+        afterAnalyser.smoothingTimeConstant = 0.92;
+        const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
+        const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
+
+        let beforeSourceConnected = false;
+        let afterSourceConnected = false;
+
+        let baCurrentTrackIndex = -1;
+        let isAfterMode = true;
+        let isPlaying = false;
+        let progressRAF = null;
+        let vuMeterRAF = null;
+        let volumeDb = 0;
+        let knobAngle = 360;
+        let knobStartY = 0;
+        let knobStartAngle = 0;
+        let isDraggingKnob = false;
+        let knobMoved = false;
+        let currentNeedleAngle = -50;
+
+        let progressFill = baProgressWrap.querySelector('.main-player-progress-fill');
+        if (!progressFill) {
+          progressFill = document.createElement('div');
+          progressFill.className = 'main-player-progress-fill';
+          progressFill.style.width = '0%';
+          baProgressWrap.appendChild(progressFill);
+        }
+
+        let scrubber = baProgressWrap.querySelector('.main-player-scrubber');
+        if (!scrubber) {
+          scrubber = document.createElement('div');
+          scrubber.className = 'main-player-scrubber';
+          baProgressWrap.appendChild(scrubber);
+        }
+
+        function formatTime(sec) {
+          const safeSec = Math.max(0, Math.floor(sec || 0));
+          const m = Math.floor(safeSec / 60);
+          const s = safeSec % 60;
+          return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function ensureAudioGraph() {
+          if (baAudioContext.state === 'suspended') {
+            baAudioContext.resume();
+          }
+
+          if (!beforeSourceConnected) {
+            const source = baAudioContext.createMediaElementSource(baBeforeAudio);
+            source.connect(beforeAnalyser);
+            beforeAnalyser.connect(beforeGain);
+            beforeGain.connect(baAudioContext.destination);
+            beforeSourceConnected = true;
+          }
+
+          if (!afterSourceConnected) {
+            const source = baAudioContext.createMediaElementSource(baAfterAudio);
+            source.connect(afterAnalyser);
+            afterAnalyser.connect(afterGain);
+            afterGain.connect(baAudioContext.destination);
+            afterSourceConnected = true;
+          }
+        }
+
+        function updateVolumeDisplay() {
+          const displayDb = volumeDb >= 0 ? `+${volumeDb.toFixed(1)}` : volumeDb.toFixed(1);
+          baVolumeValue.textContent = `${displayDb} dB`;
+          baVolumeKnob.style.transform = `rotate(${knobAngle - 360}deg)`;
+          const gain = Math.pow(10, volumeDb / 20);
+          beforeGain.gain.value = isAfterMode ? 0 : gain;
+          afterGain.gain.value = isAfterMode ? gain : 0;
+        }
+
+        function setMode(nextIsAfter) {
+          isAfterMode = nextIsAfter;
+          if (isAfterMode) {
+            baBeforeLabel.style.opacity = '0.6';
+            baBeforeLabel.style.fontWeight = '500';
+            baAfterLabel.style.opacity = '1';
+            baAfterLabel.style.fontWeight = '600';
+            baToggleButton.classList.add('active');
+            baBypassLabel.classList.add('active');
+            baBypassLabel.textContent = 'Active';
+          } else {
+            baBeforeLabel.style.opacity = '1';
+            baBeforeLabel.style.fontWeight = '600';
+            baAfterLabel.style.opacity = '0.6';
+            baAfterLabel.style.fontWeight = '500';
+            baToggleButton.classList.remove('active');
+            baBypassLabel.classList.remove('active');
+            baBypassLabel.textContent = 'Bypass';
+          }
+          updateVolumeDisplay();
+        }
+
+        function updateProgress() {
+          const cur = baBeforeAudio.currentTime || 0;
+          const dur = baBeforeAudio.duration || 0;
+          const pct = dur ? (cur / dur) : 0;
+          const percent = pct * 100;
+          progressFill.style.width = percent + '%';
+          scrubber.style.left = percent + '%';
+
+          if (baCurrentTrackIndex >= 0) {
+            const t = baTracks[baCurrentTrackIndex];
+            if (t._uiRefs) {
+              t._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+            }
+          }
+        }
+
+        function updateVUMeter() {
+          const analyser = isAfterMode ? afterAnalyser : beforeAnalyser;
+          const dataArray = isAfterMode ? afterDataArray : beforeDataArray;
+          analyser.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i] * dataArray[i];
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          const normalized = Math.max(rms / 255, 0.001);
+          let db = 20 * Math.log10(normalized);
+          db += isAfterMode ? 8 : -2;
+          db += volumeDb;
+
+          const vuMin = -20;
+          const vuMax = 3;
+          const angleMin = -50;
+          const angleMax = 50;
+          const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
+
+          let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
+          if (clampedVU < -5) normalizedVU = Math.pow(normalizedVU, 1.5);
+
+          const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
+          currentNeedleAngle += (targetAngle - currentNeedleAngle) * 0.1;
+          baMeterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
+
+          vuMeterRAF = requestAnimationFrame(updateVUMeter);
+        }
+
+        function stopProgressLoop() {
+          if (progressRAF) {
+            cancelAnimationFrame(progressRAF);
+            progressRAF = null;
+          }
+        }
+
+        function startProgressLoop() {
+          stopProgressLoop();
+          let lastSyncTs = 0;
+          const step = () => {
+            if (baBeforeAudio.paused) {
+              progressRAF = null;
+              return;
+            }
+            const now = performance.now();
+            if (now - lastSyncTs > 1000) {
+              if (Math.abs(baBeforeAudio.currentTime - baAfterAudio.currentTime) > 0.2) {
+                baAfterAudio.currentTime = baBeforeAudio.currentTime;
+              }
+              lastSyncTs = now;
+            }
+            updateProgress();
+            progressRAF = requestAnimationFrame(step);
+          };
+          progressRAF = requestAnimationFrame(step);
+        }
+
+        async function playCurrent() {
+          ensureAudioGraph();
+          await Promise.all([baBeforeAudio.play(), baAfterAudio.play()]);
+          isPlaying = true;
+          baPlayPauseBtn.classList.add('playing');
+          startProgressLoop();
+          if (!vuMeterRAF) {
+            vuMeterRAF = requestAnimationFrame(updateVUMeter);
+          }
+        }
+
+        function setActiveRow(index) {
+          document.querySelectorAll('#baPlaylistTracks .track-item').forEach((row, i) => {
+            row.classList.toggle('active', i === index);
+          });
+        }
+
+        function loadTrack(index, autoplay = true) {
+          const track = baTracks[index];
+          if (!track) return;
+
+          baCurrentTrackIndex = index;
+          baNowPlaying.textContent = track.title;
+          setMode(true);
+          setActiveRow(index);
+
+          baBeforeAudio.pause();
+          baAfterAudio.pause();
+          baBeforeAudio.src = track.before;
+          baAfterAudio.src = track.after;
+          baBeforeAudio.currentTime = 0;
+          baAfterAudio.currentTime = 0;
+          progressFill.style.width = '0%';
+          scrubber.style.left = '0%';
+          stopProgressLoop();
+
+          if (!autoplay) {
+            isPlaying = false;
+            baPlayPauseBtn.classList.remove('playing');
+            return;
+          }
+
+          playCurrent().catch(() => {
+            isPlaying = false;
+            baPlayPauseBtn.classList.remove('playing');
+          });
+        }
+
+        baTracks.forEach((track, index) => {
+          const row = document.createElement('div');
+          row.className = 'track-item';
+
+          const info = document.createElement('div');
+          info.className = 'track-item-info';
+
+          const num = document.createElement('span');
+          num.className = 'track-item-number';
+          num.textContent = index + 1;
+
+          const title = document.createElement('span');
+          title.className = 'track-item-title';
+          title.textContent = track.title;
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'track-item-time';
+          timeEl.textContent = '0:00 / 0:00';
+
+          info.appendChild(num);
+          info.appendChild(title);
+          row.appendChild(info);
+          row.appendChild(timeEl);
+
+          row.addEventListener('click', () => loadTrack(index, true));
+
+          track._uiRefs = { timeEl };
+          baPlaylistContainer.appendChild(row);
+        });
+
+        baToggleButton.addEventListener('click', () => setMode(!isAfterMode));
+        baBeforeLabel.addEventListener('click', () => { if (isAfterMode) setMode(false); });
+        baAfterLabel.addEventListener('click', () => { if (!isAfterMode) setMode(true); });
+
+        baVolumeKnob.addEventListener('mousedown', (e) => {
+          isDraggingKnob = true;
+          knobMoved = false;
+          knobStartY = e.clientY;
+          knobStartAngle = knobAngle;
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isDraggingKnob) return;
+          const deltaY = knobStartY - e.clientY;
+          if (Math.abs(deltaY) > 2) knobMoved = true;
+          knobAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+          volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+          updateVolumeDisplay();
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDraggingKnob && !knobMoved) {
+            volumeDb = 0;
+            knobAngle = 360;
+            updateVolumeDisplay();
+          }
+          isDraggingKnob = false;
+        });
+
+        baVolumeKnob.addEventListener('touchstart', (e) => {
+          isDraggingKnob = true;
+          knobMoved = false;
+          knobStartY = e.touches[0].clientY;
+          knobStartAngle = knobAngle;
+          e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+          if (!isDraggingKnob) return;
+          const deltaY = knobStartY - e.touches[0].clientY;
+          if (Math.abs(deltaY) > 2) knobMoved = true;
+          knobAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+          volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+          updateVolumeDisplay();
+          e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => {
+          if (isDraggingKnob && !knobMoved) {
+            volumeDb = 0;
+            knobAngle = 360;
+            updateVolumeDisplay();
+          }
+          isDraggingKnob = false;
+        });
+
+        document.addEventListener('touchcancel', () => {
+          isDraggingKnob = false;
+        });
+
+        baPlayPauseBtn.addEventListener('click', () => {
+          if (baCurrentTrackIndex < 0) {
+            loadTrack(0, true);
+            return;
+          }
+
+          if (isPlaying) {
+            baBeforeAudio.pause();
+            baAfterAudio.pause();
+            isPlaying = false;
+            baPlayPauseBtn.classList.remove('playing');
+            stopProgressLoop();
+            if (vuMeterRAF) {
+              cancelAnimationFrame(vuMeterRAF);
+              vuMeterRAF = null;
+            }
+          } else {
+            playCurrent().catch(() => {
+              isPlaying = false;
+              baPlayPauseBtn.classList.remove('playing');
+            });
+          }
+        });
+
+        baPrevBtn.addEventListener('click', () => {
+          if (baCurrentTrackIndex < 0) {
+            loadTrack(0, true);
+            return;
+          }
+          if ((baBeforeAudio.currentTime || 0) > 3) {
+            baBeforeAudio.currentTime = 0;
+            baAfterAudio.currentTime = 0;
+            updateProgress();
+            return;
+          }
+          const next = baCurrentTrackIndex > 0 ? baCurrentTrackIndex - 1 : 0;
+          loadTrack(next, true);
+        });
+
+        baNextBtn.addEventListener('click', () => {
+          if (baCurrentTrackIndex < 0) {
+            loadTrack(0, true);
+            return;
+          }
+          const next = (baCurrentTrackIndex + 1) % baTracks.length;
+          loadTrack(next, true);
+        });
+
+        baProgressWrap.addEventListener('click', (e) => {
+          const dur = baBeforeAudio.duration || 0;
+          if (!dur) return;
+          const rect = baProgressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          const newTime = pct * dur;
+          baBeforeAudio.currentTime = newTime;
+          baAfterAudio.currentTime = newTime;
+          updateProgress();
+        });
+
+        baBeforeAudio.addEventListener('ended', () => {
+          const next = (baCurrentTrackIndex + 1) % baTracks.length;
+          loadTrack(next, true);
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden && vuMeterRAF) {
+            cancelAnimationFrame(vuMeterRAF);
+            vuMeterRAF = null;
+          } else if (!document.hidden && isPlaying && !vuMeterRAF) {
+            vuMeterRAF = requestAnimationFrame(updateVUMeter);
+          }
+        });
+
+        updateVolumeDisplay();
+        loadTrack(0, false);
+      }, 0);
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tracks = [
+        { id: 1, title: 'Perfume Trap (AI Vocal / Live Instrument Reproduction)', before: 'highlights/Perfume Trap_RAW.mp3', after: 'highlights/Perfume Trap_02192026.mp3' },
+        { id: 2, title: 'Seen to Be (AI Vocal / Live Instrument Reproduction)', before: 'highlights/Seen To Be_RAW.mp3', after: 'highlights/Seen To Be_Mix01042026.mp3' }
+      ];
+
+      const meterNeedle = document.getElementById('aiMeterNeedle');
+      const toggleButton = document.getElementById('aiToggleButton');
+      const bypassLabel = document.getElementById('aiBypassLabel');
+      const beforeLabel = document.querySelector('.ai-toggle-before');
+      const afterLabel = document.querySelector('.ai-toggle-after');
+      const volumeKnob = document.getElementById('aiVolumeKnob');
+      const volumeValue = document.getElementById('aiVolumeValue');
+      const playPauseBtn = document.getElementById('aiPlayPauseBtn');
+      const prevBtn = document.getElementById('aiPrevBtn');
+      const nextBtn = document.getElementById('aiNextBtn');
+      const nowPlaying = document.getElementById('aiNowPlaying');
+      const wave = document.getElementById('aiWave');
+      const list = document.getElementById('aiPlaylistTracks');
+
+      if (!meterNeedle || !toggleButton || !bypassLabel || !beforeLabel || !afterLabel || !volumeKnob || !volumeValue || !playPauseBtn || !prevBtn || !nextBtn || !nowPlaying || !wave || !list) {
+        return;
+      }
+
+      const beforeAudio = new Audio();
+      const afterAudio = new Audio();
+      beforeAudio.preload = 'auto';
+      afterAudio.preload = 'auto';
+
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const beforeAnalyser = ctx.createAnalyser();
+      const afterAnalyser = ctx.createAnalyser();
+      const beforeGain = ctx.createGain();
+      const afterGain = ctx.createGain();
+      beforeAnalyser.fftSize = 256;
+      afterAnalyser.fftSize = 256;
+      beforeAnalyser.smoothingTimeConstant = 0.92;
+      afterAnalyser.smoothingTimeConstant = 0.92;
+      const beforeData = new Uint8Array(beforeAnalyser.frequencyBinCount);
+      const afterData = new Uint8Array(afterAnalyser.frequencyBinCount);
+
+      let beforeConnected = false;
+      let afterConnected = false;
+      let idx = -1;
+      let playing = false;
+      let afterMode = true;
+      let db = 0;
+      let angle = 360;
+      let drag = false;
+      let moved = false;
+      let startY = 0;
+      let startAngle = 0;
+      let needleAngle = -50;
+      let progressRAF = null;
+      let vuRAF = null;
+
+      const progressFill = document.createElement('div');
+      progressFill.className = 'main-player-progress-fill';
+      progressFill.style.width = '0%';
+      wave.appendChild(progressFill);
+
+      const scrubber = document.createElement('div');
+      scrubber.className = 'main-player-scrubber';
+      wave.appendChild(scrubber);
+
+      function ensureGraph() {
+        if (ctx.state === 'suspended') ctx.resume();
+        if (!beforeConnected) {
+          const s = ctx.createMediaElementSource(beforeAudio);
+          s.connect(beforeAnalyser);
+          beforeAnalyser.connect(beforeGain);
+          beforeGain.connect(ctx.destination);
+          beforeConnected = true;
+        }
+        if (!afterConnected) {
+          const s = ctx.createMediaElementSource(afterAudio);
+          s.connect(afterAnalyser);
+          afterAnalyser.connect(afterGain);
+          afterGain.connect(ctx.destination);
+          afterConnected = true;
+        }
+      }
+
+      function fmt(sec) {
+        const t = Math.max(0, Math.floor(sec || 0));
+        return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+      }
+
+      function applyVolume() {
+        volumeValue.textContent = `${db >= 0 ? '+' : ''}${db.toFixed(1)} dB`;
+        volumeKnob.style.transform = `rotate(${angle - 360}deg)`;
+        const gain = Math.pow(10, db / 20);
+        beforeGain.gain.value = afterMode ? 0 : gain;
+        afterGain.gain.value = afterMode ? gain : 0;
+      }
+
+      function applyMode(nextAfter) {
+        afterMode = nextAfter;
+        if (afterMode) {
+          beforeLabel.style.opacity = '0.6';
+          beforeLabel.style.fontWeight = '500';
+          afterLabel.style.opacity = '1';
+          afterLabel.style.fontWeight = '600';
+          toggleButton.classList.add('active');
+          bypassLabel.classList.add('active');
+          bypassLabel.textContent = 'Active';
+        } else {
+          beforeLabel.style.opacity = '1';
+          beforeLabel.style.fontWeight = '600';
+          afterLabel.style.opacity = '0.6';
+          afterLabel.style.fontWeight = '500';
+          toggleButton.classList.remove('active');
+          bypassLabel.classList.remove('active');
+          bypassLabel.textContent = 'Bypass';
+        }
+        applyVolume();
+      }
+
+      function renderProgress() {
+        const cur = beforeAudio.currentTime || 0;
+        const dur = beforeAudio.duration || 0;
+        const percent = dur ? (cur / dur) * 100 : 0;
+        progressFill.style.width = percent + '%';
+        scrubber.style.left = percent + '%';
+        if (idx >= 0 && tracks[idx]._time) {
+          tracks[idx]._time.textContent = `${fmt(cur)} / ${fmt(dur)}`;
+        }
+      }
+
+      function startProgress() {
+        if (progressRAF) cancelAnimationFrame(progressRAF);
+        let lastSync = 0;
+        const step = () => {
+          if (beforeAudio.paused) {
+            progressRAF = null;
+            return;
+          }
+          const now = performance.now();
+          if (now - lastSync > 1000) {
+            if (Math.abs(beforeAudio.currentTime - afterAudio.currentTime) > 0.2) {
+              afterAudio.currentTime = beforeAudio.currentTime;
+            }
+            lastSync = now;
+          }
+          renderProgress();
+          progressRAF = requestAnimationFrame(step);
+        };
+        progressRAF = requestAnimationFrame(step);
+      }
+
+      function startVU() {
+        if (vuRAF) cancelAnimationFrame(vuRAF);
+        const loop = () => {
+          const analyser = afterMode ? afterAnalyser : beforeAnalyser;
+          const data = afterMode ? afterData : beforeData;
+          analyser.getByteFrequencyData(data);
+          let sum = 0;
+          for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+          const rms = Math.sqrt(sum / data.length);
+          const normalized = Math.max(rms / 255, 0.001);
+          let meterDb = 20 * Math.log10(normalized) + (afterMode ? 8 : -2) + db;
+          meterDb = Math.max(-20, Math.min(3, meterDb));
+          let n = (meterDb + 20) / 23;
+          if (meterDb < -5) n = Math.pow(n, 1.5);
+          const target = -50 + n * 100;
+          needleAngle += (target - needleAngle) * 0.1;
+          meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
+          vuRAF = requestAnimationFrame(loop);
+        };
+        vuRAF = requestAnimationFrame(loop);
+      }
+
+      function setActiveRow(next) {
+        list.querySelectorAll('.track-item').forEach((row, i) => row.classList.toggle('active', i === next));
+      }
+
+      async function playBoth() {
+        ensureGraph();
+        await Promise.all([beforeAudio.play(), afterAudio.play()]);
+        playing = true;
+        playPauseBtn.classList.add('playing');
+        startProgress();
+        startVU();
+      }
+
+      function loadTrack(next, autoplay = true) {
+        const t = tracks[next];
+        if (!t) return;
+        idx = next;
+        nowPlaying.textContent = t.title;
+        applyMode(true);
+        setActiveRow(next);
+        beforeAudio.pause();
+        afterAudio.pause();
+        beforeAudio.src = t.before;
+        afterAudio.src = t.after;
+        beforeAudio.currentTime = 0;
+        afterAudio.currentTime = 0;
+        progressFill.style.width = '0%';
+        scrubber.style.left = '0%';
+        if (progressRAF) cancelAnimationFrame(progressRAF);
+        if (vuRAF) cancelAnimationFrame(vuRAF);
+        if (!autoplay) {
+          playing = false;
+          playPauseBtn.classList.remove('playing');
+          return;
+        }
+        playBoth().catch(() => {
+          playing = false;
+          playPauseBtn.classList.remove('playing');
+        });
+      }
+
+      tracks.forEach((t, i) => {
+        const row = document.createElement('div');
+        row.className = 'track-item';
+        const info = document.createElement('div');
+        info.className = 'track-item-info';
+        const num = document.createElement('span');
+        num.className = 'track-item-number';
+        num.textContent = i + 1;
+        const title = document.createElement('span');
+        title.className = 'track-item-title';
+        title.textContent = t.title;
+        const time = document.createElement('div');
+        time.className = 'track-item-time';
+        time.textContent = '0:00 / 0:00';
+        t._time = time;
+        info.appendChild(num);
+        info.appendChild(title);
+        row.appendChild(info);
+        row.appendChild(time);
+        row.addEventListener('click', () => loadTrack(i, true));
+        list.appendChild(row);
+      });
+
+      toggleButton.addEventListener('click', () => applyMode(!afterMode));
+      beforeLabel.addEventListener('click', () => { if (afterMode) applyMode(false); });
+      afterLabel.addEventListener('click', () => { if (!afterMode) applyMode(true); });
+
+      volumeKnob.addEventListener('mousedown', (e) => {
+        drag = true;
+        moved = false;
+        startY = e.clientY;
+        startAngle = angle;
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!drag) return;
+        const delta = startY - e.clientY;
+        if (Math.abs(delta) > 2) moved = true;
+        angle = Math.max(180, Math.min(420, startAngle + delta));
+        db = -40 + ((angle - 180) / 240) * 52;
+        applyVolume();
+      });
+      document.addEventListener('mouseup', () => {
+        if (drag && !moved) {
+          db = 0;
+          angle = 360;
+          applyVolume();
+        }
+        drag = false;
+      });
+      volumeKnob.addEventListener('touchstart', (e) => {
+        drag = true;
+        moved = false;
+        startY = e.touches[0].clientY;
+        startAngle = angle;
+        e.preventDefault();
+      }, { passive: false });
+      document.addEventListener('touchmove', (e) => {
+        if (!drag) return;
+        const delta = startY - e.touches[0].clientY;
+        if (Math.abs(delta) > 2) moved = true;
+        angle = Math.max(180, Math.min(420, startAngle + delta));
+        db = -40 + ((angle - 180) / 240) * 52;
+        applyVolume();
+        e.preventDefault();
+      }, { passive: false });
+      document.addEventListener('touchend', () => {
+        if (drag && !moved) {
+          db = 0;
+          angle = 360;
+          applyVolume();
+        }
+        drag = false;
+      });
+      document.addEventListener('touchcancel', () => { drag = false; });
+
+      playPauseBtn.addEventListener('click', () => {
+        if (idx < 0) {
+          loadTrack(0, true);
+          return;
+        }
+        if (playing) {
+          beforeAudio.pause();
+          afterAudio.pause();
+          playing = false;
+          playPauseBtn.classList.remove('playing');
+          if (progressRAF) cancelAnimationFrame(progressRAF);
+          if (vuRAF) cancelAnimationFrame(vuRAF);
+        } else {
+          playBoth().catch(() => {
+            playing = false;
+            playPauseBtn.classList.remove('playing');
+          });
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        if (idx < 0) return loadTrack(0, true);
+        if ((beforeAudio.currentTime || 0) > 3) {
+          beforeAudio.currentTime = 0;
+          afterAudio.currentTime = 0;
+          renderProgress();
+          return;
+        }
+        loadTrack(idx > 0 ? idx - 1 : 0, true);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (idx < 0) return loadTrack(0, true);
+        loadTrack((idx + 1) % tracks.length, true);
+      });
+
+      wave.addEventListener('click', (e) => {
+        const dur = beforeAudio.duration || 0;
+        if (!dur) return;
+        const rect = wave.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const t = pct * dur;
+        beforeAudio.currentTime = t;
+        afterAudio.currentTime = t;
+        renderProgress();
+      });
+
+      beforeAudio.addEventListener('ended', () => {
+        const next = (idx + 1) % tracks.length;
+        loadTrack(next, true);
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (vuRAF) cancelAnimationFrame(vuRAF);
+          vuRAF = null;
+        } else if (playing && !vuRAF) {
+          startVU();
+        }
+      });
+
+      applyVolume();
+      loadTrack(0, false);
+    });
+  </script>
 
   <!-- ========================================================================
        SITE FOOTER - Contact Information
