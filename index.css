@@ -43,23 +43,9 @@
   justify-content: center;
 }
 
-.banner-title {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin: 0;
-  padding: 0 8rem;
-  z-index: 5;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-}
-
 .env-home {
   background-image: url('Photos/about800.webp');
-  background-position: center top;
+  background-position: center;
   background-color: #0f0f0f;
 }
 
@@ -751,10 +737,6 @@ blockquote footer {
 }
 
 @media (max-width: 720px) {
-  .banner-title {
-    padding: 0 4rem;
-  }
-
   .album-cover-centered {
     width: 180px;
     height: 180px;

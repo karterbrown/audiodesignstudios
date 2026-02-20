@@ -2,8 +2,8 @@
 <html lang="en">
 
 <!-- ============================================================================
-     HIDDEN TRACKS PAGE - Audio Design Studios
-     Secret page with matrix background and before/after player
+     DESIGN & COMPOSE PAGE - Audio Design Studios
+     Sound design, FX, and original composition portfolio
      ============================================================================ -->
 
 <head>
@@ -13,15 +13,15 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Hidden Tracks - Audio Design Studios</title>
+  <title>Design & Compose - Audio Design Studios</title>
   
   <!-- Preconnect for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="music.css?v=1771539651" />
-  <link rel="stylesheet" href="matrix.css?v=1771539651" />
+  <link rel="stylesheet" href="design-compose.css?v=1771604324" />
+  <link rel="stylesheet" href="matrix.css?v=1771604324" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1426,16 +1426,36 @@
   <header class="site-header">
     <a href="index.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
-      <a href="index.html">Editorial</a>
-      <a href="music.html" class="special-link">Design & Compose</a>
+      <a href="index.html">Home</a>
+      <a href="design-compose.html" class="special-link">Design & Compose</a>
     </nav>
   </header>
 
   <!-- Full-screen Matrix Background -->
   <div class="matrix-background" id="matrixBackground"></div>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       📋 PAGE SECTION ORDER MAP
+       ═══════════════════════════════════════════════════════════════════════
+       
+       This page contains the following sections in this order:
+       To reorder: Cut & paste the entire section block below
+       
+       1. [#design]               DESIGN - Sound Design & FX Portfolio
+       2. [#compose]              COMPOSE - Original Compositions Portfolio
+       3. [#contact-form]         Get In Touch - Contact Form (3-Column Layout)
+       4. [#music]                MUSIC - On Apple Music
+       5. [#footer]               Site Footer with Contact Info
+       
+       TIP: Each section starts with a comment matching the name above.
+            Use your editor's search (Cmd/Ctrl+F) to jump to any section.
+            Example: Search for "DESIGN" to find that section.
+       
+       NOTE: Scripts for audio players appear after the COMPOSE section.
+       ═══════════════════════════════════════════════════════════════════════ -->
+
   <!-- ========================================================================
-       SECTION 1: DESIGN - Sound Design & FX
+       DESIGN - Sound Design & FX
        ======================================================================== -->
   <section id="design" class="env-image env-design">
     <h1 class="banner-title">DESIGN</h1>
@@ -1764,7 +1784,7 @@
   </section>
 
   <!-- ========================================================================
-       SECTION 2: COMPOSE - Original Compositions
+       COMPOSE - Original Compositions
        ======================================================================== -->
   <section id="compose" class="env-image env-portfolio">
     <h1 class="banner-title">COMPOSE</h1>
@@ -2041,7 +2061,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771539651"></script>
+  <script src="content.js?v=1771604324"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3990,10 +4010,10 @@
   </script>
 
   <!-- ======================================================================
-       SECTION 4: Get In Touch (3-Column Hero Layout)
+       CONTACT FORM - Get In Touch (3-Column Hero Layout)
        Left: Headshot | Center: Contact Form | Right: Album Art
        ====================================================================== -->
-  <section id="portfolio" class="hero hero-highlights-3col">
+  <section id="contact-form" class="hero hero-highlights-3col">
     <!-- Left Column: Headshot -->
     <div class="hero-left-highlights">
       <div class="headshot-wrapper-portrait">
@@ -4037,7 +4057,7 @@
   </section>
 
   <!-- ========================================================================
-       SECTION 5: MUSIC - On Apple Music
+       MUSIC - On Apple Music
        ======================================================================== -->
   <section id="music" class="env-image env-hiddentracks">
     <h1 class="banner-title-music">MUSIC</h1>
@@ -4913,9 +4933,9 @@
   </script>
 
   <!-- ========================================================================
-       SITE FOOTER - Contact Information
+       FOOTER - Contact Information
        ======================================================================== -->
-  <footer class="site-footer">
+  <footer id="footer" class="site-footer">
     <div class="footer-content">
       <h2>Contact</h2>
       <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>

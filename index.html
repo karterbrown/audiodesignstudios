@@ -3,7 +3,7 @@
 
 <!-- ============================================================================
      HOME PAGE - Audio Design Studios
-     Main landing page with highlights, services, and contact
+     Home/Editorial page: Sound design & mixing for narrative and brand content
      ============================================================================ -->
 
 <head>
@@ -17,11 +17,11 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Audio Design Studios – Karter G. Brown</title>
+  <title>Home - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771539651" />
-  <link rel="stylesheet" href="editorial.css?v=1771539651" />
+  <link rel="stylesheet" href="index.css?v=1771604324" />
+  <link rel="stylesheet" href="editorial.css?v=1771604324" />
 </head>
 
 <body>
@@ -31,8 +31,8 @@
   <header class="site-header">
     <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
-      <a href="index.html">Editorial</a>
-      <a href="music.html" class="special-link">Design & Compose</a>
+      <a href="index.html">Home</a>
+      <a href="design-compose.html" class="special-link">Design & Compose</a>
     </nav>
   </header>
 
@@ -41,74 +41,37 @@
        ======================================================================== -->
   <main>
     
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         📋 PAGE SECTION ORDER MAP
+         ═══════════════════════════════════════════════════════════════════════
+         
+         This page contains the following sections in this order:
+         To reorder: Cut & paste the entire section block below
+         
+         1. [#hero-banner]          Hero Image Banner
+         2. [#relax-listen]         Relax & Listen - Ambient Music Player
+         3. [#services]             What I Handle - Services Detail
+         4. [#editorial-values]     What You Get - 3 Value Props with Videos
+         5. [#highlights]           Highlights - 3-Column Layout (with contact form)
+         6. [#sizzle-reel]          Featured Sizzle Reel
+         7. [#who-its-for]          Who This Is For - Target Audience
+         8. [#about-testimonial]    About Banner and Testimonial
+         9. [#footer]               Site Footer with Contact Info
+         
+         TIP: Each section starts with a comment matching the name above.
+              Use your editor's search (Cmd/Ctrl+F) to jump to any section.
+              Example: Search for "RELAX & LISTEN" to find that section.
+         ═══════════════════════════════════════════════════════════════════════ -->
+    
     <!-- ======================================================================
-         SECTION 1: Hero Image Banner
+         HERO BANNER
          ====================================================================== -->
-    <section class="env-image env-home">
+    <section id="hero-banner" class="env-image env-home">
       <h1 class="banner-title">Editorial Sound Design & Mixing for Narrative and Brand Content</h1>
     </section>
 
     <!-- ======================================================================
-         SECTION 2: Ambient Music Player
-         Simple horizontal player with classical pieces
-         ====================================================================== -->
-    <section class="ambient-player-section">
-      <div class="ambient-player-container">
-        <div class="ambient-player-header">
-          <h3>Relax & Listen</h3>
-          <p class="ambient-player-subtitle">Classical performances to accompany your visit</p>
-        </div>
-        <div class="ambient-player-controls">
-          <button id="ambientPlayPause" class="ambient-play-btn" aria-label="Play/Pause"></button>
-          <button id="ambientSkip" class="ambient-skip-btn" aria-label="Skip to random track">Skip</button>
-          <div class="ambient-track-info">
-            <div id="ambientTrackTitle" class="ambient-track-title">Loading...</div>
-            <div class="ambient-progress-container">
-              <div class="ambient-progress-bar">
-                <div id="ambientProgressFill" class="ambient-progress-fill"></div>
-              </div>
-              <div class="ambient-time-display">
-                <span id="ambientCurrentTime">0:00</span>
-                <span id="ambientDuration">0:00</span>
-              </div>
-            </div>
-          </div>
-          <div class="ambient-volume-control">
-            <input type="range" id="ambientVolume" class="ambient-volume-slider" min="0" max="100" value="70" aria-label="Volume control" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 3: Services Detail
-         ====================================================================== -->
-    <section class="editorial-services section section-alt">
-      <div class="content-wrapper">
-        <h2>What I Handle</h2>
-        <div class="services-list">
-          <div class="service-item">
-            <h4>Dialogue Editing & Cleanup</h4>
-            <p>Location audio refinement, noise reduction, level matching, ADR integration</p>
-          </div>
-          <div class="service-item">
-            <h4>Sound Design & SFX</h4>
-            <p>Custom impact design, transitions, ambiences, narrative sound storytelling</p>
-          </div>
-          <div class="service-item">
-            <h4>Mixing & Mastering</h4>
-            <p>Full mix with music integration, loudness standards (LUFS), delivery specs for broadcast, web, and social</p>
-          </div>
-          <div class="service-item">
-            <h4>Music Editing & Scoring</h4>
-            <p>Music bed edits, temp-to-final replacement, original score adapted to editorial pacing</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         SECTION 4: Editorial Content - What You Get (3 Value Props with Videos)
+         EDITORIAL VALUES - What You Get (3 Value Props with Videos)
          ====================================================================== -->
     <section id="editorial" class="editorial-values section section-alt">
       <div class="content-wrapper">
@@ -147,12 +110,71 @@
       </div>
     </section>
 
-        <!-- ======================================================================
-          SECTION 5: Highlights Hero (3-Column Layout)
-         Left: Album art | Center: Title, description, cycling word | Right: Headshot
-         Bottom: Track players spanning full width
+    <!-- ======================================================================
+         RELAX & LISTEN - Ambient Music Player
          ====================================================================== -->
-    <section id="portfolio" class="hero hero-highlights-3col">
+    <section id="relax-listen" class="ambient-player-section">
+      <div class="ambient-player-container">
+        <div class="ambient-player-header">
+          <h3>Relax & Listen</h3>
+          <p class="ambient-player-subtitle">Classical performances to accompany your visit</p>
+        </div>
+        <div class="ambient-player-controls">
+          <button id="ambientPlayPause" class="ambient-play-btn" aria-label="Play/Pause"></button>
+          <button id="ambientSkip" class="ambient-skip-btn" aria-label="Skip to random track">Skip</button>
+          <div class="ambient-track-info">
+            <div id="ambientTrackTitle" class="ambient-track-title">Loading...</div>
+            <div class="ambient-progress-container">
+              <div class="ambient-progress-bar">
+                <div id="ambientProgressFill" class="ambient-progress-fill"></div>
+              </div>
+              <div class="ambient-time-display">
+                <span id="ambientCurrentTime">0:00</span>
+                <span id="ambientDuration">0:00</span>
+              </div>
+            </div>
+          </div>
+          <div class="ambient-volume-control">
+            <input type="range" id="ambientVolume" class="ambient-volume-slider" min="0" max="100" value="70" aria-label="Volume control" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SERVICES - What I Handle
+         ====================================================================== -->
+    <section id="services" class="editorial-services section section-alt">
+      <div class="content-wrapper">
+        <h2>What I Handle</h2>
+        <div class="services-list">
+          <div class="service-item">
+            <h4>Dialogue Editing & Cleanup</h4>
+            <p>Location audio refinement, noise reduction, level matching, ADR integration</p>
+          </div>
+          <div class="service-item">
+            <h4>Sound Design & SFX</h4>
+            <p>Custom impact design, transitions, ambiences, narrative sound storytelling</p>
+          </div>
+          <div class="service-item">
+            <h4>Mixing & Mastering</h4>
+            <p>Full mix with music integration, loudness standards (LUFS), delivery specs for broadcast, web, and social</p>
+          </div>
+          <div class="service-item">
+            <h4>Music Editing & Scoring</h4>
+            <p>Music bed edits, temp-to-final replacement, original score adapted to editorial pacing</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ======================================================================
+         HIGHLIGHTS - 3-Column Portfolio Layout
+         Left: Headshot | Center: Contact form | Right: Album art
+         ====================================================================== -->
+    <section id="highlights" class="hero hero-highlights-3col">
       <!-- Left Column: Headshot -->
       <div class="hero-left-highlights">
         <div class="headshot-wrapper-portrait">
@@ -196,7 +218,7 @@
     </section>
 
     <!-- ======================================================================
-         SECTION 5: Featured Sizzle Reel
+         SIZZLE REEL - Featured Work
          ====================================================================== -->
     <section id="sizzle-reel" class="editorial-sizzle section section-alt">
       <div class="content-wrapper">
@@ -213,24 +235,21 @@
     </section>
 
         <!-- ======================================================================
-          SECTION 6: Who This Is For
+         WHO THIS IS FOR - Target Audience
          ====================================================================== -->
-    <section class="editorial-audience section">
+    <section id="who-its-for" class="editorial-audience section">
       <div class="content-wrapper">
         <h2>Built for Creative Teams</h2>
         <p>
           If you're a director, editor, producer, or creative lead working on brand content, documentary, narrative shorts, sizzle reels, or pitch materials — and you need audio that's polished, collaborative, and fast — this is the lane.
         </p>
-        <p>
-          I work in Pro Tools, communicate clearly, deliver on time, and understand the difference between "technically clean" and "editorially alive."
-        </p>
       </div>
     </section>
 
         <!-- ======================================================================
-          SECTION 7: About Banner and Testimonial
+         ABOUT & TESTIMONIAL
          ====================================================================== -->
-    <section class="env-image env-about"></section>
+    <section id="about-testimonial" class="env-image env-about"></section>
 
     <section id="about" class="section section-alt">
       <h2>About</h2>
@@ -244,9 +263,9 @@
   </main>
 
   <!-- ========================================================================
-       SITE FOOTER - Contact Information
+       FOOTER - Contact Information
        ======================================================================== -->
-  <footer class="site-footer">
+  <footer id="footer" class="site-footer">
     <div class="footer-content">
       <h2>Contact</h2>
       <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
@@ -260,7 +279,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771539651"></script>
+  <script src="content.js?v=1771604324"></script>
 
   <!-- Year display script -->
   <script>
