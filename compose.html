@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771606159" />
-  <link rel="stylesheet" href="matrix.css?v=1771606159" />
+  <link rel="stylesheet" href="compose.css?v=1771607895" />
+  <link rel="stylesheet" href="matrix.css?v=1771607895" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -231,13 +231,42 @@
 
     /* Player Card */
     .hidden-player-card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
+      background: 
+        radial-gradient(ellipse at 10% 10%, rgba(25, 30, 35, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 90%, rgba(15, 18, 22, 0.5) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.8) 100%),
+        linear-gradient(145deg, rgba(18, 20, 24, 0.95), rgba(12, 14, 16, 0.98)),
+        repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0, 0, 0, 0.1) 1px, rgba(0, 0, 0, 0.1) 2px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255, 255, 255, 0.01) 3px, rgba(255, 255, 255, 0.01) 4px),
+        linear-gradient(180deg, rgba(20, 22, 26, 0.9), rgba(10, 12, 14, 0.95));
+      border: 1px solid rgba(60, 65, 70, 0.4);
+      border-radius: 2px;
       padding: 2rem;
       max-width: 600px;
       width: 100%;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(80, 85, 90, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.8),
+        inset 3px 0 12px rgba(0, 0, 0, 0.6),
+        inset -3px 0 12px rgba(0, 0, 0, 0.6),
+        inset 0 3px 12px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    
+    .hidden-player-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        linear-gradient(135deg, rgba(40, 45, 50, 0.08) 0%, transparent 30%, transparent 70%, rgba(30, 35, 40, 0.06) 100%),
+        radial-gradient(circle at 15% 85%, rgba(50, 55, 60, 0.1) 0%, transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(35, 40, 45, 0.08) 0%, transparent 25%);
+      pointer-events: none;
+      border-radius: 2px;
     }
 
     .hidden-player-title {
@@ -1245,17 +1274,17 @@
     .contact-button {
       display: inline-block;
       padding: 1rem 2rem;
-      background: rgba(126, 201, 143, 0.2);
-      border: 2px solid #7ec98f;
+      background: rgba(208, 208, 208, 0.1);
+      border: 2px solid #d0d0d0;
       border-radius: 4px;
-      color: #7ec98f;
+      color: #d0d0d0;
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
     }
 
     .contact-button:hover {
-      background: rgba(126, 201, 143, 0.3);
+      background: rgba(208, 208, 208, 0.2);
       transform: translateY(-2px);
     }
 
@@ -1935,7 +1964,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771606159"></script>
+  <script src="content.js?v=1771607895"></script>
 
   <!-- Matrix Animation Script -->
   <script>

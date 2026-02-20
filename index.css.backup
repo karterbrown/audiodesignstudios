@@ -1,27 +1,13 @@
 /* =============================================================================
-   AUDIO DESIGN STUDIOS - DESIGN PAGE (index.html)
-   Page-specific styles for the Design/Editorial home page
+   AUDIO DESIGN STUDIOS - HOME PAGE (index.html)
+   Page-specific styles for the home page
    ============================================================================= */
 
 @import url('./shared.css');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* =============================================================================
-   TABLE OF CONTENTS
-   -----------------------------------------------------------------------------
-   1. GRID LAYOUTS - Basic grid system for cards
-   2. HERO IMAGES & BANNERS - Home and About hero backgrounds  
-   3. EDITORIAL VALUES - 3-card value proposition section
-   4. HIGHLIGHTS SECTION - 3-column layout with album covers
-   5. AMBIENT MUSIC PLAYER - Horizontal music player
-   6. RESPONSIVE DESIGN - Mobile and tablet adjustments
-   ============================================================================= */
-
-/* =============================================================================
-   1. GRID LAYOUTS
-   ============================================================================= */
-
-/* 1. GRID LAYOUTS
+   PAGE-SPECIFIC: HOME PAGE LAYOUTS
    ============================================================================= */
 
 /* Services Grid - Cards Section */
@@ -41,10 +27,6 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-
-/* =============================================================================
-   2. HERO IMAGES & BANNERS
-   ============================================================================= */
 
 /* Hero Image Banner */
 .env-image {
@@ -131,29 +113,6 @@ blockquote footer {
   color: #f4f4ff;
   font-weight: 600;
 }
-
-/* =============================================================================
-   3. EDITORIAL VALUES - 3-Card Value Proposition
-   ============================================================================= */
-
-/* Note: Card styling (.card, .card h3, .card p) is in shared.css */
-/* Video container for cards */
-.card-video {
-  margin-top: 1rem;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #000;
-}
-
-.card-video video {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* =============================================================================
-   4. HIGHLIGHTS SECTION - 3-Column Layout
-   ============================================================================= */
 
 /* Highlights 3-Column Hero Section */
 .hero-highlights-3col {
@@ -244,8 +203,176 @@ blockquote footer {
   object-fit: cover;
 }
 
+/* Before & After Section */
+.before-after-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 3rem 4vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.ba-single-player {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ba-track-title {
+  font-size: 1.5rem;
+  color: #f4f4ff;
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Matrix Animation Section (page-specific overrides if needed) */
+
+.matrix-row {
+  position: absolute;
+  top: -20%;
+  font-size: 18px;
+  line-height: 2;
+  color: #00ff00;
+  text-shadow: 0 0 12px rgba(0, 255, 0, 0.9),
+               0 0 24px rgba(0, 255, 0, 0.6),
+               0 0 36px rgba(0, 255, 0, 0.3);
+  white-space: pre;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 8px;
+  animation: matrixFall 10s linear infinite;
+
+}
+
+@keyframes matrixFall {
+  0% {
+    top: -20%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+  5% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.95);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  85% {
+    opacity: 0.6;
+    transform: translateY(0) scale(0.98);
+  }
+  95% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.95);
+  }
+  100% {
+    top: 120%;
+    opacity: 0;
+    transform: translateY(0) scale(0.9);
+  }
+}
+
+/* Highlight Audio Players */
+.playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.track-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.track-header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.track-number {
+  font-weight: 600;
+  color: #cbcb83;
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+  min-width: 24px;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+.track-title {
+  font-weight: 600;
+  color: #f4f4ff;
+  font-size: 0.95rem;
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.highlight-progress-container {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 1rem;
+}
+
+.highlight-progress-wrap {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: height 0.15s ease, background 0.15s ease;
+  overflow: visible;
+  width: 100%;
+}
+
+.highlight-progress-wrap:hover {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+  height: 14px;
+}
+
+.highlight-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  border-radius: 6px 0 0 6px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.6);
+}
+
+.highlight-scrubber {
+  position: absolute;
+  left: 0;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: linear-gradient(180deg, #2dd4a0, #31c49f);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.8), 0 0 4px rgba(49, 196, 159, 0.6);
+  pointer-events: none;
+  transition: left 0.1s linear;
+  border-radius: 1px;
+}
+
 /* =============================================================================
-   5. AMBIENT MUSIC PLAYER - Horizontal minimalist player
+   AMBIENT MUSIC PLAYER - Horizontal minimalist player
    ============================================================================= */
 
 .ambient-player-section {
@@ -553,7 +680,7 @@ blockquote footer {
 }
 
 /* =============================================================================
-   6. RESPONSIVE DESIGN
+   RESPONSIVE DESIGN
    ============================================================================= */
 
 @media (max-width: 800px) {
@@ -630,4 +757,211 @@ blockquote footer {
   .before-after-section {
     padding: 2rem 2vw;
   }
+}
+
+/* =============================================================================
+   BEFORE & AFTER PLAYLIST STYLES
+   ============================================================================= */
+
+.before-after-playlist-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 3rem 4vw;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.playlist-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.playlist-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ba-track-list-hidden {
+  display: none !important;
+}
+
+.track-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  grid-template-rows: auto auto;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  transition: background 0.18s, transform 0.18s;
+}
+
+.track-item:hover {
+  background: rgba(255, 255, 255, 0.045);
+  transform: translateY(-2px);
+}
+
+.track-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.track-item-number {
+  font-size: 0.75rem;
+  color: #cbcb83;
+  font-weight: 600;
+  min-width: 1.5rem;
+}
+
+.track-item-title {
+  font-size: 1rem;
+  color: #f4f4ff;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+}
+
+.track-item-play-btn {
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, rgba(49, 196, 159, 0.12), rgba(45, 212, 160, 0.06));
+  border: 1.5px solid rgba(49, 196, 159, 0.25);
+  color: #f4f4ff;
+  padding: 0.4rem 0.55rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 0;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  grid-column: 3;
+  grid-row: 1;
+  line-height: 1;
+  text-align: center;
+  position: relative;
+}
+
+/* Play icon for track buttons */
+.track-item-play-btn::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 8px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-left: 2px;
+}
+
+/* Pause icon for track buttons */
+.track-item-play-btn.playing::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-4px);
+  width: 2.5px;
+  height: 10px;
+  background: currentColor;
+  box-shadow: 5px 0 0 currentColor;
+  border: none;
+  margin-left: 0;
+}
+
+.track-item-play-btn:hover {
+  background: linear-gradient(135deg, rgba(49, 196, 159, 0.2), rgba(45, 212, 160, 0.1));
+  border-color: rgba(49, 196, 159, 0.4);
+  box-shadow: 0 2px 8px rgba(49, 196, 159, 0.25);
+  transform: translateY(-1px);
+}
+
+.track-item-play-btn:focus-visible {
+  outline: 2px solid rgba(49, 196, 159, 0.4);
+  outline-offset: 2px;
+}
+
+.track-item-play-btn:active {
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.track-item-time {
+  font-size: 0.9rem;
+  color: rgba(244, 244, 255, 0.78);
+  white-space: nowrap;
+  min-width: 72px;
+  text-align: right;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.track-item-progress-wrap {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  overflow: visible;
+  width: 100%;
+  display: block;
+  position: relative;
+  cursor: pointer;
+  margin: 10px 0 0 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: height 0.15s ease;
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.track-item-progress-wrap:hover {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+  height: 12px;
+}
+
+.track-item-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #2dd4a0, #31c49f, #24b886);
+  border-radius: 5px 0 0 5px;
+  transition: width 30ms linear;
+  box-shadow: 0 1px 3px rgba(49, 196, 159, 0.4);
+}
+
+.track-item-progress-wrap:hover .track-item-progress-fill {
+  box-shadow: 0 1px 4px rgba(49, 196, 159, 0.6);
+}
+
+.track-item-scrubber {
+  position: absolute;
+  left: 0;
+  top: -6px;
+  bottom: -6px;
+  width: 2px;
+  background: linear-gradient(180deg, #2dd4a0, #31c49f);
+  box-shadow: 0 0 8px rgba(49, 196, 159, 0.8), 0 0 4px rgba(49, 196, 159, 0.6);
+  pointer-events: none;
+  transition: left 0.1s linear;
+  border-radius: 1px;
 }

@@ -1,13 +1,20 @@
 /* =============================================================================
    AUDIO DESIGN STUDIOS - COMPOSE PAGE (compose.html)
    Combined styles for Design & Compose portfolio sections
+   
+   TABLE OF CONTENTS:
+   1. HERO BANNER IMAGES - Design and Portfolio section backgrounds
+   2. SHARED CONTENT SECTIONS - Banner titles, content wrappers
+   3. DESIGN AUDIO PLAYER - Main Design section player with controls
+   4. PORTFOLIO PLAYLISTS - Compose section playlist layouts
+   5. VU METERS & VOLUME CONTROLS - Portfolio player meters
    ============================================================================= */
 
 @import url('./shared.css');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* =============================================================================
-   HERO BANNER IMAGES
+   1. HERO BANNER IMAGES
    ============================================================================= */
 
 /* Design Section Background */
@@ -86,7 +93,7 @@
 }
 
 /* =============================================================================
-   SHARED CONTENT SECTIONS
+   2. SHARED CONTENT SECTIONS
    ============================================================================= */
 
 /* Content Wrapper */
@@ -116,7 +123,7 @@ blockquote {
   margin: 0 0 1.5rem 0;
   padding: 1rem;
   border-left: 4px solid #d0d0d0;
-  background: rgba(120, 154, 186, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   color: #f4f4ff;
   border-radius: 6px;
 }
@@ -141,26 +148,59 @@ blockquote footer {
 }
 
 /* =============================================================================
-   DESIGN SECTION - AUDIO PLAYER STYLES
+   3. DESIGN AUDIO PLAYER
    ============================================================================= */
 
 /* Design Player Card */
 .design-player-card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  background: 
+    radial-gradient(ellipse at 10% 10%, rgba(25, 30, 35, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(15, 18, 22, 0.5) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.8) 100%),
+    linear-gradient(145deg, rgba(18, 20, 24, 0.95), rgba(12, 14, 16, 0.98)),
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0, 0, 0, 0.1) 1px, rgba(0, 0, 0, 0.1) 2px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255, 255, 255, 0.01) 3px, rgba(255, 255, 255, 0.01) 4px),
+    linear-gradient(180deg, rgba(20, 22, 26, 0.9), rgba(10, 12, 14, 0.95));
+  border: 1px solid rgba(60, 65, 70, 0.4);
+  border-radius: 2px;
   padding: 2rem;
   max-width: 600px;
   width: 100%;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(80, 85, 90, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.8),
+    inset 3px 0 12px rgba(0, 0, 0, 0.6),
+    inset -3px 0 12px rgba(0, 0, 0, 0.6),
+    inset 0 3px 12px rgba(0, 0, 0, 0.5);
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+.design-player-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(135deg, rgba(40, 45, 50, 0.08) 0%, transparent 30%, transparent 70%, rgba(30, 35, 40, 0.06) 100%),
+    radial-gradient(circle at 15% 85%, rgba(50, 55, 60, 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 85% 15%, rgba(35, 40, 45, 0.08) 0%, transparent 25%);
+  pointer-events: none;
+  border-radius: 2px;
+}
+
 @media (max-width: 720px) {
   .design-player-card {
     padding: 1.5rem;
+  }
+  
+  .design-player-card::before {
+    border-radius: 2px;
   }
 }
 
@@ -182,11 +222,11 @@ blockquote footer {
   margin-bottom: 1rem;
   padding: 1.5rem;
   background: 
-    linear-gradient(145deg, rgba(15, 20, 30, 0.95), rgba(8, 12, 20, 0.95)),
+    linear-gradient(145deg, rgba(15, 15, 15, 0.95), rgba(10, 10, 10, 0.95)),
     radial-gradient(ellipse at 20% 30%, rgba(30, 30, 30, 0.4) 0%, transparent 40%),
     radial-gradient(ellipse at 75% 60%, rgba(25, 25, 25, 0.5) 0%, transparent 35%),
     radial-gradient(ellipse at 50% 80%, rgba(35, 35, 35, 0.3) 0%, transparent 30%),
-    linear-gradient(135deg, #1a1a1a 0%, #0a0f1a 50%, #151a20 100%);
+    linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 50%, #1a1a1a 100%);
   border: 3px solid rgba(208, 208, 208, 0.5);
   border-radius: 8px;
   box-shadow: 
@@ -327,7 +367,7 @@ blockquote footer {
   color: rgba(160, 160, 160, 0.7);
   text-shadow: 
     0 1px 0 rgba(0, 0, 0, 0.9),
-    0 0 4px rgba(0, 255, 0, 0.2);
+    0 0 4px rgba(208, 208, 208, 0.2);
   text-align: center;
   letter-spacing: 2.5px;
   z-index: 1;
@@ -497,9 +537,9 @@ blockquote footer {
   border-image: conic-gradient(
     from 180deg,
     transparent 0deg,
-    rgba(0, 255, 0, 0.6) 0deg,
-    rgba(0, 255, 0, 0.8) 120deg,
-    rgba(0, 255, 0, 0.6) 240deg,
+    rgba(208, 208, 208, 0.6) 0deg,
+    rgba(208, 208, 208, 0.8) 120deg,
+    rgba(208, 208, 208, 0.6) 240deg,
     transparent 240deg
   ) 1;
   clip-path: polygon(
@@ -529,13 +569,13 @@ blockquote footer {
     conic-gradient(
       from 180deg,
       transparent 0deg,
-      rgba(0, 255, 0, 0.3) 0.5deg,
+      rgba(208, 208, 208, 0.3) 0.5deg,
       transparent 1deg,
       transparent 119deg,
-      rgba(0, 255, 0, 0.5) 119.5deg,
+      rgba(208, 208, 208, 0.5) 119.5deg,
       transparent 120.5deg,
       transparent 239deg,
-      rgba(0, 255, 0, 0.3) 239.5deg,
+      rgba(208, 208, 208, 0.3) 239.5deg,
       transparent 240.5deg
     );
   mask-image: radial-gradient(
@@ -961,7 +1001,7 @@ blockquote footer {
 }
 
 /* =============================================================================
-   COMPOSE SECTION - PORTFOLIO PLAYLISTS
+   4. PORTFOLIO PLAYLISTS
    ============================================================================= */
 
 /* Portfolio Playlists Container */
@@ -1028,10 +1068,39 @@ blockquote footer {
   gap: 0.5rem;
   padding: 2rem;
   width: 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  background: 
+    radial-gradient(ellipse at 10% 10%, rgba(25, 30, 35, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(15, 18, 22, 0.5) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.8) 100%),
+    linear-gradient(145deg, rgba(18, 20, 24, 0.95), rgba(12, 14, 16, 0.98)),
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0, 0, 0, 0.1) 1px, rgba(0, 0, 0, 0.1) 2px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255, 255, 255, 0.01) 3px, rgba(255, 255, 255, 0.01) 4px),
+    linear-gradient(180deg, rgba(20, 22, 26, 0.9), rgba(10, 12, 14, 0.95));
+  border: 1px solid rgba(60, 65, 70, 0.4);
+  border-radius: 2px;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(80, 85, 90, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.8),
+    inset 3px 0 12px rgba(0, 0, 0, 0.6),
+    inset -3px 0 12px rgba(0, 0, 0, 0.6),
+    inset 0 3px 12px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.playlist-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(135deg, rgba(40, 45, 50, 0.08) 0%, transparent 30%, transparent 70%, rgba(30, 35, 40, 0.06) 100%),
+    radial-gradient(circle at 15% 85%, rgba(50, 55, 60, 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 85% 15%, rgba(35, 40, 45, 0.08) 0%, transparent 25%);
+  pointer-events: none;
+  border-radius: 2px;
 }
 
 @media (max-width: 720px) {
@@ -1039,6 +1108,10 @@ blockquote footer {
     padding: 1.5rem;
     width: 100%;
     max-width: 100%;
+  }
+  
+  .playlist-card::before {
+    border-radius: 2px;
   }
 }
 
@@ -1390,7 +1463,7 @@ blockquote footer {
 }
 
 /* =============================================================================
-   VU METER AND VOLUME KNOB - PORTFOLIO PLAYERS
+   5. VU METERS & VOLUME CONTROLS
    ============================================================================= */
 
 .portfolio-meter-section {

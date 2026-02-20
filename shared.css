@@ -1,6 +1,18 @@
 /* =============================================================================
    AUDIO DESIGN STUDIOS - SHARED STYLES
    Common styles used across all pages
+   
+   TABLE OF CONTENTS:
+   1. BASE STYLES & RESET - Core resets, body, html
+   2. COMMON LAYOUT SECTIONS - Section wrappers, matrix sections
+   3. COMMON IMAGE OPTIMIZATION - Picture elements, lazy loading
+   4. TYPOGRAPHY - Headings, paragraphs, text styles
+   5. LAYOUT COMPONENTS - Header, navigation, footer
+   6. UI COMPONENTS - Buttons, forms, cards
+   7. IMAGES & MEDIA - Image and video styling
+   8. PLAY BUTTONS & AUDIO CONTROLS - Shared audio player elements
+   9. RESPONSIVE TABLET - Breakpoints for tablet (max-width: 800px)
+   10. RESPONSIVE MOBILE - Breakpoints for mobile (max-width: 720px)
    ============================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -481,7 +493,7 @@ img {
 
 
 /* =============================================================================
-   3. TYPOGRAPHY
+   4. TYPOGRAPHY
    ============================================================================= */
 
 .hero h1,
@@ -540,7 +552,7 @@ blockquote footer {
 
 
 /* =============================================================================
-   3. LAYOUT COMPONENTS
+   5. LAYOUT COMPONENTS
    ============================================================================= */
 
 /* ---------- Header & Navigation ---------- */
@@ -704,7 +716,7 @@ blockquote footer {
 
 
 /* =============================================================================
-   4. UI COMPONENTS - BUTTONS, FORMS, CARDS
+   6. UI COMPONENTS - BUTTONS, FORMS, CARDS
    ============================================================================= */
 
 /* ---------- Buttons ---------- */
@@ -819,7 +831,7 @@ button:focus-visible {
 
 
 /* =============================================================================
-   5. IMAGES & MEDIA
+   7. IMAGES & MEDIA
    ============================================================================= */
 
 img {
@@ -834,7 +846,7 @@ picture {
 
 
 /* =============================================================================
-   6. PLAY BUTTONS & AUDIO CONTROLS (Shared)
+   8. PLAY BUTTONS & AUDIO CONTROLS (Shared)
    ============================================================================= */
 
 .play-btn {
@@ -862,7 +874,7 @@ picture {
 
 
 /* =============================================================================
-   7. RESPONSIVE DESIGN - TABLET BREAKPOINTS
+   9. RESPONSIVE TABLET - Breakpoints (max-width: 800px)
    ============================================================================= */
 
 @media (max-width: 800px) {
@@ -899,7 +911,7 @@ picture {
 }
 
 /* =============================================================================
-   8. RESPONSIVE DESIGN - MOBILE BREAKPOINTS
+   10. RESPONSIVE MOBILE - Breakpoints (max-width: 720px)
    ============================================================================= */
 
 @media (max-width: 720px) {
