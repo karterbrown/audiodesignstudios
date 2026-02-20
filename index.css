@@ -578,6 +578,7 @@ blockquote footer {
   background: rgba(255, 255, 255, 0.1);
   outline: none;
   -webkit-appearance: none;
+  appearance: none;
   cursor: pointer;
   transition: all 0.3s ease;
 }
