@@ -7,7 +7,7 @@ This document explains the site structure and file organization to help you main
 
 ### HTML Pages (3 Main Pages)
 1. **index.html** - Home/Editorial page with integrated editorial content
-2. **design-compose.html** - Design & Compose portfolio page (formerly music.html)
+2. **compose.html** - Compose portfolio page with Design & Compose sections (formerly music.html)
 3. **matrix.html** - Easter egg Matrix animation page
 
 ### CSS Architecture
@@ -35,7 +35,7 @@ This document explains the site structure and file organization to help you main
   - Editorial sections (intro, values, services, etc.)
   - Used by index.html for editorial content styling
 
-- **design-compose.css** (1,875 lines)
+- **compose.css** (1,875 lines)
   - @import shared.css
   - Design/Compose hero images (.env-design, .env-portfolio)
   - Audio players and controls
@@ -65,8 +65,8 @@ index.html loads:
 └── editorial.css
     └── @import shared.css
 
-design-compose.html loads:
-├── design-compose.css
+compose.html loads:
+├── compose.css
 │   └── @import shared.css
 └── matrix.css
 
@@ -84,12 +84,12 @@ matrix.html loads:
 
 ### Typography
 - `.logo` - Site header title (1.8rem on all screens)
-- `.banner-title` - Hero banner text (defined in editorial.css and design-compose.css)
+- `.banner-title` - Hero banner text (defined in editorial.css and compose.css)
 
 ### Navigation
 - `.site-header` - Fixed header
 - `.nav` - Navigation links container
-- `.special-link` - Design & Compose link styling
+- `.special-link` - Compose link styling
 
 ## Responsive Breakpoints
 
@@ -123,7 +123,7 @@ Edit `.logo` in **shared.css** (line ~560)
 
 ### To update banner styling:
 - For Editorial page: edit `.banner-title` in **editorial.css** (line ~38)
-- For Design & Compose: edit `.banner-title` in **design-compose.css** (line ~68)
+- For Design & Compose sections: edit `.banner-title` in **compose.css** (line ~68)
 
 ### To add a new page:
 1. Create `newpage.html` + `newpage.css`

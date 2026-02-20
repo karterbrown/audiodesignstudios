@@ -6,7 +6,7 @@ Static portfolio website for audio design services, deployed via GitHub Pages to
 ## Architecture
 
 ### Page Structure
-- **2 main pages**: `index.html` (Home with Editorial content), `music.html` (Design & Compose)
+- **2 main pages**: `index.html` (Design - Home with Editorial content), `compose.html` (Compose - Portfolio)
 - **Easter egg**: `matrix.html` - Secret full-screen Matrix animation (accessed via logo click on home)
 - Editorial content is now integrated into the home page with an `#editorial` anchor
 - Each page follows pattern: HTML + page-specific CSS + imports `shared.css`
