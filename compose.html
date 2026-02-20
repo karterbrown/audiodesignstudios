@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771611241" />
-  <link rel="stylesheet" href="matrix.css?v=1771611241" />
+  <link rel="stylesheet" href="compose.css?v=1771619272" />
+  <link rel="stylesheet" href="matrix.css?v=1771619272" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1344,9 +1344,9 @@
        This page contains the following sections in this order:
        To reorder: Cut & paste the entire section block below
        
-       1. [#design]               DESIGN - Sound Design & FX Portfolio
-       2. [#compose]              COMPOSE - Original Compositions Portfolio
-       3. [#contact-form]         Get In Touch - Contact Form (3-Column Layout)
+       1. [#contact-form]         Get In Touch - Contact Form (3-Column Layout)
+       2. [#design]               DESIGN - Sound Design & FX Portfolio
+       3. [#compose]              COMPOSE - Original Compositions Portfolio
        4. [#music]                MUSIC - On Apple Music
        5. [#footer]               Site Footer with Contact Info
        
@@ -1356,6 +1356,53 @@
        
        NOTE: Scripts for audio players appear after the COMPOSE section.
        ═══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- ======================================================================
+       CONTACT FORM - Get In Touch (3-Column Hero Layout)
+       Left: Headshot | Center: Contact Form | Right: Album Art
+       ====================================================================== -->
+  <section id="contact-form" class="hero hero-highlights-3col">
+    <!-- Left Column: Headshot -->
+    <div class="hero-left-highlights">
+      <div class="headshot-wrapper-portrait">
+        <picture>
+          <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+          <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+          <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+        </picture>
+      </div>
+    </div>
+
+    <!-- Center Column: Contact Form -->
+    <div class="hero-center-highlights">
+      <div class="contact-wrapper">
+        <h1>Let's Talk About Your Project</h1>
+        <p>Whether you're planning a campaign, finishing a cut, or need audio help mid-production — reach out and let's see if it's a good fit.</p>
+        <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+          <input type="text" name="name" placeholder="Your Name" required />
+          <input type="email" name="email" placeholder="Your Email" required />
+          <textarea name="message" placeholder="Describe your project..." required></textarea>
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+        <div class="contact-buttons">
+          <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Album Art -->
+    <div class="hero-right-highlights">
+      <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+        <div class="album-cover-centered" aria-hidden="true">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+            <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+          </picture>
+        </div>
+      </a>
+    </div>
+  </section>
 
   <!-- ========================================================================
        DESIGN - Sound Design & FX
@@ -1964,7 +2011,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771611241"></script>
+  <script src="content.js?v=1771619272"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3911,53 +3958,6 @@
       }
     });
   </script>
-
-  <!-- ======================================================================
-       CONTACT FORM - Get In Touch (3-Column Hero Layout)
-       Left: Headshot | Center: Contact Form | Right: Album Art
-       ====================================================================== -->
-  <section id="contact-form" class="hero hero-highlights-3col">
-    <!-- Left Column: Headshot -->
-    <div class="hero-left-highlights">
-      <div class="headshot-wrapper-portrait">
-        <picture>
-          <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
-          <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
-          <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="lazy" />
-        </picture>
-      </div>
-    </div>
-
-    <!-- Center Column: Contact Form -->
-    <div class="hero-center-highlights">
-      <div class="contact-wrapper">
-        <h1>Let's Talk About Your Project</h1>
-        <p>Whether you're planning a campaign, finishing a cut, or need audio help mid-production — reach out and let's see if it's a good fit.</p>
-        <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
-          <input type="text" name="name" placeholder="Your Name" required />
-          <input type="email" name="email" placeholder="Your Email" required />
-          <textarea name="message" placeholder="Describe your project..." required></textarea>
-          <button type="submit" class="btn">Send Message</button>
-        </form>
-        <div class="contact-buttons">
-          <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Column: Album Art -->
-    <div class="hero-right-highlights">
-      <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
-        <div class="album-cover-centered" aria-hidden="true">
-          <picture>
-            <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
-            <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
-            <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
-          </picture>
-        </div>
-      </a>
-    </div>
-  </section>
 
   <!-- ========================================================================
        MUSIC - On Apple Music

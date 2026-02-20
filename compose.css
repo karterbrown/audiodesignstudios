@@ -118,6 +118,94 @@
   }
 }
 
+/* =============================================================================
+   CONTACT HERO SECTION - 3-Column Layout
+   ============================================================================= */
+
+/* Highlights 3-Column Hero Section */
+.hero-highlights-3col {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 2rem 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 1200px) {
+  .hero-highlights-3col {
+    padding-bottom: 3rem;
+  }
+}
+
+.hero-left-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-center-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+/* Contact Hero Typography */
+.hero-center-highlights h1 {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.hero-center-highlights p {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-center-highlights .contact-buttons {
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.hero-center-highlights .contact-button {
+  padding: 1rem 2.5rem;
+}
+
+.hero-right-highlights {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive Design for Contact Hero */
+@media (max-width: 1024px) {
+  .hero-highlights-3col {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    text-align: center;
+  }
+
+  .hero-left-highlights,
+  .hero-center-highlights,
+  .hero-right-highlights {
+    max-width: 100%;
+  }
+
+  /* Hide album cover on small screens */
+  .hero-right-highlights {
+    display: none;
+  }
+
+  .headshot-wrapper-portrait {
+    width: 200px;
+    height: 200px;
+  }
+}
+
 /* Testimonial/Quote Section */
 blockquote {
   margin: 0 0 1.5rem 0;

@@ -125,6 +125,15 @@
   border: 1px solid rgba(126, 201, 143, 0.2);
 }
 
+.card-video iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  background: #000;
+  display: block;
+  border: 1px solid rgba(126, 201, 143, 0.2);
+}
+
 /* ============================================================================
    SERVICES DETAIL SECTION
    ============================================================================ */
@@ -216,6 +225,84 @@
 .sizzle-placeholder p {
   color: #dcdcdc;
   font-size: 1.05rem;
+}
+
+.sizzle-watch-btn {
+  display: inline-block;
+  margin: 1.5rem 0 0.75rem 0;
+  padding: 0.85rem 2rem;
+  background: rgba(126, 201, 143, 0.15);
+  border: 2px solid #7ec98f;
+  border-radius: 8px;
+  color: #7ec98f;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  letter-spacing: 0.02em;
+}
+
+.sizzle-watch-btn:hover {
+  background: rgba(126, 201, 143, 0.25);
+  border-color: #9eddb0;
+  color: #9eddb0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(126, 201, 143, 0.3);
+}
+
+.sizzle-note {
+  font-size: 0.95rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+/* Sizzle content - for actual video display */
+.sizzle-content {
+  text-align: center;
+}
+
+.sizzle-content h3 {
+  color: #f4f4ff;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  margin-bottom: 0.5rem;
+}
+
+.sizzle-role {
+  color: #7ec98f;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.sizzle-video {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.sizzle-video video {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+  display: block;
+  border: 1px solid rgba(126, 201, 143, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.sizzle-video iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 400px;
+  border-radius: 8px;
+  background: #000;
+  display: block;
+  border: 1px solid rgba(126, 201, 143, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+@media (min-width: 768px) {
+  .sizzle-video iframe {
+    min-height: 620px;
+  }
 }
 
 /* ============================================================================
