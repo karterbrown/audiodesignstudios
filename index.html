@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771619272" />
-  <link rel="stylesheet" href="editorial.css?v=1771619272" />
+  <link rel="stylesheet" href="index.css?v=1771632058" />
+  <link rel="stylesheet" href="editorial.css?v=1771632058" />
 </head>
 
 <body>
@@ -31,6 +31,7 @@
   <header class="site-header">
     <a href="matrix.html" class="logo">Audio Design Studios</a>
     <nav class="nav">
+      <a href="#highlights">Contact</a>
       <a href="index.html">Design</a>
       <a href="compose.html" class="special-link">Compose</a>
     </nav>
@@ -64,57 +65,116 @@
          ═══════════════════════════════════════════════════════════════════════ -->
     
     <!-- ======================================================================
-         HIGHLIGHTS - 3-Column Portfolio Layout
-         Left: Headshot | Center: Contact form | Right: Album art
-         ====================================================================== -->
-    <section id="highlights" class="hero hero-highlights-3col">
-      <!-- Left Column: Headshot -->
-      <div class="hero-left-highlights">
-        <div class="headshot-wrapper-portrait">
-          <picture>
-            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
-            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
-            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
-          </picture>
-        </div>
-      </div>
-
-      <!-- Center Column: Contact Form -->
-      <div class="hero-center-highlights">
-        <div class="contact-wrapper">
-          <h1>Let's Talk About Your Project</h1>
-          <p>Whether you're planning a campaign, finishing a cut, or need audio help mid-production — reach out and let's see if it's a good fit.</p>
-          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
-            <input type="text" name="name" placeholder="Your Name" required />
-            <input type="email" name="email" placeholder="Your Email" required />
-            <textarea name="message" placeholder="Describe your project..." required></textarea>
-            <button type="submit" class="btn">Send Message</button>
-          </form>
-          <div class="contact-buttons">
-            <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Album Art -->
-      <div class="hero-right-highlights">
-        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
-          <div class="album-cover-centered" aria-hidden="true">
-            <picture>
-              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
-              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
-              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
-            </picture>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- ======================================================================
          HERO BANNER
          ====================================================================== -->
     <section id="hero-banner" class="env-image env-home">
       <h1 class="banner-title">Editorial Sound Production for Media</h1>
+    </section>
+
+    <!-- ======================================================================
+         SIZZLE REEL - Featured Work
+         ====================================================================== -->
+    <section id="sizzle-reel" class="editorial-sizzle section section-alt">
+      <div class="content-wrapper">
+        <div class="sizzle-feature">
+          <div class="sizzle-carousel-shell">
+            <span class="sizzle-badge">Film Reels</span>
+            <h2>Check out Karter's work. Contact him if it's what you need.</h2>
+
+            <div class="sizzle-carousel" id="sizzleCarousel" aria-label="Feature film highlight reel selector">
+              <button class="sizzle-nav sizzle-nav-prev" id="sizzlePrev" type="button" aria-label="Previous highlight reel">&#10094;</button>
+
+              <div class="sizzle-viewport" id="sizzleViewport" tabindex="0">
+                <div class="sizzle-track" id="sizzleTrack">
+                  <article class="sizzle-item is-active" data-index="0" data-filename="01_EnvironmentAmbience.mp4" data-title="Environment | Ambience">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/01_EnvironmentAmbience.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/01_EnvironmentAmbience720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="1" data-filename="02_DialogBackground.mp4" data-title="Dialog | Background">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/02_DialogBackground.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/02_DialogBackground720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="2" data-filename="03_MotionPacing.mp4" data-title="Motion | Pacing">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/03_MotionPacing.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/03_MotionPacing720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="3" data-filename="04_BuildImpact.mp4" data-title="Build | Impact">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/04_BuildImpact.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/04_BuildImpact720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="4" data-filename="05_SFXMusic.mp4" data-title="SFX | Music">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/05_SFXMusic.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/05_SFXMusic720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="5" data-filename="06_ImmersionStory.mp4" data-title="Immersion | Story">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/06_ImmersionStory.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/06_ImmersionStory720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="6" data-filename="07_SuspenseFoley.mp4" data-title="Suspense | Foley">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/07_SuspenseFoley.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/07_SuspenseFoley720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="7" data-filename="08_TransitionSoundDesign.mp4" data-title="Transition | Sound Design">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/08_TransitionSoundDesign.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/08_TransitionSoundDesign720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="8" data-filename="09_MixMaster.mp4" data-title="Mix | Master">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/09_MixMaster.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/09_MixMaster720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                </div>
+              </div>
+
+              <button class="sizzle-nav sizzle-nav-next" id="sizzleNext" type="button" aria-label="Next highlight reel">&#10095;</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ======================================================================
@@ -170,23 +230,53 @@
         </div>
       </div>
     </section>
-    
+
     <!-- ======================================================================
-         SIZZLE REEL - Featured Work
+         HIGHLIGHTS - 3-Column Portfolio Layout
+         Left: Headshot | Center: Contact form | Right: Album art
          ====================================================================== -->
-    <section id="sizzle-reel" class="editorial-sizzle section section-alt">
-      <div class="content-wrapper">
-        <div class="sizzle-feature">
-          <div class="sizzle-placeholder">
-            <span class="sizzle-badge">Coming Soon</span>
-            <h3>Feature Film Highlights</h3>
-            <p>Showcase reels from Kalamasa's Revenge and Daughter of the Plains in production.</p>
+    <section id="highlights" class="hero hero-highlights-3col">
+      <!-- Left Column: Headshot -->
+      <div class="hero-left-highlights">
+        <div class="headshot-wrapper-portrait">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+          </picture>
+        </div>
+      </div>
+
+      <!-- Center Column: Contact Form -->
+      <div class="hero-center-highlights">
+        <div class="contact-wrapper">
+          <h1>Let's Talk About Your Project</h1>
+          <p>Whether you're planning a campaign, finishing a cut, or need audio help mid-production — reach out and let's see if it's a good fit.</p>
+          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Describe your project..." required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+          <div class="contact-buttons">
+            <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
           </div>
         </div>
       </div>
-    </section>
 
-    
+      <!-- Right Column: Album Art -->
+      <div class="hero-right-highlights">
+        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+          <div class="album-cover-centered" aria-hidden="true">
+            <picture>
+              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+            </picture>
+          </div>
+        </a>
+      </div>
+    </section>
 
     <!-- ======================================================================
          SERVICES - What I Handle
@@ -291,7 +381,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771619272"></script>
+  <script src="content.js?v=1771632058"></script>
 
   <!-- Year display script -->
   <script>
@@ -302,6 +392,268 @@
   <script>
     document.querySelectorAll('.card-video video').forEach((video) => {
       video.addEventListener('contextmenu', (event) => event.preventDefault());
+    });
+
+    const pauseOtherVideos = (currentVideo) => {
+      document.querySelectorAll('.card-video video, .sizzle-reel-video').forEach((video) => {
+        if (video !== currentVideo) {
+          video.pause();
+        }
+      });
+    };
+
+    const hardenVideoAudio = (video) => {
+      if (video.dataset.audioHardened === 'true') {
+        return;
+      }
+
+      video.addEventListener('play', () => {
+        pauseOtherVideos(video);
+
+        if (typeof ambientAudio !== 'undefined' && ambientAudio && !ambientAudio.paused) {
+          ambientAudio.pause();
+        }
+      });
+
+      video.dataset.audioHardened = 'true';
+    };
+
+    document.querySelectorAll('.card-video video').forEach((video) => {
+      hardenVideoAudio(video);
+    });
+
+    const hardenSizzleVideos = () => {
+      document.querySelectorAll('.sizzle-reel-video').forEach((video) => {
+        if (video.dataset.contextmenuHardened === 'true') {
+          return;
+        }
+
+        const source = video.querySelector('source');
+
+        if (source && source.getAttribute('src')) {
+          video.dataset.sourceSrc = source.getAttribute('src');
+          video.dataset.sourceType = source.getAttribute('type') || 'video/mp4';
+        }
+
+        video.preload = 'none';
+        video.addEventListener('contextmenu', (event) => event.preventDefault());
+        hardenVideoAudio(video);
+        video.dataset.contextmenuHardened = 'true';
+      });
+    };
+
+    hardenSizzleVideos();
+
+    const sizzleViewport = document.getElementById('sizzleViewport');
+    const sizzleTrack = document.getElementById('sizzleTrack');
+    const sizzlePrev = document.getElementById('sizzlePrev');
+    const sizzleNext = document.getElementById('sizzleNext');
+    let sizzleItems = sizzleTrack ? Array.from(sizzleTrack.querySelectorAll('.sizzle-item')) : [];
+
+    const filenameToTitle = (filename) => {
+      const nameOnly = filename.replace(/\.[^.]+$/, '');
+      const withoutNumberPrefix = nameOnly.replace(/^\d+[_\-\s]*/, '');
+      const spaced = withoutNumberPrefix
+        .replace(/[_-]+/g, ' ')
+        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/\b(480|720|1080|1440|2160|4k|8k)\b/gi, '')
+        .trim();
+
+      return spaced.split(/\s+/).filter(Boolean).join(' | ');
+    };
+
+    const loopingEnabled = sizzleItems.length > 1;
+
+    if (loopingEnabled && sizzleTrack) {
+      const firstClone = sizzleItems[0].cloneNode(true);
+      firstClone.dataset.clone = 'true';
+
+      const lastClone = sizzleItems[sizzleItems.length - 1].cloneNode(true);
+      lastClone.dataset.clone = 'true';
+
+      sizzleTrack.insertBefore(lastClone, sizzleItems[0]);
+      sizzleTrack.appendChild(firstClone);
+
+      hardenSizzleVideos();
+      sizzleItems = Array.from(sizzleTrack.querySelectorAll('.sizzle-item'));
+    }
+
+    sizzleItems.forEach((item) => {
+      const titleElement = item.querySelector('.sizzle-item-title');
+      const customTitle = item.dataset.title || '';
+      const filename = item.dataset.filename || '';
+
+      if (titleElement) {
+        titleElement.textContent = customTitle || filenameToTitle(filename);
+      }
+    });
+
+    let currentSizzleIndex = loopingEnabled ? 1 : 0;
+    let sizzleTransitionLock = false;
+    let sizzleUnlockTimer = null;
+    const sizzleRealItemCount = loopingEnabled ? sizzleItems.length - 2 : sizzleItems.length;
+
+    const updateSizzleEdgePadding = () => {
+      if (!sizzleViewport || !sizzleTrack || !sizzleItems.length) {
+        return;
+      }
+
+      const activeIndex = Math.max(0, Math.min(currentSizzleIndex, sizzleItems.length - 1));
+      const firstCardWidth = sizzleItems[activeIndex].getBoundingClientRect().width;
+      const edgePadding = Math.max(8, (sizzleViewport.clientWidth - firstCardWidth) / 2);
+
+      sizzleTrack.style.paddingLeft = `${edgePadding}px`;
+      sizzleTrack.style.paddingRight = `${edgePadding}px`;
+    };
+
+    const scrollSizzleToIndex = (index, behavior = 'smooth') => {
+      if (!sizzleViewport || !sizzleItems[index]) {
+        return;
+      }
+
+      const targetItem = sizzleItems[index];
+      const viewportRect = sizzleViewport.getBoundingClientRect();
+      const itemRect = targetItem.getBoundingClientRect();
+      const deltaToCenter = (itemRect.left + (itemRect.width / 2)) - (viewportRect.left + (viewportRect.width / 2));
+      const targetLeft = sizzleViewport.scrollLeft + deltaToCenter;
+
+      sizzleViewport.scrollTo({ left: Math.max(0, targetLeft), behavior });
+    };
+
+    const centerSizzleItem = (index, behavior = 'smooth') => {
+      if (!sizzleItems.length || !sizzleViewport) {
+        return;
+      }
+
+      currentSizzleIndex = Math.max(0, Math.min(index, sizzleItems.length - 1));
+
+      const shouldKeepLoaded = (itemIndex) => {
+        const distance = Math.abs(itemIndex - currentSizzleIndex);
+        return distance <= 1;
+      };
+
+      const ensureVideoSourceState = (video, keepLoaded) => {
+        if (!video) {
+          return;
+        }
+
+        const source = video.querySelector('source');
+        const storedSrc = video.dataset.sourceSrc;
+        const storedType = video.dataset.sourceType || 'video/mp4';
+
+        if (!source || !storedSrc) {
+          return;
+        }
+
+        const hasSrc = !!source.getAttribute('src');
+
+        if (keepLoaded && !hasSrc) {
+          source.setAttribute('src', storedSrc);
+          source.setAttribute('type', storedType);
+          video.load();
+        }
+
+        if (!keepLoaded && hasSrc) {
+          if (!video.paused) {
+            video.pause();
+          }
+
+          source.removeAttribute('src');
+          video.load();
+        }
+
+        video.preload = keepLoaded ? 'metadata' : 'none';
+      };
+
+      sizzleItems.forEach((item, itemIndex) => {
+        item.classList.toggle('is-active', itemIndex === currentSizzleIndex);
+
+        const mediaVideo = item.querySelector('video');
+        ensureVideoSourceState(mediaVideo, shouldKeepLoaded(itemIndex));
+      });
+
+      scrollSizzleToIndex(currentSizzleIndex, behavior);
+
+      if (behavior === 'smooth') {
+        sizzleTransitionLock = true;
+
+        if (sizzleUnlockTimer) {
+          window.clearTimeout(sizzleUnlockTimer);
+        }
+
+        sizzleUnlockTimer = window.setTimeout(() => {
+          sizzleTransitionLock = false;
+        }, 390);
+      } else {
+        sizzleTransitionLock = false;
+      }
+    };
+
+    const stepSizzle = (step) => {
+      if (!sizzleItems.length) {
+        return;
+      }
+
+      if (sizzleTransitionLock) {
+        return;
+      }
+
+      if (loopingEnabled) {
+        const firstRealIndex = 1;
+        const lastRealIndex = sizzleRealItemCount;
+        const cloneBeforeFirst = 0;
+        const cloneAfterLast = sizzleItems.length - 1;
+
+        if (currentSizzleIndex === firstRealIndex && step < 0) {
+          centerSizzleItem(cloneAfterLast, 'auto');
+          centerSizzleItem(lastRealIndex, 'smooth');
+          return;
+        }
+
+        if (currentSizzleIndex === lastRealIndex && step > 0) {
+          centerSizzleItem(cloneBeforeFirst, 'auto');
+          centerSizzleItem(firstRealIndex, 'smooth');
+          return;
+        }
+      }
+
+      centerSizzleItem(currentSizzleIndex + step);
+    };
+
+    if (sizzleItems.length <= 1) {
+      if (sizzlePrev) sizzlePrev.disabled = true;
+      if (sizzleNext) sizzleNext.disabled = true;
+    }
+
+    if (sizzlePrev) {
+      sizzlePrev.addEventListener('click', () => stepSizzle(-1));
+    }
+
+    if (sizzleNext) {
+      sizzleNext.addEventListener('click', () => stepSizzle(1));
+    }
+
+    if (sizzleViewport) {
+      sizzleViewport.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          stepSizzle(-1);
+        }
+
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          stepSizzle(1);
+        }
+      });
+    }
+
+    updateSizzleEdgePadding();
+    centerSizzleItem(loopingEnabled ? 1 : 0, 'auto');
+
+    window.addEventListener('resize', () => {
+      updateSizzleEdgePadding();
+      centerSizzleItem(currentSizzleIndex, 'auto');
     });
   </script>
 

@@ -172,7 +172,7 @@
    ============================================================================ */
 .editorial-sizzle {
   text-align: center;
-  padding-top: 0;
+  padding-top: 3rem;
 }
 
 .editorial-sizzle h2 {
@@ -192,7 +192,7 @@
   margin: 0 auto;
 }
 
-.sizzle-placeholder {
+.sizzle-carousel-shell {
   min-height: 420px;
   border-radius: 10px;
   border: 1px solid rgba(126, 201, 143, 0.35);
@@ -201,7 +201,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: 2.75rem 2rem 3.5rem;
 }
 
 .sizzle-badge {
@@ -216,15 +216,112 @@
   margin-bottom: 1rem;
 }
 
-.sizzle-placeholder h3 {
+.sizzle-carousel-shell h3 {
   color: #f4f4ff;
   font-size: clamp(1.6rem, 2.8vw, 2.4rem);
   margin-bottom: 0.75rem;
 }
 
-.sizzle-placeholder p {
+.sizzle-carousel-shell p {
   color: #dcdcdc;
   font-size: 1.05rem;
+}
+
+.sizzle-carousel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 2.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.sizzle-nav {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(126, 201, 143, 0.5);
+  background: rgba(0, 0, 0, 0.5);
+  color: #7ec98f;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.sizzle-nav:hover:not(:disabled) {
+  background: rgba(126, 201, 143, 0.2);
+  transform: scale(1.04);
+}
+
+.sizzle-nav:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.sizzle-viewport {
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 3.25rem 0 2.9rem;
+}
+
+.sizzle-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.sizzle-track {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-inline: 0.5rem;
+  overflow: visible;
+}
+
+.sizzle-item {
+  position: relative;
+  flex: 0 0 clamp(340px, 52vw, 620px);
+  margin-inline: -0.95rem;
+  scroll-snap-align: center;
+  opacity: 0.56;
+  transform-origin: center center;
+  transform: scale(0.74);
+  z-index: 1;
+  transition: transform 0.38s ease, opacity 0.38s ease, z-index 0.38s ease;
+}
+
+.sizzle-item.is-active {
+  opacity: 1;
+  transform: scale(1.24);
+  z-index: 4;
+}
+
+.sizzle-item-media {
+  border: 1px solid rgba(126, 201, 143, 0.35);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.sizzle-item-media video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  background: #000;
+  border-radius: inherit;
+}
+
+.sizzle-item-title {
+  margin: 1.15rem 0 0;
+  font-size: 0.92rem;
+  color: #dcdcdc;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
 }
 
 .sizzle-watch-btn {
@@ -302,6 +399,39 @@
 @media (min-width: 768px) {
   .sizzle-video iframe {
     min-height: 620px;
+  }
+}
+
+@media (max-width: 900px) {
+  .sizzle-carousel {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sizzle-nav {
+    justify-self: center;
+  }
+
+  .sizzle-nav-prev {
+    order: 2;
+  }
+
+  .sizzle-viewport {
+    order: 1;
+  }
+
+  .sizzle-nav-next {
+    order: 3;
+  }
+
+  .sizzle-item {
+    flex-basis: clamp(280px, 78vw, 430px);
+    margin-inline: -0.4rem;
+    transform: scale(0.84);
+  }
+
+  .sizzle-item.is-active {
+    transform: scale(1.1);
   }
 }
 
