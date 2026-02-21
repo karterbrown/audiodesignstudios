@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771642407" />
-  <link rel="stylesheet" href="editorial.css?v=1771642407" />
+  <link rel="stylesheet" href="index.css?v=1771687704" />
+  <link rel="stylesheet" href="editorial.css?v=1771687704" />
 </head>
 
 <body>
@@ -387,7 +387,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771642407"></script>
+  <script src="content.js?v=1771687704"></script>
 
   <!-- Year display script -->
   <script>
@@ -404,7 +404,54 @@
       });
     };
 
-    // Click-to-play/pause for card videos (non-reel)
+    // ── Tap-overlay helper ──────────────────────────────────────────────────
+    // On iOS, native <video controls> intercepts touches before JS listeners
+    // on the video element itself can fire. We instead place a transparent
+    // <div> overlay OVER the video. When the video is paused, the overlay is
+    // interactive and a tap on it calls video.play(). When playing, the
+    // overlay gets pointer-events:none so native controls are accessible.
+    const addTapOverlay = (video, container, onTap) => {
+      if (!container) return;
+      container.style.position = 'relative'; // ensure overlay can anchor
+      const overlay = document.createElement('div');
+      overlay.style.cssText = [
+        'position:absolute',
+        'inset:0',
+        'z-index:10',
+        'cursor:pointer',
+        '-webkit-tap-highlight-color:transparent',
+        'touch-action:manipulation',
+        'background:transparent',
+      ].join(';');
+      container.appendChild(overlay);
+
+      let tapX = 0, tapY = 0, lastTouch = 0;
+      overlay.addEventListener('touchstart', (e) => {
+        tapX = e.touches[0].clientX;
+        tapY = e.touches[0].clientY;
+      }, { passive: true });
+      overlay.addEventListener('touchend', (e) => {
+        const t = e.changedTouches[0];
+        if (Math.abs(t.clientX - tapX) > 12 || Math.abs(t.clientY - tapY) > 12) return;
+        lastTouch = Date.now();
+        onTap();
+      }, { passive: true });
+      overlay.addEventListener('click', () => {
+        if (Date.now() - lastTouch < 600) return; // already handled by touchend
+        onTap();
+      });
+
+      // Show overlay (interactive) when paused; hide it when playing
+      const sync = () => {
+        overlay.style.pointerEvents = video.paused ? 'auto' : 'none';
+      };
+      video.addEventListener('play',  sync);
+      video.addEventListener('pause', sync);
+      video.addEventListener('ended', sync);
+      sync();
+    };
+
+    // ── Click-to-play/pause for card videos (non-reel) ─────────────────────
     document.querySelectorAll('.card-video video').forEach((video) => {
       video.addEventListener('contextmenu', (e) => e.preventDefault());
       video.addEventListener('play', () => {
@@ -413,21 +460,7 @@
           ambientAudio.pause();
         }
       });
-      let tapX = 0, tapY = 0, lastTouch = 0;
-      video.addEventListener('touchstart', (e) => {
-        tapX = e.touches[0].clientX; tapY = e.touches[0].clientY;
-      }, { passive: true });
-      video.addEventListener('touchend', (e) => {
-        const t = e.changedTouches[0];
-        if (Math.abs(t.clientX - tapX) > 12 || Math.abs(t.clientY - tapY) > 12) return;
-        video.paused ? video.play().catch(() => {}) : video.pause();
-        lastTouch = Date.now();
-      }, { passive: true });
-      video.addEventListener('click', (e) => {
-        e.preventDefault(); // stop browser's own click-to-toggle so we don't double-fire
-        const rect = video.getBoundingClientRect();
-        if (e.clientY > rect.bottom - 44) return; // let native controls bar work
-        if (Date.now() - lastTouch < 450) return;
+      addTapOverlay(video, video.closest('.card-video'), () => {
         video.paused ? video.play().catch(() => {}) : video.pause();
       });
     });
@@ -515,22 +548,8 @@
       items.forEach((item) => {
         const video = item.querySelector('video');
         if (!video) return;
-        let tapX = 0, tapY = 0, lastTouch = 0;
-        video.addEventListener('touchstart', (e) => {
-          tapX = e.touches[0].clientX; tapY = e.touches[0].clientY;
-        }, { passive: true });
-        video.addEventListener('touchend', (e) => {
-          const t = e.changedTouches[0];
-          if (Math.abs(t.clientX - tapX) > 12 || Math.abs(t.clientY - tapY) > 12) return;
-          if (!item.classList.contains('is-active')) return;
-          if (video.paused) { video.play().catch(() => {}); } else { playGen++; video.pause(); }
-          lastTouch = Date.now();
-        }, { passive: true });
-        video.addEventListener('click', (e) => {
-          e.preventDefault(); // stop browser's own click-to-toggle
-          const rect = video.getBoundingClientRect();
-          if (e.clientY > rect.bottom - 44) return; // let native controls work
-          if (Date.now() - lastTouch < 450) return;
+        const media = item.querySelector('.sizzle-item-media') || item;
+        addTapOverlay(video, media, () => {
           if (!item.classList.contains('is-active')) return;
           if (video.paused) { video.play().catch(() => {}); } else { playGen++; video.pause(); }
         });
