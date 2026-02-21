@@ -419,6 +419,9 @@
   .sizzle-viewport {
     order: 1;
     padding: 2.2rem 0 2.2rem;
+    overflow-x: hidden;
+    scroll-snap-type: none;
+    touch-action: pan-y;
   }
 
   .sizzle-track {

@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771632801" />
-  <link rel="stylesheet" href="editorial.css?v=1771632801" />
+  <link rel="stylesheet" href="index.css?v=1771632981" />
+  <link rel="stylesheet" href="editorial.css?v=1771632981" />
 </head>
 
 <body>
@@ -381,7 +381,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771632801"></script>
+  <script src="content.js?v=1771632981"></script>
 
   <!-- Year display script -->
   <script>
@@ -496,6 +496,7 @@
     let sizzleTouchActive = false;
     let sizzleSnapTimer = null;
     let sizzleTouchStartX = 0;
+    let sizzleTouchStartY = 0;
     let sizzleTouchStartIndex = 0;
     let sizzleSwipeStepLock = false;
     const sizzleRealItemCount = loopingEnabled ? sizzleItems.length - 2 : sizzleItems.length;
@@ -727,20 +728,7 @@
       });
 
       sizzleViewport.addEventListener('scroll', () => {
-        if (sizzleTouchActive && isMobileSizzle()) {
-          return;
-        }
-
         if (isMobileSizzle()) {
-          if (sizzleSwipeStepLock) {
-            return;
-          }
-
-          if (sizzleSnapTimer) {
-            window.clearTimeout(sizzleSnapTimer);
-          }
-
-          sizzleSnapTimer = window.setTimeout(finalizeMobileSizzleSnap, 170);
           return;
         }
 
@@ -755,18 +743,30 @@
         }, 120);
       }, { passive: true });
 
-      sizzleViewport.addEventListener('touchstart', () => {
+      sizzleViewport.addEventListener('touchstart', (event) => {
         sizzleTouchActive = true;
         sizzleTouchStartIndex = currentSizzleIndex;
-      }, { passive: true });
 
-      sizzleViewport.addEventListener('touchstart', (event) => {
         if (!event.touches || !event.touches.length) {
           return;
         }
 
         sizzleTouchStartX = event.touches[0].clientX;
+        sizzleTouchStartY = event.touches[0].clientY;
       }, { passive: true });
+
+      sizzleViewport.addEventListener('touchmove', (event) => {
+        if (!isMobileSizzle() || !event.touches || !event.touches.length) {
+          return;
+        }
+
+        const deltaX = Math.abs(event.touches[0].clientX - sizzleTouchStartX);
+        const deltaY = Math.abs(event.touches[0].clientY - sizzleTouchStartY);
+
+        if (deltaX > deltaY) {
+          event.preventDefault();
+        }
+      }, { passive: false });
 
       sizzleViewport.addEventListener('touchend', (event) => {
         sizzleTouchActive = false;
@@ -778,10 +778,13 @@
 
         const touch = event.changedTouches && event.changedTouches[0];
         const endX = touch ? touch.clientX : sizzleTouchStartX;
+        const endY = touch ? touch.clientY : sizzleTouchStartY;
         const deltaX = endX - sizzleTouchStartX;
+        const deltaY = endY - sizzleTouchStartY;
         const swipeThreshold = 32;
+        const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
 
-        if (Math.abs(deltaX) >= swipeThreshold) {
+        if (isHorizontalSwipe && Math.abs(deltaX) >= swipeThreshold) {
           const directionStep = deltaX < 0 ? 1 : -1;
 
           sizzleSwipeStepLock = true;
@@ -793,12 +796,12 @@
           return;
         }
 
-        window.setTimeout(finalizeMobileSizzleSnap, 50);
+        centerSizzleItem(sizzleTouchStartIndex, 'smooth');
       }, { passive: true });
 
       sizzleViewport.addEventListener('touchcancel', () => {
         sizzleTouchActive = false;
-        window.setTimeout(finalizeMobileSizzleSnap, 50);
+        centerSizzleItem(sizzleTouchStartIndex, 'smooth');
       }, { passive: true });
     }
 
