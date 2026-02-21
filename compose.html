@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771689732" />
-  <link rel="stylesheet" href="matrix.css?v=1771689732" />
+  <link rel="stylesheet" href="compose.css?v=1771690251" />
+  <link rel="stylesheet" href="matrix.css?v=1771690251" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1319,6 +1319,308 @@
        LIGHT MODE STYLES - Hidden Tracks Page
        ========================================================================== */
 
+    /* ==========================================================================
+       AMBIENT MUSIC PLAYER
+       ========================================================================== */
+    .ambient-player-section {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+      padding: 3rem 4rem;
+      border-top: 1px solid rgba(126, 201, 143, 0.2);
+      border-bottom: 1px solid rgba(126, 201, 143, 0.2);
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .ambient-player-container {
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    .ambient-player-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .ambient-player-header h3 {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #7ec98f;
+      letter-spacing: 0.1em;
+      margin: 0 0 0.5rem 0;
+      text-transform: uppercase;
+    }
+
+    .ambient-player-subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.95rem;
+      margin: 0;
+      font-style: italic;
+    }
+
+    .ambient-player-controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      border: 1px solid rgba(126, 201, 143, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .ambient-player-controls:hover {
+      border-color: rgba(126, 201, 143, 0.3);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .ambient-play-btn {
+      background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f0f0f;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(126, 201, 143, 0.3);
+      position: relative;
+    }
+
+    .ambient-play-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(126, 201, 143, 0.5);
+      background: linear-gradient(135deg, #8ed99f 0%, #7ac68c 100%);
+    }
+
+    .ambient-play-btn:active {
+      transform: scale(0.98);
+    }
+
+    .ambient-play-btn::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 12px solid currentColor;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      margin-left: 3px;
+    }
+
+    .ambient-play-btn.playing::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-5px);
+      width: 4px;
+      height: 16px;
+      background: currentColor;
+      box-shadow: 8px 0 0 currentColor;
+      border: none;
+      margin-left: 0;
+    }
+
+    .ambient-skip-btn {
+      background: rgba(126, 201, 143, 0.15);
+      border: 1px solid rgba(126, 201, 143, 0.3);
+      color: #7ec98f;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .ambient-skip-btn:hover {
+      background: rgba(126, 201, 143, 0.25);
+      border-color: rgba(126, 201, 143, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(126, 201, 143, 0.3);
+    }
+
+    .ambient-skip-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .ambient-track-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ambient-track-title {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ambient-progress-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .ambient-progress-bar {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: height 0.2s ease;
+    }
+
+    .ambient-progress-bar:hover {
+      height: 8px;
+    }
+
+    .ambient-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7ec98f 0%, #6ab67c 100%);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px rgba(126, 201, 143, 0.4);
+    }
+
+    .ambient-time-display {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      min-width: 90px;
+      justify-content: flex-end;
+    }
+
+    .ambient-volume-control {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+      margin-left: 1rem;
+    }
+
+    .ambient-volume-slider {
+      width: 80px;
+      height: 5px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .ambient-volume-slider:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .ambient-volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(126, 201, 143, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .ambient-volume-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 4px 10px rgba(126, 201, 143, 0.6);
+    }
+
+    .ambient-volume-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 6px rgba(126, 201, 143, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .ambient-volume-slider::-moz-range-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 4px 10px rgba(126, 201, 143, 0.6);
+    }
+
+    .ambient-volume-slider::-moz-range-track {
+      background: transparent;
+      border: none;
+    }
+
+    .ambient-volume-slider::-moz-range-progress {
+      background: linear-gradient(90deg, #7ec98f 0%, #6ab67c 100%);
+      border-radius: 5px;
+      box-shadow: 0 0 6px rgba(126, 201, 143, 0.3);
+    }
+
+    @media (max-width: 800px) {
+      .ambient-player-section {
+        padding: 2rem 2vw;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .ambient-player-section {
+        padding: 2rem 4vw;
+      }
+
+      .ambient-player-header h3 {
+        font-size: 1.4rem;
+      }
+
+      .ambient-player-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .ambient-play-btn,
+      .ambient-skip-btn {
+        align-self: center;
+      }
+
+      .ambient-track-title {
+        text-align: center;
+        font-size: 1rem;
+      }
+
+      .ambient-volume-control {
+        display: none;
+      }
+
+      .ambient-progress-container {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .ambient-time-display {
+        justify-content: center;
+      }
+    }
+
   </style>
 </head>
 
@@ -1362,7 +1664,38 @@
        DESIGN - Sound Design & FX
        ======================================================================== -->
   <section id="design" class="env-image env-design">
-    <h1 class="banner-title">DESIGN</h1>
+    <h1 class="banner-title">Listen to Karter's Music</h1>
+  </section>
+
+  <!-- ========================================================================
+       RELAX & LISTEN - Ambient Music Player
+       ======================================================================== -->
+  <section id="relax-listen" class="ambient-player-section">
+    <div class="ambient-player-container">
+      <div class="ambient-player-header">
+        <h3>Relax &amp; Listen</h3>
+        <p class="ambient-player-subtitle">Classical performances to accompany your visit</p>
+      </div>
+      <div class="ambient-player-controls">
+        <button id="ambientPlayPause" class="ambient-play-btn" aria-label="Play/Pause"></button>
+        <button id="ambientSkip" class="ambient-skip-btn" aria-label="Skip to random track">Skip</button>
+        <div class="ambient-track-info">
+          <div id="ambientTrackTitle" class="ambient-track-title">Loading...</div>
+          <div class="ambient-progress-container">
+            <div class="ambient-progress-bar">
+              <div id="ambientProgressFill" class="ambient-progress-fill"></div>
+            </div>
+            <div class="ambient-time-display">
+              <span id="ambientCurrentTime">0:00</span>
+              <span id="ambientDuration">0:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="ambient-volume-control">
+          <input type="range" id="ambientVolume" class="ambient-volume-slider" min="0" max="100" value="70" aria-label="Volume control" />
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Audio Players: Design + Analog Processing -->
@@ -1691,7 +2024,7 @@
        COMPOSE - Original Compositions
        ======================================================================== -->
   <section id="compose" class="env-image env-portfolio">
-    <h1 class="banner-title">COMPOSE</h1>
+    <h1 class="banner-title">Original Score</h1>
   </section>
 
   <!-- ======================================================================
@@ -1965,7 +2298,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771689732"></script>
+  <script src="content.js?v=1771690251"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -4787,6 +5120,264 @@
       // Register AI Player for mobile audio handling
       trackAudioState('ai', beforeAudio, ctx, afterAudio);
     });
+  </script>
+
+  <!-- ========================================================================
+       AMBIENT MUSIC PLAYER
+       ======================================================================== -->
+  <script>
+    // Classical tracks playlist
+    const ambientPlaylist = [
+      {
+        title: "Chopin - Étude Op. 25, No. 12",
+        src: "allworks/Chopin_Etude_Opus_25_No. 12_C Minor_FullMix.mp3"
+      },
+      {
+        title: "Chime and Glimmer",
+        src: "allworks/chimeandglimmer.mp3"
+      },
+      {
+        title: "Hopeful",
+        src: "allworks/hopeful.mp3"
+      },
+      {
+        title: "Cavalry March",
+        src: "allworks/cavalrymarch.mp3"
+      },
+      {
+        title: "One Step Closer",
+        src: "allworks/onestepcloser.mp3"
+      },
+      {
+        title: "Baby Blue",
+        src: "ambientplayer/Baby Blue.mp3"
+      },
+      {
+        title: "Bagatelle (Beethoven)",
+        src: "ambientplayer/Bagatelle( Beethoven).mp3"
+      },
+      {
+        title: "Breaching Life Forms",
+        src: "ambientplayer/Breaching Life Forms.mp3"
+      },
+      {
+        title: "Calling",
+        src: "ambientplayer/Calling.mp3"
+      },
+      {
+        title: "Deep Down",
+        src: "ambientplayer/Deep Down.mp3"
+      },
+      {
+        title: "Dreaming Pods",
+        src: "ambientplayer/Dreaming Pods.mp3"
+      },
+      {
+        title: "Du bist wie eine Blume (Schumann)",
+        src: "ambientplayer/Du bist wie eine Blume (Schumann).mp3"
+      },
+      {
+        title: "Foraging Below",
+        src: "ambientplayer/Foraging Below.mp3"
+      },
+      {
+        title: "Further From Home",
+        src: "ambientplayer/Further From Home.mp3"
+      },
+      {
+        title: "Gnossienne no. 1 (Erik Satie)",
+        src: "ambientplayer/Gnossienne no. 1 (Erik Satie).mp3"
+      },
+      {
+        title: "In The Deep",
+        src: "ambientplayer/In The Deep.mp3"
+      },
+      {
+        title: "Meerfahrt (Brahms)",
+        src: "ambientplayer/Meerfahrt (Brahms).mp3"
+      },
+      {
+        title: "NearlyEver",
+        src: "ambientplayer/NearlyEver.mp3"
+      },
+      {
+        title: "No Sleep",
+        src: "ambientplayer/No Sleep.mp3"
+      },
+      {
+        title: "One Eye Open",
+        src: "ambientplayer/One Eye Open.mp3"
+      },
+      {
+        title: "Prelude In E Minor (Chopin)",
+        src: "ambientplayer/Prelude In E Minor (Chopin).mp3"
+      },
+      {
+        title: "Prelude in C-sharp Minor Op. 3, No. 2 (Sergei Rachmaninov)",
+        src: "ambientplayer/Prelude in C-sharp Minor Op. 3, No. 2 (Sergei Rachmaninov).mp3"
+      },
+      {
+        title: "Sea Voyager",
+        src: "ambientplayer/Sea Voyager.mp3"
+      },
+      {
+        title: "Social Games",
+        src: "ambientplayer/Social Games.mp3"
+      },
+      {
+        title: "Symbiotic Travelers",
+        src: "ambientplayer/Symbiotic Travelers.mp3"
+      },
+      {
+        title: "The Explorer",
+        src: "ambientplayer/The Explorer.mp3"
+      },
+      {
+        title: "Troubled Waters",
+        src: "ambientplayer/Troubled Waters.mp3"
+      },
+      {
+        title: "Twilight Hours",
+        src: "ambientplayer/Twilight Hours.mp3"
+      }
+    ];
+
+    let ambientCurrentTrack = Math.floor(Math.random() * ambientPlaylist.length);
+    let ambientAudio = null;
+    let ambientIsPlaying = false;
+    let playedTracks = [];
+    let shuffledPlaylist = [];
+
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function initShuffledPlaylist() {
+      const indices = Array.from({ length: ambientPlaylist.length }, (_, i) => i);
+      shuffledPlaylist = shuffleArray(indices);
+      const currentIndex = shuffledPlaylist.indexOf(ambientCurrentTrack);
+      if (currentIndex !== 0) {
+        [shuffledPlaylist[0], shuffledPlaylist[currentIndex]] =
+        [shuffledPlaylist[currentIndex], shuffledPlaylist[0]];
+      }
+      playedTracks = [ambientCurrentTrack];
+    }
+
+    initShuffledPlaylist();
+
+    function getRandomTrack() {
+      if (playedTracks.length >= ambientPlaylist.length) {
+        const indices = Array.from({ length: ambientPlaylist.length }, (_, i) => i);
+        shuffledPlaylist = shuffleArray(indices);
+        if (shuffledPlaylist[0] === ambientCurrentTrack && ambientPlaylist.length > 1) {
+          const swapIndex = Math.floor(ambientPlaylist.length / 2);
+          [shuffledPlaylist[0], shuffledPlaylist[swapIndex]] =
+          [shuffledPlaylist[swapIndex], shuffledPlaylist[0]];
+        }
+        playedTracks = [];
+      }
+      for (let i = 0; i < shuffledPlaylist.length; i++) {
+        const trackIndex = shuffledPlaylist[i];
+        if (!playedTracks.includes(trackIndex)) {
+          playedTracks.push(trackIndex);
+          return trackIndex;
+        }
+      }
+      return 0;
+    }
+
+    function initAmbientPlayer() {
+      ambientAudio = new Audio(ambientPlaylist[ambientCurrentTrack].src);
+      ambientAudio.addEventListener('loadedmetadata', () => { updateDuration(); });
+      ambientAudio.addEventListener('timeupdate', () => { updateProgress(); });
+      ambientAudio.addEventListener('ended', () => { nextTrack(); });
+      ambientAudio.volume = 0.7;
+    }
+
+    document.getElementById('ambientPlayPause').addEventListener('click', () => {
+      if (!ambientAudio) { initAmbientPlayer(); }
+      if (ambientIsPlaying) {
+        ambientAudio.pause();
+        ambientIsPlaying = false;
+        document.getElementById('ambientPlayPause').classList.remove('playing');
+      } else {
+        ambientAudio.play();
+        ambientIsPlaying = true;
+        document.getElementById('ambientPlayPause').classList.add('playing');
+      }
+    });
+
+    function nextTrack() {
+      ambientCurrentTrack = getRandomTrack();
+      loadTrack();
+      if (ambientIsPlaying) { ambientAudio.play(); }
+    }
+
+    document.getElementById('ambientSkip').addEventListener('click', () => {
+      if (!ambientAudio) { initAmbientPlayer(); }
+      nextTrack();
+    });
+
+    function loadTrack() {
+      if (!ambientAudio) { initAmbientPlayer(); return; }
+      const track = ambientPlaylist[ambientCurrentTrack];
+      ambientAudio.src = track.src;
+      document.getElementById('ambientTrackTitle').textContent = track.title;
+      updateProgress();
+    }
+
+    function updateProgress() {
+      if (!ambientAudio) return;
+      const progress = (ambientAudio.currentTime / ambientAudio.duration) * 100 || 0;
+      document.getElementById('ambientProgressFill').style.width = progress + '%';
+      const currentMinutes = Math.floor(ambientAudio.currentTime / 60);
+      const currentSeconds = Math.floor(ambientAudio.currentTime % 60);
+      document.getElementById('ambientCurrentTime').textContent =
+        `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function updateDuration() {
+      if (!ambientAudio) return;
+      const durationMinutes = Math.floor(ambientAudio.duration / 60);
+      const durationSeconds = Math.floor(ambientAudio.duration % 60);
+      document.getElementById('ambientDuration').textContent =
+        `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`;
+    }
+
+    document.querySelector('.ambient-progress-bar').addEventListener('click', (e) => {
+      if (!ambientAudio) return;
+      const bar = e.currentTarget;
+      const clickX = e.clientX - bar.getBoundingClientRect().left;
+      const width = bar.offsetWidth;
+      const seekTime = (clickX / width) * ambientAudio.duration;
+      ambientAudio.currentTime = seekTime;
+    });
+
+    const initialVolume = 70;
+
+    document.getElementById('ambientVolume').addEventListener('input', (e) => {
+      const volumeValue = e.target.value / 100;
+      if (ambientAudio) { ambientAudio.volume = volumeValue; }
+    });
+
+    document.getElementById('ambientVolume').addEventListener('mousedown', (e) => {
+      e.currentTarget.value = initialVolume;
+      if (ambientAudio) { ambientAudio.volume = initialVolume / 100; }
+      e.currentTarget.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    document.getElementById('ambientVolume').addEventListener('touchstart', (e) => {
+      e.currentTarget.value = initialVolume;
+      if (ambientAudio) { ambientAudio.volume = initialVolume / 100; }
+      e.currentTarget.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    document.getElementById('ambientTrackTitle').textContent = ambientPlaylist[ambientCurrentTrack].title;
   </script>
 
   <!-- ========================================================================
