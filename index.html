@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771687704" />
-  <link rel="stylesheet" href="editorial.css?v=1771687704" />
+  <link rel="stylesheet" href="index.css?v=1771688490" />
+  <link rel="stylesheet" href="editorial.css?v=1771688490" />
 </head>
 
 <body>
@@ -33,6 +33,7 @@
     <nav class="nav">
       <a href="#highlights">Contact</a>
       <a href="index.html">Design</a>
+      <a href="#more-work">More Work</a>
       <a href="compose.html" class="special-link">Compose</a>
     </nav>
   </header>
@@ -51,13 +52,15 @@
          
          1. [#highlights]           Highlights - 3-Column Layout (with contact form)
          2. [#hero-banner]          Hero Image Banner
-         3. [#relax-listen]         Relax & Listen - Ambient Music Player
-         4. [#services]             What I Handle - Services Detail
-         5. [#editorial-values]     What You Get - 5 Value Props with Videos
-         6. [#sizzle-reel]          Featured Sizzle Reel
-         7. [#who-its-for]          Who This Is For - Target Audience
-         8. [#about-testimonial]    About Banner and Testimonial
-         9. [#footer]               Site Footer with Contact Info
+         3. [#sizzle-reel]          Featured Reel - Single Hero Video
+         4. [#editorial-values]     What You Get - 3 Value Props with Videos
+         5. [#highlights]           Contact - 3-Column Layout
+         6. [#services]             What I Handle - Services Detail
+         7. [#more-work]            More Work - Full 9-Video Carousel + 2 Additional Cards
+         8. [#relax-listen]         Relax & Listen - Ambient Music Player
+         9. [#who-its-for]          Who This Is For - Target Audience
+         10. [#about-testimonial]   About Banner and Testimonial
+         11. [#footer]              Site Footer with Contact Info
          
          TIP: Each section starts with a comment matching the name above.
               Use your editor's search (Cmd/Ctrl+F) to jump to any section.
@@ -72,111 +75,23 @@
     </section>
 
     <!-- ======================================================================
-         SIZZLE REEL - Featured Work
+         FEATURED REEL - Single Hero Video
          ====================================================================== -->
     <section id="sizzle-reel" class="editorial-sizzle section section-alt">
       <div class="content-wrapper">
         <div class="sizzle-feature">
-          <div class="sizzle-carousel-shell">
-            <span class="sizzle-badge">Film Reels</span>
-            <h2>Check out Karter's work. Get in touch.</h2>
-
-            <div class="sizzle-carousel" id="sizzleCarousel" aria-label="Feature film highlight reel selector">
-              <button class="sizzle-nav sizzle-nav-prev" id="sizzlePrev" type="button" aria-label="Previous highlight reel">&#10094;</button>
-
-              <div class="sizzle-viewport" id="sizzleViewport" tabindex="0">
-                <div class="sizzle-track" id="sizzleTrack">
-                  <article class="sizzle-item is-active" data-index="0" data-filename="01_EnvironmentAmbience.mp4" data-title="Environment | Ambience">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/01_EnvironmentAmbience.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/01_EnvironmentAmbience720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="1" data-filename="02_DialogBackground.mp4" data-title="Dialog | Background">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/02_DialogBackground.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/02_DialogBackground720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="2" data-filename="03_MotionPacing.mp4" data-title="Motion | Pacing">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/03_MotionPacing.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/03_MotionPacing720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="3" data-filename="04_BuildImpact.mp4" data-title="Build | Impact">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/04_BuildImpact.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/04_BuildImpact720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="4" data-filename="05_SFXMusic.mp4" data-title="SFX | Music">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/05_SFXMusic.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/05_SFXMusic720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="5" data-filename="06_ImmersionStory.mp4" data-title="Immersion | Story">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/06_ImmersionStory.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/06_ImmersionStory720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="6" data-filename="07_SuspenseFoley.mp4" data-title="Suspense | Foley">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/07_SuspenseFoley.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/07_SuspenseFoley720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="7" data-filename="08_TransitionSoundDesign.mp4" data-title="Transition | Sound Design">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/08_TransitionSoundDesign.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/08_TransitionSoundDesign720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                  <article class="sizzle-item" data-index="8" data-filename="09_MixMaster.mp4" data-title="Mix | Master">
-                    <div class="sizzle-item-media">
-                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/09_MixMaster.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                        <source src="Video/09_MixMaster720.mp4" type="video/mp4">
-                        Your browser does not support the video element.
-                      </video>
-                    </div>
-                    <h4 class="sizzle-item-title"></h4>
-                  </article>
-                </div>
+          <div class="sizzle-carousel-shell sizzle-single">
+            <span class="sizzle-badge">Featured Work</span>
+            <h2>Narrative Atmosphere &amp; Sonic World-Building</h2>
+            <p class="sizzle-subtitle">Sound design and mixing for narrative, brand, and cinematic content — atmosphere, pacing, clarity, and dynamic impact.</p>
+            <div class="sizzle-single-media">
+              <div class="sizzle-item-media">
+                <video class="sizzle-reel-video featured-solo-video" controls preload="metadata" poster="Video/01_EnvironmentAmbience.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                  <source src="Video/01_EnvironmentAmbience720.mp4" type="video/mp4">
+                  Your browser does not support the video element.
+                </video>
               </div>
-
-              <div class="sizzle-mobile-controls">
-                <button class="sizzle-mobile-nav" id="sizzlePrevMobile" type="button" aria-label="Previous highlight reel">&#10094;</button>
-                <div class="sizzle-mobile-title" id="sizzleMobileTitle"></div>
-                <button class="sizzle-mobile-nav" id="sizzleNextMobile" type="button" aria-label="Next highlight reel">&#10095;</button>
-              </div>
-
-              <button class="sizzle-nav sizzle-nav-next" id="sizzleNext" type="button" aria-label="Next highlight reel">&#10095;</button>
+              <p class="sizzle-item-title">Atmospheric Tension &amp; Spatial Design</p>
             </div>
           </div>
         </div>
@@ -199,16 +114,7 @@
               </video>
             </div>
           </div>
-          <div class="card">
-            <h3>Fast Turnaround, Flexible Revisions</h3>
-            <p>Built for fast turnarounds without compromising clarity. Quick revisions, responsive communication, adaptable to evolving creative direction.</p>
-            <div class="card-video">
-              <video controls preload="metadata" poster="Video/lucid-ad-2-poster.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
-                <source src="Video/Lucid Ad 2 0 Preview MSTR V004.mp4" type="video/mp4">
-                Your browser does not support the video element.
-              </video>
-            </div>
-          </div>
+
           <div class="card">
             <h3>Clean Dialogue, Strong Impact</h3>
             <p>Clean dialogue editing, seamless transitions, impact moments that land. Audio pacing that matches editorial rhythm and enhances emotional beats.</p>
@@ -226,13 +132,7 @@
               <iframe src="https://www.youtube.com/embed/_mK2sGMgdHc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
           </div>
-          <div class="card">
-            <h3>Interview & Documentary Dialog</h3>
-            <p>Professional documentary production with clean dialog editing and fitting musical scoring. Simple interview formats with production polish that keeps viewers engaged.</p>
-            <div class="card-video">
-              <iframe src="https://www.youtube.com/embed/x4aMF8nVuao" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-          </div>
+
         </div>
       </div>
     </section>
@@ -312,6 +212,144 @@
     </section>
     
 <!-- ======================================================================
+         MORE WORK - Full Reel Carousel + Additional Cards
+         ====================================================================== -->
+    <section id="more-work" class="editorial-sizzle section section-alt">
+      <div class="content-wrapper">
+        <div class="sizzle-feature">
+          <div class="sizzle-carousel-shell">
+            <span class="sizzle-badge">More Work</span>
+            <h2>Explore the Full Range</h2>
+            <p class="sizzle-subtitle">Browse selected reels across categories — from cinematic atmospheres and brand energy to dialogue, SFX, and full mix.</p>
+
+            <div class="sizzle-carousel" id="moreWorkCarousel" aria-label="More work reel selector">
+              <button class="sizzle-nav sizzle-nav-prev" id="moreWorkPrev" type="button" aria-label="Previous reel">&#10094;</button>
+
+              <div class="sizzle-viewport" id="moreWorkViewport" tabindex="0">
+                <div class="sizzle-track" id="moreWorkTrack">
+                  <article class="sizzle-item is-active" data-index="0" data-filename="01_EnvironmentAmbience.mp4" data-title="Atmospheric Tension &amp; Spatial Design">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/01_EnvironmentAmbience.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/01_EnvironmentAmbience720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="1" data-filename="02_DialogBackground.mp4" data-title="Dialogue Clarity &amp; Background Design">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/02_DialogBackground.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/02_DialogBackground720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="2" data-filename="03_MotionPacing.mp4" data-title="Motion &amp; Editorial Pacing">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/03_MotionPacing.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/03_MotionPacing720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="3" data-filename="04_BuildImpact.mp4" data-title="Build &amp; Cinematic Impact">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/04_BuildImpact.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/04_BuildImpact720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="4" data-filename="05_SFXMusic.mp4" data-title="SFX &amp; Music Integration">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/05_SFXMusic.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/05_SFXMusic720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="5" data-filename="06_ImmersionStory.mp4" data-title="Immersion &amp; Narrative Story">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/06_ImmersionStory.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/06_ImmersionStory720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="6" data-filename="07_SuspenseFoley.mp4" data-title="Suspense &amp; Foley Detail">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/07_SuspenseFoley.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/07_SuspenseFoley720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="7" data-filename="08_TransitionSoundDesign.mp4" data-title="Transition &amp; Sound Design">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/08_TransitionSoundDesign.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/08_TransitionSoundDesign720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                  <article class="sizzle-item" data-index="8" data-filename="09_MixMaster.mp4" data-title="Full Mix &amp; Master">
+                    <div class="sizzle-item-media">
+                      <video class="sizzle-reel-video" controls preload="metadata" poster="Video/09_MixMaster.mp4.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                        <source src="Video/09_MixMaster720.mp4" type="video/mp4">
+                        Your browser does not support the video element.
+                      </video>
+                    </div>
+                    <h4 class="sizzle-item-title"></h4>
+                  </article>
+                </div>
+              </div>
+
+              <div class="sizzle-mobile-controls">
+                <button class="sizzle-mobile-nav" id="moreWorkPrevMobile" type="button" aria-label="Previous reel">&#10094;</button>
+                <div class="sizzle-mobile-title" id="moreWorkMobileTitle"></div>
+                <button class="sizzle-mobile-nav" id="moreWorkNextMobile" type="button" aria-label="Next reel">&#10095;</button>
+              </div>
+
+              <button class="sizzle-nav sizzle-nav-next" id="moreWorkNext" type="button" aria-label="Next reel">&#10095;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- More Work - Additional Value Cards -->
+    <section class="editorial-values section section-alt">
+      <div class="content-wrapper">
+        <div class="grid">
+          <div class="card">
+            <h3>Fast Turnaround, Flexible Revisions</h3>
+            <p>Built for fast turnarounds without compromising clarity. Quick revisions, responsive communication, adaptable to evolving creative direction.</p>
+            <div class="card-video">
+              <video controls preload="metadata" poster="Video/lucid-ad-2-poster.png" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
+                <source src="Video/Lucid Ad 2 0 Preview MSTR V004.mp4" type="video/mp4">
+                Your browser does not support the video element.
+              </video>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Interview &amp; Documentary Dialog</h3>
+            <p>Professional documentary production with clean dialog editing and fitting musical scoring. Simple interview formats with production polish that keeps viewers engaged.</p>
+            <div class="card-video">
+              <iframe src="https://www.youtube.com/embed/x4aMF8nVuao" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
          RELAX & LISTEN - Ambient Music Player
          ====================================================================== -->
     <section id="relax-listen" class="ambient-player-section">
@@ -387,7 +425,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771687704"></script>
+  <script src="content.js?v=1771688490"></script>
 
   <!-- Year display script -->
   <script>
@@ -465,8 +503,22 @@
       });
     });
 
-    // Store source attrs on sizzle videos before preload=none strips them
-    document.querySelectorAll('.sizzle-reel-video').forEach((video) => {
+    // ── Tap overlay for the featured solo hero video ───────────────────────
+    document.querySelectorAll('.featured-solo-video').forEach((video) => {
+      video.addEventListener('contextmenu', (e) => e.preventDefault());
+      video.addEventListener('play', () => {
+        pauseAllVideos(video);
+        if (typeof ambientAudio !== 'undefined' && ambientAudio && !ambientAudio.paused) {
+          ambientAudio.pause();
+        }
+      });
+      addTapOverlay(video, video.closest('.sizzle-item-media'), () => {
+        video.paused ? video.play().catch(() => {}) : video.pause();
+      });
+    });
+
+    // Store source attrs on sizzle carousel videos (not the solo hero) before preload=none strips them
+    document.querySelectorAll('.sizzle-reel-video:not(.featured-solo-video)').forEach((video) => {
       video.addEventListener('contextmenu', (e) => e.preventDefault());
       const source = video.querySelector('source');
       if (source && source.getAttribute('src')) {
@@ -476,15 +528,15 @@
       video.preload = 'none';
     });
 
-    // ── Sizzle Reel Carousel ────────────────────────────────────────────────
+    // ── More Work Carousel ──────────────────────────────────────────────────
     (function () {
-      const viewport = document.getElementById('sizzleViewport');
-      const track = document.getElementById('sizzleTrack');
-      const prevBtn = document.getElementById('sizzlePrev');
-      const nextBtn = document.getElementById('sizzleNext');
-      const prevMobile = document.getElementById('sizzlePrevMobile');
-      const nextMobile = document.getElementById('sizzleNextMobile');
-      const mobileTitle = document.getElementById('sizzleMobileTitle');
+      const viewport = document.getElementById('moreWorkViewport');
+      const track = document.getElementById('moreWorkTrack');
+      const prevBtn = document.getElementById('moreWorkPrev');
+      const nextBtn = document.getElementById('moreWorkNext');
+      const prevMobile = document.getElementById('moreWorkPrevMobile');
+      const nextMobile = document.getElementById('moreWorkNextMobile');
+      const mobileTitle = document.getElementById('moreWorkMobileTitle');
 
       if (!track || !viewport) return;
 
