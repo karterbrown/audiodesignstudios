@@ -260,6 +260,10 @@
   cursor: default;
 }
 
+.sizzle-mobile-controls {
+  display: none;
+}
+
 .sizzle-viewport {
   overflow-x: auto;
   overflow-y: visible;
@@ -416,6 +420,37 @@
     display: none;
   }
 
+  .sizzle-mobile-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    margin-top: 0.7rem;
+    width: 100%;
+  }
+
+  .sizzle-mobile-nav {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(126, 201, 143, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    color: #7ec98f;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .sizzle-mobile-title {
+    min-width: min(68vw, 320px);
+    text-align: center;
+    color: #dcdcdc;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  }
+
   .sizzle-viewport {
     order: 1;
     padding: 2.2rem 0 2.2rem;
@@ -432,10 +467,20 @@
     flex-basis: min(86vw, 430px);
     margin-inline: 0;
     transform: scale(0.9);
+    transition: transform 0.22s ease, opacity 0.22s ease;
   }
 
   .sizzle-item.is-active {
     transform: scale(1.06);
+  }
+
+  .sizzle-item-title {
+    display: none;
+  }
+
+  .sizzle-item-media,
+  .sizzle-item-media video {
+    touch-action: pan-y;
   }
 }
 

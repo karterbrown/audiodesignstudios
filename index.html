@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771632981" />
-  <link rel="stylesheet" href="editorial.css?v=1771632981" />
+  <link rel="stylesheet" href="index.css?v=1771634233" />
+  <link rel="stylesheet" href="editorial.css?v=1771634233" />
 </head>
 
 <body>
@@ -168,6 +168,12 @@
                     <h4 class="sizzle-item-title"></h4>
                   </article>
                 </div>
+              </div>
+
+              <div class="sizzle-mobile-controls">
+                <button class="sizzle-mobile-nav" id="sizzlePrevMobile" type="button" aria-label="Previous highlight reel">&#10094;</button>
+                <div class="sizzle-mobile-title" id="sizzleMobileTitle"></div>
+                <button class="sizzle-mobile-nav" id="sizzleNextMobile" type="button" aria-label="Next highlight reel">&#10095;</button>
               </div>
 
               <button class="sizzle-nav sizzle-nav-next" id="sizzleNext" type="button" aria-label="Next highlight reel">&#10095;</button>
@@ -381,7 +387,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771632981"></script>
+  <script src="content.js?v=1771634233"></script>
 
   <!-- Year display script -->
   <script>
@@ -448,6 +454,9 @@
     const sizzleTrack = document.getElementById('sizzleTrack');
     const sizzlePrev = document.getElementById('sizzlePrev');
     const sizzleNext = document.getElementById('sizzleNext');
+    const sizzlePrevMobile = document.getElementById('sizzlePrevMobile');
+    const sizzleNextMobile = document.getElementById('sizzleNextMobile');
+    const sizzleMobileTitle = document.getElementById('sizzleMobileTitle');
     let sizzleItems = sizzleTrack ? Array.from(sizzleTrack.querySelectorAll('.sizzle-item')) : [];
 
     const filenameToTitle = (filename) => {
@@ -499,6 +508,8 @@
     let sizzleTouchStartY = 0;
     let sizzleTouchStartIndex = 0;
     let sizzleSwipeStepLock = false;
+    let sizzleGestureMoved = false;
+    let sizzleTouchStartedOnVideo = false;
     const sizzleRealItemCount = loopingEnabled ? sizzleItems.length - 2 : sizzleItems.length;
     const isMobileSizzle = () => window.matchMedia('(max-width: 900px)').matches;
 
@@ -580,6 +591,11 @@
         const mediaVideo = item.querySelector('video');
         ensureVideoSourceState(mediaVideo, shouldKeepLoaded(itemIndex));
       });
+
+      if (sizzleMobileTitle) {
+        const activeTitle = sizzleItems[currentSizzleIndex]?.querySelector('.sizzle-item-title')?.textContent || '';
+        sizzleMobileTitle.textContent = activeTitle;
+      }
 
       if (!skipScroll) {
         scrollSizzleToIndex(currentSizzleIndex, behavior);
@@ -701,6 +717,34 @@
       centerSizzleItem(currentSizzleIndex + step);
     };
 
+    const getMobileStepTargetIndex = (startIndex, directionStep) => {
+      if (!loopingEnabled) {
+        return Math.max(0, Math.min(startIndex + directionStep, sizzleItems.length - 1));
+      }
+
+      const firstRealIndex = 1;
+      const lastRealIndex = sizzleRealItemCount;
+      let normalizedStart = startIndex;
+
+      if (normalizedStart <= 0) {
+        normalizedStart = firstRealIndex;
+      }
+
+      if (normalizedStart >= sizzleItems.length - 1) {
+        normalizedStart = lastRealIndex;
+      }
+
+      if (normalizedStart === firstRealIndex && directionStep < 0) {
+        return lastRealIndex;
+      }
+
+      if (normalizedStart === lastRealIndex && directionStep > 0) {
+        return firstRealIndex;
+      }
+
+      return normalizedStart + directionStep;
+    };
+
     if (sizzleItems.length <= 1) {
       if (sizzlePrev) sizzlePrev.disabled = true;
       if (sizzleNext) sizzleNext.disabled = true;
@@ -712,6 +756,14 @@
 
     if (sizzleNext) {
       sizzleNext.addEventListener('click', () => stepSizzle(1));
+    }
+
+    if (sizzlePrevMobile) {
+      sizzlePrevMobile.addEventListener('click', () => stepSizzle(-1));
+    }
+
+    if (sizzleNextMobile) {
+      sizzleNextMobile.addEventListener('click', () => stepSizzle(1));
     }
 
     if (sizzleViewport) {
@@ -745,7 +797,9 @@
 
       sizzleViewport.addEventListener('touchstart', (event) => {
         sizzleTouchActive = true;
-        sizzleTouchStartIndex = currentSizzleIndex;
+        sizzleTouchStartIndex = getMobileStepTargetIndex(currentSizzleIndex, 0);
+        sizzleGestureMoved = false;
+        sizzleTouchStartedOnVideo = !!(event.target && event.target.closest && event.target.closest('.sizzle-item-media video'));
 
         if (!event.touches || !event.touches.length) {
           return;
@@ -762,8 +816,13 @@
 
         const deltaX = Math.abs(event.touches[0].clientX - sizzleTouchStartX);
         const deltaY = Math.abs(event.touches[0].clientY - sizzleTouchStartY);
+        const horizontalLead = deltaX - deltaY;
 
-        if (deltaX > deltaY) {
+        if (deltaX > 8 || deltaY > 8) {
+          sizzleGestureMoved = true;
+        }
+
+        if (deltaX > 18 && horizontalLead > 10) {
           event.preventDefault();
         }
       }, { passive: false });
@@ -782,26 +841,28 @@
         const deltaX = endX - sizzleTouchStartX;
         const deltaY = endY - sizzleTouchStartY;
         const swipeThreshold = 32;
-        const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
+        const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY) + 10;
+
+        if (sizzleTouchStartedOnVideo && !sizzleGestureMoved) {
+          return;
+        }
 
         if (isHorizontalSwipe && Math.abs(deltaX) >= swipeThreshold) {
           const directionStep = deltaX < 0 ? 1 : -1;
+          const targetIndex = getMobileStepTargetIndex(sizzleTouchStartIndex, directionStep);
 
           sizzleSwipeStepLock = true;
-          centerSizzleItem(sizzleTouchStartIndex + directionStep, 'smooth');
+          centerSizzleItem(targetIndex, 'smooth');
 
           window.setTimeout(() => {
             sizzleSwipeStepLock = false;
           }, 460);
           return;
         }
-
-        centerSizzleItem(sizzleTouchStartIndex, 'smooth');
       }, { passive: true });
 
       sizzleViewport.addEventListener('touchcancel', () => {
         sizzleTouchActive = false;
-        centerSizzleItem(sizzleTouchStartIndex, 'smooth');
       }, { passive: true });
     }
 
