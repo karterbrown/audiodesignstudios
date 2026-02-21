@@ -1,5 +1,5 @@
 
-# Large video files
-*.mov
-*.mp4
-*.avi
+# Large video files - tracked explicitly, not ignored
+# *.mov
+# *.mp4
+# *.avi
