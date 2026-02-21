@@ -70,14 +70,14 @@ button:focus {
 }
 
 .section-alt {
-  padding-bottom: 2rem;
-  margin-bottom: 2rem;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 @media (min-width: 1200px) {
   .section-alt {
-    padding-bottom: 3rem;
-    margin-bottom: 3rem;
+    padding-bottom: 0;
+    margin-bottom: 0;
   }
 }
 
