@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771634637" />
-  <link rel="stylesheet" href="editorial.css?v=1771634637" />
+  <link rel="stylesheet" href="index.css?v=1771642009" />
+  <link rel="stylesheet" href="editorial.css?v=1771642009" />
 </head>
 
 <body>
@@ -387,7 +387,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771634637"></script>
+  <script src="content.js?v=1771642009"></script>
 
   <!-- Year display script -->
   <script>
@@ -396,549 +396,230 @@
 
   <!-- Reel video controls hardening -->
   <script>
-    document.querySelectorAll('.card-video video').forEach((video) => {
-      video.addEventListener('contextmenu', (event) => event.preventDefault());
-    });
+    // ── Shared video utilities ──────────────────────────────────────────────
 
-    const pauseOtherVideos = (currentVideo) => {
-      document.querySelectorAll('.card-video video, .sizzle-reel-video').forEach((video) => {
-        if (video !== currentVideo) {
-          video.pause();
-        }
+    const pauseAllVideos = (exceptVideo) => {
+      document.querySelectorAll('.card-video video, .sizzle-reel-video').forEach((v) => {
+        if (v !== exceptVideo) v.pause();
       });
     };
 
-    const hardenVideoAudio = (video) => {
-      if (video.dataset.audioHardened === 'true') {
-        return;
-      }
-
+    // Click-to-play/pause for card videos (non-reel)
+    document.querySelectorAll('.card-video video').forEach((video) => {
+      video.addEventListener('contextmenu', (e) => e.preventDefault());
       video.addEventListener('play', () => {
-        pauseOtherVideos(video);
-
+        pauseAllVideos(video);
         if (typeof ambientAudio !== 'undefined' && ambientAudio && !ambientAudio.paused) {
           ambientAudio.pause();
         }
       });
-
-      const isMobileViewport = () => window.matchMedia('(max-width: 900px)').matches;
-      let videoTouchStartX = 0;
-      let videoTouchStartY = 0;
-
-      video.addEventListener('touchstart', (event) => {
-        if (!isMobileViewport() || !event.touches || !event.touches.length) {
-          return;
-        }
-
-        videoTouchStartX = event.touches[0].clientX;
-        videoTouchStartY = event.touches[0].clientY;
+      let tapX = 0, tapY = 0, lastTouch = 0;
+      video.addEventListener('touchstart', (e) => {
+        tapX = e.touches[0].clientX; tapY = e.touches[0].clientY;
       }, { passive: true });
-
-      video.addEventListener('touchend', (event) => {
-        if (!isMobileViewport()) {
-          return;
-        }
-
-        const changedTouch = event.changedTouches && event.changedTouches[0];
-
-        if (!changedTouch) {
-          return;
-        }
-
-        const deltaX = Math.abs(changedTouch.clientX - videoTouchStartX);
-        const deltaY = Math.abs(changedTouch.clientY - videoTouchStartY);
-
-        if (deltaX > 10 || deltaY > 10) {
-          return;
-        }
-
-        if (video.paused) {
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
+      video.addEventListener('touchend', (e) => {
+        const t = e.changedTouches[0];
+        if (Math.abs(t.clientX - tapX) > 12 || Math.abs(t.clientY - tapY) > 12) return;
+        video.paused ? video.play().catch(() => {}) : video.pause();
+        lastTouch = Date.now();
       }, { passive: true });
-
-      video.dataset.audioHardened = 'true';
-    };
-
-    document.querySelectorAll('.card-video video').forEach((video) => {
-      hardenVideoAudio(video);
-    });
-
-    const hardenSizzleVideos = () => {
-      document.querySelectorAll('.sizzle-reel-video').forEach((video) => {
-        if (video.dataset.contextmenuHardened === 'true') {
-          return;
-        }
-
-        const source = video.querySelector('source');
-
-        if (source && source.getAttribute('src')) {
-          video.dataset.sourceSrc = source.getAttribute('src');
-          video.dataset.sourceType = source.getAttribute('type') || 'video/mp4';
-        }
-
-        video.preload = 'none';
-        video.addEventListener('contextmenu', (event) => event.preventDefault());
-        hardenVideoAudio(video);
-        video.dataset.contextmenuHardened = 'true';
+      video.addEventListener('click', () => {
+        if (Date.now() - lastTouch < 450) return;
+        video.paused ? video.play().catch(() => {}) : video.pause();
       });
-    };
-
-    hardenSizzleVideos();
-
-    const sizzleViewport = document.getElementById('sizzleViewport');
-    const sizzleTrack = document.getElementById('sizzleTrack');
-    const sizzlePrev = document.getElementById('sizzlePrev');
-    const sizzleNext = document.getElementById('sizzleNext');
-    const sizzlePrevMobile = document.getElementById('sizzlePrevMobile');
-    const sizzleNextMobile = document.getElementById('sizzleNextMobile');
-    const sizzleMobileTitle = document.getElementById('sizzleMobileTitle');
-    let sizzleItems = sizzleTrack ? Array.from(sizzleTrack.querySelectorAll('.sizzle-item')) : [];
-
-    const filenameToTitle = (filename) => {
-      const nameOnly = filename.replace(/\.[^.]+$/, '');
-      const withoutNumberPrefix = nameOnly.replace(/^\d+[_\-\s]*/, '');
-      const spaced = withoutNumberPrefix
-        .replace(/[_-]+/g, ' ')
-        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-        .replace(/([a-z])([A-Z])/g, '$1 $2')
-        .replace(/\b(480|720|1080|1440|2160|4k|8k)\b/gi, '')
-        .trim();
-
-      return spaced.split(/\s+/).filter(Boolean).join(' | ');
-    };
-
-    const loopingEnabled = sizzleItems.length > 1;
-
-    if (loopingEnabled && sizzleTrack) {
-      const firstClone = sizzleItems[0].cloneNode(true);
-      firstClone.dataset.clone = 'true';
-
-      const lastClone = sizzleItems[sizzleItems.length - 1].cloneNode(true);
-      lastClone.dataset.clone = 'true';
-
-      sizzleTrack.insertBefore(lastClone, sizzleItems[0]);
-      sizzleTrack.appendChild(firstClone);
-
-      hardenSizzleVideos();
-      sizzleItems = Array.from(sizzleTrack.querySelectorAll('.sizzle-item'));
-    }
-
-    sizzleItems.forEach((item) => {
-      const titleElement = item.querySelector('.sizzle-item-title');
-      const customTitle = item.dataset.title || '';
-      const filename = item.dataset.filename || '';
-
-      if (titleElement) {
-        titleElement.textContent = customTitle || filenameToTitle(filename);
-      }
     });
 
-    let currentSizzleIndex = loopingEnabled ? 1 : 0;
-    let sizzleTransitionLock = false;
-    let sizzleUnlockTimer = null;
-    let sizzleScrollSyncTimer = null;
-    let sizzleTouchActive = false;
-    let sizzleSnapTimer = null;
-    let sizzleTouchStartX = 0;
-    let sizzleTouchStartY = 0;
-    let sizzleTouchStartIndex = 0;
-    let sizzleSwipeStepLock = false;
-    let sizzleGestureMoved = false;
-    let sizzleTouchStartedOnVideo = false;
-    const sizzleRealItemCount = loopingEnabled ? sizzleItems.length - 2 : sizzleItems.length;
-    const isMobileSizzle = () => window.matchMedia('(max-width: 900px)').matches;
-
-    const updateSizzleEdgePadding = () => {
-      if (!sizzleViewport || !sizzleTrack || !sizzleItems.length) {
-        return;
+    // Store source attrs on sizzle videos before preload=none strips them
+    document.querySelectorAll('.sizzle-reel-video').forEach((video) => {
+      video.addEventListener('contextmenu', (e) => e.preventDefault());
+      const source = video.querySelector('source');
+      if (source && source.getAttribute('src')) {
+        video.dataset.sourceSrc = source.getAttribute('src');
+        video.dataset.sourceType = source.getAttribute('type') || 'video/mp4';
       }
+      video.preload = 'none';
+    });
 
-      const activeIndex = Math.max(0, Math.min(currentSizzleIndex, sizzleItems.length - 1));
-      const firstCardWidth = sizzleItems[activeIndex].getBoundingClientRect().width;
-      const edgePadding = Math.max(8, (sizzleViewport.clientWidth - firstCardWidth) / 2);
+    // ── Sizzle Reel Carousel ────────────────────────────────────────────────
+    (function () {
+      const viewport = document.getElementById('sizzleViewport');
+      const track = document.getElementById('sizzleTrack');
+      const prevBtn = document.getElementById('sizzlePrev');
+      const nextBtn = document.getElementById('sizzleNext');
+      const prevMobile = document.getElementById('sizzlePrevMobile');
+      const nextMobile = document.getElementById('sizzleNextMobile');
+      const mobileTitle = document.getElementById('sizzleMobileTitle');
 
-      sizzleTrack.style.paddingLeft = `${edgePadding}px`;
-      sizzleTrack.style.paddingRight = `${edgePadding}px`;
-    };
+      if (!track || !viewport) return;
 
-    const scrollSizzleToIndex = (index, behavior = 'smooth') => {
-      if (!sizzleViewport || !sizzleItems[index]) {
-        return;
-      }
+      const items = Array.from(track.querySelectorAll('.sizzle-item'));
+      if (!items.length) return;
+      const n = items.length;
 
-      const targetItem = sizzleItems[index];
-      const viewportRect = sizzleViewport.getBoundingClientRect();
-      const itemRect = targetItem.getBoundingClientRect();
-      const deltaToCenter = (itemRect.left + (itemRect.width / 2)) - (viewportRect.left + (viewportRect.width / 2));
-      const targetLeft = sizzleViewport.scrollLeft + deltaToCenter;
+      let activeIndex = 0;
+      let locked = false;
+      let playGen = 0;
 
-      sizzleViewport.scrollTo({ left: Math.max(0, targetLeft), behavior });
-    };
+      // Set titles
+      items.forEach((item) => {
+        const el = item.querySelector('.sizzle-item-title');
+        if (el) el.textContent = item.dataset.title || '';
+      });
 
-    const centerSizzleItem = (index, behavior = 'smooth', skipScroll = false, autoplayActive = false) => {
-      if (!sizzleItems.length || !sizzleViewport) {
-        return;
-      }
-
-      const previousIndex = currentSizzleIndex;
-
-      currentSizzleIndex = Math.max(0, Math.min(index, sizzleItems.length - 1));
-
-      const shouldKeepLoaded = (itemIndex) => {
-        const distance = Math.abs(itemIndex - currentSizzleIndex);
-        return distance <= 1;
-      };
-
-      const ensureVideoSourceState = (video, keepLoaded) => {
-        if (!video) {
-          return;
-        }
-
+      // Ensure a video's source is loaded
+      const ensureSource = (video) => {
+        if (!video) return;
         const source = video.querySelector('source');
-        const storedSrc = video.dataset.sourceSrc;
-        const storedType = video.dataset.sourceType || 'video/mp4';
-
-        if (!source || !storedSrc) {
-          return;
-        }
-
-        const hasSrc = !!source.getAttribute('src');
-
-        if (keepLoaded && !hasSrc) {
-          source.setAttribute('src', storedSrc);
-          source.setAttribute('type', storedType);
+        const src = video.dataset.sourceSrc;
+        if (source && src && !source.getAttribute('src')) {
+          source.setAttribute('src', src);
+          source.setAttribute('type', video.dataset.sourceType || 'video/mp4');
           video.load();
         }
-
-        if (!keepLoaded && hasSrc) {
-          if (!video.paused) {
-            video.pause();
-          }
-
-          source.removeAttribute('src');
-          video.load();
-        }
-
-        video.preload = keepLoaded ? 'metadata' : 'none';
       };
 
-      sizzleItems.forEach((item, itemIndex) => {
-        item.classList.toggle('is-active', itemIndex === currentSizzleIndex);
+      // ── Clone first and last items for seamless infinite wrap ──────────────
+      // Layout will be: [lastClone, item0, item1, …, itemN-1, firstClone]
+      // Real items sit at allItems indices 1 … n. Clones at 0 and n+1.
+      const firstClone = items[0].cloneNode(true);
+      const lastClone  = items[n - 1].cloneNode(true);
+      [firstClone, lastClone].forEach((c) => {
+        c.setAttribute('aria-hidden', 'true');
+        c.classList.remove('is-active');
+      });
+      track.appendChild(firstClone);
+      track.insertBefore(lastClone, track.firstElementChild);
+      const allItems = Array.from(track.querySelectorAll('.sizzle-item'));
+      // allItems[0]   = lastClone
+      // allItems[1..n]= real items
+      // allItems[n+1] = firstClone
 
-        const mediaVideo = item.querySelector('video');
-        ensureVideoSourceState(mediaVideo, shouldKeepLoaded(itemIndex));
+      // ── Transform-based centering ──────────────────────────────────────────
+      // offsetLeft is unaffected by CSS transform, so this is always exact.
+      // Works for any item at any position — no scroll-max limitation.
+      const setTransform = (allIdx, animate) => {
+        const item = allItems[allIdx];
+        if (!item) return;
+        const tx = viewport.clientWidth / 2 - item.offsetLeft - item.offsetWidth / 2;
+        track.style.transition = animate ? 'transform 0.38s ease' : 'none';
+        track.style.transform  = `translateX(${tx}px)`;
+      };
+
+      // Center a real item (0-based index into original items[])
+      const centerItem = (realIdx, animate) => setTransform(realIdx + 1, animate);
+
+      // ── Click-to-play / pause ──────────────────────────────────────────────
+      items.forEach((item) => {
+        const video = item.querySelector('video');
+        if (!video) return;
+        let tapX = 0, tapY = 0, lastTouch = 0;
+        video.addEventListener('touchstart', (e) => {
+          tapX = e.touches[0].clientX; tapY = e.touches[0].clientY;
+        }, { passive: true });
+        video.addEventListener('touchend', (e) => {
+          const t = e.changedTouches[0];
+          if (Math.abs(t.clientX - tapX) > 12 || Math.abs(t.clientY - tapY) > 12) return;
+          if (!item.classList.contains('is-active')) return;
+          if (video.paused) { video.play().catch(() => {}); } else { playGen++; video.pause(); }
+          lastTouch = Date.now();
+        }, { passive: true });
+        video.addEventListener('click', (e) => {
+          e.preventDefault(); // stop browser's own click-to-toggle
+          const rect = video.getBoundingClientRect();
+          if (e.clientY > rect.bottom - 44) return; // let native controls work
+          if (Date.now() - lastTouch < 450) return;
+          if (!item.classList.contains('is-active')) return;
+          if (video.paused) { video.play().catch(() => {}); } else { playGen++; video.pause(); }
+        });
+        video.addEventListener('play', () => {
+          pauseAllVideos(video);
+          if (typeof ambientAudio !== 'undefined' && ambientAudio && !ambientAudio.paused) {
+            ambientAudio.pause();
+          }
+        });
       });
 
-      if (autoplayActive) {
-        const previousVideo = sizzleItems[previousIndex]?.querySelector('video');
-        const activeVideo = sizzleItems[currentSizzleIndex]?.querySelector('video');
+      // ── Navigate to a slide ────────────────────────────────────────────────
+      const goTo = (index, autoplay) => {
+        if (locked) return;
+        locked = true;
 
-        if (previousVideo && previousVideo !== activeVideo && !previousVideo.paused) {
-          previousVideo.pause();
-          previousVideo.currentTime = 0;
+        // Clamp to one step past boundaries so we animate through the clone
+        const clampedIndex = index < 0 ? -1 : index >= n ? n : index;
+        // The real destination after wrapping
+        const realNext = ((clampedIndex % n) + n) % n;
+        // allItems index to animate TO (clone or real item)
+        const targetAllIdx = clampedIndex + 1; // +1 because lastClone is at allItems[0]
+
+        const prevIndex = activeIndex;
+        activeIndex = realNext;
+
+        // Update active classes on real items only
+        items.forEach((item, i) => item.classList.toggle('is-active', i === realNext));
+
+        // Preload nearby
+        [-1, 0, 1].forEach((offset) => {
+          const i = realNext + offset;
+          if (i >= 0 && i < n) ensureSource(items[i].querySelector('video'));
+        });
+
+        if (mobileTitle) mobileTitle.textContent = items[realNext]?.dataset.title || '';
+
+        // Video handoff
+        const prevVideo = items[prevIndex]?.querySelector('video');
+        const nextVideo = items[realNext]?.querySelector('video');
+        const wasPlaying = prevVideo && !prevVideo.paused;
+        if (prevVideo && prevVideo !== nextVideo) {
+          prevVideo.pause();
+          prevVideo.currentTime = 0;
         }
-
-        if (activeVideo) {
-          const attemptPlay = () => {
-            activeVideo.play().catch(() => {});
-          };
-
-          if (activeVideo.readyState >= 2) {
-            attemptPlay();
-          } else {
-            activeVideo.addEventListener('loadeddata', attemptPlay, { once: true });
-            activeVideo.load();
+        if (autoplay || wasPlaying) {
+          if (nextVideo) {
+            const gen = ++playGen;
+            const play = () => { if (playGen === gen) nextVideo.play().catch(() => {}); };
+            nextVideo.readyState >= 2 ? play() : nextVideo.addEventListener('loadeddata', play, { once: true });
           }
         }
-      }
 
-      if (sizzleMobileTitle) {
-        const activeTitle = sizzleItems[currentSizzleIndex]?.querySelector('.sizzle-item-title')?.textContent || '';
-        sizzleMobileTitle.textContent = activeTitle;
-      }
+        // Animate to target (may be a clone for seamless wrap)
+        setTransform(targetAllIdx, true);
 
-      if (!skipScroll) {
-        scrollSizzleToIndex(currentSizzleIndex, behavior);
-      }
-
-      if (!skipScroll && behavior === 'smooth') {
-        sizzleTransitionLock = true;
-
-        if (sizzleUnlockTimer) {
-          window.clearTimeout(sizzleUnlockTimer);
-        }
-
-        sizzleUnlockTimer = window.setTimeout(() => {
-          sizzleTransitionLock = false;
-        }, 390);
-      } else {
-        sizzleTransitionLock = false;
-      }
-    };
-
-    const getClosestSizzleIndex = () => {
-      if (!sizzleViewport || !sizzleItems.length) {
-        return currentSizzleIndex;
-      }
-
-      const viewportRect = sizzleViewport.getBoundingClientRect();
-      const viewportCenter = viewportRect.left + (viewportRect.width / 2);
-      let closestIndex = 0;
-      let closestDistance = Number.POSITIVE_INFINITY;
-
-      sizzleItems.forEach((item, itemIndex) => {
-        const rect = item.getBoundingClientRect();
-        const itemCenter = rect.left + (rect.width / 2);
-        const distance = Math.abs(itemCenter - viewportCenter);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = itemIndex;
-        }
-      });
-
-      return closestIndex;
-    };
-
-    const syncSizzleFromScroll = () => {
-      if (!sizzleItems.length || sizzleTransitionLock) {
-        return;
-      }
-
-      const closestIndex = getClosestSizzleIndex();
-
-      if (loopingEnabled && closestIndex === 0) {
-        centerSizzleItem(sizzleItems.length - 2, 'auto');
-        return;
-      }
-
-      if (loopingEnabled && closestIndex === sizzleItems.length - 1) {
-        centerSizzleItem(1, 'auto');
-        return;
-      }
-
-      if (closestIndex !== currentSizzleIndex) {
-        if (isMobileSizzle()) {
-          centerSizzleItem(closestIndex, 'auto', true);
-        } else {
-          centerSizzleItem(closestIndex, 'auto', true);
-        }
-      }
-    };
-
-    const finalizeMobileSizzleSnap = () => {
-      if (!isMobileSizzle() || sizzleTouchActive || sizzleTransitionLock) {
-        return;
-      }
-
-      const closestIndex = getClosestSizzleIndex();
-
-      if (loopingEnabled && closestIndex === 0) {
-        centerSizzleItem(sizzleItems.length - 2, 'auto');
-        return;
-      }
-
-      if (loopingEnabled && closestIndex === sizzleItems.length - 1) {
-        centerSizzleItem(1, 'auto');
-        return;
-      }
-
-      centerSizzleItem(closestIndex, 'auto', true);
-    };
-
-    const stepSizzle = (step) => {
-      if (!sizzleItems.length) {
-        return;
-      }
-
-      if (sizzleTransitionLock) {
-        return;
-      }
-
-      if (loopingEnabled) {
-        const firstRealIndex = 1;
-        const lastRealIndex = sizzleRealItemCount;
-        const cloneBeforeFirst = 0;
-        const cloneAfterLast = sizzleItems.length - 1;
-
-        if (currentSizzleIndex === firstRealIndex && step < 0) {
-          centerSizzleItem(cloneAfterLast, 'auto');
-          centerSizzleItem(lastRealIndex, 'smooth', false, true);
-          return;
-        }
-
-        if (currentSizzleIndex === lastRealIndex && step > 0) {
-          centerSizzleItem(cloneBeforeFirst, 'auto');
-          centerSizzleItem(firstRealIndex, 'smooth', false, true);
-          return;
-        }
-      }
-
-      centerSizzleItem(currentSizzleIndex + step, 'smooth', false, true);
-    };
-
-    const getMobileStepTargetIndex = (startIndex, directionStep) => {
-      if (!loopingEnabled) {
-        return Math.max(0, Math.min(startIndex + directionStep, sizzleItems.length - 1));
-      }
-
-      const firstRealIndex = 1;
-      const lastRealIndex = sizzleRealItemCount;
-      let normalizedStart = startIndex;
-
-      if (normalizedStart <= 0) {
-        normalizedStart = firstRealIndex;
-      }
-
-      if (normalizedStart >= sizzleItems.length - 1) {
-        normalizedStart = lastRealIndex;
-      }
-
-      if (normalizedStart === firstRealIndex && directionStep < 0) {
-        return lastRealIndex;
-      }
-
-      if (normalizedStart === lastRealIndex && directionStep > 0) {
-        return firstRealIndex;
-      }
-
-      return normalizedStart + directionStep;
-    };
-
-    if (sizzleItems.length <= 1) {
-      if (sizzlePrev) sizzlePrev.disabled = true;
-      if (sizzleNext) sizzleNext.disabled = true;
-    }
-
-    if (sizzlePrev) {
-      sizzlePrev.addEventListener('click', () => stepSizzle(-1));
-    }
-
-    if (sizzleNext) {
-      sizzleNext.addEventListener('click', () => stepSizzle(1));
-    }
-
-    if (sizzlePrevMobile) {
-      sizzlePrevMobile.addEventListener('click', () => stepSizzle(-1));
-    }
-
-    if (sizzleNextMobile) {
-      sizzleNextMobile.addEventListener('click', () => stepSizzle(1));
-    }
-
-    if (sizzleViewport) {
-      sizzleViewport.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowLeft') {
-          event.preventDefault();
-          stepSizzle(-1);
-        }
-
-        if (event.key === 'ArrowRight') {
-          event.preventDefault();
-          stepSizzle(1);
-        }
-      });
-
-      sizzleViewport.addEventListener('scroll', () => {
-        if (isMobileSizzle()) {
-          return;
-        }
-
-        if (sizzleScrollSyncTimer) {
-          window.clearTimeout(sizzleScrollSyncTimer);
-        }
-
-        sizzleScrollSyncTimer = window.setTimeout(() => {
-          if (!sizzleTouchActive) {
-            syncSizzleFromScroll();
+        setTimeout(() => {
+          // If we went through a clone, instantly snap to the real item position
+          if (clampedIndex < 0 || clampedIndex >= n) {
+            setTransform(realNext + 1, false); // no animation — instant jump
           }
-        }, 120);
-      }, { passive: true });
+          locked = false;
+        }, 400);
+      };
 
-      sizzleViewport.addEventListener('touchstart', (event) => {
-        sizzleTouchActive = true;
-        sizzleTouchStartIndex = getMobileStepTargetIndex(currentSizzleIndex, 0);
-        sizzleGestureMoved = false;
-        sizzleTouchStartedOnVideo = !!(event.target && event.target.closest && event.target.closest('.sizzle-item-media video'));
+      // ── Controls ───────────────────────────────────────────────────────────
+      if (prevBtn)    prevBtn.addEventListener('click',    () => goTo(activeIndex - 1, true));
+      if (nextBtn)    nextBtn.addEventListener('click',    () => goTo(activeIndex + 1, true));
+      if (prevMobile) prevMobile.addEventListener('click', () => goTo(activeIndex - 1, true));
+      if (nextMobile) nextMobile.addEventListener('click', () => goTo(activeIndex + 1, true));
 
-        if (!event.touches || !event.touches.length) {
-          return;
-        }
+      viewport.setAttribute('tabindex', '0');
+      viewport.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(activeIndex - 1, true); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); goTo(activeIndex + 1, true); }
+      });
 
-        sizzleTouchStartX = event.touches[0].clientX;
-        sizzleTouchStartY = event.touches[0].clientY;
-      }, { passive: true });
+      // ── Init ───────────────────────────────────────────────────────────────
+      items[0].classList.add('is-active');
+      ensureSource(items[0]?.querySelector('video'));
+      if (items[1])     ensureSource(items[1].querySelector('video'));
+      if (items[n - 1]) ensureSource(items[n - 1].querySelector('video'));
+      if (mobileTitle)  mobileTitle.textContent = items[0]?.dataset.title || '';
 
-      sizzleViewport.addEventListener('touchmove', (event) => {
-        if (!isMobileSizzle() || !event.touches || !event.touches.length) {
-          return;
-        }
+      const recenter = () => centerItem(activeIndex, false);
+      requestAnimationFrame(() => requestAnimationFrame(recenter));
+      window.addEventListener('load', recenter);
+      window.addEventListener('resize', recenter);
+      if (document.fonts?.ready) document.fonts.ready.then(recenter).catch(() => {});
+    })();
 
-        const deltaX = Math.abs(event.touches[0].clientX - sizzleTouchStartX);
-        const deltaY = Math.abs(event.touches[0].clientY - sizzleTouchStartY);
-        const horizontalLead = deltaX - deltaY;
 
-        if (deltaX > 8 || deltaY > 8) {
-          sizzleGestureMoved = true;
-        }
-
-        const horizontalSwipeIntent = deltaX > 18 && horizontalLead > 10;
-        const videoTouchSwipeIntent = sizzleTouchStartedOnVideo && deltaX > 24 && horizontalLead > 12;
-
-        if (horizontalSwipeIntent || videoTouchSwipeIntent) {
-          event.preventDefault();
-        }
-      }, { passive: false });
-
-      sizzleViewport.addEventListener('touchend', (event) => {
-        sizzleTouchActive = false;
-
-        if (!isMobileSizzle()) {
-          window.setTimeout(finalizeMobileSizzleSnap, 50);
-          return;
-        }
-
-        const touch = event.changedTouches && event.changedTouches[0];
-        const endX = touch ? touch.clientX : sizzleTouchStartX;
-        const endY = touch ? touch.clientY : sizzleTouchStartY;
-        const deltaX = endX - sizzleTouchStartX;
-        const deltaY = endY - sizzleTouchStartY;
-        const swipeThreshold = 32;
-        const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY) + 10;
-
-        if (sizzleTouchStartedOnVideo && !sizzleGestureMoved) {
-          return;
-        }
-
-        if (isHorizontalSwipe && Math.abs(deltaX) >= swipeThreshold) {
-          const directionStep = deltaX < 0 ? 1 : -1;
-          const targetIndex = getMobileStepTargetIndex(sizzleTouchStartIndex, directionStep);
-
-          sizzleSwipeStepLock = true;
-          centerSizzleItem(targetIndex, 'smooth', false, true);
-
-          window.setTimeout(() => {
-            sizzleSwipeStepLock = false;
-          }, 460);
-          return;
-        }
-      }, { passive: true });
-
-      sizzleViewport.addEventListener('touchcancel', () => {
-        sizzleTouchActive = false;
-      }, { passive: true });
-    }
-
-    updateSizzleEdgePadding();
-    centerSizzleItem(loopingEnabled ? 1 : 0, 'auto');
-
-    window.addEventListener('resize', () => {
-      updateSizzleEdgePadding();
-      centerSizzleItem(currentSizzleIndex, 'auto');
-    });
   </script>
 
   <!-- ========================================================================
