@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771634233" />
-  <link rel="stylesheet" href="editorial.css?v=1771634233" />
+  <link rel="stylesheet" href="index.css?v=1771634637" />
+  <link rel="stylesheet" href="editorial.css?v=1771634637" />
 </head>
 
 <body>
@@ -387,7 +387,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771634233"></script>
+  <script src="content.js?v=1771634637"></script>
 
   <!-- Year display script -->
   <script>
@@ -420,6 +420,44 @@
           ambientAudio.pause();
         }
       });
+
+      const isMobileViewport = () => window.matchMedia('(max-width: 900px)').matches;
+      let videoTouchStartX = 0;
+      let videoTouchStartY = 0;
+
+      video.addEventListener('touchstart', (event) => {
+        if (!isMobileViewport() || !event.touches || !event.touches.length) {
+          return;
+        }
+
+        videoTouchStartX = event.touches[0].clientX;
+        videoTouchStartY = event.touches[0].clientY;
+      }, { passive: true });
+
+      video.addEventListener('touchend', (event) => {
+        if (!isMobileViewport()) {
+          return;
+        }
+
+        const changedTouch = event.changedTouches && event.changedTouches[0];
+
+        if (!changedTouch) {
+          return;
+        }
+
+        const deltaX = Math.abs(changedTouch.clientX - videoTouchStartX);
+        const deltaY = Math.abs(changedTouch.clientY - videoTouchStartY);
+
+        if (deltaX > 10 || deltaY > 10) {
+          return;
+        }
+
+        if (video.paused) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      }, { passive: true });
 
       video.dataset.audioHardened = 'true';
     };
@@ -540,10 +578,12 @@
       sizzleViewport.scrollTo({ left: Math.max(0, targetLeft), behavior });
     };
 
-    const centerSizzleItem = (index, behavior = 'smooth', skipScroll = false) => {
+    const centerSizzleItem = (index, behavior = 'smooth', skipScroll = false, autoplayActive = false) => {
       if (!sizzleItems.length || !sizzleViewport) {
         return;
       }
+
+      const previousIndex = currentSizzleIndex;
 
       currentSizzleIndex = Math.max(0, Math.min(index, sizzleItems.length - 1));
 
@@ -591,6 +631,29 @@
         const mediaVideo = item.querySelector('video');
         ensureVideoSourceState(mediaVideo, shouldKeepLoaded(itemIndex));
       });
+
+      if (autoplayActive) {
+        const previousVideo = sizzleItems[previousIndex]?.querySelector('video');
+        const activeVideo = sizzleItems[currentSizzleIndex]?.querySelector('video');
+
+        if (previousVideo && previousVideo !== activeVideo && !previousVideo.paused) {
+          previousVideo.pause();
+          previousVideo.currentTime = 0;
+        }
+
+        if (activeVideo) {
+          const attemptPlay = () => {
+            activeVideo.play().catch(() => {});
+          };
+
+          if (activeVideo.readyState >= 2) {
+            attemptPlay();
+          } else {
+            activeVideo.addEventListener('loadeddata', attemptPlay, { once: true });
+            activeVideo.load();
+          }
+        }
+      }
 
       if (sizzleMobileTitle) {
         const activeTitle = sizzleItems[currentSizzleIndex]?.querySelector('.sizzle-item-title')?.textContent || '';
@@ -703,18 +766,18 @@
 
         if (currentSizzleIndex === firstRealIndex && step < 0) {
           centerSizzleItem(cloneAfterLast, 'auto');
-          centerSizzleItem(lastRealIndex, 'smooth');
+          centerSizzleItem(lastRealIndex, 'smooth', false, true);
           return;
         }
 
         if (currentSizzleIndex === lastRealIndex && step > 0) {
           centerSizzleItem(cloneBeforeFirst, 'auto');
-          centerSizzleItem(firstRealIndex, 'smooth');
+          centerSizzleItem(firstRealIndex, 'smooth', false, true);
           return;
         }
       }
 
-      centerSizzleItem(currentSizzleIndex + step);
+      centerSizzleItem(currentSizzleIndex + step, 'smooth', false, true);
     };
 
     const getMobileStepTargetIndex = (startIndex, directionStep) => {
@@ -822,7 +885,10 @@
           sizzleGestureMoved = true;
         }
 
-        if (deltaX > 18 && horizontalLead > 10) {
+        const horizontalSwipeIntent = deltaX > 18 && horizontalLead > 10;
+        const videoTouchSwipeIntent = sizzleTouchStartedOnVideo && deltaX > 24 && horizontalLead > 12;
+
+        if (horizontalSwipeIntent || videoTouchSwipeIntent) {
           event.preventDefault();
         }
       }, { passive: false });
@@ -852,7 +918,7 @@
           const targetIndex = getMobileStepTargetIndex(sizzleTouchStartIndex, directionStep);
 
           sizzleSwipeStepLock = true;
-          centerSizzleItem(targetIndex, 'smooth');
+          centerSizzleItem(targetIndex, 'smooth', false, true);
 
           window.setTimeout(() => {
             sizzleSwipeStepLock = false;
