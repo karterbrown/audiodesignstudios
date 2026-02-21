@@ -418,13 +418,18 @@
   }
 
   .sizzle-mobile-controls {
-    display: grid;
-    grid-template-columns: 38px minmax(0, 1fr) 38px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.7rem;
+    gap: 0.5rem;
     margin-top: 0.7rem;
     width: 100%;
-    max-width: 100%;
+  }
+
+  .sizzle-mobile-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
   }
 
   .sizzle-mobile-nav {
@@ -440,17 +445,17 @@
   }
 
   .sizzle-mobile-title {
-    min-width: 0;
     width: 100%;
     text-align: center;
     color: #dcdcdc;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    padding: 0 0.5rem;
   }
 
   .sizzle-viewport {
@@ -458,9 +463,9 @@
     padding: 2.2rem 0 2.2rem;
     width: 100%;
     max-width: 100%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    touch-action: pan-x;
+    overflow: hidden;
+    overflow-y: visible;
+    touch-action: pan-y;
   }
 
   .sizzle-item {

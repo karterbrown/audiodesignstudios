@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771693161" />
-  <link rel="stylesheet" href="editorial.css?v=1771693161" />
+  <link rel="stylesheet" href="index.css?v=1771693460" />
+  <link rel="stylesheet" href="editorial.css?v=1771693460" />
 </head>
 
 <body>
@@ -290,9 +290,11 @@
               </div>
 
               <div class="sizzle-mobile-controls">
-                <button class="sizzle-mobile-nav" id="moreWorkPrevMobile" type="button" aria-label="Previous reel">&#10094;</button>
                 <div class="sizzle-mobile-title" id="moreWorkMobileTitle"></div>
-                <button class="sizzle-mobile-nav" id="moreWorkNextMobile" type="button" aria-label="Next reel">&#10095;</button>
+                <div class="sizzle-mobile-buttons">
+                  <button class="sizzle-mobile-nav" id="moreWorkPrevMobile" type="button" aria-label="Previous reel">&#10094;</button>
+                  <button class="sizzle-mobile-nav" id="moreWorkNextMobile" type="button" aria-label="Next reel">&#10095;</button>
+                </div>
               </div>
 
               <button class="sizzle-nav sizzle-nav-next" id="moreWorkNext" type="button" aria-label="Next reel">&#10095;</button>
@@ -378,7 +380,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771693161"></script>
+  <script src="content.js?v=1771693460"></script>
 
   <!-- Year display script -->
   <script>
@@ -625,6 +627,28 @@
       if (nextBtn)    nextBtn.addEventListener('click',    () => goTo(activeIndex + 1, true));
       if (prevMobile) prevMobile.addEventListener('click', () => goTo(activeIndex - 1, true));
       if (nextMobile) nextMobile.addEventListener('click', () => goTo(activeIndex + 1, true));
+
+      // ── Swipe detection ────────────────────────────────────────────────────
+      let swipeStartX = 0, swipeStartY = 0, swipeIntent = null;
+      viewport.addEventListener('touchstart', (e) => {
+        swipeStartX = e.touches[0].clientX;
+        swipeStartY = e.touches[0].clientY;
+        swipeIntent = null;
+      }, { passive: true });
+      viewport.addEventListener('touchmove', (e) => {
+        if (swipeIntent === null) {
+          const dx = Math.abs(e.touches[0].clientX - swipeStartX);
+          const dy = Math.abs(e.touches[0].clientY - swipeStartY);
+          if (dx > 6 || dy > 6) swipeIntent = dx > dy ? 'h' : 'v';
+        }
+        if (swipeIntent === 'h') e.preventDefault();
+      }, { passive: false });
+      viewport.addEventListener('touchend', (e) => {
+        if (swipeIntent !== 'h') return;
+        const dx = e.changedTouches[0].clientX - swipeStartX;
+        if (Math.abs(dx) < 40) return;
+        goTo(activeIndex + (dx < 0 ? 1 : -1), true);
+      }, { passive: true });
 
       viewport.setAttribute('tabindex', '0');
       viewport.addEventListener('keydown', (e) => {
