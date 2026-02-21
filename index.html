@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771694152" />
-  <link rel="stylesheet" href="editorial.css?v=1771694152" />
+  <link rel="stylesheet" href="index.css?v=1771694417" />
+  <link rel="stylesheet" href="editorial.css?v=1771694417" />
 </head>
 
 <body>
@@ -380,7 +380,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771694152"></script>
+  <script src="content.js?v=1771694417"></script>
 
   <!-- Year display script -->
   <script>
@@ -642,8 +642,18 @@
         swipeStartX = e.touches[0].clientX;
         swipeStartY = e.touches[0].clientY;
         swipeIntent = null;
+        // Block swipe if touch starts in the native video control bar area
+        // (bottom ~25% of the video element = where the progress bar lives)
+        const vid = e.target.tagName === 'VIDEO' ? e.target : null;
+        if (vid) {
+          const rect = vid.getBoundingClientRect();
+          if (e.touches[0].clientY > rect.bottom - rect.height * 0.25) {
+            swipeIntent = 'blocked';
+          }
+        }
       }, { passive: true });
       viewport.addEventListener('touchmove', (e) => {
+        if (swipeIntent === 'blocked') return;
         if (swipeIntent === null) {
           const dx = Math.abs(e.touches[0].clientX - swipeStartX);
           const dy = Math.abs(e.touches[0].clientY - swipeStartY);
