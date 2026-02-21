@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771693591" />
-  <link rel="stylesheet" href="editorial.css?v=1771693591" />
+  <link rel="stylesheet" href="index.css?v=1771693875" />
+  <link rel="stylesheet" href="editorial.css?v=1771693875" />
 </head>
 
 <body>
@@ -210,7 +210,7 @@
                   </article>
                   <article class="sizzle-item" data-index="2" data-filename="DocInterview.mp4" data-title="Interview &amp; Documentary Dialog">
                     <div class="sizzle-item-media" style="position:relative;aspect-ratio:16/9;">
-                      <iframe src="https://www.youtube.com/embed/x4aMF8nVuao" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;"></iframe>
+                      <iframe src="https://www.youtube.com/embed/x4aMF8nVuao?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;"></iframe>
                     </div>
                     <h4 class="sizzle-item-title"></h4>
                   </article>
@@ -380,7 +380,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771693591"></script>
+  <script src="content.js?v=1771693875"></script>
 
   <!-- Year display script -->
   <script>
@@ -597,16 +597,24 @@
         // Video handoff
         const prevVideo = items[prevIndex]?.querySelector('video');
         const nextVideo = items[realNext]?.querySelector('video');
+        const prevIframe = items[prevIndex]?.querySelector('iframe');
+        const nextIframe = items[realNext]?.querySelector('iframe');
         const wasPlaying = prevVideo && !prevVideo.paused;
         if (prevVideo && prevVideo !== nextVideo) {
           prevVideo.pause();
           prevVideo.currentTime = 0;
+        }
+        if (prevIframe) {
+          prevIframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo' }), '*');
         }
         if (autoplay || wasPlaying) {
           if (nextVideo) {
             const gen = ++playGen;
             const play = () => { if (playGen === gen) nextVideo.play().catch(() => {}); };
             nextVideo.readyState >= 2 ? play() : nextVideo.addEventListener('loadeddata', play, { once: true });
+          }
+          if (nextIframe) {
+            nextIframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func: 'playVideo' }), '*');
           }
         }
 
@@ -649,6 +657,42 @@
         if (Math.abs(dx) < 40) return;
         goTo(activeIndex + (dx < 0 ? 1 : -1), true);
       }, { passive: true });
+
+      // ── Swipe overlays for iframe items (YouTube swallows touch events) ──
+      items.forEach((item) => {
+        const iframeEl = item.querySelector('iframe');
+        if (!iframeEl) return;
+        const media = item.querySelector('.sizzle-item-media');
+        if (!media) return;
+        const iOverlay = document.createElement('div');
+        iOverlay.style.cssText = 'position:absolute;inset:0;z-index:10;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:transparent;';
+        media.appendChild(iOverlay);
+        let ox = 0, oy = 0, iIntent = null;
+        iOverlay.addEventListener('touchstart', (e) => {
+          ox = e.touches[0].clientX;
+          oy = e.touches[0].clientY;
+          iIntent = null;
+        }, { passive: true });
+        iOverlay.addEventListener('touchmove', (e) => {
+          if (iIntent === null) {
+            const dx = Math.abs(e.touches[0].clientX - ox);
+            const dy = Math.abs(e.touches[0].clientY - oy);
+            if (dx > 6 || dy > 6) iIntent = dx > dy ? 'h' : 'v';
+          }
+          if (iIntent === 'h') e.preventDefault();
+        }, { passive: false });
+        iOverlay.addEventListener('touchend', (e) => {
+          const dx = e.changedTouches[0].clientX - ox;
+          if (iIntent === 'h' && Math.abs(dx) >= 40) {
+            goTo(activeIndex + (dx < 0 ? 1 : -1), true);
+          } else {
+            // Tap / vertical — briefly disable overlay so the iframe receives the touch
+            iOverlay.style.pointerEvents = 'none';
+            setTimeout(() => { iOverlay.style.pointerEvents = ''; }, 600);
+          }
+          iIntent = null;
+        }, { passive: true });
+      });
 
       viewport.setAttribute('tabindex', '0');
       viewport.addEventListener('keydown', (e) => {
