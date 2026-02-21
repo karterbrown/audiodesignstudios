@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771693875" />
-  <link rel="stylesheet" href="editorial.css?v=1771693875" />
+  <link rel="stylesheet" href="index.css?v=1771694152" />
+  <link rel="stylesheet" href="editorial.css?v=1771694152" />
 </head>
 
 <body>
@@ -380,7 +380,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771693875"></script>
+  <script src="content.js?v=1771694152"></script>
 
   <!-- Year display script -->
   <script>
@@ -658,40 +658,45 @@
         goTo(activeIndex + (dx < 0 ? 1 : -1), true);
       }, { passive: true });
 
-      // ── Swipe overlays for iframe items (YouTube swallows touch events) ──
-      items.forEach((item) => {
-        const iframeEl = item.querySelector('iframe');
-        if (!iframeEl) return;
-        const media = item.querySelector('.sizzle-item-media');
-        if (!media) return;
-        const iOverlay = document.createElement('div');
-        iOverlay.style.cssText = 'position:absolute;inset:0;z-index:10;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:transparent;';
-        media.appendChild(iOverlay);
-        let ox = 0, oy = 0, iIntent = null;
-        iOverlay.addEventListener('touchstart', (e) => {
-          ox = e.touches[0].clientX;
-          oy = e.touches[0].clientY;
-          iIntent = null;
+      // ── Edge-strip swipe zones for iframe items ────────────────────────────
+      // Full-cover overlays block YouTube controls, so instead we place two
+      // thin strips on the left/right edges of the viewport. The centre of the
+      // iframe remains fully interactive while the edges capture swipes.
+      ['left','right'].forEach((side) => {
+        const strip = document.createElement('div');
+        strip.style.cssText = [
+          'position:absolute',
+          side === 'left' ? 'left:0' : 'right:0',
+          'top:0','bottom:0','width:48px',
+          'z-index:20',
+          'touch-action:none',
+          '-webkit-tap-highlight-color:transparent',
+          'background:transparent',
+        ].join(';');
+        viewport.style.position = 'relative';
+        viewport.appendChild(strip);
+        let sx = 0, sy = 0, sIntent = null;
+        strip.addEventListener('touchstart', (e) => {
+          sx = e.touches[0].clientX;
+          sy = e.touches[0].clientY;
+          sIntent = null;
         }, { passive: true });
-        iOverlay.addEventListener('touchmove', (e) => {
-          if (iIntent === null) {
-            const dx = Math.abs(e.touches[0].clientX - ox);
-            const dy = Math.abs(e.touches[0].clientY - oy);
-            if (dx > 6 || dy > 6) iIntent = dx > dy ? 'h' : 'v';
+        strip.addEventListener('touchmove', (e) => {
+          if (sIntent === null) {
+            const dx = Math.abs(e.touches[0].clientX - sx);
+            const dy = Math.abs(e.touches[0].clientY - sy);
+            if (dx > 6 || dy > 6) sIntent = dx > dy ? 'h' : 'v';
           }
-          if (iIntent === 'h') e.preventDefault();
+          if (sIntent === 'h') e.preventDefault();
         }, { passive: false });
-        iOverlay.addEventListener('touchend', (e) => {
-          const dx = e.changedTouches[0].clientX - ox;
-          if (iIntent === 'h' && Math.abs(dx) >= 40) {
+        strip.addEventListener('touchend', (e) => {
+          if (sIntent !== 'h') return;
+          const dx = e.changedTouches[0].clientX - sx;
+          if (Math.abs(dx) >= 30) {
+            e.stopPropagation();
             goTo(activeIndex + (dx < 0 ? 1 : -1), true);
-          } else {
-            // Tap / vertical — briefly disable overlay so the iframe receives the touch
-            iOverlay.style.pointerEvents = 'none';
-            setTimeout(() => { iOverlay.style.pointerEvents = ''; }, 600);
           }
-          iIntent = null;
-        }, { passive: true });
+        }, { passive: false });
       });
 
       viewport.setAttribute('tabindex', '0');
