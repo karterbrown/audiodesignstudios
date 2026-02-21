@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771632058" />
-  <link rel="stylesheet" href="editorial.css?v=1771632058" />
+  <link rel="stylesheet" href="index.css?v=1771632801" />
+  <link rel="stylesheet" href="editorial.css?v=1771632801" />
 </head>
 
 <body>
@@ -79,7 +79,7 @@
         <div class="sizzle-feature">
           <div class="sizzle-carousel-shell">
             <span class="sizzle-badge">Film Reels</span>
-            <h2>Check out Karter's work. Contact him if it's what you need.</h2>
+            <h2>Check out Karter's work. Get in touch.</h2>
 
             <div class="sizzle-carousel" id="sizzleCarousel" aria-label="Feature film highlight reel selector">
               <button class="sizzle-nav sizzle-nav-prev" id="sizzlePrev" type="button" aria-label="Previous highlight reel">&#10094;</button>
@@ -381,7 +381,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771632058"></script>
+  <script src="content.js?v=1771632801"></script>
 
   <!-- Year display script -->
   <script>
@@ -492,7 +492,14 @@
     let currentSizzleIndex = loopingEnabled ? 1 : 0;
     let sizzleTransitionLock = false;
     let sizzleUnlockTimer = null;
+    let sizzleScrollSyncTimer = null;
+    let sizzleTouchActive = false;
+    let sizzleSnapTimer = null;
+    let sizzleTouchStartX = 0;
+    let sizzleTouchStartIndex = 0;
+    let sizzleSwipeStepLock = false;
     const sizzleRealItemCount = loopingEnabled ? sizzleItems.length - 2 : sizzleItems.length;
+    const isMobileSizzle = () => window.matchMedia('(max-width: 900px)').matches;
 
     const updateSizzleEdgePadding = () => {
       if (!sizzleViewport || !sizzleTrack || !sizzleItems.length) {
@@ -521,7 +528,7 @@
       sizzleViewport.scrollTo({ left: Math.max(0, targetLeft), behavior });
     };
 
-    const centerSizzleItem = (index, behavior = 'smooth') => {
+    const centerSizzleItem = (index, behavior = 'smooth', skipScroll = false) => {
       if (!sizzleItems.length || !sizzleViewport) {
         return;
       }
@@ -573,9 +580,11 @@
         ensureVideoSourceState(mediaVideo, shouldKeepLoaded(itemIndex));
       });
 
-      scrollSizzleToIndex(currentSizzleIndex, behavior);
+      if (!skipScroll) {
+        scrollSizzleToIndex(currentSizzleIndex, behavior);
+      }
 
-      if (behavior === 'smooth') {
+      if (!skipScroll && behavior === 'smooth') {
         sizzleTransitionLock = true;
 
         if (sizzleUnlockTimer) {
@@ -588,6 +597,76 @@
       } else {
         sizzleTransitionLock = false;
       }
+    };
+
+    const getClosestSizzleIndex = () => {
+      if (!sizzleViewport || !sizzleItems.length) {
+        return currentSizzleIndex;
+      }
+
+      const viewportRect = sizzleViewport.getBoundingClientRect();
+      const viewportCenter = viewportRect.left + (viewportRect.width / 2);
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      sizzleItems.forEach((item, itemIndex) => {
+        const rect = item.getBoundingClientRect();
+        const itemCenter = rect.left + (rect.width / 2);
+        const distance = Math.abs(itemCenter - viewportCenter);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = itemIndex;
+        }
+      });
+
+      return closestIndex;
+    };
+
+    const syncSizzleFromScroll = () => {
+      if (!sizzleItems.length || sizzleTransitionLock) {
+        return;
+      }
+
+      const closestIndex = getClosestSizzleIndex();
+
+      if (loopingEnabled && closestIndex === 0) {
+        centerSizzleItem(sizzleItems.length - 2, 'auto');
+        return;
+      }
+
+      if (loopingEnabled && closestIndex === sizzleItems.length - 1) {
+        centerSizzleItem(1, 'auto');
+        return;
+      }
+
+      if (closestIndex !== currentSizzleIndex) {
+        if (isMobileSizzle()) {
+          centerSizzleItem(closestIndex, 'auto', true);
+        } else {
+          centerSizzleItem(closestIndex, 'auto', true);
+        }
+      }
+    };
+
+    const finalizeMobileSizzleSnap = () => {
+      if (!isMobileSizzle() || sizzleTouchActive || sizzleTransitionLock) {
+        return;
+      }
+
+      const closestIndex = getClosestSizzleIndex();
+
+      if (loopingEnabled && closestIndex === 0) {
+        centerSizzleItem(sizzleItems.length - 2, 'auto');
+        return;
+      }
+
+      if (loopingEnabled && closestIndex === sizzleItems.length - 1) {
+        centerSizzleItem(1, 'auto');
+        return;
+      }
+
+      centerSizzleItem(closestIndex, 'auto', true);
     };
 
     const stepSizzle = (step) => {
@@ -646,6 +725,81 @@
           stepSizzle(1);
         }
       });
+
+      sizzleViewport.addEventListener('scroll', () => {
+        if (sizzleTouchActive && isMobileSizzle()) {
+          return;
+        }
+
+        if (isMobileSizzle()) {
+          if (sizzleSwipeStepLock) {
+            return;
+          }
+
+          if (sizzleSnapTimer) {
+            window.clearTimeout(sizzleSnapTimer);
+          }
+
+          sizzleSnapTimer = window.setTimeout(finalizeMobileSizzleSnap, 170);
+          return;
+        }
+
+        if (sizzleScrollSyncTimer) {
+          window.clearTimeout(sizzleScrollSyncTimer);
+        }
+
+        sizzleScrollSyncTimer = window.setTimeout(() => {
+          if (!sizzleTouchActive) {
+            syncSizzleFromScroll();
+          }
+        }, 120);
+      }, { passive: true });
+
+      sizzleViewport.addEventListener('touchstart', () => {
+        sizzleTouchActive = true;
+        sizzleTouchStartIndex = currentSizzleIndex;
+      }, { passive: true });
+
+      sizzleViewport.addEventListener('touchstart', (event) => {
+        if (!event.touches || !event.touches.length) {
+          return;
+        }
+
+        sizzleTouchStartX = event.touches[0].clientX;
+      }, { passive: true });
+
+      sizzleViewport.addEventListener('touchend', (event) => {
+        sizzleTouchActive = false;
+
+        if (!isMobileSizzle()) {
+          window.setTimeout(finalizeMobileSizzleSnap, 50);
+          return;
+        }
+
+        const touch = event.changedTouches && event.changedTouches[0];
+        const endX = touch ? touch.clientX : sizzleTouchStartX;
+        const deltaX = endX - sizzleTouchStartX;
+        const swipeThreshold = 32;
+
+        if (Math.abs(deltaX) >= swipeThreshold) {
+          const directionStep = deltaX < 0 ? 1 : -1;
+
+          sizzleSwipeStepLock = true;
+          centerSizzleItem(sizzleTouchStartIndex + directionStep, 'smooth');
+
+          window.setTimeout(() => {
+            sizzleSwipeStepLock = false;
+          }, 460);
+          return;
+        }
+
+        window.setTimeout(finalizeMobileSizzleSnap, 50);
+      }, { passive: true });
+
+      sizzleViewport.addEventListener('touchcancel', () => {
+        sizzleTouchActive = false;
+        window.setTimeout(finalizeMobileSizzleSnap, 50);
+      }, { passive: true });
     }
 
     updateSizzleEdgePadding();

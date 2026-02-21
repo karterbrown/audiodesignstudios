@@ -265,6 +265,9 @@
   overflow-y: visible;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
   padding: 3.25rem 0 2.9rem;
 }
 
@@ -304,6 +307,7 @@
   overflow: hidden;
   background: #000;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  touch-action: pan-x pinch-zoom;
 }
 
 .sizzle-item-media video {
@@ -409,29 +413,26 @@
   }
 
   .sizzle-nav {
-    justify-self: center;
-  }
-
-  .sizzle-nav-prev {
-    order: 2;
+    display: none;
   }
 
   .sizzle-viewport {
     order: 1;
+    padding: 2.2rem 0 2.2rem;
   }
 
-  .sizzle-nav-next {
-    order: 3;
+  .sizzle-track {
+    gap: 0.75rem;
   }
 
   .sizzle-item {
-    flex-basis: clamp(280px, 78vw, 430px);
-    margin-inline: -0.4rem;
-    transform: scale(0.84);
+    flex-basis: min(86vw, 430px);
+    margin-inline: 0;
+    transform: scale(0.9);
   }
 
   .sizzle-item.is-active {
-    transform: scale(1.1);
+    transform: scale(1.06);
   }
 }
 
