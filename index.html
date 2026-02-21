@@ -20,8 +20,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1771642009" />
-  <link rel="stylesheet" href="editorial.css?v=1771642009" />
+  <link rel="stylesheet" href="index.css?v=1771642407" />
+  <link rel="stylesheet" href="editorial.css?v=1771642407" />
 </head>
 
 <body>
@@ -387,7 +387,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1771642009"></script>
+  <script src="content.js?v=1771642407"></script>
 
   <!-- Year display script -->
   <script>
@@ -423,7 +423,10 @@
         video.paused ? video.play().catch(() => {}) : video.pause();
         lastTouch = Date.now();
       }, { passive: true });
-      video.addEventListener('click', () => {
+      video.addEventListener('click', (e) => {
+        e.preventDefault(); // stop browser's own click-to-toggle so we don't double-fire
+        const rect = video.getBoundingClientRect();
+        if (e.clientY > rect.bottom - 44) return; // let native controls bar work
         if (Date.now() - lastTouch < 450) return;
         video.paused ? video.play().catch(() => {}) : video.pause();
       });
