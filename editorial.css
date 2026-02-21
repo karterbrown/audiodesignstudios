@@ -429,7 +429,9 @@
   .sizzle-mobile-buttons {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 0.5rem;
   }
 
   .sizzle-mobile-nav {
