@@ -29,6 +29,7 @@
        ======================================================================== -->
   <header class="site-header">
     <a href="index.html" class="logo">Audio Design Studios</a>
+    <button class="demo-header-info-btn" id="demoInfoBtn" aria-label="How to use this player">INFO</button>
   </header>
 
   <!-- ========================================================================
@@ -197,6 +198,34 @@
        ======================================================================== -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+
+      // ====================================================================
+      // DEMO INFO MODAL
+      // ====================================================================
+      const demoInfoOverlay = document.getElementById('demoInfoOverlay');
+      const demoInfoClose   = document.getElementById('demoInfoClose');
+      const demoInfoBtn     = document.getElementById('demoInfoBtn');
+
+      demoInfoBtn.addEventListener('click', () => {
+        demoInfoOverlay.classList.add('open');
+        demoInfoOverlay.setAttribute('aria-hidden', 'false');
+      });
+
+      function closeDemoInfo() {
+        demoInfoOverlay.classList.remove('open');
+        demoInfoOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      demoInfoClose.addEventListener('click', closeDemoInfo);
+      demoInfoOverlay.addEventListener('click', (e) => {
+        if (e.target === demoInfoOverlay) closeDemoInfo();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && demoInfoOverlay.classList.contains('open')) closeDemoInfo();
+      });
+
+      // ====================================================================
+
       const audioStates = {
         ai: { wasPlaying: false, audio: null, context: null, audioB: null }
       };
@@ -1635,6 +1664,62 @@
       });
     });
   </script>
+
+  <!-- ========================================================================
+       DEMO INFO MODAL - How to use the player
+       ======================================================================== -->
+  <div class="player-info-overlay" id="demoInfoOverlay" aria-hidden="true">
+    <div class="player-info-modal" role="dialog" aria-modal="true" aria-labelledby="demoInfoTitle">
+      <button class="player-info-close" id="demoInfoClose" aria-label="Close info">&times;</button>
+      <h2 class="player-info-title" id="demoInfoTitle">How to Use the Demo Player</h2>
+      <div class="player-info-divider"></div>
+      <ul class="player-info-list">
+        <li>
+          <span class="player-info-icon">&#9654;</span>
+          <div>
+            <strong>Play / Pause</strong>
+            <p>Click the center transport button to start or stop playback. Clicking a track title in the list will also begin playing it immediately.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#8651;</span>
+          <div>
+            <strong>Raw / Mix Toggle</strong>
+            <p>Switch between the unprocessed (Raw) and fully mixed (Mix) version of the track in real time. The VU meter reflects the active signal.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9644;</span>
+          <div>
+            <strong>Progress Bar</strong>
+            <p>Click anywhere on the progress bar to jump to that position, or click and drag to scrub through the track.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9678;</span>
+          <div>
+            <strong>Volume Knob</strong>
+            <p>Drag upward to raise the volume, downward to lower it. A single click without dragging resets the level to 0 dB.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#128202;</span>
+          <div>
+            <strong>Analyze</strong>
+            <p>Runs a full loudness and dynamics analysis on the current track, reporting RMS, True Peak, LUFS, and LRA values.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#128065;</span>
+          <div>
+            <strong>View</strong>
+            <p>Opens the real-time loudness meter, showing a live LUFS and LRA readout while the track plays.</p>
+          </div>
+        </li>
+      </ul>
+      <div class="player-info-footer">Click outside this window or press Esc to close</div>
+    </div>
+  </div>
 
   <!-- ========================================================================
        FOOTER - Contact Information

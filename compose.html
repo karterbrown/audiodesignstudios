@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771882798" />
-  <link rel="stylesheet" href="matrix.css?v=1771882798" />
+  <link rel="stylesheet" href="compose.css?v=1771884124" />
+  <link rel="stylesheet" href="matrix.css?v=1771884124" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1120,6 +1120,10 @@
       position: absolute;
       bottom: 10px;
       right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
     }
 
     .power-button {
@@ -1375,6 +1379,7 @@
       <div class="design-meter-section">
         <!-- Power Button -->
         <div class="power-button-container">
+          <button class="info-button" aria-label="Player info">INFO</button>
           <a href="index.html" class="power-button" aria-label="Power - Return to Design">POWER</a>
         </div>
         
@@ -1491,6 +1496,7 @@
       <div class="ba-global-toggle-section">
         <!-- Power Button -->
         <div class="power-button-container">
+          <button class="info-button" aria-label="Player info">INFO</button>
           <a href="index.html" class="power-button" aria-label="Power - Return to Design">POWER</a>
         </div>
         
@@ -1642,6 +1648,7 @@
         <div class="portfolio-meter-section">
           <!-- Power Button -->
           <div class="power-button-container">
+            <button class="info-button" aria-label="Player info">INFO</button>
             <a href="index.html" class="power-button" aria-label="Power - Return to Design">POWER</a>
           </div>
           
@@ -1770,6 +1777,7 @@
         <div class="portfolio-meter-section">
           <!-- Power Button -->
           <div class="power-button-container">
+            <button class="info-button" aria-label="Player info">INFO</button>
             <a href="index.html" class="power-button" aria-label="Power - Return to Design">POWER</a>
           </div>
           
@@ -1888,7 +1896,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771882798"></script>
+  <script src="content.js?v=1771884124"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -2105,6 +2113,35 @@
       let activeDrag = null;
 
       // ====================================================================
+      // PLAYER INFO MODAL
+      // ====================================================================
+      const infoOverlay = document.getElementById('playerInfoOverlay');
+      const infoClose = document.getElementById('playerInfoClose');
+
+      function openInfoModal() {
+        infoOverlay.classList.add('open');
+        infoOverlay.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeInfoModal() {
+        infoOverlay.classList.remove('open');
+        infoOverlay.setAttribute('aria-hidden', 'true');
+      }
+
+      document.querySelectorAll('.info-button').forEach(btn => {
+        btn.addEventListener('click', openInfoModal);
+      });
+
+      infoClose.addEventListener('click', closeInfoModal);
+
+      infoOverlay.addEventListener('click', (e) => {
+        if (e.target === infoOverlay) closeInfoModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && infoOverlay.classList.contains('open')) closeInfoModal();
+      });
+      // ====================================================================
       // MOBILE AUDIO PLAYBACK MANAGER - Handles screen lock & interruptions
       // ====================================================================
       const audioStates = {
@@ -2277,13 +2314,21 @@
       function designPrevTrack() {
         designCurrentTrack = (designCurrentTrack - 1 + designTracks.length) % designTracks.length;
         designLoadTrack(designCurrentTrack);
-        if (designIsPlaying) designAudio.play();
+        if (designIsPlaying) {
+          designAudio.addEventListener('canplay', () => {
+            designAudio.play().catch(e => console.warn('Audio play failed:', e));
+          }, { once: true });
+        }
       }
 
       function designNextTrack() {
         designCurrentTrack = (designCurrentTrack + 1) % designTracks.length;
         designLoadTrack(designCurrentTrack);
-        if (designIsPlaying) designAudio.play();
+        if (designIsPlaying) {
+          designAudio.addEventListener('canplay', () => {
+            designAudio.play().catch(e => console.warn('Audio play failed:', e));
+          }, { once: true });
+        }
       }
 
       function designUpdateProgress() {
@@ -2797,6 +2842,9 @@
       let trackLoadDebounceTimer = null;
       const TRACK_LOAD_DEBOUNCE_MS = 150;
 
+      // Per-player pending canplay listener reference (for cleanup on rapid track switch)
+      const pendingCanPlay = { dotp: null, allWorks: null };
+
       function renderProgress(ctx) {
         if (!ctx || !ctx.current) return;
         const audio = ctx.audio;
@@ -2878,9 +2926,20 @@
             ctx.nowPlayingEl.textContent = trackTitle;
           }
 
+          // Cancel any canplay listener left over from a previous rapid switch
+          if (pendingCanPlay[playerKey]) {
+            ctx.audio.removeEventListener('canplay', pendingCanPlay[playerKey]);
+            pendingCanPlay[playerKey] = null;
+          }
+
           ctx.audio.src = url;
-          ctx.audio.load();
-          ctx.audio.play().catch(e => console.warn('play failed', e));
+          // Wait for the browser to buffer enough data before playing to prevent glitches.
+          // Do NOT call audio.load() explicitly — setting src + canplay is the correct pattern.
+          pendingCanPlay[playerKey] = function onCanPlay() {
+            pendingCanPlay[playerKey] = null;
+            ctx.audio.play().catch(e => console.warn('play failed', e));
+          };
+          ctx.audio.addEventListener('canplay', pendingCanPlay[playerKey], { once: true });
         }, TRACK_LOAD_DEBOUNCE_MS);
       }
 
@@ -4062,6 +4121,8 @@
 
         async function playCurrent() {
           ensureAudioGraph();
+          // Wait for enough data to be buffered before playing to prevent glitches
+          await Promise.all([waitForReady(baBeforeAudio), waitForReady(baAfterAudio)]);
           await Promise.all([baBeforeAudio.play(), baAfterAudio.play()]);
           isPlaying = true;
           baPlayPauseBtn.classList.add('playing');
@@ -4277,6 +4338,55 @@
       }, 0);
     });
   </script>
+
+  <!-- ========================================================================
+       INFO MODAL - Player Instructions
+       ======================================================================== -->
+  <div class="player-info-overlay" id="playerInfoOverlay" aria-hidden="true">
+    <div class="player-info-modal" role="dialog" aria-modal="true" aria-labelledby="playerInfoTitle">
+      <button class="player-info-close" id="playerInfoClose" aria-label="Close info">&times;</button>
+      <h2 class="player-info-title" id="playerInfoTitle">How to Use the Player</h2>
+      <div class="player-info-divider"></div>
+      <ul class="player-info-list">
+        <li>
+          <span class="player-info-icon">&#9654;</span>
+          <div>
+            <strong>Play / Pause</strong>
+            <p>Click the center button to start or pause playback. Clicking any track title will also begin playing it.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#8644;</span>
+          <div>
+            <strong>Skip Tracks</strong>
+            <p>Use the left and right arrow buttons to jump to the previous or next track in the playlist.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9644;</span>
+          <div>
+            <strong>Progress Bar</strong>
+            <p>Click anywhere on the progress bar to seek to that position. Click and drag to scrub through the track in real time.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9678;</span>
+          <div>
+            <strong>Volume Knob</strong>
+            <p>Click and drag upward to raise the volume, or downward to lower it. A single click without dragging resets the level to 0 dB.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#8651;</span>
+          <div>
+            <strong>Dry / Wet Toggle</strong>
+            <p>On the Analog Processing player, use this toggle to switch between the unprocessed (Dry) and processed (Wet) signal for a direct A/B comparison.</p>
+          </div>
+        </li>
+      </ul>
+      <div class="player-info-footer">Click outside this window or press Esc to close</div>
+    </div>
+  </div>
 
   <!-- ========================================================================
        FOOTER - Contact Information

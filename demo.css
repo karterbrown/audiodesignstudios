@@ -88,6 +88,34 @@ main {
   }
 }
 
+/* Demo page header info button */
+.demo-header-info-btn {
+  background: none;
+  border: 1px solid rgba(126, 201, 143, 0.35);
+  border-radius: 4px;
+  color: #7ec98f;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  text-shadow: 0 0 8px rgba(126, 201, 143, 0.6);
+  white-space: nowrap;
+}
+
+.demo-header-info-btn:hover {
+  background: rgba(126, 201, 143, 0.08);
+  border-color: #7ec98f;
+  box-shadow: 0 0 10px rgba(126, 201, 143, 0.2);
+}
+
+.demo-header-info-btn:active {
+  background: rgba(126, 201, 143, 0.14);
+}
+
 /* =============================================================================
    4. AI PLAYER STYLES - Before/After Toggle Player
    ============================================================================= */
