@@ -425,7 +425,7 @@ main {
   gap: 0.75rem 1rem;
   width: 100%;
   max-width: 600px;
-  margin: 1.5rem auto 2.5rem;
+  margin: 1.5rem auto 0;
   padding: 0.75rem 1.5rem;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(208, 208, 208, 0.2);
@@ -586,8 +586,8 @@ main {
 
 /* View button inline with volume control */
 .ba-view-btn-inline {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
   border: 2px solid rgba(126, 201, 143, 0.4);
   border-radius: 4px;
@@ -606,6 +606,8 @@ main {
   align-items: center;
   justify-content: center;
   opacity: 0.95;
+  flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
 .ba-view-btn-inline:hover {
@@ -642,18 +644,6 @@ main {
   }
   
   .ba-meter-value {
-    font-size: 0.8rem;
-    min-width: auto;
-  }
-}
-    justify-content: space-between;
-  }
-  
-  .ba-meter-label-text {
-    font-size: 0.65rem;
-  }
-  
-  .ba-meter-value {
     font-size: 0.85rem;
     min-width: auto;
     text-align: right;
@@ -661,11 +651,19 @@ main {
 }
 
 .ba-controls-row {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  justify-content: center;
-  margin-top: 5rem;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  justify-content: center !important;
+  margin-top: 0;
+  width: 100%;
+}
+
+.ba-controls-row > * {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
 }
 
 .ba-toggle-button {
@@ -688,6 +686,8 @@ main {
   justify-content: center;
   font-family: 'Courier New', monospace;
   letter-spacing: 0.5px;
+  flex: 0 0 auto;
+  flex-shrink: 0;
 }
 
 .ba-toggle-button::after {
@@ -764,7 +764,7 @@ main {
   flex-direction: row;
   align-items: center;
   gap: 1rem;
-  margin-top: -12px;
+  margin-top: 0;
 }
 
 .ba-volume-knob-wrapper {
@@ -1179,6 +1179,8 @@ main {
   padding: 0 !important;
   min-width: 60px !important;
   min-height: 60px !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
 }
 
 .control-btn-analyze:hover {

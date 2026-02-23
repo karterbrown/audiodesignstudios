@@ -106,22 +106,9 @@
             </div>
 
             <div class="ba-controls-row">
-              <div class="ba-volume-control">
-                <button id="aiLoudnessMeterBtn" class="ba-view-btn-inline" aria-label="View Loudness Meter" title="Show loudness meter">View</button>
-                <div class="ba-volume-knob-wrapper">
-                  <div class="ba-volume-knob-container">
-                    <div class="ba-volume-tick"></div>
-                    <div class="ba-volume-tick"></div>
-                    <div class="ba-volume-tick"></div>
-                    <div class="ba-volume-db-label"></div>
-                    <div class="ba-volume-db-label">0</div>
-                    <div class="ba-volume-db-label">+12</div>
-                    <div class="ba-volume-knob" id="aiVolumeKnob" aria-label="AI Demo Volume Control"></div>
-                    <div class="ba-volume-arc"></div>
-                  </div>
-                  <div class="ba-volume-value" id="aiVolumeValue">0 dB</div>
-                </div>
-              </div>
+              <button class="ba-toggle-button" id="aiToggleButton" aria-label="Toggle Raw/Mix"></button>
+              <button id="aiLoudnessMeterBtn" class="ba-view-btn-inline" aria-label="View Loudness Meter" title="Show loudness meter">View</button>
+              <button id="aiAnalyzeBtn" class="control-btn-analyze" aria-label="Analyze Track" title="Analyze current track">Analyze</button>
             </div>
           </div>
 
@@ -132,8 +119,21 @@
             <button id="aiPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
             <button id="aiPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
             <button id="aiNextBtn" class="control-btn" aria-label="Next track"></button>
-            <button class="ba-toggle-button" id="aiToggleButton" aria-label="Toggle Raw/Mix"></button>
-            <button id="aiAnalyzeBtn" class="control-btn-analyze" aria-label="Analyze Track" title="Analyze current track">Analyze</button>
+            <div class="ba-volume-control">
+              <div class="ba-volume-knob-wrapper">
+                <div class="ba-volume-knob-container">
+                  <div class="ba-volume-tick"></div>
+                  <div class="ba-volume-tick"></div>
+                  <div class="ba-volume-tick"></div>
+                  <div class="ba-volume-db-label"></div>
+                  <div class="ba-volume-db-label">0</div>
+                  <div class="ba-volume-db-label">+12</div>
+                  <div class="ba-volume-knob" id="aiVolumeKnob" aria-label="AI Demo Volume Control"></div>
+                  <div class="ba-volume-arc"></div>
+                </div>
+                <div class="ba-volume-value" id="aiVolumeValue">0 dB</div>
+              </div>
+            </div>
           </div>
           <div class="track-list" id="aiPlaylistTracks"></div>
         </div>
