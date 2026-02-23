@@ -1198,6 +1198,38 @@ main {
 }
 
 /* =============================================================================
+   TRACK LOADING SPINNER
+   ============================================================================= */
+
+/* Shown on the track-item number cell while audio buffers after a click */
+.track-item.loading {
+  opacity: 0.7;
+}
+
+.track-item.loading .track-item-number {
+  position: relative;
+  color: transparent;
+}
+
+.track-item.loading .track-item-number::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 2px solid rgba(126, 201, 143, 0.25);
+  border-top-color: #7ec98f;
+  border-radius: 50%;
+  animation: trackLoadSpin 0.7s linear infinite;
+}
+
+@keyframes trackLoadSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* =============================================================================
    ANALYSIS MODAL
    ============================================================================= */
 
@@ -1231,6 +1263,7 @@ main {
 
 .loudness-meter-content {
   max-width: 700px;
+  padding-top: 4.5rem;
 }
 
 .analysis-modal-close {
@@ -1257,12 +1290,59 @@ main {
 }
 
 .analysis-modal-content h2 {
-  margin: 0 0 1.5rem 0;
+  margin: 0;
   color: #7ec98f;
   font-size: 1.8rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+/* Spectrum modal header row: title left, Raw/Mix toggle right */
+.spectrum-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  /* Reserve space so Raw/Mix buttons don't sit under the absolute close button */
+  padding-right: 3rem;
+}
+
+.spectrum-modal-header h2 {
+  margin: 0;
+}
+
+.spectrum-mode-toggle {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.spectrum-mode-btn {
+  background: none;
+  border: 1px solid rgba(126, 201, 143, 0.3);
+  color: rgba(126, 201, 143, 0.5);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.spectrum-mode-btn:hover {
+  border-color: rgba(126, 201, 143, 0.6);
+  color: rgba(126, 201, 143, 0.8);
+}
+
+.spectrum-mode-btn.active {
+  background: rgba(126, 201, 143, 0.15);
+  border-color: #7ec98f;
+  color: #7ec98f;
 }
 
 .analysis-results {

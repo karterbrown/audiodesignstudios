@@ -158,13 +158,19 @@
     <div id="loudnessMeterModal" class="analysis-modal" style="display: none;">
       <div class="analysis-modal-content loudness-meter-content">
         <button class="analysis-modal-close" id="loudnessMeterClose">&times;</button>
-        <h2>Loudness Meter</h2>
+        <div class="spectrum-modal-header">
+          <h2>Spectrum Analyzer</h2>
+          <div class="spectrum-mode-toggle">
+            <button id="spectrumRawBtn" class="spectrum-mode-btn">Raw</button>
+            <button id="spectrumMixBtn" class="spectrum-mode-btn active">Mix</button>
+          </div>
+        </div>
         <div id="loudnessMeterDisplay" class="loudness-meter-display">
           <div class="loudness-meter-track-name">No track playing</div>
           <canvas id="loudnessMeterCanvas" width="500" height="300"></canvas>
           <div class="loudness-meter-readings">
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">RMS: 300ms average level</span>
+              <span class="loudness-meter-label">RMS: Current level (active mode)</span>
               <span class="loudness-meter-value" id="meterRmsValue">-∞ dB</span>
             </div>
             <div class="loudness-meter-reading">
@@ -364,10 +370,16 @@
       const afterAnalyser = ctx.createAnalyser();
       const beforeGain = ctx.createGain();
       const afterGain = ctx.createGain();
-      beforeAnalyser.fftSize = 2048;
-      afterAnalyser.fftSize = 2048;
+      beforeAnalyser.fftSize = 8192;
+      afterAnalyser.fftSize = 8192;
       beforeAnalyser.smoothingTimeConstant = 0.8;
       afterAnalyser.smoothingTimeConstant = 0.8;
+      // Set dB range so getByteFrequencyData maps 0→-90 dBFS and 255→0 dBFS.
+      // This makes the spectrum graph accurate without any extra conversion offset.
+      beforeAnalyser.minDecibels = -90;
+      beforeAnalyser.maxDecibels = 0;
+      afterAnalyser.minDecibels = -90;
+      afterAnalyser.maxDecibels = 0;
       const beforeData = new Uint8Array(beforeAnalyser.frequencyBinCount);
       const afterData = new Uint8Array(afterAnalyser.frequencyBinCount);
       const beforeTimeData = new Float32Array(beforeAnalyser.fftSize);
@@ -482,8 +494,21 @@
           const track = tracks[idx];
           nowPlaying.textContent = afterMode ? track.titleMix : track.titleRaw;
         }
-        
+
         applyVolume();
+
+        // Keep spectrum modal buttons + track name in sync (safe: modal is in HTML so getElementById always works)
+        const _specModal = document.getElementById('loudnessMeterModal');
+        if (_specModal && _specModal.style.display !== 'none') {
+          const _rawBtn = document.getElementById('spectrumRawBtn');
+          const _mixBtn = document.getElementById('spectrumMixBtn');
+          const _trackName = document.querySelector('.loudness-meter-track-name');
+          if (_rawBtn) _rawBtn.classList.toggle('active', !afterMode);
+          if (_mixBtn) _mixBtn.classList.toggle('active', afterMode);
+          if (_trackName && idx >= 0 && tracks[idx]) {
+            _trackName.textContent = afterMode ? tracks[idx].titleMix : tracks[idx].titleRaw;
+          }
+        }
       }
 
       function renderProgress() {
@@ -509,8 +534,9 @@
             return;
           }
           const now = performance.now();
-          if (now - lastSync > 1000) {
-            if (Math.abs(beforeAudio.currentTime - afterAudio.currentTime) > 0.2) {
+          if (now - lastSync > 500) {
+            const drift = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
+            if (drift > 0.05) {
               afterAudio.currentTime = beforeAudio.currentTime;
             }
             lastSync = now;
@@ -727,18 +753,20 @@
         idx = next;
         applyMode(true); // This will set the title via applyMode
         setActiveRow(next);
+
+        // Cancel all ongoing animation loops before touching audio
+        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+        stopVU();
+
         beforeAudio.pause();
         afterAudio.pause();
-        beforeAudio.src = t.before;
-        afterAudio.src = t.after;
-        beforeAudio.currentTime = 0;
-        afterAudio.currentTime = 0;
+
         progressFill.style.width = '0%';
         scrubber.style.left = '0%';
-        
+
         // Reset time display
         if (timeDisplay) timeDisplay.textContent = '0:00 / 0:00';
-        
+
         // Reset metering values for both modes
         beforeLufsBuffer = [];
         afterLufsBuffer = [];
@@ -747,16 +775,16 @@
         beforeTruePeakHold = -100;
         afterTruePeakHold = -100;
         truePeakHold = -100;
-        
+
         // Reset integrated buffers for View modal
         beforeIntegratedLufsBuffer = [];
         afterIntegratedLufsBuffer = [];
         beforeLraValues = [];
         afterLraValues = [];
-        
+
         // Reset LRA tracking
         lraValuesMain = [];
-        
+
         needleAngle = -50;
         if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
         if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBTP';
@@ -764,18 +792,70 @@
         if (vuDisplay) vuDisplay.textContent = '-∞ VU';
         if (sourceDisplay) sourceDisplay.textContent = 'Mix';
         if (lraDisplay) lraDisplay.textContent = '-- LU';
-        
-        if (progressRAF) cancelAnimationFrame(progressRAF);
-        stopVU();
+
+        // Set src and force the browser to start buffering
+        beforeAudio.src = t.before;
+        afterAudio.src = t.after;
+        beforeAudio.load();
+        afterAudio.load();
+
         if (!autoplay) {
           playing = false;
           playPauseBtn.classList.remove('playing');
           return;
         }
-        playBoth().catch(() => {
+
+        // Mark active row as loading so the user gets immediate feedback
+        const loadingRow = list.querySelectorAll('.track-item')[next];
+        if (loadingRow) loadingRow.classList.add('loading');
+
+        // Wait for both tracks to have enough data before starting playback
+        // This prevents the glitchy startup caused by one track buffering ahead of the other
+        let beforeReady = false;
+        let afterReady = false;
+
+        const onBeforeReady = () => {
+          beforeReady = true;
+          tryStartPlayback();
+        };
+        const onAfterReady = () => {
+          afterReady = true;
+          tryStartPlayback();
+        };
+
+        // Clean up listeners whether we succeed or fail
+        function cleanup() {
+          beforeAudio.removeEventListener('canplay', onBeforeReady);
+          afterAudio.removeEventListener('canplay', onAfterReady);
+          beforeAudio.removeEventListener('error', onError);
+          afterAudio.removeEventListener('error', onError);
+          // Remove loading spinner from all rows
+          list.querySelectorAll('.track-item.loading').forEach(r => r.classList.remove('loading'));
+        }
+
+        function onError(e) {
+          cleanup();
+          console.error('[AI PLAYER] Audio load error:', e);
           playing = false;
           playPauseBtn.classList.remove('playing');
-        });
+        }
+
+        function tryStartPlayback() {
+          if (!beforeReady || !afterReady) return;
+          cleanup();
+          // Snap both to zero right before playing so they stay in sync
+          beforeAudio.currentTime = 0;
+          afterAudio.currentTime = 0;
+          playBoth().catch(() => {
+            playing = false;
+            playPauseBtn.classList.remove('playing');
+          });
+        }
+
+        beforeAudio.addEventListener('canplay', onBeforeReady, { once: true });
+        afterAudio.addEventListener('canplay', onAfterReady, { once: true });
+        beforeAudio.addEventListener('error', onError, { once: true });
+        afterAudio.addEventListener('error', onError, { once: true });
       }
 
       tracks.forEach((t, i) => {
@@ -1245,11 +1325,37 @@
       const meterLufsIValueEl = document.getElementById('meterLufsIValue');
       const meterLRAValueEl = document.getElementById('meterLRAValue');
       const meterTrackNameEl = document.querySelector('.loudness-meter-track-name');
+      const spectrumRawBtn = document.getElementById('spectrumRawBtn');
+      const spectrumMixBtn = document.getElementById('spectrumMixBtn');
+
+      function applySpectrumMode(isMix) {
+        // Delegate to the main applyMode — this switches audio gains, main player labels,
+        // nowPlaying title, AND (via applyMode's sync block) updates these modal buttons
+        applyMode(isMix);
+        // Update modal track name explicitly in case no track is loaded yet
+        if (meterTrackNameEl && idx >= 0 && tracks[idx]) {
+          meterTrackNameEl.textContent = isMix ? tracks[idx].titleMix : tracks[idx].titleRaw;
+        }
+        // Reset integrated buffers for the newly selected mode so readouts start fresh
+        if (isMix) {
+          afterIntegratedLufsBuffer = [];
+          afterLraValues = [];
+        } else {
+          beforeIntegratedLufsBuffer = [];
+          beforeLraValues = [];
+        }
+      }
+
+      spectrumRawBtn.addEventListener('click', () => applySpectrumMode(false));
+      spectrumMixBtn.addEventListener('click', () => applySpectrumMode(true));
 
       let meterActive = false;
       let meterRAF = null;
-      let meterHistory = [];
-      const MAX_HISTORY = 300; // 6 seconds at 50fps
+
+      // Smoothed spectrum buffers for both channels (for visual smoothing)
+      let rawSpectrumSmoothed = null;
+      let mixSpectrumSmoothed = null;
+      const SPECTRUM_SMOOTHING = 0.75; // Higher = smoother but slower to react
 
       function closeLoudnessMeter() {
         loudnessMeterModal.style.display = 'none';
@@ -1265,175 +1371,239 @@
         if (e.target === loudnessMeterModal) closeLoudnessMeter();
       });
 
-      function drawMeterGraph() {
-        if (!meterCtx || !meterActive) return;
+      function drawSpectrumGraph(rawFreqData, mixFreqData) {
+        if (!meterCtx) return;
 
-        const width = loudnessMeterCanvas.width;
-        const height = loudnessMeterCanvas.height;
+        const W = loudnessMeterCanvas.width;
+        const H = loudnessMeterCanvas.height;
+        const binCount = rawFreqData.length;
+        const sampleRate = ctx.sampleRate || 48000;
+        const nyquist = sampleRate / 2;
 
-        // Clear canvas
+        // Chart margins: room for dB labels left, freq labels bottom
+        const ML = 42; // left margin
+        const MB = 22; // bottom margin
+        const MT = 10; // top margin
+        const MR = 10; // right margin
+        const cW = W - ML - MR;
+        const cH = H - MT - MB;
+
+        const MIN_DB = -90;
+        const MAX_DB = 0;
+        const DB_RANGE = MAX_DB - MIN_DB;
+        const MIN_FREQ = 20;
+
+        // dB value → canvas y pixel
+        function dbToY(db) {
+          return MT + cH * (1 - (Math.max(MIN_DB, Math.min(MAX_DB, db)) - MIN_DB) / DB_RANGE);
+        }
+        // chart-area x offset → frequency (log)
+        function xToFreq(cx) {
+          return MIN_FREQ * Math.pow(nyquist / MIN_FREQ, cx / cW);
+        }
+        // Linearly interpolate between adjacent bins so the curve stays smooth
+        // even in the low-frequency region where bins map to many on-screen pixels.
+        function sampleDB(data, freq) {
+          const exactBin = (freq / nyquist) * binCount;
+          const b0 = Math.max(0, Math.floor(exactBin));
+          const b1 = Math.min(b0 + 1, binCount - 1);
+          const t  = exactBin - b0;
+          const val = data[b0] * (1 - t) + data[b1] * t; // lerp
+          return MIN_DB + (val / 255) * DB_RANGE;
+        }
+
+        // ── Clear canvas ────────────────────────────────────────────────────────
         meterCtx.fillStyle = '#0f0f0f';
-        meterCtx.fillRect(0, 0, width, height);
+        meterCtx.fillRect(0, 0, W, H);
 
-        // Draw grid lines
-        meterCtx.strokeStyle = 'rgba(126, 201, 143, 0.2)';
-        meterCtx.lineWidth = 1;
-
-        // Horizontal lines (-60 to 0 dB)
-        for (let db = 0; db >= -60; db -= 10) {
-          const y = height - ((db + 60) / 60) * height;
+        // ── Grid lines (drawn without clipping so they reach axis labels) ────────
+        const dbStops = [0, -10, -20, -30, -40, -50, -60, -70, -80, -90];
+        dbStops.forEach(db => {
+          const y = dbToY(db);
+          meterCtx.strokeStyle = (db === 0 || db === -90)
+            ? 'rgba(126, 201, 143, 0.3)'
+            : 'rgba(126, 201, 143, 0.13)';
+          meterCtx.lineWidth = 1;
           meterCtx.beginPath();
-          meterCtx.moveTo(0, y);
-          meterCtx.lineTo(width, y);
+          meterCtx.moveTo(ML, y);
+          meterCtx.lineTo(W - MR, y);
           meterCtx.stroke();
+        });
 
-          // Labels
-          meterCtx.fillStyle = '#7ec98f';
-          meterCtx.font = '10px monospace';
-          meterCtx.fillText(`${db} dB`, 5, y - 3);
-        }
-
-        // Vertical time lines (every 1 second)
-        const pixelsPerSample = width / MAX_HISTORY;
-        const samplesPerSecond = 50; // ~50fps
-        for (let sec = 0; sec < 6; sec++) {
-          const x = width - (sec * samplesPerSecond * pixelsPerSample);
+        const freqStops = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000];
+        freqStops.forEach(freq => {
+          if (freq >= nyquist) return;
+          const x = ML + cW * Math.log(freq / MIN_FREQ) / Math.log(nyquist / MIN_FREQ);
+          meterCtx.strokeStyle = 'rgba(126, 201, 143, 0.12)';
+          meterCtx.lineWidth = 1;
           meterCtx.beginPath();
-          meterCtx.moveTo(x, 0);
-          meterCtx.lineTo(x, height);
+          meterCtx.moveTo(x, MT);
+          meterCtx.lineTo(x, MT + cH);
           meterCtx.stroke();
+        });
 
-          if (sec > 0) {
-            meterCtx.fillStyle = '#7ec98f';
-            meterCtx.fillText(`-${sec}s`, x + 3, height - 5);
+        // ── Spectrum curves (clipped to chart area) ───────────────────────────────
+        meterCtx.save();
+        meterCtx.beginPath();
+        meterCtx.rect(ML, MT, cW, cH);
+        meterCtx.clip();
+
+        function drawSpectrum(data, fillColor, strokeColor) {
+          meterCtx.beginPath();
+          meterCtx.moveTo(ML, MT + cH);
+          for (let cx = 0; cx <= cW; cx++) {
+            meterCtx.lineTo(ML + cx, dbToY(sampleDB(data, xToFreq(cx))));
           }
+          meterCtx.lineTo(ML + cW, MT + cH);
+          meterCtx.closePath();
+          meterCtx.fillStyle = fillColor;
+          meterCtx.fill();
+
+          meterCtx.beginPath();
+          for (let cx = 0; cx <= cW; cx++) {
+            const y = dbToY(sampleDB(data, xToFreq(cx)));
+            if (cx === 0) meterCtx.moveTo(ML, y);
+            else meterCtx.lineTo(ML + cx, y);
+          }
+          meterCtx.strokeStyle = strokeColor;
+          meterCtx.lineWidth = 1.5;
+          meterCtx.stroke();
         }
 
-        if (meterHistory.length < 2) return;
+        // RAW behind MIX so MIX is always on top
+        drawSpectrum(rawFreqData, 'rgba(255, 130, 40, 0.18)', 'rgba(255, 130, 40, 0.85)');
+        drawSpectrum(mixFreqData, 'rgba(126, 201, 143, 0.18)', 'rgba(126, 201, 143, 0.95)');
+        meterCtx.restore();
 
-        // Draw RMS line
-        meterCtx.strokeStyle = '#7ec98f';
-        meterCtx.lineWidth = 2;
-        meterCtx.beginPath();
-        meterHistory.forEach((point, i) => {
-          const x = width - ((meterHistory.length - i) * pixelsPerSample);
-          const dbNorm = Math.max(-60, point.rms);
-          const y = height - ((dbNorm + 60) / 60) * height;
-          if (i === 0) meterCtx.moveTo(x, y);
-          else meterCtx.lineTo(x, y);
+        // ── dBFS axis labels (left margin) ────────────────────────────────────────
+        meterCtx.textAlign = 'right';
+        meterCtx.textBaseline = 'middle';
+        dbStops.forEach(db => {
+          const y = dbToY(db);
+          meterCtx.fillStyle = db === 0
+            ? 'rgba(126, 201, 143, 0.9)'
+            : 'rgba(126, 201, 143, 0.5)';
+          meterCtx.font = '10px monospace';
+          meterCtx.fillText(db === 0 ? '0' : `${db}`, ML - 5, y);
         });
-        meterCtx.stroke();
 
-        // Draw Peak line
-        meterCtx.strokeStyle = '#ff6b6b';
-        meterCtx.lineWidth = 2;
-        meterCtx.beginPath();
-        meterHistory.forEach((point, i) => {
-          const x = width - ((meterHistory.length - i) * pixelsPerSample);
-          const dbNorm = Math.max(-60, point.peak);
-          const y = height - ((dbNorm + 60) / 60) * height;
-          if (i === 0) meterCtx.moveTo(x, y);
-          else meterCtx.lineTo(x, y);
+        // Rotated axis unit label
+        meterCtx.save();
+        meterCtx.fillStyle = 'rgba(126, 201, 143, 0.35)';
+        meterCtx.font = '9px monospace';
+        meterCtx.textAlign = 'center';
+        meterCtx.textBaseline = 'middle';
+        meterCtx.translate(8, MT + cH / 2);
+        meterCtx.rotate(-Math.PI / 2);
+        meterCtx.fillText('dBFS', 0, 0);
+        meterCtx.restore();
+
+        // ── Frequency axis labels (bottom margin) ─────────────────────────────────
+        meterCtx.textAlign = 'center';
+        meterCtx.textBaseline = 'bottom';
+        freqStops.forEach(freq => {
+          if (freq >= nyquist) return;
+          const x = ML + cW * Math.log(freq / MIN_FREQ) / Math.log(nyquist / MIN_FREQ);
+          const label = freq >= 1000 ? `${freq / 1000}k` : `${freq}`;
+          meterCtx.fillStyle = 'rgba(126, 201, 143, 0.5)';
+          meterCtx.font = '10px monospace';
+          meterCtx.fillText(label, x, H - 2);
         });
-        meterCtx.stroke();
 
-        // Draw legend
-        meterCtx.font = '12px monospace';
-        meterCtx.fillStyle = '#7ec98f';
-        meterCtx.fillRect(width - 140, 10, 12, 12);
+        // ── Legend (top-right corner inside chart) ────────────────────────────────
+        const legX = W - MR - 68;
+        const legY = MT + 8;
+        meterCtx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+        meterCtx.fillRect(legX - 6, legY - 4, 74, 46);
+        meterCtx.fillStyle = 'rgba(255, 130, 40, 0.85)';
+        meterCtx.fillRect(legX, legY, 12, 12);
         meterCtx.fillStyle = '#fff';
-        meterCtx.fillText('RMS', width - 120, 20);
-
-        meterCtx.fillStyle = '#ff6b6b';
-        meterCtx.fillRect(width - 140, 30, 12, 12);
+        meterCtx.font = '11px monospace';
+        meterCtx.textAlign = 'left';
+        meterCtx.textBaseline = 'middle';
+        meterCtx.fillText('RAW', legX + 17, legY + 6);
+        meterCtx.fillStyle = 'rgba(126, 201, 143, 0.95)';
+        meterCtx.fillRect(legX, legY + 22, 12, 12);
         meterCtx.fillStyle = '#fff';
-        meterCtx.fillText('True Peak', width - 120, 40);
+        meterCtx.fillText('MIX', legX + 17, legY + 28);
       }
 
       function updateLoudnessMeter() {
-        if (!meterActive || !playing) {
+        if (!meterActive) {
           meterRAF = requestAnimationFrame(updateLoudnessMeter);
           return;
         }
 
-        const currentAnalyser = afterMode ? afterAnalyser : beforeAnalyser;
-        const timeData = new Float32Array(currentAnalyser.fftSize);
-        currentAnalyser.getFloatTimeDomainData(timeData);
+        // ── Spectrum overlay: grab frequency data from BOTH analysers ──────────
+        const rawBinCount = beforeAnalyser.frequencyBinCount;
+        const rawFreqRaw = new Uint8Array(rawBinCount);
+        const mixFreqRaw = new Uint8Array(afterAnalyser.frequencyBinCount);
+        beforeAnalyser.getByteFrequencyData(rawFreqRaw);
+        afterAnalyser.getByteFrequencyData(mixFreqRaw);
 
-        // Calculate RMS
-        let sumSquares = 0;
-        let peakSample = 0;
-        for (let i = 0; i < timeData.length; i++) {
-          const val = timeData[i];
-          sumSquares += val * val;
-          const absVal = Math.abs(val);
-          if (absVal > peakSample) peakSample = absVal;
+        // Smooth the spectra so the display isn't jittery
+        if (!rawSpectrumSmoothed) rawSpectrumSmoothed = new Float32Array(rawBinCount);
+        if (!mixSpectrumSmoothed) mixSpectrumSmoothed = new Float32Array(rawBinCount);
+        for (let i = 0; i < rawBinCount; i++) {
+          rawSpectrumSmoothed[i] = rawSpectrumSmoothed[i] * SPECTRUM_SMOOTHING + rawFreqRaw[i] * (1 - SPECTRUM_SMOOTHING);
+          mixSpectrumSmoothed[i] = mixSpectrumSmoothed[i] * SPECTRUM_SMOOTHING + mixFreqRaw[i] * (1 - SPECTRUM_SMOOTHING);
         }
 
-        const rms = Math.sqrt(sumSquares / timeData.length);
-        const rmsDb = rms > 0.00001 ? 20 * Math.log10(rms) : -100;
-        const peakDb = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
+        drawSpectrumGraph(rawSpectrumSmoothed, mixSpectrumSmoothed);
 
-        // Get current LUFS from the main display
-        const currentRmsBuffer = afterMode ? afterRmsBuffer : beforeRmsBuffer;
-        const currentLufsBuffer = afterMode ? afterLufsBuffer : beforeLufsBuffer;
-        
-        let avgRmsDb = rmsDb;
-        if (currentRmsBuffer.length > 5) {
-          const avgSquare = currentRmsBuffer.reduce((sum, val) => sum + val * val, 0) / currentRmsBuffer.length;
-          const avgRms = Math.sqrt(avgSquare);
-          avgRmsDb = avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100;
-        }
-        
-        // True Peak (from main display)
-        const currentTruePeakHold = afterMode ? afterTruePeakHold : beforeTruePeakHold;
-        
-        // LUFS (I) - Integrated (accumulated over entire session for current mode)
-        const currentIntegratedBuffer = afterMode ? afterIntegratedLufsBuffer : beforeIntegratedLufsBuffer;
-        currentIntegratedBuffer.push(rms);
-        
-        let lufsIntegrated = -100;
-        if (currentIntegratedBuffer.length > 100) { // Need at least 2 seconds
-          const avgSquareIntegrated = currentIntegratedBuffer.reduce((sum, val) => sum + val * val, 0) / currentIntegratedBuffer.length;
-          const avgRmsIntegrated = Math.sqrt(avgSquareIntegrated);
-          const avgRmsDbFsIntegrated = avgRmsIntegrated > 0.00001 ? 20 * Math.log10(avgRmsIntegrated) : -100;
-          lufsIntegrated = avgRmsDbFsIntegrated - 0.691;
-        }
-        
-        // LRA - Loudness Range (high - low percentiles of LUFS over time for current mode)
-        const currentLraValues = afterMode ? afterLraValues : beforeLraValues;
-        currentLraValues.push(lufsIntegrated);
-        if (currentLraValues.length > 300) currentLraValues.shift(); // Keep last 6 seconds
-        
-        let lraValue = 0;
-        if (currentLraValues.length > 100) {
-          const sortedLRA = [...currentLraValues].filter(v => v > -99).sort((a, b) => a - b);
-          if (sortedLRA.length > 20) {
-            const low10 = sortedLRA[Math.floor(sortedLRA.length * 0.1)];
-            const high95 = sortedLRA[Math.floor(sortedLRA.length * 0.95)];
-            lraValue = high95 - low10;
+        // ── Digital readouts: use the modal's own Raw/Mix toggle ─────────────
+        if (playing) {
+          const currentAnalyser = afterMode ? afterAnalyser : beforeAnalyser;
+          const timeData = new Float32Array(currentAnalyser.fftSize);
+          currentAnalyser.getFloatTimeDomainData(timeData);
+
+          let sumSquares = 0;
+          let peakSample = 0;
+          for (let i = 0; i < timeData.length; i++) {
+            const val = timeData[i];
+            sumSquares += val * val;
+            if (Math.abs(val) > peakSample) peakSample = Math.abs(val);
           }
+          const rms = Math.sqrt(sumSquares / timeData.length);
+          const rmsDb = rms > 0.00001 ? 20 * Math.log10(rms) : -100;
+
+          const currentRmsBuffer = afterMode ? afterRmsBuffer : beforeRmsBuffer;
+          let avgRmsDb = rmsDb;
+          if (currentRmsBuffer.length > 5) {
+            const avgSq = currentRmsBuffer.reduce((s, v) => s + v * v, 0) / currentRmsBuffer.length;
+            const avgRms = Math.sqrt(avgSq);
+            avgRmsDb = avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100;
+          }
+
+          const currentTruePeakHold = afterMode ? afterTruePeakHold : beforeTruePeakHold;
+
+          const currentIntegratedBuffer = afterMode ? afterIntegratedLufsBuffer : beforeIntegratedLufsBuffer;
+          currentIntegratedBuffer.push(rms);
+          let lufsIntegrated = -100;
+          if (currentIntegratedBuffer.length > 100) {
+            const avgSqI = currentIntegratedBuffer.reduce((s, v) => s + v * v, 0) / currentIntegratedBuffer.length;
+            const avgRmsI = Math.sqrt(avgSqI);
+            const avgDbI = avgRmsI > 0.00001 ? 20 * Math.log10(avgRmsI) : -100;
+            lufsIntegrated = avgDbI - 0.691;
+          }
+
+          const currentLraValues = afterMode ? afterLraValues : beforeLraValues;
+          currentLraValues.push(lufsIntegrated);
+          if (currentLraValues.length > 300) currentLraValues.shift();
+          let lraValue = 0;
+          if (currentLraValues.length > 100) {
+            const sortedLRA = [...currentLraValues].filter(v => v > -99).sort((a, b) => a - b);
+            if (sortedLRA.length > 20) {
+              lraValue = sortedLRA[Math.floor(sortedLRA.length * 0.95)] - sortedLRA[Math.floor(sortedLRA.length * 0.1)];
+            }
+          }
+
+          if (meterRmsValueEl) meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-∞ dB';
+          if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
+          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} LUFS` : '-∞ LUFS';
+          if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} LU` : '-- LU';
         }
 
-        // Add to history
-        meterHistory.push({ rms: avgRmsDb, peak: peakDb, lufs: lufsIntegrated });
-        if (meterHistory.length > MAX_HISTORY) meterHistory.shift();
-
-        // Update digital displays
-        if (meterRmsValueEl) {
-          meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-∞ dB';
-        }
-        if (meterTruePeakValueEl) {
-          meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
-        }
-        if (meterLufsIValueEl) {
-          meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} LUFS` : '-∞ LUFS';
-        }
-        if (meterLRAValueEl) {
-          meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} LU` : '-- LU';
-        }
-
-        drawMeterGraph();
         meterRAF = requestAnimationFrame(updateLoudnessMeter);
       }
 
@@ -1448,15 +1618,11 @@
           meterTrackNameEl.textContent = afterMode ? track.titleMix : track.titleRaw;
         }
 
-        meterHistory = [];
-        // Only reset the buffer for the current mode
-        if (afterMode) {
-          afterIntegratedLufsBuffer = [];
-          afterLraValues = [];
-        } else {
-          beforeIntegratedLufsBuffer = [];
-          beforeLraValues = [];
-        }
+        // Reset smoothed spectrum buffers on open so stale data doesn't display
+        rawSpectrumSmoothed = null;
+        mixSpectrumSmoothed = null;
+        // Sync modal toggle to the current player mode and reset integrated buffers
+        applySpectrumMode(afterMode);
         loudnessMeterModal.style.display = 'flex';
         meterActive = true;
         
