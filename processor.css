@@ -1,0 +1,222 @@
+/* =============================================================================
+   AUDIO DESIGN STUDIOS - PROCESSOR PAGE (processor.html)
+   Single-File Audio Processor & Analyzer
+
+   Inherits all VU meter, player controls, modal, and layout styles from
+   demo.css (which in turn imports shared.css and compose.css).
+   Only processor-specific additions are defined here.
+   ============================================================================= */
+
+@import url('./demo.css');
+
+/* =============================================================================
+   1. UPLOAD ZONE — drag-and-drop or click to browse
+   ============================================================================= */
+
+.upload-zone {
+  position: relative;
+  border: 2px dashed rgba(126, 201, 143, 0.3);
+  border-radius: 10px;
+  background: rgba(126, 201, 143, 0.03);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-bottom: 2rem;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.upload-zone:hover {
+  border-color: rgba(126, 201, 143, 0.55);
+  background: rgba(126, 201, 143, 0.06);
+}
+
+.upload-zone.drag-over {
+  border-color: #7ec98f;
+  background: rgba(126, 201, 143, 0.12);
+  box-shadow: 0 0 0 4px rgba(126, 201, 143, 0.12), 0 0 24px rgba(126, 201, 143, 0.15);
+}
+
+.upload-zone.loaded {
+  border-style: solid;
+  border-color: rgba(126, 201, 143, 0.5);
+  background: rgba(126, 201, 143, 0.06);
+  padding: 1.25rem 2rem;
+  min-height: 0;
+  cursor: default;
+}
+
+.upload-file-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* Hide the native input when a file is loaded (click is handled programmatically) */
+.upload-zone.loaded .upload-file-input {
+  pointer-events: none;
+}
+
+.upload-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.upload-zone-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  color: rgba(126, 201, 143, 0.55);
+  margin-bottom: 0.25rem;
+}
+
+.upload-zone-text {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(200, 200, 200, 0.85);
+  letter-spacing: 0.04em;
+}
+
+.upload-zone-subtext {
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  color: rgba(126, 201, 143, 0.55);
+  letter-spacing: 0.08em;
+}
+
+.upload-zone-formats {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: rgba(126, 201, 143, 0.35);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+/* Loaded state */
+.upload-loaded-content {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  width: 100%;
+  flex-wrap: wrap;
+  z-index: 3;
+  position: relative;
+}
+
+.upload-loaded-filename {
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #7ec98f;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.upload-clear-btn {
+  background: none;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  border-radius: 4px;
+  color: rgba(255, 107, 107, 0.8);
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.upload-clear-btn:hover {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: rgba(255, 107, 107, 0.7);
+  color: #ff6b6b;
+}
+
+/* Upload another button (shown in loaded state for new file) */
+.upload-another-btn {
+  background: none;
+  border: 1px solid rgba(126, 201, 143, 0.35);
+  border-radius: 4px;
+  color: rgba(126, 201, 143, 0.7);
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.upload-another-btn:hover {
+  background: rgba(126, 201, 143, 0.08);
+  border-color: rgba(126, 201, 143, 0.6);
+  color: #7ec98f;
+}
+
+/* =============================================================================
+   2. UPLOAD ZONE BUFFERING ANIMATION
+   ============================================================================= */
+
+/* Spinner shown on upload zone while audio loads from the blob URL */
+@keyframes uploadZoneSpin {
+  to { transform: rotate(360deg); }
+}
+
+.upload-zone.buffering::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid rgba(126, 201, 143, 0.25);
+  border-top-color: #7ec98f;
+  border-radius: 50%;
+  animation: uploadZoneSpin 0.7s linear infinite;
+  z-index: 10;
+}
+
+/* =============================================================================
+   3. PROCESSOR CANVAS OVERRIDE
+   The processor uses #procLoudnessMeterCanvas rather than demo's
+   #loudnessMeterCanvas, so the sizing rule needs to be declared here.
+   ============================================================================= */
+
+#procLoudnessMeterCanvas {
+  width: 100%;
+  height: 300px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0f0f0f;
+}
+
+@media (max-width: 768px) {
+  #procLoudnessMeterCanvas {
+    height: 200px;
+  }
+}
+
