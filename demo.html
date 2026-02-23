@@ -146,7 +146,10 @@
         <button class="analysis-modal-close" id="analysisModalClose">&times;</button>
         <h2>Track Analysis</h2>
         <div id="analysisResults" class="analysis-results">
-          <div class="analysis-loading">Analyzing track...</div>
+          <div class="analysis-loading">
+            <span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span>
+            <div class="analysis-loading-subtext">This may take a minute</div>
+          </div>
         </div>
       </div>
     </div>
@@ -951,7 +954,7 @@
 
       async function analyzeTrack(audioUrl, trackName) {
         analysisModal.style.display = 'flex';
-        analysisResults.innerHTML = '<div class="analysis-loading">Analyzing track...</div>';
+        analysisResults.innerHTML = '<div class="analysis-loading"><span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div></div>';
 
         try {
           // Fetch audio file

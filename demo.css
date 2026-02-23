@@ -22,7 +22,6 @@ html {
 
 body {
   margin: 0;
-  padding: 0;
   overflow-x: hidden;
   background-color: #0f0f0f;
   color: #fff;
@@ -1277,6 +1276,42 @@ main {
   padding: 2rem;
   color: #7ec98f;
   font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.analysis-loading-text {
+  display: inline;
+}
+
+.analysis-loading-dots {
+  display: inline;
+  letter-spacing: 0.05em;
+}
+
+.analysis-loading-dots span {
+  opacity: 0;
+  animation: dotSequence 1.5s infinite;
+}
+
+.analysis-loading-dots span:nth-child(1) { animation-delay: 0s; }
+.analysis-loading-dots span:nth-child(2) { animation-delay: 0.5s; }
+.analysis-loading-dots span:nth-child(3) { animation-delay: 1s; }
+
+@keyframes dotSequence {
+  0%, 33% { opacity: 0; }
+  50% { opacity: 1; }
+  80%, 100% { opacity: 0; }
+}
+
+.analysis-loading-subtext {
+  font-size: 0.8rem;
+  color: rgba(126, 201, 143, 0.6);
+  letter-spacing: 0.06em;
+  font-style: italic;
+  margin-top: 0.25rem;
 }
 
 .analysis-track-name {
