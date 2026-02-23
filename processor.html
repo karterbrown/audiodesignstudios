@@ -55,11 +55,13 @@
               class="upload-file-input"
               aria-label="Upload audio file"
             />
+            <!-- Transparent label covers the zone so any tap opens the file picker on mobile -->
+            <label for="fileInput" class="upload-zone-label" aria-hidden="true"></label>
             <!-- Empty state -->
             <div class="upload-zone-content" id="uploadZoneContent">
               <div class="upload-zone-icon">&#9836;</div>
               <div class="upload-zone-text">Drop an audio file here</div>
-              <div class="upload-zone-subtext">or click to browse</div>
+              <div class="upload-zone-subtext">or tap to browse</div>
               <div class="upload-zone-formats">MP3 &middot; WAV &middot; AIFF &middot; FLAC &middot; OGG &middot; M4A &middot; AAC</div>
             </div>
             <!-- Loaded state -->

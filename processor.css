@@ -27,7 +27,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 .upload-zone:hover {
@@ -52,17 +51,27 @@
 
 .upload-file-input {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 1px;
+  height: 1px;
   opacity: 0;
-  cursor: pointer;
-  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
 }
 
-/* Hide the native input when a file is loaded (click is handled programmatically) */
-.upload-zone.loaded .upload-file-input {
-  pointer-events: none;
+/* Label that covers the upload zone in empty state — direct tap = file picker */
+.upload-zone-label {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  z-index: 2;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide the label when a file is loaded (use programmatic click instead) */
+.upload-zone.loaded .upload-zone-label {
+  display: none;
 }
 
 .upload-zone-content {
