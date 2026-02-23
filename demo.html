@@ -366,24 +366,34 @@
       });
 
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+      // Spectrum analysers (8192 FFT) — used only for the visual frequency graph
       const beforeAnalyser = ctx.createAnalyser();
       const afterAnalyser = ctx.createAnalyser();
-      const beforeGain = ctx.createGain();
-      const afterGain = ctx.createGain();
       beforeAnalyser.fftSize = 8192;
       afterAnalyser.fftSize = 8192;
       beforeAnalyser.smoothingTimeConstant = 0.8;
       afterAnalyser.smoothingTimeConstant = 0.8;
-      // Set dB range so getByteFrequencyData maps 0→-90 dBFS and 255→0 dBFS.
-      // This makes the spectrum graph accurate without any extra conversion offset.
       beforeAnalyser.minDecibels = -90;
       beforeAnalyser.maxDecibels = 0;
       afterAnalyser.minDecibels = -90;
       afterAnalyser.maxDecibels = 0;
+
+      // VU / metering analysers (2048 FFT) — lightweight, used for needle + readouts
+      const beforeVUAnalyser = ctx.createAnalyser();
+      const afterVUAnalyser = ctx.createAnalyser();
+      beforeVUAnalyser.fftSize = 2048;
+      afterVUAnalyser.fftSize = 2048;
+      beforeVUAnalyser.smoothingTimeConstant = 0.8;
+      afterVUAnalyser.smoothingTimeConstant = 0.8;
+
+      const beforeGain = ctx.createGain();
+      const afterGain = ctx.createGain();
       const beforeData = new Uint8Array(beforeAnalyser.frequencyBinCount);
       const afterData = new Uint8Array(afterAnalyser.frequencyBinCount);
-      const beforeTimeData = new Float32Array(beforeAnalyser.fftSize);
-      const afterTimeData = new Float32Array(afterAnalyser.fftSize);
+      // Pre-allocated time-domain buffers (2048 each — matched to VU analysers)
+      const beforeTimeData = new Float32Array(beforeVUAnalyser.fftSize);
+      const afterTimeData = new Float32Array(afterVUAnalyser.fftSize);
 
       // Metering display elements
       const rmsDisplay = document.getElementById('aiRmsValue');
@@ -418,6 +428,20 @@
       // LRA tracking for main display
       let lraValuesMain = [];
 
+      // Running sums for O(1) RMS/LUFS buffer updates (replaces reduce() every frame)
+      let beforeRmsSumSq = 0, afterRmsSumSq = 0;
+      let beforeLufsSumSq = 0, afterLufsSumSq = 0;
+      // LRA: re-sort only every ~60 VU frames (~1s) instead of every frame
+      let lraMainCached = 0, lraMainFrame = 0;
+      // Pre-allocated buffers for spectrum modal (no GC pressure per animation frame)
+      let meterTimeData = null;
+      let meterRawFreqData = null;
+      let meterMixFreqData = null;
+      let specFrameCount = 0;
+      // Cached log-scale pixel→frequency lookup for drawSpectrumGraph
+      let freqMapCache = null;
+      let freqMapCacheWidth = -1;
+
       let beforeConnected = false;
       let afterConnected = false;
       let idx = -1;
@@ -446,16 +470,20 @@
         if (ctx.state === 'suspended') ctx.resume();
         if (!beforeConnected) {
           const s = ctx.createMediaElementSource(beforeAudio);
-          s.connect(beforeAnalyser);
-          beforeAnalyser.connect(beforeGain);
+          // VU path: source → VU analyser (2048) → gain → output
+          s.connect(beforeVUAnalyser);
+          beforeVUAnalyser.connect(beforeGain);
           beforeGain.connect(ctx.destination);
+          // Spectrum tap: source → spectrum analyser (8192, no audio output)
+          s.connect(beforeAnalyser);
           beforeConnected = true;
         }
         if (!afterConnected) {
           const s = ctx.createMediaElementSource(afterAudio);
-          s.connect(afterAnalyser);
-          afterAnalyser.connect(afterGain);
+          s.connect(afterVUAnalyser);
+          afterVUAnalyser.connect(afterGain);
           afterGain.connect(ctx.destination);
+          s.connect(afterAnalyser);
           afterConnected = true;
         }
       }
@@ -528,6 +556,7 @@
       function startProgress() {
         if (progressRAF) cancelAnimationFrame(progressRAF);
         let lastSync = 0;
+        let lastRender = 0;
         const step = () => {
           if (beforeAudio.paused) {
             progressRAF = null;
@@ -541,7 +570,11 @@
             }
             lastSync = now;
           }
-          renderProgress();
+          // Progress bar only needs ~15fps — no reason to force layout at 60fps
+          if (now - lastRender >= 66) {
+            renderProgress();
+            lastRender = now;
+          }
           progressRAF = requestAnimationFrame(step);
         };
         progressRAF = requestAnimationFrame(step);
@@ -576,152 +609,105 @@
 
       function startVU() {
         if (vuRAF) cancelAnimationFrame(vuRAF);
+        let lastDisplayUpdate = 0;
         const loop = () => {
-          const analyser = afterMode ? afterAnalyser : beforeAnalyser;
-          const freqData = afterMode ? afterData : beforeData;
+          // Use the lightweight 2048-bin VU analyser — 4x less data than the spectrum analyser
+          const analyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
           const timeData = afterMode ? afterTimeData : beforeTimeData;
-          
-          // Get frequency data for display
-          analyser.getByteFrequencyData(freqData);
-          
-          // Get time domain data for accurate RMS and peak calculation
           analyser.getFloatTimeDomainData(timeData);
-          
-          // Calculate RMS from time domain data
+
+          // RMS + peak from time-domain samples
           let sumSquares = 0;
           let peakSample = 0;
           for (let i = 0; i < timeData.length; i++) {
-            const sample = timeData[i];
-            sumSquares += sample * sample;
-            peakSample = Math.max(peakSample, Math.abs(sample));
+            const s = timeData[i];
+            sumSquares += s * s;
+            const a = s < 0 ? -s : s;
+            if (a > peakSample) peakSample = a;
           }
           const rms = Math.sqrt(sumSquares / timeData.length);
-          
-          // Store instantaneous RMS for short-term averaging
+
+          // Short-term RMS via running sum — O(1) instead of O(n) reduce() every frame
           const currentRmsBuffer = afterMode ? afterRmsBuffer : beforeRmsBuffer;
+          let currentRmsSumSq = afterMode ? afterRmsSumSq : beforeRmsSumSq;
+          if (currentRmsBuffer.length >= rmsBufferSize) {
+            const oldest = currentRmsBuffer[0];
+            currentRmsSumSq -= oldest * oldest;
+          }
           currentRmsBuffer.push(rms);
           if (currentRmsBuffer.length > rmsBufferSize) currentRmsBuffer.shift();
-          
-          // Calculate short-term RMS (300ms average) for display
-          let shortTermRms = rms;
-          if (currentRmsBuffer.length > 5) {
-            const avgSquare = currentRmsBuffer.reduce((sum, val) => sum + val * val, 0) / currentRmsBuffer.length;
-            shortTermRms = Math.sqrt(avgSquare);
-          }
-          
-          // Convert to dBFS (0 dBFS = full scale)
+          currentRmsSumSq += rms * rms;
+          if (afterMode) afterRmsSumSq = currentRmsSumSq; else beforeRmsSumSq = currentRmsSumSq;
+          const shortTermRms = currentRmsBuffer.length > 1 ? Math.sqrt(currentRmsSumSq / currentRmsBuffer.length) : rms;
           const shortTermRmsDbFs = shortTermRms > 0.00001 ? 20 * Math.log10(shortTermRms) : -100;
           const truePeakDbFs = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
-          
-          // Use separate buffers and peak holds for before/after
-          const currentLufsBuffer = afterMode ? afterLufsBuffer : beforeLufsBuffer;
-          const currentTruePeakRef = afterMode ? 'afterTruePeakHold' : 'beforeTruePeakHold';
-          
-          // Update true peak hold for current mode
+
+          // True peak hold
           if (afterMode) {
-            if (truePeakDbFs > afterTruePeakHold) {
-              afterTruePeakHold = truePeakDbFs;
-            } else {
-              afterTruePeakHold = Math.max(afterTruePeakHold * 0.998, -100);
-            }
+            if (truePeakDbFs > afterTruePeakHold) afterTruePeakHold = truePeakDbFs;
+            else afterTruePeakHold = Math.max(afterTruePeakHold * 0.998, -100);
             truePeakHold = afterTruePeakHold;
           } else {
-            if (truePeakDbFs > beforeTruePeakHold) {
-              beforeTruePeakHold = truePeakDbFs;
-            } else {
-              beforeTruePeakHold = Math.max(beforeTruePeakHold * 0.998, -100);
-            }
+            if (truePeakDbFs > beforeTruePeakHold) beforeTruePeakHold = truePeakDbFs;
+            else beforeTruePeakHold = Math.max(beforeTruePeakHold * 0.998, -100);
             truePeakHold = beforeTruePeakHold;
           }
-          
-          // Calculate LUFS for current mode (Integrated)
+
+          // Integrated LUFS via running sum — O(1)
+          const currentLufsBuffer = afterMode ? afterLufsBuffer : beforeLufsBuffer;
+          let currentLufsSumSq = afterMode ? afterLufsSumSq : beforeLufsSumSq;
+          if (currentLufsBuffer.length >= lufsBufferSize) {
+            const oldest = currentLufsBuffer[0];
+            currentLufsSumSq -= oldest * oldest;
+          }
           currentLufsBuffer.push(rms);
           if (currentLufsBuffer.length > lufsBufferSize) currentLufsBuffer.shift();
-          
+          currentLufsSumSq += rms * rms;
+          if (afterMode) afterLufsSumSq = currentLufsSumSq; else beforeLufsSumSq = currentLufsSumSq;
           let lufsValue = -100;
-          if (currentLufsBuffer.length > 50) { // Need at least 1 second of data
-            const avgSquare = currentLufsBuffer.reduce((sum, val) => sum + val * val, 0) / currentLufsBuffer.length;
-            const avgRms = Math.sqrt(avgSquare);
-            // Convert to LUFS with K-weighting offset
-            // K-weighting typically adds about -0.691 LUFS at reference level
+          if (currentLufsBuffer.length > 50) {
+            const avgRms = Math.sqrt(currentLufsSumSq / currentLufsBuffer.length);
             const avgRmsDbFs = avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100;
-            lufsValue = avgRmsDbFs - 0.691; // Apply K-weighting approximation
+            lufsValue = avgRmsDbFs - 0.691;
           }
-          
-          // Peak calculation for True Peak
-          const peakDbFs = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
-          
-          // LRA - Loudness Range for main display
+
+          // LRA: accumulate values every frame but re-sort only once per ~60 frames (~1s)
           lraValuesMain.push(lufsValue);
-          if (lraValuesMain.length > 300) lraValuesMain.shift(); // Keep last 6 seconds
-          
-          let lraMain = 0;
-          if (lraValuesMain.length > 100) {
-            const sortedLRAMain = [...lraValuesMain].filter(v => v > -99).sort((a, b) => a - b);
-            if (sortedLRAMain.length > 20) {
-              const low10 = sortedLRAMain[Math.floor(sortedLRAMain.length * 0.1)];
-              const high95 = sortedLRAMain[Math.floor(sortedLRAMain.length * 0.95)];
-              lraMain = high95 - low10;
-            }
+          if (lraValuesMain.length > 300) lraValuesMain.shift();
+          lraMainFrame++;
+          if (lraMainFrame % 60 === 0 && lraValuesMain.length > 100) {
+            const sorted = [...lraValuesMain].filter(v => v > -99).sort((a, b) => a - b);
+            if (sorted.length > 20)
+              lraMainCached = sorted[Math.floor(sorted.length * 0.95)] - sorted[Math.floor(sorted.length * 0.1)];
           }
-          
-          // VU meter calibration for digital audio
-          // In digital audio, 0 VU typically equals -18 dBFS to -20 dBFS
-          // VU meter range: -20 VU to +3 VU
-          // Map: -38 dBFS (silent) to -15 dBFS (hot) = -20 VU to +3 VU
-          
-          // Apply volume gain
+          const lraMain = lraMainCached;
+
+          // VU needle (runs every frame for smooth ballistic animation)
           const volumeGain = Math.pow(10, db / 20);
           const adjustedRmsDbFs = shortTermRmsDbFs + 20 * Math.log10(volumeGain);
-          
-          // Convert dBFS to VU scale
-          // 0 VU = -18 dBFS, so VU = dBFS + 18
-          // Range: -20 VU to +3 VU = -38 dBFS to -15 dBFS
-          const vuReading = adjustedRmsDbFs + 18; // Offset to calibrate 0 VU at -18 dBFS
-          
-          // Clamp to VU meter physical range
-          const vuMin = -20;
-          const vuMax = 3;
+          const vuReading = adjustedRmsDbFs + 18;
+          const vuMin = -20, vuMax = 3;
           const clampedVU = Math.max(vuMin, Math.min(vuMax, vuReading));
-          
-          // Convert VU reading to needle angle (-50° to +50°)
           let normPosition = (clampedVU - vuMin) / (vuMax - vuMin);
-          
-          // Apply slight compression curve for smoother movement at low levels
-          if (clampedVU < -10) {
-            const lowRange = (clampedVU + 20) / 10; // 0 to 1 for -20 to -10 VU
-            normPosition = Math.pow(lowRange, 1.2) * 0.435;
-          }
-          
+          if (clampedVU < -10) normPosition = Math.pow((clampedVU + 20) / 10, 1.2) * 0.435;
           const targetAngle = -50 + normPosition * 100;
-          
-          // Smooth needle movement with VU-style ballistics
           const diff = targetAngle - needleAngle;
-          const rate = diff > 0 ? 0.2 : 0.06; // Fast attack, slow release (VU behavior)
-          needleAngle += diff * rate;
-          
+          needleAngle += diff * (diff > 0 ? 0.2 : 0.06);
           meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
-          
-          // Update displays
-          if (sourceDisplay) {
-            sourceDisplay.textContent = afterMode ? 'Mix' : 'RAW';
+
+          // Text readouts throttled to ~10fps — values change too fast to read at 60fps
+          // and removing the textContent writes halves the layout work per frame
+          const now = performance.now();
+          if (now - lastDisplayUpdate >= 100) {
+            lastDisplayUpdate = now;
+            if (sourceDisplay) sourceDisplay.textContent = afterMode ? 'Mix' : 'RAW';
+            if (vuDisplay) vuDisplay.textContent = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-∞ VU';
+            if (rmsDisplay) rmsDisplay.textContent = shortTermRmsDbFs > -99 ? `${shortTermRmsDbFs.toFixed(1)} dB` : '-∞ dB';
+            if (truePeakDisplay) truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
+            if (lufsDisplay) lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} LUFS` : '-∞ LUFS';
+            if (lraDisplay) lraDisplay.textContent = lraMain > 0 ? `${lraMain.toFixed(1)} LU` : '-- LU';
           }
-          if (vuDisplay) {
-            vuDisplay.textContent = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-∞ VU';
-          }
-          if (rmsDisplay) {
-            rmsDisplay.textContent = shortTermRmsDbFs > -99 ? `${shortTermRmsDbFs.toFixed(1)} dB` : '-∞ dB';
-          }
-          if (truePeakDisplay) {
-            truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
-          }
-          if (lufsDisplay) {
-            lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} LUFS` : '-∞ LUFS';
-          }
-          if (lraDisplay) {
-            lraDisplay.textContent = lraMain > 0 ? `${lraMain.toFixed(1)} LU` : '-- LU';
-          }
-          
+
           vuRAF = requestAnimationFrame(loop);
         };
         vuRAF = requestAnimationFrame(loop);
@@ -775,6 +761,9 @@
         beforeTruePeakHold = -100;
         afterTruePeakHold = -100;
         truePeakHold = -100;
+        beforeRmsSumSq = 0; afterRmsSumSq = 0;
+        beforeLufsSumSq = 0; afterLufsSumSq = 0;
+        lraMainCached = 0; lraMainFrame = 0;
 
         // Reset integrated buffers for View modal
         beforeIntegratedLufsBuffer = [];
@@ -1393,13 +1382,18 @@
         const DB_RANGE = MAX_DB - MIN_DB;
         const MIN_FREQ = 20;
 
+        // Build/reuse cached log-scale pixel→frequency map (avoids Math.pow per pixel per frame)
+        if (freqMapCacheWidth !== cW) {
+          freqMapCache = new Float32Array(cW + 1);
+          for (let cx = 0; cx <= cW; cx++) {
+            freqMapCache[cx] = MIN_FREQ * Math.pow(nyquist / MIN_FREQ, cx / cW);
+          }
+          freqMapCacheWidth = cW;
+        }
+
         // dB value → canvas y pixel
         function dbToY(db) {
           return MT + cH * (1 - (Math.max(MIN_DB, Math.min(MAX_DB, db)) - MIN_DB) / DB_RANGE);
-        }
-        // chart-area x offset → frequency (log)
-        function xToFreq(cx) {
-          return MIN_FREQ * Math.pow(nyquist / MIN_FREQ, cx / cW);
         }
         // Linearly interpolate between adjacent bins so the curve stays smooth
         // even in the low-frequency region where bins map to many on-screen pixels.
@@ -1452,7 +1446,7 @@
           meterCtx.beginPath();
           meterCtx.moveTo(ML, MT + cH);
           for (let cx = 0; cx <= cW; cx++) {
-            meterCtx.lineTo(ML + cx, dbToY(sampleDB(data, xToFreq(cx))));
+            meterCtx.lineTo(ML + cx, dbToY(sampleDB(data, freqMapCache[cx])));
           }
           meterCtx.lineTo(ML + cW, MT + cH);
           meterCtx.closePath();
@@ -1461,7 +1455,7 @@
 
           meterCtx.beginPath();
           for (let cx = 0; cx <= cW; cx++) {
-            const y = dbToY(sampleDB(data, xToFreq(cx)));
+            const y = dbToY(sampleDB(data, freqMapCache[cx]));
             if (cx === 0) meterCtx.moveTo(ML, y);
             else meterCtx.lineTo(ML + cx, y);
           }
@@ -1534,28 +1528,37 @@
           return;
         }
 
-        // ── Spectrum overlay: grab frequency data from BOTH analysers ──────────
+        // Throttle canvas redraws to ~30fps (skip odd frames)
+        specFrameCount++;
+        if (specFrameCount % 2 !== 0) {
+          meterRAF = requestAnimationFrame(updateLoudnessMeter);
+          return;
+        }
+
+        // ── Spectrum overlay: use pre-allocated buffers (no GC per frame) ────────
         const rawBinCount = beforeAnalyser.frequencyBinCount;
-        const rawFreqRaw = new Uint8Array(rawBinCount);
-        const mixFreqRaw = new Uint8Array(afterAnalyser.frequencyBinCount);
-        beforeAnalyser.getByteFrequencyData(rawFreqRaw);
-        afterAnalyser.getByteFrequencyData(mixFreqRaw);
+        if (!meterRawFreqData) meterRawFreqData = new Uint8Array(rawBinCount);
+        if (!meterMixFreqData) meterMixFreqData = new Uint8Array(afterAnalyser.frequencyBinCount);
+        beforeAnalyser.getByteFrequencyData(meterRawFreqData);
+        afterAnalyser.getByteFrequencyData(meterMixFreqData);
 
         // Smooth the spectra so the display isn't jittery
         if (!rawSpectrumSmoothed) rawSpectrumSmoothed = new Float32Array(rawBinCount);
         if (!mixSpectrumSmoothed) mixSpectrumSmoothed = new Float32Array(rawBinCount);
         for (let i = 0; i < rawBinCount; i++) {
-          rawSpectrumSmoothed[i] = rawSpectrumSmoothed[i] * SPECTRUM_SMOOTHING + rawFreqRaw[i] * (1 - SPECTRUM_SMOOTHING);
-          mixSpectrumSmoothed[i] = mixSpectrumSmoothed[i] * SPECTRUM_SMOOTHING + mixFreqRaw[i] * (1 - SPECTRUM_SMOOTHING);
+          rawSpectrumSmoothed[i] = rawSpectrumSmoothed[i] * SPECTRUM_SMOOTHING + meterRawFreqData[i] * (1 - SPECTRUM_SMOOTHING);
+          mixSpectrumSmoothed[i] = mixSpectrumSmoothed[i] * SPECTRUM_SMOOTHING + meterMixFreqData[i] * (1 - SPECTRUM_SMOOTHING);
         }
 
         drawSpectrumGraph(rawSpectrumSmoothed, mixSpectrumSmoothed);
 
         // ── Digital readouts: use the modal's own Raw/Mix toggle ─────────────
         if (playing) {
-          const currentAnalyser = afterMode ? afterAnalyser : beforeAnalyser;
-          const timeData = new Float32Array(currentAnalyser.fftSize);
-          currentAnalyser.getFloatTimeDomainData(timeData);
+          // Use VU analyser for readouts — pre-allocated 2048-sample buffer, no GC
+          const currentVUAnalyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
+          if (!meterTimeData) meterTimeData = new Float32Array(currentVUAnalyser.fftSize);
+          currentVUAnalyser.getFloatTimeDomainData(meterTimeData);
+          const timeData = meterTimeData;
 
           let sumSquares = 0;
           let peakSample = 0;
