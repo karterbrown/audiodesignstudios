@@ -660,18 +660,12 @@
         playPauseBtn.classList.remove('playing');
         fileLoaded = false;
 
-        // Handler: ready to play
+        // Handler: ready to play — do NOT auto-play, wait for user input
         const onReady = () => {
           fileLoaded = true;
           showLoadedZone(file.name);
           audio.currentTime = 0;
-          audio
-            .play()
-            .then(() => { ensureGraph(); startProgress(); startVU(); })
-            .catch(err => {
-              console.warn('[PROCESSOR] Autoplay blocked:', err);
-              // Still mark as loaded so the user can manually press play
-            });
+          ensureGraph();
         };
 
         // Handler: error
@@ -950,69 +944,122 @@
             }
           }
 
-          const clippingHTML = clippingEvents.length > 0
-            ? `<div class="analysis-metric" style="border-left-color:#ff6b6b;">
-                <span class="analysis-label" style="color:#ff6b6b;">Clipping Events:</span>
-                <span class="analysis-value" style="color:#ff6b6b;">${clippingEvents.length} detected</span>
-               </div>
-               <div class="analysis-clipping-log">
-                 <div class="analysis-clipping-header">Clipping Timestamps:</div>
-                 <div class="analysis-clipping-events">
-                   ${clippingEvents.map(ev => `<div class="analysis-clipping-event">${ev.timeCode}</div>`).join('')}
-                 </div>
-               </div>`
-            : '';
+          // Clipping HTML (with green "none" state matching demo)
+          let clippingHTML = '';
+          if (clippingEvents.length > 0) {
+            clippingHTML = `
+              <div class="analysis-metric" style="border-left-color: #ff6b6b;">
+                <span class="analysis-label" style="color: #ff6b6b;">Clipping Events:</span>
+                <span class="analysis-value" style="color: #ff6b6b;">${clippingEvents.length} detected</span>
+              </div>
+              <div class="analysis-clipping-log">
+                <div class="analysis-clipping-header">Clipping Timestamps:</div>
+                <div class="analysis-clipping-events">
+                  ${clippingEvents.map(ev => `<div class="analysis-clipping-event">${ev.timeCode}</div>`).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            clippingHTML = `
+              <div class="analysis-metric" style="border-left-color: #7ec98f;">
+                <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
+                <span class="analysis-value" style="color: #7ec98f;">None detected ✓</span>
+              </div>
+            `;
+          }
 
           // Streaming compliance (-14 ± 1.5 LUFS, peak < -1.0 dBTP)
-          const targetLUFS  = -14.0;
-          const lufsMargin  = 1.5;
-          const peakLimit   = -1.0;
-          const lufsOk      = Math.abs(intLUFS - targetLUFS) <= lufsMargin;
-          const peakOk      = truePeak < peakLimit;
+          const lufsInRange = intLUFS >= -15.5 && intLUFS <= -12.5;
+          const peakOk      = truePeak < -1.0;
           const noClipping  = clippingEvents.length === 0;
-          const compliance  = lufsOk && peakOk && noClipping ? 'ready'
-                            : (lufsOk || peakOk) ? 'warning' : 'fail';
-          const statusText  = compliance === 'ready'   ? '\u2713 Streaming Ready'
-                            : compliance === 'warning' ? '\u26A0 Adjustments Recommended'
-                            : '\u2715 Needs Processing';
+
+          let complianceStatus  = '';
+          let complianceClass   = '';
+          let complianceDetails = [];
+
+          if (lufsInRange && peakOk && noClipping) {
+            complianceStatus = '✓ Ready for Spotify/Apple Music';
+            complianceClass  = 'ready';
+            complianceDetails.push('LUFS level is optimal for streaming platforms');
+            complianceDetails.push('True Peak is below -1.0 dBTP (prevents inter-sample clipping)');
+            complianceDetails.push('No clipping detected');
+          } else {
+            const issues = [];
+            if (!lufsInRange) {
+              if (intLUFS < -15.5) {
+                issues.push('too-quiet');
+                complianceDetails.push(`<strong>Too Quiet:</strong> ${intLUFS.toFixed(1)} LUFS is below -15.5 LUFS. Streaming platforms may not turn it up enough.`);
+              } else {
+                issues.push('too-loud');
+                complianceDetails.push(`<strong>Too Loud:</strong> ${intLUFS.toFixed(1)} LUFS is above -12.5 LUFS. Will be turned down by streaming platforms, reducing dynamic impact.`);
+              }
+            }
+            if (!peakOk) {
+              issues.push('peak-hot');
+              complianceDetails.push(`<strong>Peak Too Hot:</strong> ${truePeak.toFixed(1)} dBTP is at or above -1.0 dBTP. Risk of inter-sample clipping during lossy encoding (MP3/AAC).`);
+            }
+            if (!noClipping) {
+              issues.push('clipping');
+              complianceDetails.push(`<strong>Clipping Detected:</strong> ${clippingEvents.length} instances found. This will cause audible distortion.`);
+            }
+            if (issues.length === 1 && issues[0] !== 'clipping') {
+              complianceStatus = '⚠ Minor Issues';
+              complianceClass  = 'warning';
+            } else if (issues.includes('clipping') || issues.length > 1) {
+              complianceStatus = '✗ Not Ready for Streaming';
+              complianceClass  = 'fail';
+            } else {
+              complianceStatus = '⚠ Minor Issues';
+              complianceClass  = 'warning';
+            }
+          }
+
+          const complianceHTML = `
+            <div class="analysis-compliance ${complianceClass}">
+              <div class="analysis-compliance-status">${complianceStatus}</div>
+              <div class="analysis-compliance-details">
+                ${complianceDetails.map(d => `<div class="analysis-compliance-item">${d}</div>`).join('')}
+              </div>
+            </div>
+          `;
+
+          const duration = audioBuffer.duration;
 
           analysisResults.innerHTML = `
             <div class="analysis-track-name">${trackName}</div>
-            <div class="analysis-compliance ${compliance}">
-              <div class="analysis-compliance-status">${statusText}</div>
-              <div class="analysis-compliance-details">
-                <div class="analysis-compliance-item">
-                  <strong>Streaming Target:</strong> ${targetLUFS} LUFS &mdash;
-                  Your track: ${intLUFS > -99 ? intLUFS.toFixed(1) + ' LUFS' : '-\u221E LUFS'}
-                </div>
-                <div class="analysis-compliance-item">
-                  <strong>True Peak limit:</strong> ${peakLimit} dBTP &mdash;
-                  Your track: ${truePeak > -99 ? truePeak.toFixed(1) + ' dBTP' : '-\u221E dBTP'}
-                </div>
-                ${!noClipping ? `<div class="analysis-compliance-item" style="color:#ff6b6b;">
-                  <strong>Clipping detected</strong> &mdash; ${clippingEvents.length} event(s) above 99% full scale
-                </div>` : ''}
-              </div>
+            ${complianceHTML}
+            <div class="analysis-metric">
+              <span class="analysis-label">Duration:</span>
+              <span class="analysis-value">${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}</span>
             </div>
             <div class="analysis-metric">
               <span class="analysis-label">Integrated LUFS:</span>
-              <span class="analysis-value">${intLUFS > -99 ? intLUFS.toFixed(1) + ' LUFS' : '-\u221E LUFS'}</span>
+              <span class="analysis-value">${intLUFS.toFixed(1)} LUFS</span>
             </div>
             <div class="analysis-metric">
               <span class="analysis-label">True Peak:</span>
-              <span class="analysis-value">${truePeak > -99 ? truePeak.toFixed(1) + ' dBTP' : '-\u221E dBTP'}</span>
+              <span class="analysis-value">${truePeak.toFixed(1)} dBTP</span>
             </div>
             <div class="analysis-metric">
-              <span class="analysis-label">Loudness Range (LRA):</span>
-              <span class="analysis-value">${lra > 0 ? lra.toFixed(1) + ' LU' : '-- LU'}</span>
+              <span class="analysis-label">Loudness Range:</span>
+              <span class="analysis-value">${lra.toFixed(1)} LU</span>
             </div>
             ${clippingHTML}
+            <div class="analysis-metric">
+              <span class="analysis-label">Sample Rate:</span>
+              <span class="analysis-value">${(audioBuffer.sampleRate / 1000).toFixed(1)} kHz</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Channels:</span>
+              <span class="analysis-value">${audioBuffer.numberOfChannels}</span>
+            </div>
             <div class="analysis-note">
-              <strong>About These Measurements</strong>
-              Integrated LUFS and True Peak are measured using the ITU-R BS.1770-4 standard.
-              Streaming platforms (Spotify, Apple Music, YouTube) normalize to approximately
-              -14 LUFS with a true peak limit of -1 dBTP.
-            </div>`;
+              <strong>Standards Reference:</strong><br>
+              Streaming: -14 to -16 LUFS (Spotify, Apple Music, YouTube)<br>
+              Broadcasting: -23 LUFS (EBU R128)<br>
+              True Peak: &lt; -1.0 dBTP recommended
+            </div>
+          `;
 
         } catch (err) {
           console.error('[PROCESSOR] Analysis error:', err);
@@ -1097,30 +1144,69 @@
           meterCtx.stroke();
         });
 
-        // Spectrum curve — single green line
+        // Spectrum curve — clipped to chart area, fill then stroke (smooth, rounded)
+        meterCtx.save();
         meterCtx.beginPath();
-        for (let px = 0; px < cW; px++) {
-          const binIdx = Math.round(freqMapCache[px]);
+        meterCtx.rect(ML, MT, cW, cH);
+        meterCtx.clip();
+
+        meterCtx.lineJoin = 'round';
+        meterCtx.lineCap  = 'round';
+
+        // Build subsampled point set for smooth bezier spline
+        const STEP = Math.max(2, Math.floor(cW / 200));
+        const pts  = [];
+        for (let px = 0; px <= cW; px += STEP) {
+          const safe    = Math.min(px, cW - 1);
+          const binIdx  = Math.round(freqMapCache[safe]);
           const clamped = Math.min(binIdx, freqData.length - 1);
           const normVal = freqData[clamped] / 255;
-          const db      = normVal * 90 - 90;
-          const y       = dbToY(db);
-          if (px === 0) meterCtx.moveTo(ML + px, y);
-          else          meterCtx.lineTo(ML + px, y);
+          pts.push([ML + px, dbToY(normVal * 90 - 90)]);
         }
-        meterCtx.strokeStyle = 'rgba(126,201,143,0.9)';
-        meterCtx.lineWidth = 1.5;
-        meterCtx.stroke();
+        // Ensure last point reaches right edge
+        if (pts[pts.length - 1][0] < ML + cW) {
+          const binIdx  = Math.round(freqMapCache[cW - 1]);
+          const clamped = Math.min(binIdx, freqData.length - 1);
+          pts.push([ML + cW, dbToY((freqData[clamped] / 255) * 90 - 90)]);
+        }
 
-        // Fill under curve
+        // Helper: draw quadratic bezier midpoint spline through pts
+        function splinePath() {
+          meterCtx.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < pts.length - 1; i++) {
+            const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+            const my = (pts[i][1] + pts[i + 1][1]) / 2;
+            meterCtx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+          }
+          meterCtx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+        }
+
+        // Fill pass: closed shape from bottom-left, along spline, back to bottom-right
+        meterCtx.beginPath();
+        meterCtx.moveTo(ML, MT + cH);
+        meterCtx.lineTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length - 1; i++) {
+          const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+          const my = (pts[i][1] + pts[i + 1][1]) / 2;
+          meterCtx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+        }
+        meterCtx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
         meterCtx.lineTo(ML + cW, MT + cH);
-        meterCtx.lineTo(ML, MT + cH);
         meterCtx.closePath();
         const grad = meterCtx.createLinearGradient(0, MT, 0, MT + cH);
         grad.addColorStop(0, 'rgba(126,201,143,0.25)');
         grad.addColorStop(1, 'rgba(126,201,143,0.02)');
         meterCtx.fillStyle = grad;
         meterCtx.fill();
+
+        // Stroke pass: just the top spline curve
+        meterCtx.beginPath();
+        splinePath();
+        meterCtx.strokeStyle = 'rgba(126,201,143,0.9)';
+        meterCtx.lineWidth   = 1.5;
+        meterCtx.stroke();
+
+        meterCtx.restore();
 
         // dBFS axis labels
         meterCtx.textAlign    = 'right';

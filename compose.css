@@ -1167,8 +1167,8 @@ blockquote footer {
 }
 
 .design-analog-container {
-  grid-template-columns: repeat(3, minmax(280px, 520px));
-  max-width: 1900px;
+  grid-template-columns: repeat(2, minmax(280px, 520px));
+  max-width: 1200px;
 }
 
 @media (max-width: 1024px) {
