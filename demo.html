@@ -570,7 +570,10 @@
             const inactiveAudio = afterMode ? beforeAudio : afterAudio;
             const t = inactiveAudio.currentTime || activeAudio.currentTime;
             inactiveAudio.pause();
-            activeAudio.currentTime = t;
+            // Only seek if there's meaningful drift — avoids the buffering lag
+            // that caused audible gaps when toggling between Raw and Mix.
+            const drift = Math.abs(activeAudio.currentTime - t);
+            if (drift > 0.05) activeAudio.currentTime = t;
             activeAudio.play().catch(() => {});
           }
         }
@@ -590,8 +593,9 @@
       }
 
       function renderProgress() {
-        const cur = beforeAudio.currentTime || 0;
-        const dur = beforeAudio.duration || 0;
+        const activeAudio = (isMobile && afterMode) ? afterAudio : beforeAudio;
+        const cur = activeAudio.currentTime || 0;
+        const dur = activeAudio.duration || beforeAudio.duration || 0;
         const percent = dur ? (cur / dur) * 100 : 0;
         progressFill.style.width = percent + '%';
         scrubber.style.left = percent + '%';
@@ -608,12 +612,13 @@
         let lastSync = 0;
         let lastRender = 0;
         const step = () => {
-          if (beforeAudio.paused) {
+          const trackingAudio = (isMobile && afterMode) ? afterAudio : beforeAudio;
+          if (trackingAudio.paused) {
             progressRAF = null;
             return;
           }
           const now = performance.now();
-          if (now - lastSync > 500) {
+          if (now - lastSync > 100) {
             if (isMobile) {
               // On mobile only one stream plays at a time.
               // Keep the inactive audio paused and time-synced so a mode toggle is instant.
