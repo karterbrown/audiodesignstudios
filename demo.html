@@ -396,11 +396,17 @@
 
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-      // Spectrum analysers (8192 FFT) — used only for the visual frequency graph
+      // Detect mobile: lower-power devices need a reduced processing budget
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+                       ('ontouchstart' in window && window.innerWidth <= 900);
+
+      // Spectrum analysers — 8192 FFT on desktop gives high resolution;
+      // 2048 on mobile cuts the per-frame workload by 4× (still looks great)
+      const specFftSize = isMobile ? 2048 : 8192;
       const beforeAnalyser = ctx.createAnalyser();
       const afterAnalyser = ctx.createAnalyser();
-      beforeAnalyser.fftSize = 8192;
-      afterAnalyser.fftSize = 8192;
+      beforeAnalyser.fftSize = specFftSize;
+      afterAnalyser.fftSize = specFftSize;
       beforeAnalyser.smoothingTimeConstant = 0.8;
       afterAnalyser.smoothingTimeConstant = 0.8;
       beforeAnalyser.minDecibels = -90;
@@ -594,7 +600,10 @@
           const now = performance.now();
           if (now - lastSync > 500) {
             const drift = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
-            if (drift > 0.05) {
+            // On mobile a hard currentTime seek on a WAV causes a rebuffer stutter.
+            // Use a wider tolerance so minor drift is ignored and reseeking is rare.
+            const driftThreshold = isMobile ? 0.15 : 0.05;
+            if (drift > driftThreshold) {
               afterAudio.currentTime = beforeAudio.currentTime;
             }
             lastSync = now;
@@ -639,7 +648,10 @@
       function startVU() {
         if (vuRAF) cancelAnimationFrame(vuRAF);
         let lastDisplayUpdate = 0;
+        let vuFrameCount = 0;
         const loop = () => {
+          // Throttle to ~30fps on mobile — halves the CPU cost while still feeling smooth
+          if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
           // Use the lightweight 2048-bin VU analyser — 4x less data than the spectrum analyser
           const analyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
           const timeData = afterMode ? afterTimeData : beforeTimeData;

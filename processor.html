@@ -357,9 +357,13 @@
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       window._procAudioContext = ctx;
 
-      // Spectrum analyser (8192 FFT) — for the visual spectrum graph
+      // Detect mobile: lower-power devices need a reduced processing budget
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+                       ('ontouchstart' in window && window.innerWidth <= 900);
+
+      // Spectrum analyser — 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4×
       const analyser = ctx.createAnalyser();
-      analyser.fftSize = 8192;
+      analyser.fftSize = isMobile ? 2048 : 8192;
       analyser.smoothingTimeConstant = 0.8;
       analyser.minDecibels = -90;
       analyser.maxDecibels = 0;
@@ -521,7 +525,10 @@
       function startVU() {
         if (vuRAF) cancelAnimationFrame(vuRAF);
         let lastDisplayUpdate = 0;
+        let vuFrameCount = 0;
         const loop = () => {
+          // Throttle to ~30fps on mobile — halves the CPU cost while still feeling smooth
+          if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
           vuAnalyser.getFloatTimeDomainData(timeData);
 
           let sumSquares = 0, peakSample = 0;
