@@ -97,12 +97,12 @@
                 <span class="ba-meter-value" id="aiTruePeakValue">-∞ dBTP</span>
               </div>
               <div class="ba-meter-item">
-                <span class="ba-meter-label-text">LUFS (I):</span>
-                <span class="ba-meter-value" id="aiLufsValue">-∞ LUFS</span>
+                <span class="ba-meter-label-text">RMS (avg):</span>
+                <span class="ba-meter-value" id="aiLufsValue">-∞ dB</span>
               </div>
               <div class="ba-meter-item">
-                <span class="ba-meter-label-text">LRA:</span>
-                <span class="ba-meter-value" id="aiLraValue">-- LU</span>
+                <span class="ba-meter-label-text">Range:</span>
+                <span class="ba-meter-value" id="aiLraValue">-- dB</span>
               </div>
             </div>
 
@@ -179,12 +179,12 @@
               <span class="loudness-meter-value" id="meterTruePeakValue">-∞ dBTP</span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">LUFS (I): Integrated average</span>
-              <span class="loudness-meter-value" id="meterLufsIValue">-∞ LUFS</span>
+              <span class="loudness-meter-label">RMS (avg): Time-averaged level</span>
+              <span class="loudness-meter-value" id="meterLufsIValue">-∞ dB</span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">LRA: Loudness range</span>
-              <span class="loudness-meter-value" id="meterLRAValue">-- LU</span>
+              <span class="loudness-meter-label">Range: Dynamic range</span>
+              <span class="loudness-meter-value" id="meterLRAValue">-- dB</span>
             </div>
           </div>
         </div>
@@ -665,7 +665,7 @@
         // Reset digital displays
         if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
         if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBTP';
-        if (lufsDisplay) lufsDisplay.textContent = '-∞ LUFS';
+        if (lufsDisplay) lufsDisplay.textContent = '-∞ dB';
         if (vuDisplay) vuDisplay.textContent = '-∞ VU';
       }
 
@@ -769,8 +769,8 @@
             if (vuDisplay) vuDisplay.textContent = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-∞ VU';
             if (rmsDisplay) rmsDisplay.textContent = shortTermRmsDbFs > -99 ? `${shortTermRmsDbFs.toFixed(1)} dB` : '-∞ dB';
             if (truePeakDisplay) truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
-            if (lufsDisplay) lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} LUFS` : '-∞ LUFS';
-            if (lraDisplay) lraDisplay.textContent = lraMain > 0 ? `${lraMain.toFixed(1)} LU` : '-- LU';
+            if (lufsDisplay) lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} dB` : '-∞ dB';
+            if (lraDisplay) lraDisplay.textContent = lraMain > 0 ? `${lraMain.toFixed(1)} dB` : '-- dB';
           }
 
           vuRAF = requestAnimationFrame(loop);
@@ -786,16 +786,12 @@
         console.log('[AI PLAYER] playBoth called');
         ensureGraph();
         try {
-          if (isMobile) {
-            // On mobile: only decode one stream at a time to avoid CPU overload.
-            // The inactive audio stays paused; startProgress() keeps its time in sync.
-            const activeAudio    = afterMode ? afterAudio : beforeAudio;
-            const inactiveAudio  = afterMode ? beforeAudio : afterAudio;
-            if (!inactiveAudio.paused) inactiveAudio.pause();
-            await activeAudio.play();
-          } else {
-            await Promise.all([beforeAudio.play(), afterAudio.play()]);
-          }
+          // Only play the active audio stream to prevent choppy playback
+          // The inactive audio stays paused; startProgress() keeps its time in sync
+          const activeAudio    = afterMode ? afterAudio : beforeAudio;
+          const inactiveAudio  = afterMode ? beforeAudio : afterAudio;
+          if (!inactiveAudio.paused) inactiveAudio.pause();
+          await activeAudio.play();
           playing = true;
           console.log('[AI PLAYER] Playing state set to TRUE');
           startProgress();
@@ -851,10 +847,10 @@
         needleAngle = -50;
         if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
         if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBTP';
-        if (lufsDisplay) lufsDisplay.textContent = '-∞ LUFS';
+        if (lufsDisplay) lufsDisplay.textContent = '-∞ dB';
         if (vuDisplay) vuDisplay.textContent = '-∞ VU';
         if (sourceDisplay) sourceDisplay.textContent = 'Mix';
-        if (lraDisplay) lraDisplay.textContent = '-- LU';
+if (lraDisplay) lraDisplay.textContent = '-- dB';
 
         // Set src and force the browser to start buffering
         beforeAudio.src = t.before;
@@ -1013,8 +1009,9 @@
         
         if (isActuallyPlaying) {
           console.log('[AI PLAYER] PAUSING');
-          beforeAudio.pause();
-          afterAudio.pause();
+          // Only pause the currently active audio
+          const activeAudio = afterMode ? afterAudio : beforeAudio;
+          activeAudio.pause();
           playing = false;
           if (progressRAF) cancelAnimationFrame(progressRAF);
           stopVU();
@@ -1715,8 +1712,8 @@
 
           if (meterRmsValueEl) meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-∞ dB';
           if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
-          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} LUFS` : '-∞ LUFS';
-          if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} LU` : '-- LU';
+          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} dB` : '-∞ dB';
+          if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} dB` : '-- dB';
         }
 
         meterRAF = requestAnimationFrame(updateLoudnessMeter);
@@ -1789,14 +1786,14 @@
           <span class="player-info-icon">&#128202;</span>
           <div>
             <strong>Analyze</strong>
-            <p>Runs a full loudness and dynamics analysis on the current track, reporting RMS, True Peak, LUFS, and LRA values.</p>
+            <p>Runs a full loudness and dynamics analysis on the current track with K-weighting (ITU-R BS.1770-4 standard). Reports accurate LUFS (Loudness Units relative to Full Scale), True Peak, and LRA (Loudness Range) values for streaming platform compliance.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#128065;</span>
           <div>
             <strong>View</strong>
-            <p>Opens the real-time loudness meter, showing a live LUFS and LRA readout while the track plays.</p>
+            <p>Opens the real-time spectrum analyzer and metering display. Shows RMS approximations and dynamic range in real-time. For accurate LUFS measurements, use the Analyze button.</p>
           </div>
         </li>
       </ul>
