@@ -1137,13 +1137,22 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           };
 
           updateProgress(5, 'Fetching audio...');
-          const response = await fetch(audioUrl);
+          // Encode URL to handle spaces and special characters
+          const encodedUrl = encodeURI(audioUrl);
+          const response = await fetch(encodedUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch audio file: ${response.status} ${response.statusText}`);
+          }
           const arrayBuffer = await response.arrayBuffer();
 
           updateProgress(15, 'Decoding audio...');
           // Create audio context for decoding
           const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          
+          if (!audioBuffer || audioBuffer.length === 0) {
+            throw new Error('Audio file could not be decoded or is empty');
+          }
 
           updateProgress(25, 'Preparing analysis...');
           
@@ -1424,6 +1433,8 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
 
         } catch (err) {
           console.error('Analysis failed:', err);
+          console.error('Audio URL:', audioUrl);
+          console.error('Track name:', trackName);
           analysisResults.innerHTML = `
             <div class="analysis-error">
               <strong>Analysis Failed</strong><br>
