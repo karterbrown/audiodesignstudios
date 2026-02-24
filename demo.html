@@ -1694,6 +1694,12 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           return;
         }
 
+        // Ensure analyzers are ready before attempting to read data
+        if (!beforeAnalyser || !afterAnalyser) {
+          meterRAF = requestAnimationFrame(updateLoudnessMeter);
+          return;
+        }
+
         // Throttle canvas redraws to ~30fps (skip odd frames)
         specFrameCount++;
         if (specFrameCount % 2 !== 0) {
@@ -1850,6 +1856,9 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           return;
         }
         const track = tracks[idx];
+        
+        // Ensure audio graph is connected before opening analyzer
+        ensureGraph();
         
         if (meterTrackNameEl) {
           meterTrackNameEl.textContent = afterMode ? track.titleMix : track.titleRaw;
