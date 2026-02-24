@@ -560,6 +560,21 @@
 
         applyVolume();
 
+        // On mobile: swap which audio element is actually playing so only one
+        // stream is decoded at a time. The newly-inactive stream is paused;
+        // the newly-active one seeks to the current position and resumes.
+        if (isMobile) {
+          const wasPlaying = !beforeAudio.paused || !afterAudio.paused;
+          if (wasPlaying) {
+            const activeAudio   = afterMode ? afterAudio : beforeAudio;
+            const inactiveAudio = afterMode ? beforeAudio : afterAudio;
+            const t = inactiveAudio.currentTime || activeAudio.currentTime;
+            inactiveAudio.pause();
+            activeAudio.currentTime = t;
+            activeAudio.play().catch(() => {});
+          }
+        }
+
         // Keep spectrum modal buttons + track name in sync (safe: modal is in HTML so getElementById always works)
         const _specModal = document.getElementById('loudnessMeterModal');
         if (_specModal && _specModal.style.display !== 'none') {
@@ -599,12 +614,16 @@
           }
           const now = performance.now();
           if (now - lastSync > 500) {
-            const drift = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
-            // On mobile a hard currentTime seek on a WAV causes a rebuffer stutter.
-            // Use a wider tolerance so minor drift is ignored and reseeking is rare.
-            const driftThreshold = isMobile ? 0.15 : 0.05;
-            if (drift > driftThreshold) {
-              afterAudio.currentTime = beforeAudio.currentTime;
+            if (isMobile) {
+              // On mobile only one stream plays at a time.
+              // Keep the inactive audio paused and time-synced so a mode toggle is instant.
+              const activeAudio   = afterMode ? afterAudio : beforeAudio;
+              const inactiveAudio = afterMode ? beforeAudio : afterAudio;
+              if (!inactiveAudio.paused) inactiveAudio.pause();
+              inactiveAudio.currentTime = activeAudio.currentTime;
+            } else {
+              const drift = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
+              if (drift > 0.05) afterAudio.currentTime = beforeAudio.currentTime;
             }
             lastSync = now;
           }
@@ -762,7 +781,16 @@
         console.log('[AI PLAYER] playBoth called');
         ensureGraph();
         try {
-          await Promise.all([beforeAudio.play(), afterAudio.play()]);
+          if (isMobile) {
+            // On mobile: only decode one stream at a time to avoid CPU overload.
+            // The inactive audio stays paused; startProgress() keeps its time in sync.
+            const activeAudio    = afterMode ? afterAudio : beforeAudio;
+            const inactiveAudio  = afterMode ? beforeAudio : afterAudio;
+            if (!inactiveAudio.paused) inactiveAudio.pause();
+            await activeAudio.play();
+          } else {
+            await Promise.all([beforeAudio.play(), afterAudio.play()]);
+          }
           playing = true;
           console.log('[AI PLAYER] Playing state set to TRUE');
           startProgress();
