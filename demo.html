@@ -171,20 +171,24 @@
           <canvas id="loudnessMeterCanvas" width="500" height="300"></canvas>
           <div class="loudness-meter-readings">
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">RMS: Current level (active mode)</span>
+              <span class="loudness-meter-label">Current Level</span>
               <span class="loudness-meter-value" id="meterRmsValue">-∞ dB</span>
+              <span class="loudness-meter-status" id="meterRmsStatus"></span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">Peak: Short-term maximum</span>
+              <span class="loudness-meter-label">Streaming Target</span>
+              <span class="loudness-meter-value" id="meterLufsIValue">-∞ LUFS</span>
+              <span class="loudness-meter-status" id="meterLufsStatus">Target: −14 LUFS</span>
+            </div>
+            <div class="loudness-meter-reading">
+              <span class="loudness-meter-label">True Peak</span>
               <span class="loudness-meter-value" id="meterTruePeakValue">-∞ dBFS</span>
+              <span class="loudness-meter-status" id="meterPeakStatus">Target: < −1.0 dBFS</span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">RMS (avg): Time-averaged level</span>
-              <span class="loudness-meter-value" id="meterLufsIValue">-∞ dB</span>
-            </div>
-            <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">Range: Dynamic range</span>
+              <span class="loudness-meter-label">Dynamic Range</span>
               <span class="loudness-meter-value" id="meterLRAValue">-- dB</span>
+              <span class="loudness-meter-status" id="meterLraStatus"></span>
             </div>
           </div>
         </div>
@@ -1471,6 +1475,10 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
       const meterTruePeakValueEl = document.getElementById('meterTruePeakValue');
       const meterLufsIValueEl = document.getElementById('meterLufsIValue');
       const meterLRAValueEl = document.getElementById('meterLRAValue');
+      const meterRmsStatusEl = document.getElementById('meterRmsStatus');
+      const meterPeakStatusEl = document.getElementById('meterPeakStatus');
+      const meterLufsStatusEl = document.getElementById('meterLufsStatus');
+      const meterLraStatusEl = document.getElementById('meterLraStatus');
       const meterTrackNameEl = document.querySelector('.loudness-meter-track-name');
       const spectrumRawBtn = document.getElementById('spectrumRawBtn');
       const spectrumMixBtn = document.getElementById('spectrumMixBtn');
@@ -1761,8 +1769,76 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
 
           if (meterRmsValueEl) meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-∞ dB';
           if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBFS` : '-∞ dBFS';
-          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} dB` : '-∞ dB';
-          if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} dB` : '-- dB';
+          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} LUFS` : '-∞ LUFS';
+          if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} LU` : '-- LU';
+
+          // Update status indicators
+          // Current Level status (based on if it's too hot)
+          if (meterRmsStatusEl && avgRmsDb > -99) {
+            if (avgRmsDb > -6) {
+              meterRmsStatusEl.textContent = '⚠ Too Hot';
+              meterRmsStatusEl.className = 'loudness-meter-status warning';
+            } else if (avgRmsDb > -12) {
+              meterRmsStatusEl.textContent = '✓ Good';
+              meterRmsStatusEl.className = 'loudness-meter-status good';
+            } else if (avgRmsDb > -24) {
+              meterRmsStatusEl.textContent = '✓ Normal';
+              meterRmsStatusEl.className = 'loudness-meter-status good';
+            } else {
+              meterRmsStatusEl.textContent = '↓ Quiet';
+              meterRmsStatusEl.className = 'loudness-meter-status info';
+            }
+          }
+
+          // Streaming Target status (−14 LUFS target)
+          if (meterLufsStatusEl && lufsIntegrated > -99) {
+            const target = -14;
+            const delta = lufsIntegrated - target;
+            if (Math.abs(delta) < 1.5) {
+              meterLufsStatusEl.textContent = '✓ On Target';
+              meterLufsStatusEl.className = 'loudness-meter-status good';
+            } else if (delta > 0) {
+              meterLufsStatusEl.textContent = `↑ ${Math.abs(delta).toFixed(1)} dB Over`;
+              meterLufsStatusEl.className = 'loudness-meter-status warning';
+            } else {
+              meterLufsStatusEl.textContent = `↓ ${Math.abs(delta).toFixed(1)} dB Under`;
+              meterLufsStatusEl.className = 'loudness-meter-status info';
+            }
+          }
+
+          // True Peak status (< -1.0 dBFS target)
+          if (meterPeakStatusEl && currentTruePeakHold > -99) {
+            if (currentTruePeakHold >= -0.1) {
+              meterPeakStatusEl.textContent = '✗ Clipping Risk';
+              meterPeakStatusEl.className = 'loudness-meter-status danger';
+            } else if (currentTruePeakHold >= -1.0) {
+              meterPeakStatusEl.textContent = '⚠ Near Limit';
+              meterPeakStatusEl.className = 'loudness-meter-status warning';
+            } else if (currentTruePeakHold >= -3.0) {
+              meterPeakStatusEl.textContent = '✓ Safe';
+              meterPeakStatusEl.className = 'loudness-meter-status good';
+            } else {
+              meterPeakStatusEl.textContent = '✓ Plenty of Headroom';
+              meterPeakStatusEl.className = 'loudness-meter-status good';
+            }
+          }
+
+          // Dynamic Range status
+          if (meterLraStatusEl && lraValue > 0) {
+            if (lraValue < 4) {
+              meterLraStatusEl.textContent = '⚠ Heavily Limited';
+              meterLraStatusEl.className = 'loudness-meter-status warning';
+            } else if (lraValue < 8) {
+              meterLraStatusEl.textContent = '✓ Well Compressed';
+              meterLraStatusEl.className = 'loudness-meter-status good';
+            } else if (lraValue < 15) {
+              meterLraStatusEl.textContent = '✓ Natural Dynamics';
+              meterLraStatusEl.className = 'loudness-meter-status good';
+            } else {
+              meterLraStatusEl.textContent = '↑ Very Dynamic';
+              meterLraStatusEl.className = 'loudness-meter-status info';
+            }
+          }
         }
 
         meterRAF = requestAnimationFrame(updateLoudnessMeter);
