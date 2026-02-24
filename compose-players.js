@@ -8,6 +8,7 @@ function createBAPlayer(config) {
     toggleButtonId,
     beforeLabelClass,
     afterLabelClass,
+    bypassLabelId,
     volumeKnobId,
     volumeValueId,
     playPauseBtnId,
@@ -59,6 +60,7 @@ function createBAPlayer(config) {
   const toggleButton = document.getElementById(toggleButtonId);
   const beforeLabel = document.querySelector(`.${beforeLabelClass}`);
   const afterLabel = document.querySelector(`.${afterLabelClass}`);
+  const bypassLabel = bypassLabelId ? document.getElementById(bypassLabelId) : null;
   const volumeKnob = document.getElementById(volumeKnobId);
   const volumeValue = document.getElementById(volumeValueId);
   const playPauseBtn = document.getElementById(playPauseBtnId);
@@ -179,12 +181,20 @@ function createBAPlayer(config) {
       afterLabel.style.opacity = '1';
       afterLabel.style.fontWeight = '600';
       toggleButton.classList.add('active');
+      if (bypassLabel) {
+        bypassLabel.classList.add('active');
+        bypassLabel.textContent = 'Active';
+      }
     } else {
       beforeLabel.style.opacity = '1';
       beforeLabel.style.fontWeight = '600';
       afterLabel.style.opacity = '0.6';
       afterLabel.style.fontWeight = '500';
       toggleButton.classList.remove('active');
+      if (bypassLabel) {
+        bypassLabel.classList.remove('active');
+        bypassLabel.textContent = 'Bypass';
+      }
     }
 
     // Swap active audio stream
