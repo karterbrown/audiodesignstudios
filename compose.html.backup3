@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771955638" />
-  <link rel="stylesheet" href="matrix.css?v=1771955638" />
+  <link rel="stylesheet" href="compose.css?v=1771954861" />
+  <link rel="stylesheet" href="matrix.css?v=1771954861" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1896,7 +1896,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771955638"></script>
+  <script src="content.js?v=1771954861"></script>
   <script src="compose-players.js?v=1771954861"></script>
 
   <!-- Matrix Animation Script -->
@@ -3260,9 +3260,670 @@
         progressWrapperId: 'baWave',
         trackListId: 'baPlaylistTracks'
       });
+      baBeforeAudio.preload = 'auto';
+      baAfterAudio.preload = 'auto';
+
+      const beforeAnalyser = baAudioContext.createAnalyser();
+      const afterAnalyser = baAudioContext.createAnalyser();
+      const beforeGain = baAudioContext.createGain();
+      const afterGain = baAudioContext.createGain();
+
+      beforeAnalyser.fftSize = 256;
+      afterAnalyser.fftSize = 256;
+      beforeAnalyser.smoothingTimeConstant = 0.92;
+      afterAnalyser.smoothingTimeConstant = 0.92;
+
+      const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
+      const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
+
+      let beforeSourceConnected = false;
+      let afterSourceConnected = false;
+
+      baBeforeAudio.addEventListener('play', () => {
+        if (baAudioContext.state === 'suspended') {
+          baAudioContext.resume();
+        }
+
+        if (!beforeSourceConnected) {
+          const beforeSource = baAudioContext.createMediaElementSource(baBeforeAudio);
+          beforeSource.connect(beforeAnalyser);
+          beforeAnalyser.connect(beforeGain);
+          beforeGain.connect(baAudioContext.destination);
+          beforeSourceConnected = true;
+        }
+
+        if (!afterSourceConnected) {
+          const afterSource = baAudioContext.createMediaElementSource(baAfterAudio);
+          afterSource.connect(afterAnalyser);
+          afterAnalyser.connect(afterGain);
+          afterGain.connect(baAudioContext.destination);
+          afterSourceConnected = true;
+        }
+      }, { once: true });
+
+      let baCurrentTrackIndex = -1;
+      let isPlaying = false;
+      let isAfterMode = true;
+
+      beforeGain.gain.value = 0;
+      afterGain.gain.value = 1;
+
+      const baMeterNeedle = document.getElementById('baMeterNeedle');
+      const baVolumeKnob = document.getElementById('baVolumeKnob');
+      const baVolumeValue = document.getElementById('baVolumeValue');
+      const baToggleButton = document.getElementById('baToggleButton');
+      const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
+      const baPrevBtn = document.getElementById('baPrevBtn');
+      const baNextBtn = document.getElementById('baNextBtn');
+      const baNowPlaying = document.getElementById('baNowPlaying');
+      const baProgressWrap = document.getElementById('baWave');
+      const baPlaylistContainer = document.getElementById('baPlaylistTracks');
+
+      let volumeDb = 0;
+      let knobAngle = 360;
+      let currentNeedleAngle = -50;
+
+      let vuMeterAnimationId = null;
+      let lastVUFrameTime = 0;
+      const vuFrameInterval = 33;
+      let isVUPaused = false;
+
+      function updateVUMeter(timestamp) {
+        if (isVUPaused) {
+          return;
+        }
+        
+        if (timestamp - lastVUFrameTime < vuFrameInterval) {
+          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+          return;
+        }
+        lastVUFrameTime = timestamp;
+        
+        vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+        
+        const analyser = isAfterMode ? afterAnalyser : beforeAnalyser;
+        const dataArray = isAfterMode ? afterDataArray : beforeDataArray;
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          sum += dataArray[i] * dataArray[i];
+        }
+        const rms = Math.sqrt(sum / dataArray.length);
+        
+        const normalized = Math.max(rms / 255, 0.001);
+        let db = 20 * Math.log10(normalized);
+        
+        if (isAfterMode) {
+          db += 8;
+        } else {
+          db -= 2;
+        }
+        
+        db += volumeDb;
+        
+        const vuMin = -20;
+        const vuMax = 3;
+        const angleMin = -50;
+        const angleMax = 50;
+        
+        const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
+        
+        let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
+        
+        if (clampedVU < -5) {
+          normalizedVU = Math.pow(normalizedVU, 1.5);
+        }
+        
+        const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
+        
+        currentNeedleAngle += (targetAngle - currentNeedleAngle) * 0.1;
+        
+        baMeterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
+      }
+      
+      updateVUMeter(performance.now());
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          isVUPaused = true;
+          if (vuMeterAnimationId) {
+            cancelAnimationFrame(vuMeterAnimationId);
+            vuMeterAnimationId = null;
+          }
+        } else {
+          isVUPaused = false;
+          vuMeterAnimationId = requestAnimationFrame(updateVUMeter);
+        }
+      });
+
+      function updateVolumeDisplay() {
+        const displayDb = volumeDb >= 0 ? `+${volumeDb.toFixed(1)}` : volumeDb.toFixed(1);
+        baVolumeValue.textContent = `${displayDb} dB`;
+        baVolumeKnob.style.transform = `rotate(${knobAngle - 360}deg)`;
+        
+        const gain = Math.pow(10, volumeDb / 20);
+        beforeGain.gain.value = isAfterMode ? 0 : gain;
+        afterGain.gain.value = isAfterMode ? gain : 0;
+      }
+
+      function setBAMode(nextIsAfter) {
+        isAfterMode = nextIsAfter;
+        const beforeLabel = document.querySelector('.ba-toggle-before');
+        const afterLabel = document.querySelector('.ba-toggle-after');
+        const bypassLabel = document.getElementById('baBypassLabel');
+
+        updateVolumeDisplay();
+
+        if (beforeLabel && afterLabel && bypassLabel) {
+          if (isAfterMode) {
+            beforeLabel.style.opacity = '0.6';
+            beforeLabel.style.fontWeight = '500';
+            afterLabel.style.opacity = '1';
+            afterLabel.style.fontWeight = '600';
+            baToggleButton.classList.add('active');
+            bypassLabel.classList.add('active');
+            bypassLabel.textContent = 'Active';
+          } else {
+            beforeLabel.style.opacity = '1';
+            beforeLabel.style.fontWeight = '600';
+            afterLabel.style.opacity = '0.6';
+            afterLabel.style.fontWeight = '500';
+            baToggleButton.classList.remove('active');
+            bypassLabel.classList.remove('active');
+            bypassLabel.textContent = 'Bypass';
+          }
+        }
+
+        // Swap which audio element is playing so only one stream is active
+        const wasPlaying = !baBeforeAudio.paused || !baAfterAudio.paused;
+        if (wasPlaying) {
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+          const t = inactiveAudio.currentTime || activeAudio.currentTime;
+          inactiveAudio.pause();
+          const drift = Math.abs(activeAudio.currentTime - t);
+          if (drift > 0.05) activeAudio.currentTime = t;
+          activeAudio.play().catch(() => {});
+        }
+      }
+
+      let isDraggingKnob = false;
+      let knobStartY = 0;
+      let knobStartAngle = 0;
+      let knobMoved = false;
+
+      baVolumeKnob.addEventListener('mousedown', (e) => {
+        isDraggingKnob = true;
+        knobMoved = false;
+        knobStartY = e.clientY;
+        knobStartAngle = knobAngle;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingKnob) return;
+        
+        const deltaY = knobStartY - e.clientY;
+        if (Math.abs(deltaY) > 2) {
+          knobMoved = true;
+        }
+        
+        const newAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+        knobAngle = newAngle;
+        
+        volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+        
+        updateVolumeDisplay();
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDraggingKnob && !knobMoved) {
+          volumeDb = 0;
+          knobAngle = 360;
+          updateVolumeDisplay();
+        }
+        isDraggingKnob = false;
+      });
+
+      baVolumeKnob.addEventListener('touchstart', (e) => {
+        isDraggingKnob = true;
+        knobMoved = false;
+        knobStartY = e.touches[0].clientY;
+        knobStartAngle = knobAngle;
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!isDraggingKnob) return;
+        
+        const deltaY = knobStartY - e.touches[0].clientY;
+        if (Math.abs(deltaY) > 2) {
+          knobMoved = true;
+        }
+        
+        const newAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+        knobAngle = newAngle;
+        
+        volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+        
+        updateVolumeDisplay();
+        e.preventDefault();
+      }, { passive: false });
+
+      document.addEventListener('touchend', () => {
+        if (isDraggingKnob && !knobMoved) {
+          volumeDb = 0;
+          knobAngle = 360;
+          updateVolumeDisplay();
+        }
+        isDraggingKnob = false;
+      });
+
+      updateVolumeDisplay();
+
+      function waitForReady(audio) {
+        return new Promise(resolve => {
+          if (audio.readyState >= 3) {
+            resolve();
+          } else {
+            audio.addEventListener('canplaythrough', resolve, { once: true });
+          }
+        });
+      }
+
+      let baProgressRAF = null;
+      const baProgressFill = document.createElement('div');
+      baProgressFill.className = 'main-player-progress-fill';
+      baProgressFill.style.width = '0%';
+      baProgressWrap.appendChild(baProgressFill);
+
+      const baScrubber = document.createElement('div');
+      baScrubber.className = 'main-player-scrubber';
+      baProgressWrap.appendChild(baScrubber);
+
+      function baRenderProgress() {
+        // Use the currently active audio stream
+        const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+        const cur = activeAudio.currentTime || 0;
+        const dur = activeAudio.duration || 0;
+        const pct = dur ? (cur / dur) : 0;
+        const percent = pct * 100;
+
+        baProgressFill.style.width = percent + '%';
+        baScrubber.style.left = percent + '%';
+
+        if (baCurrentTrackIndex >= 0) {
+          const track = baTracks[baCurrentTrackIndex];
+          if (track._uiRefs) {
+            track._uiRefs.progressFill.style.width = percent + '%';
+            track._uiRefs.itemScrubber.style.left = percent + '%';
+            track._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+          }
+        }
+      }
+
+      function baStartProgressLoop() {
+        if (baProgressRAF) cancelAnimationFrame(baProgressRAF);
+        const step = () => {
+          // Track whichever audio is currently active
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          if (activeAudio.paused || !activeAudio.duration) {
+            baProgressRAF = null;
+            return;
+          }
+          baRenderProgress();
+          baProgressRAF = requestAnimationFrame(step);
+        };
+        baProgressRAF = requestAnimationFrame(step);
+      }
+
+      function baStopProgressLoop() {
+        if (baProgressRAF) {
+          cancelAnimationFrame(baProgressRAF);
+          baProgressRAF = null;
+        }
+      }
+
+      // =================================================================
+      // CREATE BEFORE/AFTER TRACK LIST
+      // =================================================================
+      console.log('[BA PLAYER] Starting track creation...');
+      console.log('[BA PLAYER] baPlaylistContainer:', baPlaylistContainer);
+      console.log('[BA PLAYER] baTracks:', baTracks);
+      
+      // Add visual test marker
+      if (baPlaylistContainer) {
+        baPlaylistContainer.style.border = '2px solid red';
+        baPlaylistContainer.style.minHeight = '100px';
+        console.log('[BA PLAYER] Container exists and styled with red border');
+      }
+      
+      if (!baPlaylistContainer) {
+        console.error('[BA PLAYER] CRITICAL: Container element #baPlaylistTracks not found!');
+        alert('ERROR: BA Player container not found!');
+      }
+      
+      if (!baTracks || baTracks.length === 0) {
+        console.error('[BA PLAYER] CRITICAL: No tracks defined!');
+        alert('ERROR: No tracks defined!');
+      }
+      
+      if (baPlaylistContainer && baTracks && baTracks.length > 0) {
+        console.log('[BA PLAYER] Creating', baTracks.length, 'tracks...');
+        
+        baTracks.forEach((track, index) => {
+          console.log('[BA PLAYER] Creating track', index + 1, ':', track.title);
+          
+          const trackRow = document.createElement('div');
+          trackRow.className = 'track-item';
+          trackRow.dataset.trackIndex = index;
+          trackRow.style.cursor = 'pointer';
+
+          const info = document.createElement('div');
+          info.className = 'track-item-info';
+
+          const num = document.createElement('span');
+          num.className = 'track-item-number';
+          num.textContent = index + 1;
+
+          const title = document.createElement('span');
+          title.className = 'track-item-title';
+          title.textContent = track.title;
+
+          const progressWrap = document.createElement('div');
+          progressWrap.className = 'track-item-progress-wrap';
+
+          const progressFill = document.createElement('div');
+          progressFill.className = 'track-item-progress-fill';
+          progressFill.style.width = '0%';
+          progressWrap.appendChild(progressFill);
+
+          const itemScrubber = document.createElement('div');
+          itemScrubber.className = 'track-item-scrubber';
+          progressWrap.appendChild(itemScrubber);
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'track-item-time';
+          timeEl.textContent = '0:00 / 0:00';
+
+          info.appendChild(num);
+          info.appendChild(title);
+
+          const btn = document.createElement('button');
+          btn.className = 'track-item-play-btn';
+          btn.setAttribute('aria-label', `Play ${track.title}`);
+          btn.textContent = '';
+
+          track._uiRefs = { btn, progressFill, itemScrubber, timeEl };
+
+          trackRow.addEventListener('click', (e) => {
+            if (!e.target.closest('.track-item-progress-wrap') && !e.target.closest('.track-item-play-btn')) {
+              loadBATrack(index);
+            }
+          });
+
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            loadBATrack(index);
+          });
+
+          const updateProgress = (e) => {
+            const rect = progressWrap.getBoundingClientRect();
+            const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            if (baBeforeAudio.duration) {
+              const newTime = pct * baBeforeAudio.duration;
+              baBeforeAudio.currentTime = newTime;
+              baAfterAudio.currentTime = newTime;
+              baRenderProgress();
+            }
+          };
+
+          progressWrap.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            activeDrag = { element: progressWrap, update: updateProgress };
+            updateProgress(e);
+            progressWrap.style.cursor = 'grabbing';
+          });
+
+          progressWrap.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!activeDrag) updateProgress(e);
+          });
+
+          trackRow.appendChild(info);
+          trackRow.appendChild(progressWrap);
+          trackRow.appendChild(timeEl);
+          trackRow.appendChild(btn);
+          baPlaylistContainer.appendChild(trackRow);
+          
+          console.log('[BA PLAYER] Track', index + 1, 'appended to container');
+        });
+        
+        console.log('[BA PLAYER] All tracks created! Total:', baPlaylistContainer.children.length);
+        alert(`BA PLAYER: Successfully created ${baPlaylistContainer.children.length} tracks!`);
+      } else {
+        console.error('[BA PLAYER] Failed to create tracks - check above for details');
+      }
+
+      let baTrackLoadDebounceTimer = null;
+
+      function loadBATrack(index) {
+        const track = baTracks[index];
+        
+        if (baAudioContext.state === 'suspended') {
+          baAudioContext.resume();
+        }
+        
+        if (baCurrentTrackIndex === index) {
+          if (isPlaying) {
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            activeAudio.pause();
+            isPlaying = false;
+          } else {
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+            if (!inactiveAudio.paused) inactiveAudio.pause();
+            activeAudio.play().catch(e => console.warn('play failed', e));
+            isPlaying = true;
+          }
+          return;
+        }
+
+        clearTimeout(baTrackLoadDebounceTimer);
+        baTrackLoadDebounceTimer = setTimeout(() => {
+          if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+            baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+            baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+          }
+
+          baCurrentTrackIndex = index;
+
+          document.querySelectorAll('#baPlaylistTracks .track-item').forEach((item, i) => {
+            item.classList.toggle('active', i === index);
+          });
+
+          if (track._uiRefs) {
+            track._uiRefs.btn.textContent = '';
+          }
+
+          setBAMode(true);
+
+          baNowPlaying.textContent = track.title;
+
+          baBeforeAudio.src = track.before;
+          baAfterAudio.src = track.after;
+          
+          Promise.all([
+            waitForReady(baBeforeAudio),
+            waitForReady(baAfterAudio)
+          ]).then(() => {
+            // Only play the active audio stream to prevent choppy playback
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+            if (!inactiveAudio.paused) inactiveAudio.pause();
+            return activeAudio.play();
+          }).then(() => {
+            isPlaying = true;
+            if (track._uiRefs) {
+              track._uiRefs.btn.classList.add('playing');
+              track._uiRefs.btn.textContent = '';
+            }
+          }).catch(e => console.warn('play failed', e));
+        }, TRACK_LOAD_DEBOUNCE_MS);
+      }
+
+      baBeforeAudio.addEventListener('play', baStartProgressLoop);
+      baBeforeAudio.addEventListener('pause', baStopProgressLoop);
+      baBeforeAudio.addEventListener('ended', baStopProgressLoop);
+
+      baProgressWrap.addEventListener('click', (e) => {
+        if (baBeforeAudio.duration) {
+          const rect = baProgressWrap.getBoundingClientRect();
+          const percent = (e.clientX - rect.left) / rect.width;
+          const newTime = percent * baBeforeAudio.duration;
+          baBeforeAudio.currentTime = newTime;
+          baAfterAudio.currentTime = newTime;
+          baRenderProgress();
+        }
+      });
+
+      baToggleButton.addEventListener('click', () => {
+        setBAMode(!isAfterMode);
+        if (baCurrentTrackIndex >= 0) {
+          const track = baTracks[baCurrentTrackIndex];
+          baNowPlaying.textContent = track.title;
+        }
+      });
+
+      baPlayPauseBtn.addEventListener('click', () => {
+        if (baCurrentTrackIndex === -1) {
+          loadBATrack(0);
+        } else if (isPlaying) {
+          // Only pause the currently active audio
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          activeAudio.pause();
+          isPlaying = false;
+        } else {
+          if (baAudioContext.state === 'suspended') {
+            baAudioContext.resume();
+          }
+          // Only play the active audio stream to prevent choppy playback
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+          if (!inactiveAudio.paused) inactiveAudio.pause();
+          activeAudio.play().then(() => {
+            isPlaying = true;
+          }).catch(e => console.warn('play failed', e));
+        }
+      });
+
+      baBeforeAudio.addEventListener('play', () => {
+        baPlayPauseBtn.classList.add('playing');
+        baPlayPauseBtn.textContent = '';
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.add('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+        }
+        
+        // Update Media Session for lock screen controls
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]) {
+          updateMediaSession(baTracks[baCurrentTrackIndex].title);
+        }
+      });
+
+      baBeforeAudio.addEventListener('pause', () => {
+        baPlayPauseBtn.classList.remove('playing');
+        baPlayPauseBtn.textContent = '';
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+        }
+      });
+
+      baBeforeAudio.addEventListener('ended', () => {
+        baPlayPauseBtn.classList.remove('playing');
+        baPlayPauseBtn.textContent = '';
+        isPlaying = false;
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.classList.remove('playing');
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '';
+          baTracks[baCurrentTrackIndex]._uiRefs.progressFill.style.width = '0%';
+          baTracks[baCurrentTrackIndex]._uiRefs.itemScrubber.style.left = '0%';
+        }
+        baProgressFill.style.width = '0%';
+        baScrubber.style.left = '0%';
+        baStopProgressLoop();
+        
+        if (baCurrentTrackIndex < baTracks.length - 1) {
+          loadBATrack(baCurrentTrackIndex + 1);
+        } else {
+          loadBATrack(0);
+        }
+      });
+
+      baBeforeAudio.addEventListener('loadedmetadata', () => {
+        if (baCurrentTrackIndex >= 0 && baTracks[baCurrentTrackIndex]._uiRefs) {
+          baTracks[baCurrentTrackIndex]._uiRefs.btn.textContent = '⏸';
+        }
+      });
+
+      baPrevBtn.addEventListener('click', () => {
+        if (baBeforeAudio.currentTime > 3) {
+          baBeforeAudio.currentTime = 0;
+          baAfterAudio.currentTime = 0;
+        } else if (baCurrentTrackIndex > 0) {
+          loadBATrack(baCurrentTrackIndex - 1);
+        }
+      });
+
+      baNextBtn.addEventListener('click', () => {
+        if (baCurrentTrackIndex < baTracks.length - 1) {
+          loadBATrack(baCurrentTrackIndex + 1);
+        } else {
+          loadBATrack(0);
+        }
+      });
+
+      function initFirstTrack() {
+        const track = baTracks[0];
+        baCurrentTrackIndex = 0;
+        setBAMode(true);
+        
+        baNowPlaying.textContent = track.title;
+        
+        baBeforeAudio.src = track.before;
+        baAfterAudio.src = track.after;
+
+        document.querySelectorAll('#baPlaylistTracks .track-item').forEach((item, i) => {
+          item.classList.toggle('active', i === 0);
+        });
+      }
+
+      initFirstTrack();
+      
+      const beforeLabel = document.querySelector('.ba-toggle-before');
+      const afterLabel = document.querySelector('.ba-toggle-after');
+      const bypassLabel = document.getElementById('baBypassLabel');
+      
+      beforeLabel.addEventListener('click', () => {
+        if (isAfterMode) {
+          baToggleButton.click();
+        }
+      });
+      
+      afterLabel.addEventListener('click', () => {
+        if (!isAfterMode) {
+          baToggleButton.click();
+        }
+      });
+      
+      setBAMode(true);
       
       // Register Before/After Player for mobile audio handling
-      trackAudioState('beforeAfter', baPlayer.beforeAudio, baPlayer.audioContext, baPlayer.afterAudio);
+      trackAudioState('beforeAfter', baBeforeAudio, baAudioContext, baAfterAudio);
     });
   </script>
 
