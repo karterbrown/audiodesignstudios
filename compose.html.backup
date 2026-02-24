@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771954232" />
-  <link rel="stylesheet" href="matrix.css?v=1771954232" />
+  <link rel="stylesheet" href="compose.css?v=1771951642" />
+  <link rel="stylesheet" href="matrix.css?v=1771951642" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1896,7 +1896,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771954232"></script>
+  <script src="content.js?v=1771951642"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3922,6 +3922,443 @@
     <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" class="banner-text">on Apple Music</a>
   </section>
 
+
+          { id: 2, title: 'Hysteria (Drum Cover)', before: 'highlights/B_hysteriadrum.mp3', after: 'highlights/A_hysteriadrum.mp3' },
+          { id: 3, title: 'Near Wild Heaven (R.E.M. Cover)', before: 'highlights/B_NearWildHeaven_12072025.mp3', after: 'highlights/A_NearWildHeaven_12072025.mp3' },
+          { id: 4, title: "We're In This Together (NIN Drum Cover)", before: 'highlights/B_wereinthistogetherdrum.mp3', after: 'highlights/A_wereinthistogetherdrum.mp3' },
+          { id: 5, title: 'Fortunate Supportive Thoughts', before: 'highlights/FortunateSupportiveThoughts_Dry.mp3', after: 'highlights/FortunateSupportiveThoughts_FullMix.mp3' },
+          { id: 6, title: 'Reggae Lights', before: 'highlights/ReggaeLights_Dry.mp3', after: 'highlights/ReggaeLights_FullMix.mp3' }
+        ];
+
+        const baBeforeAudio = new Audio();
+        const baAfterAudio = new Audio();
+        baBeforeAudio.preload = 'auto';
+        baAfterAudio.preload = 'auto';
+
+        const baToggleButton = document.getElementById('baToggleButton');
+        const baBypassLabel = document.getElementById('baBypassLabel');
+        const baBeforeLabel = document.querySelector('.ba-toggle-before');
+        const baAfterLabel = document.querySelector('.ba-toggle-after');
+        const baPlayPauseBtn = document.getElementById('baPlayPauseBtn');
+        const baPrevBtn = document.getElementById('baPrevBtn');
+        const baNextBtn = document.getElementById('baNextBtn');
+        const baNowPlaying = document.getElementById('baNowPlaying');
+        const baProgressWrap = document.getElementById('baWave');
+        const baMeterNeedle = document.getElementById('baMeterNeedle');
+        const baVolumeKnob = document.getElementById('baVolumeKnob');
+        const baVolumeValue = document.getElementById('baVolumeValue');
+
+        if (!baToggleButton || !baBypassLabel || !baBeforeLabel || !baAfterLabel || !baPlayPauseBtn || !baPrevBtn || !baNextBtn || !baNowPlaying || !baProgressWrap || !baMeterNeedle || !baVolumeKnob || !baVolumeValue) {
+          return;
+        }
+
+        const baAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const beforeAnalyser = baAudioContext.createAnalyser();
+        const afterAnalyser = baAudioContext.createAnalyser();
+        const beforeGain = baAudioContext.createGain();
+        const afterGain = baAudioContext.createGain();
+        beforeAnalyser.fftSize = 256;
+        afterAnalyser.fftSize = 256;
+        beforeAnalyser.smoothingTimeConstant = 0.92;
+        afterAnalyser.smoothingTimeConstant = 0.92;
+        const beforeDataArray = new Uint8Array(beforeAnalyser.frequencyBinCount);
+        const afterDataArray = new Uint8Array(afterAnalyser.frequencyBinCount);
+
+        let beforeSourceConnected = false;
+        let afterSourceConnected = false;
+
+        let baCurrentTrackIndex = -1;
+        let isAfterMode = true;
+        let isPlaying = false;
+        let progressRAF = null;
+        let vuMeterRAF = null;
+        let volumeDb = 0;
+        let knobAngle = 360;
+        let knobStartY = 0;
+        let knobStartAngle = 0;
+        let isDraggingKnob = false;
+        let knobMoved = false;
+        let currentNeedleAngle = -50;
+
+        let progressFill = baProgressWrap.querySelector('.main-player-progress-fill');
+        if (!progressFill) {
+          progressFill = document.createElement('div');
+          progressFill.className = 'main-player-progress-fill';
+          progressFill.style.width = '0%';
+          baProgressWrap.appendChild(progressFill);
+        }
+
+        let scrubber = baProgressWrap.querySelector('.main-player-scrubber');
+        if (!scrubber) {
+          scrubber = document.createElement('div');
+          scrubber.className = 'main-player-scrubber';
+          baProgressWrap.appendChild(scrubber);
+        }
+
+        function formatTime(sec) {
+          const safeSec = Math.max(0, Math.floor(sec || 0));
+          const m = Math.floor(safeSec / 60);
+          const s = safeSec % 60;
+          return `${m}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function ensureAudioGraph() {
+          if (baAudioContext.state === 'suspended') {
+            baAudioContext.resume();
+          }
+
+          if (!beforeSourceConnected) {
+            const source = baAudioContext.createMediaElementSource(baBeforeAudio);
+            source.connect(beforeAnalyser);
+            beforeAnalyser.connect(beforeGain);
+            beforeGain.connect(baAudioContext.destination);
+            beforeSourceConnected = true;
+          }
+
+          if (!afterSourceConnected) {
+            const source = baAudioContext.createMediaElementSource(baAfterAudio);
+            source.connect(afterAnalyser);
+            afterAnalyser.connect(afterGain);
+            afterGain.connect(baAudioContext.destination);
+            afterSourceConnected = true;
+          }
+        }
+
+        function updateVolumeDisplay() {
+          const displayDb = volumeDb >= 0 ? `+${volumeDb.toFixed(1)}` : volumeDb.toFixed(1);
+          baVolumeValue.textContent = `${displayDb} dB`;
+          baVolumeKnob.style.transform = `rotate(${knobAngle - 360}deg)`;
+          const gain = Math.pow(10, volumeDb / 20);
+          beforeGain.gain.value = isAfterMode ? 0 : gain;
+          afterGain.gain.value = isAfterMode ? gain : 0;
+        }
+
+        function setMode(nextIsAfter) {
+          isAfterMode = nextIsAfter;
+          if (isAfterMode) {
+            baBeforeLabel.style.opacity = '0.6';
+            baBeforeLabel.style.fontWeight = '500';
+            baAfterLabel.style.opacity = '1';
+            baAfterLabel.style.fontWeight = '600';
+            baToggleButton.classList.add('active');
+            baBypassLabel.classList.add('active');
+            baBypassLabel.textContent = 'Active';
+          } else {
+            baBeforeLabel.style.opacity = '1';
+            baBeforeLabel.style.fontWeight = '600';
+            baAfterLabel.style.opacity = '0.6';
+            baAfterLabel.style.fontWeight = '500';
+            baToggleButton.classList.remove('active');
+            baBypassLabel.classList.remove('active');
+            baBypassLabel.textContent = 'Bypass';
+          }
+          updateVolumeDisplay();
+        }
+
+        function updateProgress() {
+          // Use the currently active audio stream
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const cur = activeAudio.currentTime || 0;
+          const dur = activeAudio.duration || 0;
+          const pct = dur ? (cur / dur) : 0;
+          const percent = pct * 100;
+          progressFill.style.width = percent + '%';
+          scrubber.style.left = percent + '%';
+
+          if (baCurrentTrackIndex >= 0) {
+            const t = baTracks[baCurrentTrackIndex];
+            if (t._uiRefs) {
+              t._uiRefs.timeEl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+            }
+          }
+        }
+
+        function updateVUMeter() {
+          const analyser = isAfterMode ? afterAnalyser : beforeAnalyser;
+          const dataArray = isAfterMode ? afterDataArray : beforeDataArray;
+          analyser.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i] * dataArray[i];
+          }
+          const rms = Math.sqrt(sum / dataArray.length);
+          const normalized = Math.max(rms / 255, 0.001);
+          let db = 20 * Math.log10(normalized);
+          db += isAfterMode ? 8 : -2;
+          db += volumeDb;
+
+          const vuMin = -20;
+          const vuMax = 3;
+          const angleMin = -50;
+          const angleMax = 50;
+          const clampedVU = Math.max(vuMin, Math.min(vuMax, db));
+
+          let normalizedVU = (clampedVU - vuMin) / (vuMax - vuMin);
+          if (clampedVU < -5) normalizedVU = Math.pow(normalizedVU, 1.5);
+
+          const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
+          currentNeedleAngle += (targetAngle - currentNeedleAngle) * 0.1;
+          baMeterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
+
+          vuMeterRAF = requestAnimationFrame(updateVUMeter);
+        }
+
+        function stopProgressLoop() {
+          if (progressRAF) {
+            cancelAnimationFrame(progressRAF);
+            progressRAF = null;
+          }
+        }
+
+        function startProgressLoop() {
+          stopProgressLoop();
+          let lastSyncTs = 0;
+          const step = () => {
+            // Track whichever audio is currently active
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+            
+            if (activeAudio.paused) {
+              progressRAF = null;
+              return;
+            }
+            const now = performance.now();
+            if (now - lastSyncTs > 100) {
+              // Keep the inactive audio paused and time-synced
+              if (!inactiveAudio.paused) inactiveAudio.pause();
+              inactiveAudio.currentTime = activeAudio.currentTime;
+              lastSyncTs = now;
+            }
+            updateProgress();
+            progressRAF = requestAnimationFrame(step);
+          };
+          progressRAF = requestAnimationFrame(step);
+        }
+
+        async function playCurrent() {
+          ensureAudioGraph();
+          // Wait for enough data to be buffered before playing to prevent glitches
+          await Promise.all([waitForReady(baBeforeAudio), waitForReady(baAfterAudio)]);
+          // Only play the active audio stream to prevent choppy playback
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+          if (!inactiveAudio.paused) inactiveAudio.pause();
+          await activeAudio.play();
+          isPlaying = true;
+          baPlayPauseBtn.classList.add('playing');
+          startProgressLoop();
+          if (!vuMeterRAF) {
+            vuMeterRAF = requestAnimationFrame(updateVUMeter);
+          }
+        }
+
+        function setActiveRow(index) {
+          document.querySelectorAll('#baPlaylistTracks .track-item').forEach((row, i) => {
+            row.classList.toggle('active', i === index);
+          });
+        }
+
+        function loadTrack(index, autoplay = true) {
+          const track = baTracks[index];
+          if (!track) return;
+
+          baCurrentTrackIndex = index;
+          baNowPlaying.textContent = track.title;
+          setMode(true);
+          setActiveRow(index);
+
+          baBeforeAudio.pause();
+          baAfterAudio.pause();
+          baBeforeAudio.src = track.before;
+          baAfterAudio.src = track.after;
+          baBeforeAudio.currentTime = 0;
+          baAfterAudio.currentTime = 0;
+          progressFill.style.width = '0%';
+          scrubber.style.left = '0%';
+          stopProgressLoop();
+
+          if (!autoplay) {
+            isPlaying = false;
+            baPlayPauseBtn.classList.remove('playing');
+            return;
+          }
+
+          playCurrent().catch(() => {
+            isPlaying = false;
+            baPlayPauseBtn.classList.remove('playing');
+          });
+        }
+
+        baTracks.forEach((track, index) => {
+          const row = document.createElement('div');
+          row.className = 'track-item';
+
+          const info = document.createElement('div');
+          info.className = 'track-item-info';
+
+          const num = document.createElement('span');
+          num.className = 'track-item-number';
+          num.textContent = index + 1;
+
+          const title = document.createElement('span');
+          title.className = 'track-item-title';
+          title.textContent = track.title;
+
+          const timeEl = document.createElement('div');
+          timeEl.className = 'track-item-time';
+          timeEl.textContent = '0:00 / 0:00';
+
+          info.appendChild(num);
+          info.appendChild(title);
+          row.appendChild(info);
+          row.appendChild(timeEl);
+
+          row.addEventListener('click', () => loadTrack(index, true));
+
+          track._uiRefs = { timeEl };
+          baPlaylistContainer.appendChild(row);
+        });
+
+        baToggleButton.addEventListener('click', () => setMode(!isAfterMode));
+        baBeforeLabel.addEventListener('click', () => { if (isAfterMode) setMode(false); });
+        baAfterLabel.addEventListener('click', () => { if (!isAfterMode) setMode(true); });
+
+        baVolumeKnob.addEventListener('mousedown', (e) => {
+          isDraggingKnob = true;
+          knobMoved = false;
+          knobStartY = e.clientY;
+          knobStartAngle = knobAngle;
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isDraggingKnob) return;
+          const deltaY = knobStartY - e.clientY;
+          if (Math.abs(deltaY) > 2) knobMoved = true;
+          knobAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+          volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+          updateVolumeDisplay();
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDraggingKnob && !knobMoved) {
+            volumeDb = 0;
+            knobAngle = 360;
+            updateVolumeDisplay();
+          }
+          isDraggingKnob = false;
+        });
+
+        baVolumeKnob.addEventListener('touchstart', (e) => {
+          isDraggingKnob = true;
+          knobMoved = false;
+          knobStartY = e.touches[0].clientY;
+          knobStartAngle = knobAngle;
+          e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+          if (!isDraggingKnob) return;
+          const deltaY = knobStartY - e.touches[0].clientY;
+          if (Math.abs(deltaY) > 2) knobMoved = true;
+          knobAngle = Math.max(180, Math.min(420, knobStartAngle + deltaY));
+          volumeDb = -40 + ((knobAngle - 180) / 240) * 52;
+          updateVolumeDisplay();
+          e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => {
+          if (isDraggingKnob && !knobMoved) {
+            volumeDb = 0;
+            knobAngle = 360;
+            updateVolumeDisplay();
+          }
+          isDraggingKnob = false;
+        });
+
+        document.addEventListener('touchcancel', () => {
+          isDraggingKnob = false;
+        });
+
+        baPlayPauseBtn.addEventListener('click', () => {
+          if (baCurrentTrackIndex < 0) {
+            loadTrack(0, true);
+            return;
+          }
+
+          if (isPlaying) {
+            baBeforeAudio.pause();
+            baAfterAudio.pause();
+            isPlaying = false;
+            baPlayPauseBtn.classList.remove('playing');
+            stopProgressLoop();
+            if (vuMeterRAF) {
+              cancelAnimationFrame(vuMeterRAF);
+              vuMeterRAF = null;
+            }
+          } else {
+            playCurrent().catch(() => {
+              isPlaying = false;
+              baPlayPauseBtn.classList.remove('playing');
+            });
+          }
+        });
+
+        baPrevBtn.addEventListener('click', () => {
+          if (baCurrentTrackIndex < 0) {
+            loadTrack(0, true);
+            return;
+          }
+          if ((baBeforeAudio.currentTime || 0) > 3) {
+            baBeforeAudio.currentTime = 0;
+            baAfterAudio.currentTime = 0;
+            updateProgress();
+            return;
+          }
+          const next = baCurrentTrackIndex > 0 ? baCurrentTrackIndex - 1 : 0;
+          loadTrack(next, true);
+        });
+
+        baNextBtn.addEventListener('click', () => {
+          if (baCurrentTrackIndex < 0) {
+            loadTrack(0, true);
+            return;
+          }
+          const next = (baCurrentTrackIndex + 1) % baTracks.length;
+          loadTrack(next, true);
+        });
+
+        baProgressWrap.addEventListener('click', (e) => {
+          const dur = baBeforeAudio.duration || 0;
+          if (!dur) return;
+          const rect = baProgressWrap.getBoundingClientRect();
+          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          const newTime = pct * dur;
+          baBeforeAudio.currentTime = newTime;
+          baAfterAudio.currentTime = newTime;
+          updateProgress();
+        });
+
+        baBeforeAudio.addEventListener('ended', () => {
+          const next = (baCurrentTrackIndex + 1) % baTracks.length;
+          loadTrack(next, true);
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden && vuMeterRAF) {
+            cancelAnimationFrame(vuMeterRAF);
+            vuMeterRAF = null;
+          } else if (!document.hidden && isPlaying && !vuMeterRAF) {
+            vuMeterRAF = requestAnimationFrame(updateVUMeter);
+          }
+        });
+
+        updateVolumeDisplay();
+        loadTrack(0, false);
+      }, 0);
+    });
+  </script>
 
   <!-- ========================================================================
        INFO MODAL - Player Instructions
