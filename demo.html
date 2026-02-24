@@ -10,6 +10,22 @@
   <!-- Meta Information -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive before/after demo showcasing AI-powered audio reconstruction and mixing. Compare raw recordings with professional studio mixes in real-time." />
+  <meta name="keywords" content="audio demo, before after, AI reconstruction, audio mixing demo, sound design demo, audio comparison" />
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.audiodesignstudios.com/demo.html" />
+  <meta property="og:title" content="Demo - Audio Design Studios | AI Reconstruction Player" />
+  <meta property="og:description" content="Interactive demo comparing raw recordings with AI-enhanced professional mixes." />
+  <meta property="og:image" content="https://www.audiodesignstudios.com/Photos/homepiano1400.webp" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Demo - Audio Design Studios" />
+  <meta name="twitter:description" content="Interactive audio reconstruction demo with real-time comparison." />
+  <meta name="twitter:image" content="https://www.audiodesignstudios.com/Photos/homepiano1400.webp" />
+  
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -350,27 +366,10 @@
       const list = document.getElementById('aiPlaylistTracks');
       const timeDisplay = document.getElementById('aiTimeDisplay');
 
-      console.log('[AI PLAYER] Initializing...', {
-        meterNeedle: !!meterNeedle,
-        toggleButton: !!toggleButton,
-        beforeLabel: !!beforeLabel,
-        afterLabel: !!afterLabel,
-        volumeKnob: !!volumeKnob,
-        volumeValue: !!volumeValue,
-        playPauseBtn: !!playPauseBtn,
-        prevBtn: !!prevBtn,
-        nextBtn: !!nextBtn,
-        nowPlaying: !!nowPlaying,
-        wave: !!wave,
-        list: !!list
-      });
-
       if (!meterNeedle || !toggleButton || !beforeLabel || !afterLabel || !volumeKnob || !volumeValue || !playPauseBtn || !prevBtn || !nextBtn || !nowPlaying || !wave || !list) {
         console.error('[AI PLAYER] Missing required elements, aborting initialization');
         return;
       }
-
-      console.log('[AI PLAYER] All elements found, setting up player...');
 
       const beforeAudio = new Audio();
       const afterAudio = new Audio();
@@ -378,21 +377,17 @@
       afterAudio.preload = 'auto';
 
       beforeAudio.addEventListener('play', () => {
-        console.log('[AI PLAYER] beforeAudio PLAY event fired');
         playPauseBtn.classList.add('playing');
       });
       beforeAudio.addEventListener('pause', () => {
-        console.log('[AI PLAYER] beforeAudio PAUSE event fired');
         if (beforeAudio.paused && afterAudio.paused) {
           playPauseBtn.classList.remove('playing');
         }
       });
       afterAudio.addEventListener('play', () => {
-        console.log('[AI PLAYER] afterAudio PLAY event fired');
         playPauseBtn.classList.add('playing');
       });
       afterAudio.addEventListener('pause', () => {
-        console.log('[AI PLAYER] afterAudio PAUSE event fired');
         if (beforeAudio.paused && afterAudio.paused) {
           playPauseBtn.classList.remove('playing');
         }
@@ -780,7 +775,6 @@
       }
 
       async function playBoth() {
-        console.log('[AI PLAYER] playBoth called');
         ensureGraph();
         try {
           // Only play the active audio stream to prevent choppy playback
@@ -790,7 +784,6 @@
           if (!inactiveAudio.paused) inactiveAudio.pause();
           await activeAudio.play();
           playing = true;
-          console.log('[AI PLAYER] Playing state set to TRUE');
           startProgress();
           startVU();
         } catch (err) {
@@ -934,7 +927,6 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         row.appendChild(info);
         row.appendChild(time);
         row.addEventListener('click', () => {
-          console.log('[AI PLAYER] Track clicked:', i, t.title);
           loadTrack(i, true);
         });
         list.appendChild(row);
@@ -994,10 +986,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
       document.addEventListener('touchcancel', () => { drag = false; });
 
       playPauseBtn.addEventListener('click', async () => {
-        console.log('[AI PLAYER] Button clicked');
-        
         if (idx < 0) {
-          console.log('[AI PLAYER] No track loaded, loading track 0');
           loadTrack(0, true);
           return;
         }
@@ -1005,7 +994,6 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         const isActuallyPlaying = !beforeAudio.paused || !afterAudio.paused;
         
         if (isActuallyPlaying) {
-          console.log('[AI PLAYER] PAUSING');
           // Only pause the currently active audio
           const activeAudio = afterMode ? afterAudio : beforeAudio;
           activeAudio.pause();
@@ -1013,7 +1001,6 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           if (progressRAF) cancelAnimationFrame(progressRAF);
           stopVU();
         } else {
-          console.log('[AI PLAYER] PLAYING');
           try {
             await playBoth();
           } catch (err) {
@@ -1067,8 +1054,6 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
 
       applyVolume();
       loadTrack(0, false);
-      
-      console.log('[AI PLAYER] Initialization complete!');
       
       // Register AI Player for mobile audio handling
       if (window.trackAudioState) {
