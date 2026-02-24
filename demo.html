@@ -560,22 +560,19 @@
 
         applyVolume();
 
-        // On mobile: swap which audio element is actually playing so only one
-        // stream is decoded at a time. The newly-inactive stream is paused;
-        // the newly-active one seeks to the current position and resumes.
-        if (isMobile) {
-          const wasPlaying = !beforeAudio.paused || !afterAudio.paused;
-          if (wasPlaying) {
-            const activeAudio   = afterMode ? afterAudio : beforeAudio;
-            const inactiveAudio = afterMode ? beforeAudio : afterAudio;
-            const t = inactiveAudio.currentTime || activeAudio.currentTime;
-            inactiveAudio.pause();
-            // Only seek if there's meaningful drift — avoids the buffering lag
-            // that caused audible gaps when toggling between Raw and Mix.
-            const drift = Math.abs(activeAudio.currentTime - t);
-            if (drift > 0.05) activeAudio.currentTime = t;
-            activeAudio.play().catch(() => {});
-          }
+        // Swap which audio element is actually playing so only one stream is active.
+        // The newly-inactive stream is paused; the newly-active one seeks to the
+        // current position and resumes if we were playing.
+        const wasPlaying = !beforeAudio.paused || !afterAudio.paused;
+        if (wasPlaying) {
+          const activeAudio   = afterMode ? afterAudio : beforeAudio;
+          const inactiveAudio = afterMode ? beforeAudio : afterAudio;
+          const t = inactiveAudio.currentTime || activeAudio.currentTime;
+          inactiveAudio.pause();
+          // Only seek if there's meaningful drift — avoids buffering lag
+          const drift = Math.abs(activeAudio.currentTime - t);
+          if (drift > 0.05) activeAudio.currentTime = t;
+          activeAudio.play().catch(() => {});
         }
 
         // Keep spectrum modal buttons + track name in sync (safe: modal is in HTML so getElementById always works)
@@ -593,9 +590,10 @@
       }
 
       function renderProgress() {
-        const activeAudio = (isMobile && afterMode) ? afterAudio : beforeAudio;
+        // Use the currently active audio stream
+        const activeAudio = afterMode ? afterAudio : beforeAudio;
         const cur = activeAudio.currentTime || 0;
-        const dur = activeAudio.duration || beforeAudio.duration || 0;
+        const dur = activeAudio.duration || 0;
         const percent = dur ? (cur / dur) * 100 : 0;
         progressFill.style.width = percent + '%';
         scrubber.style.left = percent + '%';
@@ -612,24 +610,19 @@
         let lastSync = 0;
         let lastRender = 0;
         const step = () => {
-          const trackingAudio = (isMobile && afterMode) ? afterAudio : beforeAudio;
-          if (trackingAudio.paused) {
+          // Track whichever audio is currently active (playing)
+          const activeAudio = afterMode ? afterAudio : beforeAudio;
+          const inactiveAudio = afterMode ? beforeAudio : afterAudio;
+          
+          if (activeAudio.paused) {
             progressRAF = null;
             return;
           }
           const now = performance.now();
           if (now - lastSync > 100) {
-            if (isMobile) {
-              // On mobile only one stream plays at a time.
-              // Keep the inactive audio paused and time-synced so a mode toggle is instant.
-              const activeAudio   = afterMode ? afterAudio : beforeAudio;
-              const inactiveAudio = afterMode ? beforeAudio : afterAudio;
-              if (!inactiveAudio.paused) inactiveAudio.pause();
-              inactiveAudio.currentTime = activeAudio.currentTime;
-            } else {
-              const drift = Math.abs(beforeAudio.currentTime - afterAudio.currentTime);
-              if (drift > 0.05) afterAudio.currentTime = beforeAudio.currentTime;
-            }
+            // Keep the inactive audio paused and time-synced so a mode toggle is instant
+            if (!inactiveAudio.paused) inactiveAudio.pause();
+            inactiveAudio.currentTime = activeAudio.currentTime;
             lastSync = now;
           }
           // Progress bar only needs ~15fps — no reason to force layout at 60fps
