@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="compose.css?v=1771949984" />
-  <link rel="stylesheet" href="matrix.css?v=1771949984" />
+  <link rel="stylesheet" href="compose.css?v=1771951642" />
+  <link rel="stylesheet" href="matrix.css?v=1771951642" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -1896,7 +1896,7 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="content.js?v=1771949984"></script>
+  <script src="content.js?v=1771951642"></script>
 
   <!-- Matrix Animation Script -->
   <script>
@@ -3422,6 +3422,18 @@
             bypassLabel.textContent = 'Bypass';
           }
         }
+
+        // Swap which audio element is playing so only one stream is active
+        const wasPlaying = !baBeforeAudio.paused || !baAfterAudio.paused;
+        if (wasPlaying) {
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+          const t = inactiveAudio.currentTime || activeAudio.currentTime;
+          inactiveAudio.pause();
+          const drift = Math.abs(activeAudio.currentTime - t);
+          if (drift > 0.05) activeAudio.currentTime = t;
+          activeAudio.play().catch(() => {});
+        }
       }
 
       let isDraggingKnob = false;
@@ -3519,8 +3531,10 @@
       baProgressWrap.appendChild(baScrubber);
 
       function baRenderProgress() {
-        const cur = baBeforeAudio.currentTime || 0;
-        const dur = baBeforeAudio.duration || 0;
+        // Use the currently active audio stream
+        const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+        const cur = activeAudio.currentTime || 0;
+        const dur = activeAudio.duration || 0;
         const pct = dur ? (cur / dur) : 0;
         const percent = pct * 100;
 
@@ -3540,7 +3554,9 @@
       function baStartProgressLoop() {
         if (baProgressRAF) cancelAnimationFrame(baProgressRAF);
         const step = () => {
-          if (baBeforeAudio.paused || !baBeforeAudio.duration) {
+          // Track whichever audio is currently active
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          if (activeAudio.paused || !activeAudio.duration) {
             baProgressRAF = null;
             return;
           }
@@ -3680,14 +3696,14 @@
         
         if (baCurrentTrackIndex === index) {
           if (isPlaying) {
-            baBeforeAudio.pause();
-            baAfterAudio.pause();
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            activeAudio.pause();
             isPlaying = false;
           } else {
-            Promise.all([
-              baBeforeAudio.play(),
-              baAfterAudio.play()
-            ]).catch(e => console.warn('play failed', e));
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+            if (!inactiveAudio.paused) inactiveAudio.pause();
+            activeAudio.play().catch(e => console.warn('play failed', e));
             isPlaying = true;
           }
           return;
@@ -3721,10 +3737,11 @@
             waitForReady(baBeforeAudio),
             waitForReady(baAfterAudio)
           ]).then(() => {
-            return Promise.all([
-              baBeforeAudio.play(),
-              baAfterAudio.play()
-            ]);
+            // Only play the active audio stream to prevent choppy playback
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+            if (!inactiveAudio.paused) inactiveAudio.pause();
+            return activeAudio.play();
           }).then(() => {
             isPlaying = true;
             if (track._uiRefs) {
@@ -3762,17 +3779,19 @@
         if (baCurrentTrackIndex === -1) {
           loadBATrack(0);
         } else if (isPlaying) {
-          baBeforeAudio.pause();
-          baAfterAudio.pause();
+          // Only pause the currently active audio
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          activeAudio.pause();
           isPlaying = false;
         } else {
           if (baAudioContext.state === 'suspended') {
             baAudioContext.resume();
           }
-          Promise.all([
-            baBeforeAudio.play(),
-            baAfterAudio.play()
-          ]).then(() => {
+          // Only play the active audio stream to prevent choppy playback
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+          if (!inactiveAudio.paused) inactiveAudio.pause();
+          activeAudio.play().then(() => {
             isPlaying = true;
           }).catch(e => console.warn('play failed', e));
         }
@@ -4045,8 +4064,10 @@
         }
 
         function updateProgress() {
-          const cur = baBeforeAudio.currentTime || 0;
-          const dur = baBeforeAudio.duration || 0;
+          // Use the currently active audio stream
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const cur = activeAudio.currentTime || 0;
+          const dur = activeAudio.duration || 0;
           const pct = dur ? (cur / dur) : 0;
           const percent = pct * 100;
           progressFill.style.width = percent + '%';
@@ -4102,15 +4123,19 @@
           stopProgressLoop();
           let lastSyncTs = 0;
           const step = () => {
-            if (baBeforeAudio.paused) {
+            // Track whichever audio is currently active
+            const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+            const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+            
+            if (activeAudio.paused) {
               progressRAF = null;
               return;
             }
             const now = performance.now();
-            if (now - lastSyncTs > 1000) {
-              if (Math.abs(baBeforeAudio.currentTime - baAfterAudio.currentTime) > 0.2) {
-                baAfterAudio.currentTime = baBeforeAudio.currentTime;
-              }
+            if (now - lastSyncTs > 100) {
+              // Keep the inactive audio paused and time-synced
+              if (!inactiveAudio.paused) inactiveAudio.pause();
+              inactiveAudio.currentTime = activeAudio.currentTime;
               lastSyncTs = now;
             }
             updateProgress();
@@ -4123,7 +4148,11 @@
           ensureAudioGraph();
           // Wait for enough data to be buffered before playing to prevent glitches
           await Promise.all([waitForReady(baBeforeAudio), waitForReady(baAfterAudio)]);
-          await Promise.all([baBeforeAudio.play(), baAfterAudio.play()]);
+          // Only play the active audio stream to prevent choppy playback
+          const activeAudio = isAfterMode ? baAfterAudio : baBeforeAudio;
+          const inactiveAudio = isAfterMode ? baBeforeAudio : baAfterAudio;
+          if (!inactiveAudio.paused) inactiveAudio.pause();
+          await activeAudio.play();
           isPlaying = true;
           baPlayPauseBtn.classList.add('playing');
           startProgressLoop();
