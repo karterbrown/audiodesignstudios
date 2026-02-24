@@ -44,7 +44,7 @@ main {
 }
 
 .playlists-container {
-  max-width: 900px !important;
+  max-width: 1600px !important;
   margin: 0 auto;
   display: flex !important;
   justify-content: center;
@@ -55,7 +55,7 @@ main {
 
 .playlist-card {
   width: 100% !important;
-  max-width: 900px;
+  max-width: 1600px;
 }
 
 /* Make the player title visible on demo page */
@@ -462,6 +462,78 @@ main {
     0 1px 2px rgba(208, 208, 208, 0.1);
 }
 
+/* Large screen: bigger VU meter + wider metering grid */
+@media (min-width: 900px) {
+  .ba-toggle-labels {
+    width: 480px;
+  }
+  .ba-meter-display {
+    width: 480px;
+    height: 265px;
+  }
+  .ba-meter-scale {
+    width: 420px;
+    height: 140px;
+    top: 42px;
+  }
+  .ba-meter-vu-line {
+    top: 52px;
+    height: 5px;
+  }
+  .ba-meter-tick {
+    top: 52px;
+    height: 12px;
+  }
+  .ba-meter-tick.small {
+    height: 7px;
+    width: 1.5px;
+  }
+  .ba-meter-label {
+    top: 8px;
+    font-size: 13px;
+  }
+  .ba-meter-percent-line {
+    top: 70px;
+    height: 3px;
+  }
+  .ba-meter-percent-tick {
+    top: 70px;
+    height: 9px;
+  }
+  .ba-meter-percent-label {
+    top: 82px;
+    font-size: 11px;
+  }
+  .ba-meter-needle {
+    bottom: 43px !important;
+    height: 205px !important;
+    width: 3px !important;
+    transform-origin: bottom center;
+  }
+  .ba-meter-branding {
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    bottom: 8px;
+  }
+  .ba-meter-vu-display {
+    font-size: 1rem;
+    top: 12px;
+    padding: 3px 12px;
+  }
+  .ba-metering-display {
+    max-width: 900px;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 1rem 2rem;
+    gap: 1rem 1.5rem;
+  }
+  .ba-meter-label-text {
+    font-size: 0.8rem;
+  }
+  .ba-meter-value {
+    font-size: 1rem;
+    width: 115px;
+  }
+}
 .ba-meter-item {
   display: flex;
   flex-direction: column;
@@ -484,8 +556,10 @@ main {
   font-weight: 700;
   color: #7ec98f;
   text-shadow: 0 0 4px rgba(126, 201, 143, 0.5);
-  min-width: 70px;
+  width: 100px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .ba-meter-source .ba-meter-value {

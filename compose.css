@@ -2257,3 +2257,37 @@ blockquote footer {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* Large screen: wider, more readable info modal */
+@media (min-width: 900px) {
+  .player-info-modal {
+    max-width: 720px;
+    padding: 2.5rem 3rem 2rem;
+  }
+  .player-info-title {
+    font-size: 0.9rem;
+    margin-bottom: 1.1rem;
+  }
+  .player-info-list {
+    gap: 1.4rem;
+  }
+  .player-info-list li {
+    gap: 1.25rem;
+  }
+  .player-info-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+  .player-info-list strong {
+    font-size: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+  .player-info-list p {
+    font-size: 0.82rem;
+  }
+  .player-info-footer {
+    font-size: 0.68rem;
+    margin-top: 1.8rem;
+  }
+}
