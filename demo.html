@@ -93,8 +93,8 @@
                 <span class="ba-meter-value" id="aiRmsValue">-∞ dB</span>
               </div>
               <div class="ba-meter-item">
-                <span class="ba-meter-label-text">True Peak:</span>
-                <span class="ba-meter-value" id="aiTruePeakValue">-∞ dBTP</span>
+                <span class="ba-meter-label-text">Peak:</span>
+                <span class="ba-meter-value" id="aiTruePeakValue">-∞ dBFS</span>
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">RMS (avg):</span>
@@ -175,8 +175,8 @@
               <span class="loudness-meter-value" id="meterRmsValue">-∞ dB</span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">True Peak: Max sample peak</span>
-              <span class="loudness-meter-value" id="meterTruePeakValue">-∞ dBTP</span>
+              <span class="loudness-meter-label">Peak: Short-term maximum</span>
+              <span class="loudness-meter-value" id="meterTruePeakValue">-∞ dBFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">RMS (avg): Time-averaged level</span>
@@ -657,7 +657,7 @@
         
         // Reset digital displays
         if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
-        if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBTP';
+        if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBFS';
         if (lufsDisplay) lufsDisplay.textContent = '-∞ dB';
         if (vuDisplay) vuDisplay.textContent = '-∞ VU';
       }
@@ -700,7 +700,7 @@
           const shortTermRmsDbFs = shortTermRms > 0.00001 ? 20 * Math.log10(shortTermRms) : -100;
           const truePeakDbFs = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
 
-          // True peak hold
+          // Sample peak hold (highest sample value, not true inter-sample peak)
           if (afterMode) {
             if (truePeakDbFs > afterTruePeakHold) afterTruePeakHold = truePeakDbFs;
             else afterTruePeakHold = Math.max(afterTruePeakHold * 0.998, -100);
@@ -761,7 +761,7 @@
             if (sourceDisplay) sourceDisplay.textContent = afterMode ? 'Mix' : 'RAW';
             if (vuDisplay) vuDisplay.textContent = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-∞ VU';
             if (rmsDisplay) rmsDisplay.textContent = shortTermRmsDbFs > -99 ? `${shortTermRmsDbFs.toFixed(1)} dB` : '-∞ dB';
-            if (truePeakDisplay) truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
+            if (truePeakDisplay) truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBFS` : '-∞ dBFS';
             if (lufsDisplay) lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} dB` : '-∞ dB';
             if (lraDisplay) lraDisplay.textContent = lraMain > 0 ? `${lraMain.toFixed(1)} dB` : '-- dB';
           }
@@ -839,7 +839,7 @@
 
         needleAngle = -50;
         if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
-        if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBTP';
+        if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBFS';
         if (lufsDisplay) lufsDisplay.textContent = '-∞ dB';
         if (vuDisplay) vuDisplay.textContent = '-∞ VU';
         if (sourceDisplay) sourceDisplay.textContent = 'Mix';
@@ -1205,7 +1205,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             ? -0.691 + 10 * Math.log10(finalMeanSquare / finalCount)
             : -100;
 
-          // Calculate true peak
+          // Calculate sample peak (highest sample value in the file)
           let truePeak = -100;
           for (let ch = 0; ch < channelData.length; ch++) {
             for (let i = 0; i < channelData[ch].length; i++) {
@@ -1296,7 +1296,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             complianceStatus = '✓ Ready for Spotify/Apple Music';
             complianceClass = 'ready';
             complianceDetails.push('LUFS level is optimal for streaming platforms');
-            complianceDetails.push('True Peak is below -1.0 dBTP (prevents inter-sample clipping)');
+            complianceDetails.push('Sample Peak is below -1.0 dBFS (leaves headroom for encoding)');
             complianceDetails.push('No clipping detected');
           } else {
             const issues = [];
@@ -1313,7 +1313,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             
             if (!peakOk) {
               issues.push('peak-hot');
-              complianceDetails.push(`<strong>Peak Too Hot:</strong> ${truePeak.toFixed(1)} dBTP is at or above -1.0 dBTP. Risk of inter-sample clipping during lossy encoding (MP3/AAC).`);
+              complianceDetails.push(`<strong>Peak Too Hot:</strong> ${truePeak.toFixed(1)} dBFS is at or above -1.0 dBFS. May cause clipping during playback or encoding.`);
             }
             
             if (!noClipping) {
@@ -1355,8 +1355,8 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
               <span class="analysis-value">${integratedLUFS.toFixed(1)} LUFS</span>
             </div>
             <div class="analysis-metric">
-              <span class="analysis-label">True Peak:</span>
-              <span class="analysis-value">${truePeak.toFixed(1)} dBTP</span>
+              <span class="analysis-label">Sample Peak:</span>
+              <span class="analysis-value">${truePeak.toFixed(1)} dBFS</span>
             </div>
             <div class="analysis-metric">
               <span class="analysis-label">Loudness Range:</span>
@@ -1373,9 +1373,10 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             </div>
             <div class="analysis-note">
               <strong>Standards Reference:</strong><br>
-              Streaming: -14 to -16 LUFS (Spotify, Apple Music, YouTube)<br>
+              Streaming: -14 LUFS target (Spotify, Apple Music, YouTube)<br>
               Broadcasting: -23 LUFS (EBU R128)<br>
-              True Peak: &lt; -1.0 dBTP recommended
+              Sample Peak: &lt; -1.0 dBFS recommended (prevents clipping)<br>
+              <em>Note: True Peak (dBTP) requires 4x oversampling for inter-sample peak detection.</em>
             </div>
           `;
 
@@ -1704,7 +1705,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           }
 
           if (meterRmsValueEl) meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-∞ dB';
-          if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBTP` : '-∞ dBTP';
+          if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBFS` : '-∞ dBFS';
           if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} dB` : '-∞ dB';
           if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} dB` : '-- dB';
         }
@@ -1779,14 +1780,14 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           <span class="player-info-icon">&#128202;</span>
           <div>
             <strong>Analyze</strong>
-            <p>Runs a full loudness and dynamics analysis on the current track with K-weighting (ITU-R BS.1770-4 standard). Reports accurate LUFS (Loudness Units relative to Full Scale), True Peak, and LRA (Loudness Range) values for streaming platform compliance.</p>
+            <p>Runs a full loudness and dynamics analysis on the current track with K-weighting (ITU-R BS.1770-4 standard). Reports accurate LUFS (Loudness Units relative to Full Scale), Sample Peak, and LRA (Loudness Range) values for streaming platform compliance. Note: Sample Peak measures the highest digital sample value; True Peak (dBTP) would require 4x oversampling for inter-sample peak detection.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#128065;</span>
           <div>
             <strong>View</strong>
-            <p>Opens the real-time spectrum analyzer and metering display. Shows RMS approximations and dynamic range in real-time. For accurate LUFS measurements, use the Analyze button.</p>
+            <p>Opens the real-time spectrum analyzer and metering display. Shows short-term Peak, RMS approximations, and dynamic range while playing. For accurate, full-track LUFS analysis, use the Analyze button.</p>
           </div>
         </li>
       </ul>
