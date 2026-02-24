@@ -318,17 +318,17 @@
           id: 1, 
           title: 'Perfume Trap',
           titleRaw: 'Perfume Trap (RAW)',
-          titleMix: 'Perfume Trap (02192026 Mix)',
+          titleMix: 'Perfume Trap (Mix 02232026)',
           before: 'hiddentracks/Perfume Trap_RAW.mp3', 
-          after: 'hiddentracks/Perfume Trap_02192026.mp3' 
+          after: 'hiddentracks/Perfume Trap_Mix_02232026.wav' 
         },
         { 
           id: 2, 
           title: 'Seen to Be',
           titleRaw: 'Seen to Be (RAW)',
-          titleMix: 'Seen to Be (Master)',
+          titleMix: 'Seen to Be (Mix 01042026)',
           before: 'hiddentracks/Seen To Be_RAW.mp3', 
-          after: 'hiddentracks/Seen To Be_Master.wav' 
+          after: 'hiddentracks/Seen To Be_Mix01042026.wav' 
         }
       ];
 
@@ -1050,6 +1050,40 @@
         if (e.target === analysisModal) closeModal();
       });
 
+      // K-weighting pre-filter (ITU-R BS.1770-4) — required for accurate LUFS measurement
+      function kWeightChannel(data, fs) {
+        // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
+        const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
+        const Ks  = Math.tan(Math.PI * f0s / fs);
+        const Vh  = Math.pow(10, Gs / 20);
+        const Vb  = Math.pow(Vh, 0.4996667741545416);
+        const den = 1 + Ks / Qs + Ks * Ks;
+        const bs0 = (Vh + Vb * Ks / Qs + Ks * Ks) / den;
+        const bs1 = 2 * (Ks * Ks - Vh) / den;
+        const bs2 = (Vh - Vb * Ks / Qs + Ks * Ks) / den;
+        const as1 = 2 * (Ks * Ks - 1) / den;
+        const as2 = (1 - Ks / Qs + Ks * Ks) / den;
+        // Stage 2: Highpass (RLB weighting, models free-field head transfer ~38 Hz)
+        const f0h = 38.13547087602444, Qh = 0.5003270373238773;
+        const Kh  = Math.tan(Math.PI * f0h / fs);
+        const dh  = 1 + Kh / Qh + Kh * Kh;
+        const bh0 = 1 / dh, bh1 = -2 / dh, bh2 = 1 / dh;
+        const ah1 = 2 * (Kh * Kh - 1) / dh;
+        const ah2 = (1 - Kh / Qh + Kh * Kh) / dh;
+        function biquad(input, b0, b1, b2, a1, a2) {
+          const out = new Float32Array(input.length);
+          let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+          for (let i = 0; i < input.length; i++) {
+            const x0 = input[i];
+            const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+            x2 = x1; x1 = x0; y2 = y1; y1 = y0;
+            out[i] = y0;
+          }
+          return out;
+        }
+        return biquad(biquad(data, bs0, bs1, bs2, as1, as2), bh0, bh1, bh2, ah1, ah2);
+      }
+
       async function analyzeTrack(audioUrl, trackName) {
         analysisModal.style.display = 'flex';
         analysisResults.innerHTML = '<div class="analysis-loading"><span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div></div>';
@@ -1071,6 +1105,9 @@
             channelData.push(audioBuffer.getChannelData(i));
           }
 
+          // Apply K-weighting (ITU-R BS.1770-4) before LUFS calculation
+          const kWeightedData = channelData.map(ch => kWeightChannel(ch, sampleRate));
+
           // Calculate integrated LUFS and other metrics
           const blockSize = Math.floor(sampleRate * 0.4); // 400ms blocks for LUFS
           const overlapSize = Math.floor(blockSize * 0.75); // 75% overlap
@@ -1078,21 +1115,22 @@
           let gatedBlocks = [];
           let allBlocks = [];
 
-          // Process in blocks
-          for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
-            let sumSquares = 0;
-            let samples = 0;
+          // Process in blocks (BS.1770: sum per-channel mean squares, then compute loudness)
+          for (let pos = 0; pos < kWeightedData[0].length - blockSize; pos += step) {
+            // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs — stereo is always 1.0
+            const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
+            let sumChannelMeans = 0;
 
-            // Sum all channels
-            for (let ch = 0; ch < channelData.length; ch++) {
+            for (let ch = 0; ch < kWeightedData.length; ch++) {
+              let sumSq = 0;
               for (let i = 0; i < blockSize; i++) {
-                const sample = channelData[ch][pos + i];
-                sumSquares += sample * sample;
-                samples++;
+                const sample = kWeightedData[ch][pos + i];
+                sumSq += sample * sample;
               }
+              sumChannelMeans += (chWeights[ch] || 1.0) * (sumSq / blockSize);
             }
 
-            const meanSquare = sumSquares / samples;
+            const meanSquare = sumChannelMeans;
             const blockLoudness = -0.691 + 10 * Math.log10(meanSquare);
             
             allBlocks.push({ loudness: blockLoudness, meanSquare });
