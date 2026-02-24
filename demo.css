@@ -1376,19 +1376,21 @@ main {
   border: none;
   color: #7ec98f;
   font-size: 2rem;
+  line-height: 1;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 4px;
   transition: all 0.2s ease;
+  padding: 0;
 }
 
 .analysis-modal-close:hover {
-  background-color: rgba(126, 201, 143, 0.1);
-  transform: rotate(90deg);
+  background-color: rgba(126, 201, 143, 0.15);
+  color: #fff;
 }
 
 .analysis-modal-content h2 {
