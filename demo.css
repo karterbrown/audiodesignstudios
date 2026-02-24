@@ -1496,6 +1496,32 @@ main {
   margin-top: 0.25rem;
 }
 
+.analysis-progress {
+  width: 100%;
+  max-width: 300px;
+  height: 4px;
+  background: rgba(126, 201, 143, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.analysis-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #7ec98f, #5fb97e);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.analysis-progress-text {
+  font-size: 0.75rem;
+  color: rgba(126, 201, 143, 0.7);
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .analysis-track-name {
   font-size: 1.3rem;
   font-weight: 600;

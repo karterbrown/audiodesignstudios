@@ -1121,17 +1121,32 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
 
       async function analyzeTrack(audioUrl, trackName) {
         analysisModal.style.display = 'flex';
-        analysisResults.innerHTML = '<div class="analysis-loading"><span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div></div>';
+        const progressEl = document.createElement('div');
+        progressEl.className = 'analysis-loading';
+        progressEl.innerHTML = '<span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div><div class="analysis-progress"><div class="analysis-progress-bar" id="analysisProgressBar"></div></div><div class="analysis-progress-text" id="analysisProgressText">0%</div>';
+        analysisResults.innerHTML = '';
+        analysisResults.appendChild(progressEl);
 
         try {
-          // Fetch audio file
+          // Fetch audio file with progress
+          const updateProgress = (percent, status) => {
+            const barEl = document.getElementById('analysisProgressBar');
+            const textEl = document.getElementById('analysisProgressText');
+            if (barEl) barEl.style.width = `${percent}%`;
+            if (textEl) textEl.textContent = status || `${Math.round(percent)}%`;
+          };
+
+          updateProgress(5, 'Fetching audio...');
           const response = await fetch(audioUrl);
           const arrayBuffer = await response.arrayBuffer();
 
-          // Create offline context for analysis
-          const offlineCtx = new OfflineAudioContext(2, 1, 48000);
-          const audioBuffer = await offlineCtx.decodeAudioData(arrayBuffer);
+          updateProgress(15, 'Decoding audio...');
+          // Create audio context for decoding
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
+          updateProgress(25, 'Preparing analysis...');
+          
           // Analyze audio
           const sampleRate = audioBuffer.sampleRate;
           const duration = audioBuffer.duration;
@@ -1140,26 +1155,34 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             channelData.push(audioBuffer.getChannelData(i));
           }
 
-          // Apply K-weighting (ITU-R BS.1770-4) before LUFS calculation
-          const kWeightedData = channelData.map(ch => kWeightChannel(ch, sampleRate));
-
           // Calculate integrated LUFS and other metrics
           const blockSize = Math.floor(sampleRate * 0.4); // 400ms blocks for LUFS
           const overlapSize = Math.floor(blockSize * 0.75); // 75% overlap
           const step = blockSize - overlapSize;
-          let gatedBlocks = [];
           let allBlocks = [];
 
+          // Calculate total blocks for progress
+          const totalBlocks = Math.floor((channelData[0].length - blockSize) / step);
+          let processedBlocks = 0;
+
+          updateProgress(30, 'Processing blocks...');
+
           // Process in blocks (BS.1770: sum per-channel mean squares, then compute loudness)
-          for (let pos = 0; pos < kWeightedData[0].length - blockSize; pos += step) {
+          // Apply K-weighting on-demand per block to save memory
+          for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
             // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs — stereo is always 1.0
             const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
             let sumChannelMeans = 0;
 
-            for (let ch = 0; ch < kWeightedData.length; ch++) {
+            for (let ch = 0; ch < channelData.length; ch++) {
+              // Extract block from channel
+              const block = channelData[ch].slice(pos, pos + blockSize);
+              // Apply K-weighting to this block only
+              const kWeightedBlock = kWeightChannel(block, sampleRate);
+              
               let sumSq = 0;
               for (let i = 0; i < blockSize; i++) {
-                const sample = kWeightedData[ch][pos + i];
+                const sample = kWeightedBlock[i];
                 sumSq += sample * sample;
               }
               sumChannelMeans += (chWeights[ch] || 1.0) * (sumSq / blockSize);
@@ -1169,7 +1192,18 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             const blockLoudness = -0.691 + 10 * Math.log10(meanSquare);
             
             allBlocks.push({ loudness: blockLoudness, meanSquare });
+
+            // Update progress every 100 blocks
+            processedBlocks++;
+            if (processedBlocks % 100 === 0 || processedBlocks === totalBlocks) {
+              const progress = 30 + (processedBlocks / totalBlocks) * 50; // 30-80%
+              updateProgress(progress, `Processing ${processedBlocks}/${totalBlocks} blocks...`);
+              // Allow UI to update
+              await new Promise(resolve => setTimeout(resolve, 0));
+            }
           }
+
+          updateProgress(85, 'Calculating metrics...');
 
           // Calculate absolute threshold (gating at -70 LUFS)
           const absoluteGate = -70;
@@ -1206,6 +1240,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             : -100;
 
           // Calculate sample peak (highest sample value in the file)
+          updateProgress(90, 'Calculating peak levels...');
           let truePeak = -100;
           for (let ch = 0; ch < channelData.length; ch++) {
             for (let i = 0; i < channelData[ch].length; i++) {
@@ -1228,6 +1263,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             : 0;
 
           // Detect clipping events with timestamps
+          updateProgress(95, 'Detecting clipping...');
           const clipThreshold = 0.99; // 99% of full scale
           const clippingEvents = [];
           const sampleInterval = 0.1; // Check every 100ms
@@ -1343,6 +1379,9 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           `;
 
           // Display results
+          updateProgress(100, 'Complete!');
+          await new Promise(resolve => setTimeout(resolve, 200)); // Brief pause to show 100%
+          
           analysisResults.innerHTML = `
             <div class="analysis-track-name">${trackName}</div>
             ${complianceHTML}
@@ -1380,11 +1419,16 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             </div>
           `;
 
+          // Close audio context to free resources
+          audioCtx.close();
+
         } catch (err) {
           console.error('Analysis failed:', err);
           analysisResults.innerHTML = `
             <div class="analysis-error">
-              Failed to analyze track: ${err.message}
+              <strong>Analysis Failed</strong><br>
+              ${err.message}<br>
+              <span style="font-size: 0.9em; opacity: 0.7;">Please ensure the audio file is valid and accessible.</span>
             </div>
           `;
         }
