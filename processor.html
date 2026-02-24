@@ -200,20 +200,24 @@
           <canvas id="procLoudnessMeterCanvas" width="500" height="300"></canvas>
           <div class="loudness-meter-readings">
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">RMS: Current level</span>
+              <span class="loudness-meter-label">Current Level</span>
               <span class="loudness-meter-value" id="procMeterRmsValue">-&#8734; dB</span>
+              <span class="loudness-meter-status" id="procMeterRmsStatus"></span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">True Peak: Max sample peak</span>
-              <span class="loudness-meter-value" id="procMeterTruePeakValue">-&#8734; dBTP</span>
-            </div>
-            <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">LUFS (I): Integrated average</span>
+              <span class="loudness-meter-label">Streaming Target</span>
               <span class="loudness-meter-value" id="procMeterLufsIValue">-&#8734; LUFS</span>
+              <span class="loudness-meter-status" id="procMeterLufsStatus">Target: −14 LUFS</span>
             </div>
             <div class="loudness-meter-reading">
-              <span class="loudness-meter-label">LRA: Loudness range</span>
-              <span class="loudness-meter-value" id="procMeterLRAValue">-- LU</span>
+              <span class="loudness-meter-label">True Peak</span>
+              <span class="loudness-meter-value" id="procMeterTruePeakValue">-&#8734; dBFS</span>
+              <span class="loudness-meter-status" id="procMeterPeakStatus">Target: < −1.0 dBFS</span>
+            </div>
+            <div class="loudness-meter-reading">
+              <span class="loudness-meter-label">Dynamic Range</span>
+              <span class="loudness-meter-value" id="procMeterLRAValue">-- dB</span>
+              <span class="loudness-meter-status" id="procMeterLraStatus"></span>
             </div>
           </div>
         </div>
@@ -347,6 +351,10 @@
       const meterTruePeakValueEl = document.getElementById('procMeterTruePeakValue');
       const meterLufsIValueEl   = document.getElementById('procMeterLufsIValue');
       const meterLRAValueEl     = document.getElementById('procMeterLRAValue');
+      const meterRmsStatusEl    = document.getElementById('procMeterRmsStatus');
+      const meterPeakStatusEl   = document.getElementById('procMeterPeakStatus');
+      const meterLufsStatusEl   = document.getElementById('procMeterLufsStatus');
+      const meterLraStatusEl    = document.getElementById('procMeterLraStatus');
       const meterCanvas         = document.getElementById('procLoudnessMeterCanvas');
       const meterCtx            = meterCanvas.getContext('2d', { alpha: false, desynchronized: true });
 
@@ -899,28 +907,46 @@
 
       async function analyzeTrack(audioUrl, trackName) {
         analysisModal.style.display = 'flex';
-        analysisResults.innerHTML =
-          '<div class="analysis-loading">' +
-          '<span class="analysis-loading-text">Analyzing track</span>' +
-          '<span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span>' +
-          '<div class="analysis-loading-subtext">This may take a moment</div>' +
-          '</div>';
+        const progressEl = document.createElement('div');
+        progressEl.className = 'analysis-loading';
+        progressEl.innerHTML = '<span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div><div class="analysis-progress"><div class="analysis-progress-bar" id="analysisProgressBar"></div></div><div class="analysis-progress-text" id="analysisProgressText">0%</div>';
+        analysisResults.innerHTML = '';
+        analysisResults.appendChild(progressEl);
 
         try {
-          const response = await fetch(audioUrl);
+          // Fetch audio file with progress
+          const updateProgress = (percent, status) => {
+            const barEl = document.getElementById('analysisProgressBar');
+            const textEl = document.getElementById('analysisProgressText');
+            if (barEl) barEl.style.width = `${percent}%`;
+            if (textEl) textEl.textContent = status || `${Math.round(percent)}%`;
+          };
+
+          updateProgress(5, 'Fetching audio...');
+          // Encode URL to handle spaces and special characters
+          const encodedUrl = encodeURI(audioUrl);
+          const response = await fetch(encodedUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch audio file: ${response.status} ${response.statusText}`);
+          }
           const arrayBuffer = await response.arrayBuffer();
 
-          const offlineCtx = new OfflineAudioContext(2, 1, 48000);
-          const audioBuffer = await offlineCtx.decodeAudioData(arrayBuffer);
+          updateProgress(15, 'Decoding audio...');
+          // Create audio context for decoding
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          
+          if (!audioBuffer || audioBuffer.length === 0) {
+            throw new Error('Audio file could not be decoded or is empty');
+          }
 
+          updateProgress(25, 'Preparing analysis...');
+          
           const sampleRate  = audioBuffer.sampleRate;
           const channelData = [];
           for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
             channelData.push(audioBuffer.getChannelData(i));
           }
-
-          // Apply K-weighting (ITU-R BS.1770-4) before LUFS calculation
-          const kWeightedData = channelData.map(ch => kWeightChannel(ch, sampleRate));
 
           // LUFS — 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
           const blockSize   = Math.floor(sampleRate * 0.4);
@@ -928,22 +954,45 @@
           const step        = blockSize - overlapSize;
           const allBlocks   = [];
 
+          // Calculate total blocks for progress
+          const totalBlocks = Math.floor((channelData[0].length - blockSize) / step);
+          let processedBlocks = 0;
+
+          updateProgress(30, 'Processing blocks...');
+
           // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs — stereo is always 1.0
           const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
 
-          for (let pos = 0; pos < kWeightedData[0].length - blockSize; pos += step) {
+          // Process in blocks - apply K-weighting on-demand per block to save memory
+          for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
             let sumChannelMeans = 0;
-            for (let ch = 0; ch < kWeightedData.length; ch++) {
+            for (let ch = 0; ch < channelData.length; ch++) {
+              // Extract block from channel
+              const block = channelData[ch].slice(pos, pos + blockSize);
+              // Apply K-weighting to this block only
+              const kWeightedBlock = kWeightChannel(block, sampleRate);
+              
               let sumSq = 0;
               for (let i = 0; i < blockSize; i++) {
-                const s = kWeightedData[ch][pos + i];
+                const s = kWeightedBlock[i];
                 sumSq += s * s;
               }
               sumChannelMeans += (chWeights[ch] || 1.0) * (sumSq / blockSize);
             }
             const ms = sumChannelMeans;
             allBlocks.push({ loudness: -0.691 + 10 * Math.log10(ms), meanSquare: ms });
+
+            // Update progress every 100 blocks
+            processedBlocks++;
+            if (processedBlocks % 100 === 0 || processedBlocks === totalBlocks) {
+              const progress = 30 + (processedBlocks / totalBlocks) * 50; // 30-80%
+              updateProgress(progress, `Processing ${processedBlocks}/${totalBlocks} blocks...`);
+              // Allow UI to update
+              await new Promise(resolve => setTimeout(resolve, 0));
+            }
           }
+
+          updateProgress(85, 'Calculating metrics...');
 
           // Absolute gate
           let gatedMs = 0, gatedCount = 0;
@@ -958,6 +1007,7 @@
           const intLUFS = finalCount > 0 ? -0.691 + 10 * Math.log10(finalMs / finalCount) : -100;
 
           // True peak
+          updateProgress(90, 'Calculating peak levels...');
           let truePeak = -100;
           for (let ch = 0; ch < channelData.length; ch++) {
             for (let i = 0; i < channelData[ch].length; i++) {
@@ -976,6 +1026,7 @@
             : 0;
 
           // Clipping events (100ms windows at 99% of full scale)
+          updateProgress(95, 'Detecting clipping...');
           const clipThreshold = 0.99;
           const clippingEvents = [];
           const samplesPerCheck = Math.floor(sampleRate * 0.1);
@@ -1076,6 +1127,9 @@
 
           const duration = audioBuffer.duration;
 
+          updateProgress(100, 'Complete!');
+          await new Promise(resolve => setTimeout(resolve, 200)); // Brief pause to show 100%
+          
           analysisResults.innerHTML = `
             <div class="analysis-track-name">${trackName}</div>
             ${complianceHTML}
@@ -1112,10 +1166,20 @@
             </div>
           `;
 
+          // Close audio context to free resources
+          audioCtx.close();
+
         } catch (err) {
           console.error('[PROCESSOR] Analysis error:', err);
-          analysisResults.innerHTML =
-            `<div class="analysis-error">Analysis failed: ${err.message || 'Unknown error'}</div>`;
+          console.error('Audio URL:', audioUrl);
+          console.error('Track name:', trackName);
+          analysisResults.innerHTML = `
+            <div class="analysis-error">
+              <strong>Analysis Failed</strong><br>
+              ${err.message}<br>
+              <span style="font-size: 0.9em; opacity: 0.7;">Please ensure the audio file is valid and accessible.</span>
+            </div>
+          `;
         }
       }
 
@@ -1356,6 +1420,74 @@
           if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = meterTruePeakModal > -99 ? `${meterTruePeakModal.toFixed(1)} dBTP` : '-\u221E dBTP';
           if (meterLufsIValueEl)    meterLufsIValueEl.textContent    = lufsI > -99 ? `${lufsI.toFixed(1)} LUFS` : '-\u221E LUFS';
           if (meterLRAValueEl)      meterLRAValueEl.textContent      = lraModal > 0 ? `${lraModal.toFixed(1)} LU` : '-- LU';
+
+          // Update status indicators
+          // Current Level status
+          if (meterRmsStatusEl && avgRmsDb > -99) {
+            if (avgRmsDb > -6) {
+              meterRmsStatusEl.textContent = '\u26a0 Too Hot';
+              meterRmsStatusEl.className = 'loudness-meter-status warning';
+            } else if (avgRmsDb > -12) {
+              meterRmsStatusEl.textContent = '\u2713 Good';
+              meterRmsStatusEl.className = 'loudness-meter-status good';
+            } else if (avgRmsDb > -24) {
+              meterRmsStatusEl.textContent = '\u2713 Normal';
+              meterRmsStatusEl.className = 'loudness-meter-status good';
+            } else {
+              meterRmsStatusEl.textContent = '\u2193 Quiet';
+              meterRmsStatusEl.className = 'loudness-meter-status info';
+            }
+          }
+
+          // Streaming Target status (\u221214 LUFS target)
+          if (meterLufsStatusEl && lufsI > -99) {
+            const target = -14;
+            const delta = lufsI - target;
+            if (Math.abs(delta) < 1.5) {
+              meterLufsStatusEl.textContent = '\u2713 On Target';
+              meterLufsStatusEl.className = 'loudness-meter-status good';
+            } else if (delta > 0) {
+              meterLufsStatusEl.textContent = `\u2191 ${Math.abs(delta).toFixed(1)} dB Over`;
+              meterLufsStatusEl.className = 'loudness-meter-status warning';
+            } else {
+              meterLufsStatusEl.textContent = `\u2193 ${Math.abs(delta).toFixed(1)} dB Under`;
+              meterLufsStatusEl.className = 'loudness-meter-status info';
+            }
+          }
+
+          // True Peak status (< -1.0 dBFS target)
+          if (meterPeakStatusEl && meterTruePeakModal > -99) {
+            if (meterTruePeakModal >= -0.1) {
+              meterPeakStatusEl.textContent = '\u2717 Clipping Risk';
+              meterPeakStatusEl.className = 'loudness-meter-status danger';
+            } else if (meterTruePeakModal >= -1.0) {
+              meterPeakStatusEl.textContent = '\u26a0 Near Limit';
+              meterPeakStatusEl.className = 'loudness-meter-status warning';
+            } else if (meterTruePeakModal >= -3.0) {
+              meterPeakStatusEl.textContent = '\u2713 Safe';
+              meterPeakStatusEl.className = 'loudness-meter-status good';
+            } else {
+              meterPeakStatusEl.textContent = '\u2713 Plenty of Headroom';
+              meterPeakStatusEl.className = 'loudness-meter-status good';
+            }
+          }
+
+          // Dynamic Range status
+          if (meterLraStatusEl && lraModal > 0) {
+            if (lraModal < 4) {
+              meterLraStatusEl.textContent = '\u26a0 Heavily Limited';
+              meterLraStatusEl.className = 'loudness-meter-status warning';
+            } else if (lraModal < 8) {
+              meterLraStatusEl.textContent = '\u2713 Well Compressed';
+              meterLraStatusEl.className = 'loudness-meter-status good';
+            } else if (lraModal < 15) {
+              meterLraStatusEl.textContent = '\u2713 Natural Dynamics';
+              meterLraStatusEl.className = 'loudness-meter-status good';
+            } else {
+              meterLraStatusEl.textContent = '\u2191 Very Dynamic';
+              meterLraStatusEl.className = 'loudness-meter-status info';
+            }
+          }
         }
 
         meterRAF = requestAnimationFrame(updateSpectrumModal);
@@ -1363,6 +1495,9 @@
 
       loudnessMeterBtn.addEventListener('click', () => {
         if (!fileLoaded) { alert('Please load a file first.'); return; }
+        
+        // Ensure audio graph is connected before opening analyzer
+        ensureAudioGraph();
 
         if (meterTrackNameEl) meterTrackNameEl.textContent = currentTrackName || 'No file loaded';
 
