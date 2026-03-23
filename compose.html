@@ -1389,7 +1389,7 @@
   <section class="playlists-section">
     <div class="playlists-container design-analog-container">
     <div class="design-player-card">
-      <h2 class="design-player-title">Cinematic Sound Design & FX</h2>
+      <h2 class="design-player-title">Productions</h2>
       
       <!-- Module: VU Meter and Volume Control -->
       <div class="design-meter-section">
@@ -2275,7 +2275,11 @@
       // 1. DESIGN PLAYER
       // ====================================================================
       const designTracks = [
-        { title: 'Bass Stinger (Design Demo)', url: 'allworks/Shifting of Khamsin Wind.mp3' }
+        { title: 'Retrowave Pop Demo', url: 'allworks/Retrowave Synth Demo 2_03022026.mp3' },
+        { title: 'Retrowave Demo 2', url: 'allworks/Retrowave Demo 2_75bpm_03022026.mp3' },
+        { title: 'Bass Stinger (Design Demo)', url: 'allworks/Shifting of Khamsin Wind.mp3' },
+        { title: 'Perfume Trap (Instrumental)', url: 'allworks/Perfume Trap_INST_02252026.mp3' },
+        { title: 'Seen To Be (Instrumental)', url: 'allworks/Seen To Be_INST_02252026.mp3' }
       ];
 
       let designCurrentTrack = 0;
@@ -2307,10 +2311,18 @@
         
         designAudio.src = track.url;
         
+        // Reset progress bar
+        if (designProgressFill) designProgressFill.style.width = '0%';
+        if (designScrubber) designScrubber.style.left = '0%';
+        
         document.getElementById('designNowPlaying').textContent = track.title;
         
         document.querySelectorAll('#designPlaylistTracks .track-item').forEach((item, i) => {
           item.classList.toggle('active', i === index);
+          if (i === index) {
+            const timeEl = item.querySelector('.track-item-time');
+            if (timeEl) timeEl.textContent = '0:00';
+          }
         });
       }
 
@@ -2488,7 +2500,13 @@
           `;
           trackItem.addEventListener('click', () => {
             designLoadTrack(index);
-            if (!designIsPlaying) designTogglePlay();
+            if (designIsPlaying) {
+              designAudio.addEventListener('canplay', () => {
+                designAudio.play().catch(e => console.warn('Audio play failed:', e));
+              }, { once: true });
+            } else {
+              designTogglePlay();
+            }
           });
           trackList.appendChild(trackItem);
         });
