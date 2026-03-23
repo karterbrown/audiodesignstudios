@@ -1,0 +1,2651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pico Light Show Visualizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.6/build/Midi.js"></script>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #161619;
+      --surface2:  #1e1e23;
+      --border:    #2a2a35;
+      --text:      #e0e0e8;
+      --muted:     #6b6b80;
+      --accent:    #00c8ff;
+      --green:     #00c832;
+      --strip0:    rgb(0,200,255);
+      --strip1:    rgb(0,60,255);
+      --strip2:    rgb(148,0,211);
+      --strip3:    rgb(255,200,0);
+      --strip4:    rgb(0,200,50);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Layout ────────────────────────────────────────────────────── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Header ────────────────────────────────────────────────────── */
+    .header { text-align: center; padding: 8px 0 4px; }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: linear-gradient(90deg, var(--strip0), var(--strip2), var(--strip4));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 0.875rem;
+    }
+
+    /* ── Controls Bar ──────────────────────────────────────────────── */
+    .controls-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+    }
+    .ctrl-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ctrl-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ── Upload buttons ────────────────────────────────────────────── */
+    .upload-btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    #file-btn {
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    #file-btn:hover { background: rgba(0,200,255,0.12); }
+
+    #audio-btn {
+      background: var(--surface2);
+      border: 1px solid var(--green);
+      color: var(--green);
+    }
+    #audio-btn:hover { background: rgba(0,200,50,0.12); }
+
+    input[type="file"] { display: none; }
+
+    .upload-name {
+      color: var(--muted);
+      font-size: 0.8rem;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Mode toggle ───────────────────────────────────────────────── */
+    .mode-toggle {
+      display: flex;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .mode-toggle label {
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: background 0.15s, color 0.15s;
+      color: var(--muted);
+    }
+    .mode-toggle input[type="radio"] { display: none; }
+    .mode-toggle input[type="radio"]:checked + label {
+      background: rgba(0,200,255,0.18);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Number inputs ─────────────────────────────────────────────── */
+    .num-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      width: 72px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .num-input:focus { outline: 1px solid var(--accent); }
+    .num-input.offset-s  { width: 54px; }
+    .num-input.offset-ms { width: 58px; }
+    .offset-unit { color: var(--muted); font-size: 0.75rem; }
+
+    /* ── Action Buttons ────────────────────────────────────────────── */
+    .btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-play   { background: #1a6a2a; color: #7dff9e; }
+    .btn-play:hover:not(:disabled)   { background: #1f7d33; }
+    .btn-stop   { background: #3a1a1a; color: #ff7d7d; }
+    .btn-stop:hover:not(:disabled)   { background: #501f1f; }
+    .btn-export { background: #1a3a6a; color: #7db8ff; }
+    .btn-export:hover:not(:disabled) { background: #1f4a7d; }
+
+    /* ── Speed selector ────────────────────────────────────────────── */
+    .speed-sel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+    }
+
+    /* ── Volume slider ─────────────────────────────────────────────── */
+    #vol-slider {
+      width: 80px;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface2);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    #vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--green);
+      cursor: pointer;
+    }
+    #vol-slider::-moz-range-thumb {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--green);
+      cursor: pointer;
+      border: none;
+    }
+    #mute-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 5px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #mute-btn:hover { color: var(--text); border-color: var(--muted); }
+    #mute-btn.muted { color: #ff7d7d; border-color: #7d3a3a; }
+
+    /* ── Loading indicator ─────────────────────────────────────────── */
+    #load-status {
+      color: var(--accent);
+      font-size: 0.82rem;
+      display: none;
+    }
+    #load-status.visible { display: block; }
+
+    /* ── Stats Bar ─────────────────────────────────────────────────── */
+    #stats-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 18px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    #stats-bar.visible { display: flex; }
+    .stat-item { color: var(--muted); }
+    .stat-item strong { color: var(--text); }
+    .stat-strip-bars {
+      display: flex;
+      gap: 4px;
+      align-items: flex-end;
+      height: 24px;
+    }
+    .strip-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .strip-bar {
+      width: 14px;
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      transition: height 0.3s;
+    }
+    .strip-bar-lbl { font-size: 0.65rem; color: var(--muted); }
+
+    /* ── Visualizer Panel ──────────────────────────────────────────── */
+    .viz-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      position: relative;
+    }
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .viz-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    #time-display {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    #demo-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      background: rgba(148,0,211,0.25);
+      color: #cc77ff;
+      border: 1px solid #7700bb;
+      border-radius: 10px;
+    }
+    #audio-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      background: rgba(0,200,50,0.15);
+      color: #66ff99;
+      border: 1px solid #007722;
+      border-radius: 10px;
+      display: none;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #audio-badge.visible { display: inline-block; }
+
+    .strip-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .strip-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .strip-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 46px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    canvas.strip-canvas {
+      display: block;
+      border-radius: 4px;
+      background: #111114;
+      cursor: crosshair;
+    }
+
+    /* ── Timeline ──────────────────────────────────────────────────── */
+    .timeline-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+    #timeline-slider {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface2);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    #timeline-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--accent);
+    }
+    #timeline-slider::-moz-range-thumb {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ── Event Log ─────────────────────────────────────────────────── */
+    .log-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .log-header:hover { background: var(--surface2); }
+    .log-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .log-toggle-btn {
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .log-body { display: none; padding: 0 18px 14px; }
+    .log-body.open { display: block; }
+    .log-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+    .btn-copy {
+      padding: 5px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+    }
+    .btn-copy:hover { background: var(--border); }
+    #event-table-wrap {
+      max-height: 260px;
+      overflow-y: auto;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    #event-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    #event-table th {
+      background: var(--surface2);
+      color: var(--muted);
+      text-align: left;
+      padding: 6px 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    #event-table td {
+      padding: 5px 10px;
+      border-bottom: 1px solid #1f1f26;
+      font-family: monospace;
+    }
+    #event-table tr:last-child td { border-bottom: none; }
+    #event-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .effect-tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* ── Keyboard shortcut hint ────────────────────────────────────── */
+    .kb-hint {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #3a3a50;
+    }
+    .kb-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-family: monospace;
+      color: var(--muted);
+    }
+
+    /* ── Presets Panel ───────────────────────────────────────────────── */
+    .presets-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+    }
+    .btn-randomize {
+      background: linear-gradient(135deg, #2a2a48, #3a2558);
+      border: 1px solid #5a3a8a;
+      border-radius: 6px;
+      color: #c89ff0;
+      font-size: 0.82rem;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-randomize:hover {
+      background: linear-gradient(135deg, #3a3a68, #4a2e6a);
+      transform: scale(1.04);
+    }
+    .btn-randomize:active { transform: scale(0.97); }
+    .preset-hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    /* ── Colors Panel ────────────────────────────────────────────────── */
+    .colors-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 20px;
+      align-items: center;
+    }
+    .colors-title {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      flex-shrink: 0;
+    }
+    .color-swatches {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .color-swatch-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .color-swatch {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, transform 0.12s;
+    }
+    .color-swatch:hover { border-color: var(--muted); transform: scale(1.12); }
+    .color-swatch input[type="color"] {
+      position: absolute;
+      top: -4px; left: -4px;
+      width: calc(100% + 8px);
+      height: calc(100% + 8px);
+      opacity: 0;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+    .color-swatch-lbl {
+      font-size: 0.68rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .lock-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--muted);
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .lock-label:hover { color: var(--text); }
+    .lock-label.locked { color: var(--accent); }
+    .lock-label input[type="checkbox"] { cursor: pointer; accent-color: var(--accent); }
+    .btn-reset-colors {
+      padding: 5px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-reset-colors:hover { color: var(--text); border-color: var(--muted); }
+    .btn-rand-colors { color: var(--accent); border-color: var(--accent); }
+    .btn-rand-colors:hover { background: var(--accent); color: #000; }
+
+    /* ── LED Color Picker ─────────────────────────────────────────────── */
+    #led-color-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      align-items: center;
+    }
+    #led-color-panel.visible { display: flex; }
+    .led-sel-info {
+      font-size: 0.85rem;
+      font-family: monospace;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .led-sel-hint { font-size: 0.75rem; color: var(--muted); }
+    #led-color-in {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      padding: 0;
+      background: none;
+      overflow: hidden;
+      transition: border-color 0.15s, transform 0.12s;
+    }
+    #led-color-in:hover { border-color: var(--muted); transform: scale(1.1); }
+    .btn-clear-led {
+      padding: 5px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-clear-led:hover { color: var(--text); border-color: var(--muted); }
+    .btn-clear-strip-leds {
+      padding: 5px 10px;
+      background: var(--surface2);
+      border: 1px solid #7d3a3a;
+      color: #ff7d7d;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .btn-clear-strip-leds:hover { opacity: 0.8; }
+
+    /* ── Scrollbars ────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- Hidden audio element — the actual playback engine for MP3 sync -->
+<audio id="audio-el" preload="auto"></audio>
+
+<div class="page">
+
+  <!-- ================================================================
+       HEADER
+       ================================================================ -->
+  <header class="header">
+    <h1>Pico Light Show Visualizer</h1>
+    <p>Upload a MIDI file to preview and export your LED light show</p>
+  </header>
+
+  <!-- ================================================================
+       CONTROLS BAR
+       ================================================================ -->
+  <section class="controls-bar" aria-label="Controls">
+
+    <!-- MIDI File Upload -->
+    <div class="ctrl-group">
+      <button class="upload-btn" id="file-btn" onclick="document.getElementById('file-input').click()">
+        🎹 Upload MIDI
+      </button>
+      <input type="file" id="file-input" accept=".mid,.midi" />
+      <span class="upload-name" id="file-name">No MIDI loaded</span>
+    </div>
+
+    <!-- MP3 Audio Upload -->
+    <div class="ctrl-group">
+      <button class="upload-btn" id="audio-btn" onclick="document.getElementById('audio-input').click()">
+        ♪ Upload MP3
+      </button>
+      <input type="file" id="audio-input" accept="audio/*,.mp3,.wav,.ogg,.flac,.aac,.m4a" />
+      <span class="upload-name" id="audio-name">No audio loaded</span>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- Mode -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Mode</span>
+      <div class="mode-toggle">
+        <input type="radio" name="mode" id="mode-cue" value="cue" />
+        <label for="mode-cue">Cue</label>
+        <input type="radio" name="mode" id="mode-interpret" value="interpret" checked />
+        <label for="mode-interpret">Interpret</label>
+      </div>
+    </div>
+
+    <!-- BPM -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">BPM</span>
+      <input type="number" id="bpm-input" class="num-input" value="75" min="40" max="300" />
+    </div>
+
+    <!-- MIDI Offset -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">MIDI Offset</span>
+      <input type="number" id="midi-off-sec" class="num-input offset-s"  value="0" step="1" title="MIDI event offset — seconds" />
+      <span class="offset-unit">s</span>
+      <input type="number" id="midi-off-ms"  class="num-input offset-ms" value="0" step="1" min="-999" max="999" title="MIDI event offset — milliseconds" />
+      <span class="offset-unit">ms</span>
+    </div>
+
+    <!-- Audio Offset -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Audio Offset</span>
+      <input type="number" id="audio-off-sec" class="num-input offset-s"  value="-8" step="1" title="Audio start offset — seconds (positive = skip into file)" />
+      <span class="offset-unit">s</span>
+      <input type="number" id="audio-off-ms"  class="num-input offset-ms" value="0" step="1" min="-999" max="999" title="Audio start offset — milliseconds" />
+      <span class="offset-unit">ms</span>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- Playback buttons -->
+    <div class="ctrl-group">
+      <button class="btn btn-play" id="play-btn" disabled>▶ Play</button>
+      <button class="btn btn-stop" id="stop-btn">■ Reset</button>
+    </div>
+
+    <!-- Speed -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Speed</span>
+      <select class="speed-sel" id="speed-sel">
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+      </select>
+    </div>
+
+    <!-- Volume (only meaningful when audio is loaded) -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Vol</span>
+      <input type="range" id="vol-slider" min="0" max="100" value="80" />
+      <button id="mute-btn" title="Mute / Unmute audio">🔊</button>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- Export -->
+    <div class="ctrl-group">
+      <button class="btn btn-export" id="export-btn" disabled>⬇ Export .py</button>
+    </div>
+
+    <!-- Loading indicator -->
+    <span id="load-status">⟳ Processing MIDI…</span>
+  </section>
+
+  <!-- ================================================================
+       LIGHT SHOW GENERATOR
+       ================================================================ -->
+  <div class="presets-panel">
+    <span class="colors-title">Generate Show</span>
+    <button class="btn-randomize" id="randomize-btn" title="Generate a brand-new random artistic light show">🎲 New Random Show</button>
+    <span class="preset-hint" id="preset-hint"></span>
+  </div>
+
+  <!-- ================================================================
+       STRIP COLORS
+       ================================================================ -->
+  <div class="colors-panel">
+    <span class="colors-title">Default Colors <span style="font-size:0.7rem;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(fallback — MIDI events use per-note hue)</span></span>
+    <div class="color-swatches" id="color-swatches">
+      <!-- Built by JS -->
+    </div>
+    <label class="lock-label" id="lock-label" title="Disable the 10-second color rotation so each strip shows its chosen color">
+      <input type="checkbox" id="lock-colors-cb" />
+      Lock (no rotation)
+    </label>
+    <button class="btn-reset-colors" id="reset-colors-btn" title="Restore default colors">↺ Reset</button>
+    <button class="btn-reset-colors btn-rand-colors" id="rand-colors-btn" title="Generate a random color palette">⚄ Random</button>
+  </div>
+
+  <!-- ================================================================
+       LED COLOR PICKER
+       ================================================================ -->
+  <div id="led-color-panel">
+    <span class="colors-title">LED Color</span>
+    <span class="led-sel-info" id="led-sel-info">—</span>
+    <input type="color" id="led-color-in" value="#00c8ff" title="Set this LED's color" />
+    <button class="btn-clear-led" id="btn-clear-led">Reset LED</button>
+    <button class="btn-clear-strip-leds" id="btn-clear-strip-leds">Reset Strip</button>
+    <button class="btn-clear-led" id="btn-clear-all-leds">Reset All LEDs</button>
+    <span class="led-sel-hint">Click any LED on the canvas to select it</span>
+  </div>
+
+  <!-- ================================================================
+       STATS BAR
+       ================================================================ -->
+  <div id="stats-bar">
+    <div class="stat-item">Events: <strong id="stat-events">—</strong></div>
+    <div class="stat-item">Duration: <strong id="stat-duration">—</strong></div>
+    <div class="stat-item">Mode: <strong id="stat-mode">—</strong></div>
+    <div class="stat-item" style="display:flex;align-items:center;gap:8px;">
+      Per strip:
+      <div class="stat-strip-bars" id="stat-strip-bars"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       VISUALIZER PANEL
+       ================================================================ -->
+  <section class="viz-panel" aria-label="LED Visualizer">
+    <div class="viz-header">
+      <span class="viz-title">LED Strips</span>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span id="demo-badge">DEMO</span>
+        <span id="audio-badge">♪ —</span>
+        <span id="time-display">0:00.000</span>
+      </div>
+    </div>
+    <div class="strip-rows" id="strip-rows">
+      <!-- Rows injected by JS -->
+    </div>
+  </section>
+
+  <!-- ================================================================
+       TIMELINE SCRUBBER
+       ================================================================ -->
+  <div class="timeline-wrap">
+    <div class="timeline-labels">
+      <span id="tl-current">0:00.000</span>
+      <span id="tl-total">0:00.000</span>
+    </div>
+    <input type="range" id="timeline-slider" min="0" max="10000" value="0" step="1" />
+  </div>
+
+  <!-- ================================================================
+       EVENT LOG (collapsible)
+       ================================================================ -->
+  <div class="log-section">
+    <div class="log-header" id="log-toggle-header" role="button" aria-expanded="false" tabindex="0">
+      <span class="log-title">Event Log</span>
+      <button class="log-toggle-btn" id="log-toggle-btn" aria-label="Toggle event log">▼ Show</button>
+    </div>
+    <div class="log-body" id="log-body">
+      <div class="log-actions">
+        <button class="btn-copy" id="copy-py-btn">Copy as Python</button>
+      </div>
+      <div id="event-table-wrap">
+        <table id="event-table">
+          <thead>
+            <tr>
+              <th>Time (ms)</th>
+              <th>Strip</th>
+              <th>Brightness</th>
+              <th>Effect</th>
+              <th>Duration (ms)</th>
+              <th>LED Pos</th>
+            </tr>
+          </thead>
+          <tbody id="event-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard hints -->
+  <div class="kb-hint">
+    <kbd>Space</kbd> Play/Pause &nbsp;&nbsp; <kbd>R</kbd> Reset &nbsp;&nbsp; <kbd>M</kbd> Mute audio
+  </div>
+
+</div><!-- .page -->
+
+<script>
+/* ============================================================
+   PICO LIGHT SHOW VISUALIZER — core script
+   ============================================================ */
+
+// ── Constants ─────────────────────────────────────────────────────────
+const NUM_STRIPS = 5;
+const NUM_LEDS   = 20;
+
+const BASE_COLORS = [
+  [0, 200, 255],   // Electric blue
+  [0,  60, 255],   // Blue
+  [148,  0, 211],  // Purple
+  [255, 200,  0],  // Yellow
+  [0,  200,  50],  // Green
+];
+
+// Frozen copy of the defaults so the Reset button can restore them
+const DEFAULT_COLORS = [
+  [0, 200, 255],
+  [0,  60, 255],
+  [148,  0, 211],
+  [255, 200,  0],
+  [0,  200,  50],
+];
+
+const CUE_NOTE_MAP = { 24: 0, 26: 1, 28: 2, 29: 3, 31: 4 };
+
+const DEMO_EVENTS = [
+  {time_ms:     0, strip: 0, brightness: 255, effect: 'flash',  duration_ms:  500, led_pos: 255},
+  {time_ms:   500, strip: 1, brightness: 200, effect: 'pulse',  duration_ms:  800, led_pos: 255},
+  {time_ms:  1000, strip: 2, brightness: 255, effect: 'strobe', duration_ms:  300, led_pos: 255},
+  {time_ms:  1500, strip: 3, brightness: 180, effect: 'fade',   duration_ms: 1000, led_pos: 255},
+  {time_ms:  2000, strip: 4, brightness: 200, effect: 'hold',   duration_ms: 1500, led_pos: 255},
+  {time_ms:  3000, strip: 0, brightness: 220, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  4000, strip: 0, brightness: 255, effect: 'pulse',  duration_ms: 1000, led_pos: 255},
+  {time_ms:  4000, strip: 2, brightness: 255, effect: 'pulse',  duration_ms: 1000, led_pos: 255},
+  {time_ms:  4000, strip: 4, brightness: 255, effect: 'pulse',  duration_ms: 1000, led_pos: 255},
+  {time_ms:  5500, strip: 1, brightness: 200, effect: 'flash',  duration_ms:  300, led_pos: 255},
+  {time_ms:  5800, strip: 3, brightness: 200, effect: 'flash',  duration_ms:  300, led_pos: 255},
+  {time_ms:  7000, strip: 0, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7200, strip: 1, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7400, strip: 2, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7600, strip: 3, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7800, strip: 4, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms: 10000, strip: 0, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 1, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 2, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 3, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 4, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10600, strip: 0, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 1, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 2, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 3, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 4, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+];
+
+// ── Generative light show ─────────────────────────────────────────────
+// Unique artistic show each call: per-section color palette + individual LEDs.
+// hsvToRgb is a function declaration (hoisted) — safe to call from here.
+function generateShow() {
+  const evts  = [];
+  const ri    = (lo, hi) => Math.floor(Math.random() * (hi - lo + 1)) + lo;
+  const rf    = (lo, hi) => Math.random() * (hi - lo) + lo;
+  const pick  = a => a[Math.floor(Math.random() * a.length)];
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, Math.round(v)));
+
+  function addEv(t, s, br, ef, dur, lp = 255, col = undefined) {
+    if (s < 0 || s >= NUM_STRIPS) return;
+    const ev = {
+      time_ms:     clamp(Math.max(0, t), 0, 9999999),
+      strip:       s,
+      brightness:  clamp(br, 0, 255),
+      effect:      ef,
+      duration_ms: clamp(dur, 50, 30000),
+      led_pos:     lp,
+    };
+    if (col) ev.color = col;
+    evts.push(ev);
+  }
+
+  // ── Color palette: 4 vivid hues on a random-offset hue wheel ─────────
+  const startH = rf(0, 1);
+  const sat    = rf(0.72, 1.0);
+  const pal    = [0, 0.25, 0.5, 0.75].map(off =>
+    hsvToRgb((startH + off) % 1, sat, 1.0)
+  );
+  const white = [255, 245, 220];
+  // Blend user BASE_COLORS with generated palette (55% palette, 45% user picks)
+  const sc = (s, shift = 0) =>
+    Math.random() < 0.55 ? pal[(s + shift) % pal.length] : BASE_COLORS[s];
+
+  // ── Musical structure ─────────────────────────────────────────────────
+  const BPM  = ri(95, 142);
+  const beat = 60000 / BPM;
+  const bar  = beat * 4;
+  const nb   = { intro: ri(3,7), build: ri(6,11), drop: ri(8,18),
+                 break: ri(4,9), climax: ri(7,15), outro: ri(3,7) };
+
+  // ── Symmetry maps ─────────────────────────────────────────────────────
+  const LR   = [0, 1, 2, 3, 4];
+  const CO   = [2, 1, 3, 0, 4];
+  const OI   = [0, 4, 1, 3, 2];
+  const FLIP = [4, 3, 2, 1, 0];
+
+  // ── Whole-strip motifs ────────────────────────────────────────────────
+  const sweepLR   = (t, ef, br, dur, gap, col) => LR.forEach((s,i) => addEv(t+i*gap, s, br, ef, dur, 255, col || sc(s)));
+  const sweepRL   = (t, ef, br, dur, gap, col) => [...LR].reverse().forEach((s,i) => addEv(t+i*gap, s, br, ef, dur, 255, col || sc(s)));
+  const centerOut = (t, ef, br, dur, gap, col, sh=0) => CO.forEach((s,i) => addEv(t+i*gap, s, br, ef, dur, 255, col || sc(s,sh)));
+  const outerIn   = (t, ef, br, dur, gap, col, sh=0) => OI.forEach((s,i) => addEv(t+i*gap, s, br, ef, dur, 255, col || sc(s,sh)));
+  const allSync   = (t, ef, br, dur, col) => LR.forEach(s => addEv(t, s, br, ef, dur, 255, col || sc(s)));
+  const alternate = (t, ef, br, dur, off, col) => {
+    [0,2,4].forEach(s => addEv(t,     s, br,        ef, dur, 255, col || sc(s)));
+    [1,3  ].forEach(s => addEv(t+off, s, br * 0.88, ef, dur, 255, col || sc(s)));
+  };
+  const waveRipple = (t, dur, col) =>
+    LR.forEach((s,i) => addEv(t + i*dur*0.14, s, ri(150,220), 'wave', dur, 255, col || sc(s)));
+  const mirrorHit = (t, s, ef, br, dur, off, col) => {
+    const c = col || sc(s);
+    addEv(t,     s,       br,           ef, dur, 255, c);
+    addEv(t+off, FLIP[s], br*rf(0.8,1), ef, dur, 255, c);
+  };
+
+  // ── Individual-LED motifs ─────────────────────────────────────────────
+  // Meteor: a point of light sweeps across a strip
+  function meteor(t, s, br, sweepMs, col) {
+    const step = sweepMs / NUM_LEDS;
+    for (let l = 0; l < NUM_LEDS; l++)
+      addEv(t + l * step, s, br, 'flash', step * 2.5, l, col || sc(s));
+  }
+  // Mirror meteor: LEDs race inward from both ends simultaneously
+  function mirrorMeteor(t, s, br, sweepMs, col) {
+    const half = Math.floor(NUM_LEDS / 2);
+    const step = sweepMs / half;
+    const c    = col || sc(s);
+    for (let i = 0; i < half; i++) {
+      addEv(t + i*step, s, br, 'flash', step * 2.8, i,             c);
+      addEv(t + i*step, s, br, 'flash', step * 2.8, NUM_LEDS-1-i,  c);
+    }
+  }
+  // Sparkle: random LEDs twinkle across a strip window
+  function sparkle(t, s, count, br, windowMs, col) {
+    const c = col || sc(s);
+    for (let n = 0; n < count; n++) {
+      const l = ri(0, NUM_LEDS - 1);
+      addEv(t + rf(0, windowMs * 0.88), s, br, 'flash',
+            rf(windowMs * 0.07, windowMs * 0.32), l, c);
+    }
+  }
+  // Running dot: single LED bounces back and forth
+  function runningDot(t, s, ef, br, cycleMs, numCycles, col) {
+    const step = cycleMs / (NUM_LEDS * 2);
+    const c    = col || sc(s);
+    for (let cy = 0; cy < numCycles; cy++) {
+      const base = t + cy * cycleMs;
+      for (let l = 0; l < NUM_LEDS; l++)
+        addEv(base + l * step, s, br, ef, step * 2.2, l, c);
+      for (let l = NUM_LEDS - 1; l >= 0; l--)
+        addEv(base + (NUM_LEDS + NUM_LEDS - 1 - l) * step, s, br, ef, step * 2.2, l, c);
+    }
+  }
+  // LED chase: position sweeps across ALL strips simultaneously
+  function ledChase(t, ef, br, dur, spacing, sh) {
+    for (let l = 0; l < NUM_LEDS; l++)
+      LR.forEach(s => addEv(t + l*spacing, s, br, ef, dur, l, sc(s, sh)));
+  }
+
+  // ── Section generation ────────────────────────────────────────────────
+  let cursor = 0;
+  const SECS = ['intro','build','drop','break','climax','outro'];
+  for (let si = 0; si < SECS.length; si++) {
+    const sec     = SECS[si];
+    const secBars = nb[sec];
+    const t0      = cursor * bar;
+    const C0      = pal[si % pal.length];
+    const C1      = pal[(si + 1) % pal.length];
+    const lightEfx = pick([['fade','pulse','hold'], ['pulse','hold'], ['fade','pulse']]);
+    const heavyEfx = pick([['strobe','flash'], ['flash','pulse','strobe'], ['strobe','flash','pulse']]);
+
+    if (sec === 'intro') {
+      centerOut(t0 + beat * rf(0, 1), pick(lightEfx), ri(140,200), bar*rf(1.5,3), beat*rf(0.3,0.6), C0);
+      for (let b = 0; b < secBars; b++) {
+        const t = t0 + b * bar;
+        if (Math.random() < 0.55)
+          mirrorHit(t + rf(0, beat*1.5), ri(0,4), pick(lightEfx), ri(120,195), bar*rf(1,2.5), rf(0,beat*0.3), pal[(si+b) % pal.length]);
+        if (Math.random() < 0.50)
+          meteor(t + rf(0, beat), ri(0,4), ri(150,220), beat*rf(1.5,3), C0);
+        if (Math.random() < 0.30)
+          sparkle(t, ri(0,4), ri(3,6), ri(130,200), bar*rf(0.5,1.5), C1);
+      }
+    }
+
+    else if (sec === 'build') {
+      const motif = pick(['centerOut','outerIn','sweepLR']);
+      for (let b = 0; b < secBars; b++) {
+        const prog = b / secBars;
+        const t    = t0 + b * bar;
+        const br   = clamp(130 + prog * 125, 130, 255);
+        const gap  = beat * rf(0.2, 0.55);
+        const dur  = bar * rf(0.5, 1.4);
+        const ef   = pick(prog < 0.5 ? lightEfx : [...lightEfx, 'flash']);
+        const col  = pal[(si + b) % pal.length];
+        if      (motif === 'centerOut') centerOut(t, ef, br, dur, gap, col);
+        else if (motif === 'outerIn')   outerIn  (t, ef, br, dur, gap, col);
+        else                            sweepLR  (t, ef, br, dur, gap, col);
+        if (prog > 0.55 && Math.random() < 0.55)
+          allSync(t + bar - beat, pick(['flash','pulse']), ri(185,255), beat*rf(0.4,0.9), C0);
+        if (b % 4 === 3)
+          allSync(t + bar - beat * 0.5, 'flash', 255, beat*rf(0.3,0.7), white);
+        if (b % 3 === 0 && secBars > 4)
+          runningDot(t, 2, 'flash', ri(130,200), beat * 2, 1, C1);
+      }
+    }
+
+    else if (sec === 'drop') {
+      const dropStyle = pick(['alternating','centerOut','pingpong','allHeavy']);
+      const mainEf   = pick(heavyEfx);
+      for (let b = 0; b < secBars; b++) {
+        const t   = t0 + b * bar;
+        const br  = ri(210, 255);
+        const dur = bar * rf(0.4, 1);
+        const gap = beat * rf(0.12, 0.35);
+        const col = b % 2 === 0 ? C0 : C1;
+        if      (dropStyle === 'alternating') alternate(t, mainEf, br, dur, beat*rf(0.2,0.5), col);
+        else if (dropStyle === 'centerOut')   centerOut(t, mainEf, br, dur, gap, col);
+        else if (dropStyle === 'pingpong')    (b % 2 === 0 ? sweepLR : sweepRL)(t, mainEf, br, dur, gap, col);
+        else                                  allSync  (t, mainEf, br, dur, col);
+        for (const bi of [2, 4]) {
+          if (Math.random() < 0.55) {
+            const t2  = t + (bi - 1) * beat;
+            const ef2 = pick(heavyEfx);
+            const ac  = pal[(si + bi) % pal.length];
+            const ht  = ri(0, 4);
+            if      (ht === 0) addEv(t2, 2, ri(200,255), ef2, beat*rf(0.35,0.85), 255, ac);
+            else if (ht === 1) [0,4].forEach(s => addEv(t2, s, ri(200,255), ef2, beat*rf(0.35,0.85), 255, ac));
+            else if (ht === 2) sweepLR(t2, ef2, ri(195,255), beat*rf(0.3,0.75), beat*rf(0.08,0.2), ac);
+            else if (ht === 3) meteor(t2, ri(0,4), ri(200,255), beat*rf(0.5,1.5), ac);
+            else               sparkle(t2, ri(0,4), ri(4,8), ri(180,255), beat*rf(0.5,1), ac);
+          }
+        }
+      }
+      if (Math.random() < 0.6)
+        ledChase(t0 + Math.floor(secBars/2)*bar, 'flash', ri(200,255), beat*rf(0.15,0.3), beat*rf(0.03,0.07), si);
+    }
+
+    else if (sec === 'break') {
+      for (let b = 0; b < secBars; b++) {
+        const t   = t0 + b * bar;
+        const col = pal[(si + b) % pal.length];
+        if (b % 2 === 0)              waveRipple(t, bar * rf(1.5, 3), col);
+        else if (Math.random() < 0.5) mirrorHit(t + beat*ri(0,3), ri(0,4), pick(lightEfx), ri(120,185), bar*rf(0.75,2), rf(0,beat*0.3), col);
+        if (b % 4 === 3)              centerOut(t + bar*0.75, 'pulse', ri(155,205), beat*rf(0.8,1.5), beat*rf(0.2,0.45), col);
+        if (Math.random() < 0.45)
+          mirrorMeteor(t + rf(0, beat), ri(0,4), ri(140,210), beat*rf(1.5,3), col);
+        if (Math.random() < 0.35)
+          runningDot(t, ri(0,4), 'pulse', ri(110,180), bar, 1, C0);
+      }
+    }
+
+    else if (sec === 'climax') {
+      for (let b = 0; b < secBars; b++) {
+        const t   = t0 + b * bar;
+        const col = b % 2 === 0 ? C0 : white;
+        allSync(t, pick(['strobe','flash','strobe']), 255, beat*rf(0.25,0.9), col);
+        for (let bi = 1; bi < 4; bi++) {
+          if (Math.random() < 0.68) {
+            const t2  = t + bi * beat;
+            const ef  = pick(heavyEfx);
+            const gap = beat * rf(0.08, 0.22);
+            const dur = beat * rf(0.22, 0.72);
+            const ac  = pal[(si + bi) % pal.length];
+            const ht  = ri(0, 5);
+            if      (ht === 0) centerOut(t2, ef, ri(215,255), dur, gap, ac);
+            else if (ht === 1) outerIn  (t2, ef, ri(215,255), dur, gap, ac);
+            else if (ht === 2) sweepLR  (t2, ef, ri(215,255), dur, gap, ac);
+            else if (ht === 3) sweepRL  (t2, ef, ri(215,255), dur, gap, ac);
+            else if (ht === 4) allSync  (t2, 'strobe', 255, beat*rf(0.15,0.45), white);
+            else               meteor   (t2, b % NUM_STRIPS, ri(210,255), beat*rf(0.5,1.5), ac);
+          }
+        }
+        if (Math.random() < 0.45)
+          LR.forEach(s => sparkle(t + beat*rf(0.5,3), s, ri(3,7), ri(200,255), beat*rf(0.5,1.5), pal[(si+s) % pal.length]));
+      }
+    }
+
+    else if (sec === 'outro') {
+      allSync(t0, 'flash', 255, bar*rf(0.5,1), C0);
+      for (let b = 1; b < secBars; b++) {
+        const prog = b / secBars;
+        const br   = clamp(215 * (1 - prog * 0.75), 50, 215);
+        const col  = pal[(si + b) % pal.length];
+        if (Math.random() < 0.65)
+          centerOut(t0 + b*bar, pick(lightEfx), br, bar*rf(0.75,2), beat*rf(0.25,0.55), col);
+        if (Math.random() < 0.40)
+          meteor(t0 + b*bar + rf(0,beat), ri(0,4), br, beat*rf(1.5,3), col);
+      }
+      LR.forEach((s,i) => addEv(t0 + (secBars-1)*bar + i*beat*0.3, s, 170, 'fade', bar * 2, 255, pal[s % pal.length]));
+    }
+
+    cursor += secBars;
+  }
+
+  return evts.sort((a, b) => a.time_ms - b.time_ms);
+}
+
+// ── App State ──────────────────────────────────────────────────────────
+let events        = [];
+let sourceEvents  = null;   // Preserved copy of the last MIDI load for randomizer
+let isDemo        = true;
+let midiFileName  = '';
+let currentMode   = 'interpret';
+
+// Playback state
+let isPlaying     = false;
+let playStartWall = 0;
+let playStartTime = 0;
+let playbackTime  = 0;
+let playbackSpeed = 1;
+let totalDuration = 0;
+let rafId         = null;
+
+// Per-LED active events
+let activeEvents  = Array.from({length: NUM_STRIPS}, () => Array(NUM_LEDS).fill(null));
+let dispatchPtr   = 0;
+
+// Canvas refs
+let canvases = [];
+let ctxs     = [];
+
+// Color customization state
+let colorLocked = false;   // when true, strip s always uses BASE_COLORS[s] (no rotation)
+
+// Per-LED color overrides: null = use strip color, [r,g,b] = fixed override
+let LED_COLOR_OVERRIDES = Array.from({length: NUM_STRIPS}, () => Array(NUM_LEDS).fill(null));
+let selectedLed = {strip: null, led: null};
+
+// Audio state
+// NOTE: uploaded files are read entirely in-browser via FileReader / blob URLs.
+// Nothing is sent to any server; blob URLs are revoked when no longer needed.
+let audioObjectURL  = null;   // current blob URL for the loaded audio file
+let audioLoaded     = false;
+let audioMuted      = false;
+let audioFileName   = '';
+
+// ── Canvas sizing ──────────────────────────────────────────────────────
+const LED_RADIUS  = 11;
+const LED_SPACING = 28;
+const CANVAS_H    = 28;
+const CANVAS_W    = NUM_LEDS * LED_SPACING + 4;
+
+// ── DOM refs ───────────────────────────────────────────────────────────
+const audioEl      = document.getElementById('audio-el');
+const fileInput    = document.getElementById('file-input');
+const audioInput   = document.getElementById('audio-input');
+const fileNameEl   = document.getElementById('file-name');
+const audioNameEl  = document.getElementById('audio-name');
+const playBtn      = document.getElementById('play-btn');
+const stopBtn      = document.getElementById('stop-btn');
+const exportBtn    = document.getElementById('export-btn');
+const speedSel     = document.getElementById('speed-sel');
+const bpmInput     = document.getElementById('bpm-input');
+const offsetInput  = document.getElementById('midi-off-sec'); // legacy alias kept for safety
+const midiOffSec   = document.getElementById('midi-off-sec');
+const midiOffMs    = document.getElementById('midi-off-ms');
+const audioOffSec  = document.getElementById('audio-off-sec');
+const audioOffMs   = document.getElementById('audio-off-ms');
+
+// Returns total MIDI event time shift in ms
+function getMidiOffsetMs() {
+  return (parseFloat(midiOffSec.value) || 0) * 1000 + (parseFloat(midiOffMs.value) || 0);
+}
+// Returns how far into the audio file to start when playbackTime = 0
+function getAudioOffsetMs() {
+  return (parseFloat(audioOffSec.value) || 0) * 1000 + (parseFloat(audioOffMs.value) || 0);
+}
+const timeDisplay  = document.getElementById('time-display');
+const tlCurrent    = document.getElementById('tl-current');
+const tlTotal      = document.getElementById('tl-total');
+const tlSlider     = document.getElementById('timeline-slider');
+const demoBadge    = document.getElementById('demo-badge');
+const audioBadge   = document.getElementById('audio-badge');
+const loadStatus   = document.getElementById('load-status');
+const statsBar     = document.getElementById('stats-bar');
+const eventTbody   = document.getElementById('event-tbody');
+const logBody      = document.getElementById('log-body');
+const logToggleBtn = document.getElementById('log-toggle-btn');
+const logHeader    = document.getElementById('log-toggle-header');
+const volSlider    = document.getElementById('vol-slider');
+const muteBtn      = document.getElementById('mute-btn');
+
+// ── Audio helpers ──────────────────────────────────────────────────────
+
+/** Sync the <audio> element position to the current playbackTime.
+ *  audioOffset shifts which point in the file corresponds to playbackTime 0.
+ *  e.g. audioOffset=1500 means playbackTime=0 → audioEl.currentTime=1.5s
+ */
+function audioSyncPosition(timeMs) {
+  if (!audioLoaded) return;
+  const t = Math.max(0, (timeMs + getAudioOffsetMs())) / 1000;
+  if (Math.abs(audioEl.currentTime - t) > 0.05) {
+    audioEl.currentTime = t;
+  }
+}
+
+function audioPlay() {
+  if (!audioLoaded || isDemo) return;
+  audioEl.playbackRate = playbackSpeed;
+  audioEl.volume = audioMuted ? 0 : parseInt(volSlider.value, 10) / 100;
+  audioSyncPosition(playbackTime);   // seek to current position before hitting play
+  audioEl.play().catch(() => {});
+}
+
+function audioPause() {
+  if (!audioLoaded) return;
+  audioEl.pause();
+}
+
+function audioStop() {
+  if (!audioLoaded) return;
+  audioEl.pause();
+  audioEl.currentTime = 0;
+}
+
+function audioSeek(timeMs) {
+  if (!audioLoaded) return;
+  audioEl.currentTime = Math.max(0, (timeMs + getAudioOffsetMs())) / 1000;
+}
+
+// ── Audio file upload ──────────────────────────────────────────────────
+audioInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Revoke previous blob URL to avoid memory leak
+  if (audioObjectURL) {
+    URL.revokeObjectURL(audioObjectURL);
+    audioObjectURL = null;
+  }
+
+  audioObjectURL = URL.createObjectURL(file);
+  audioFileName  = file.name;
+  audioLoaded    = true;
+
+  audioEl.src = audioObjectURL;
+  audioEl.load();
+
+  // Update UI
+  audioNameEl.textContent = file.name;
+  audioBadge.textContent  = `♪ ${file.name}`;
+  audioBadge.classList.add('visible');
+
+  // If we're already playing, start audio from current position
+  if (isPlaying && !isDemo) {
+    audioPlay();
+  }
+});
+
+// ── Volume / Mute controls ─────────────────────────────────────────────
+volSlider.addEventListener('input', () => {
+  if (!audioMuted) {
+    audioEl.volume = parseInt(volSlider.value, 10) / 100;
+  }
+});
+
+muteBtn.addEventListener('click', () => {
+  audioMuted = !audioMuted;
+  audioEl.volume   = audioMuted ? 0 : parseInt(volSlider.value, 10) / 100;
+  muteBtn.textContent = audioMuted ? '🔇' : '🔊';
+  muteBtn.classList.toggle('muted', audioMuted);
+});
+
+// ── Build strip rows ───────────────────────────────────────────────────
+function buildStripRows() {
+  const container = document.getElementById('strip-rows');
+  container.innerHTML = '';
+  canvases = []; ctxs = [];
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    const row = document.createElement('div');
+    row.className = 'strip-row';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'strip-label';
+    lbl.textContent = `Strip ${s}`;
+    lbl.style.color = `rgb(${BASE_COLORS[s].join(',')})`;
+
+    const cv = document.createElement('canvas');
+    cv.className = 'strip-canvas';
+    cv.width  = CANVAS_W;
+    cv.height = CANVAS_H;
+    cv.style.width  = CANVAS_W + 'px';
+    cv.style.height = CANVAS_H + 'px';
+
+    row.appendChild(lbl);
+    row.appendChild(cv);
+    container.appendChild(row);
+
+    canvases.push(cv);
+    ctxs.push(cv.getContext('2d', {alpha: false}));
+  }
+  addCanvasClickHandlers();
+}
+
+// ── Color customization helpers ──────────────────────────────────────────
+function rgbToHex(r, g, b) {
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+function hexToRgb(hex) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+// HSV → RGB  (h/s/v each 0-1) → [r, g, b] 0-255
+function hsvToRgb(h, s, v) {
+  h = ((h % 1) + 1) % 1;
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+  return [[v,t,p],[q,v,p],[p,v,t],[p,q,v],[t,p,v],[v,p,q]][i % 6].map(c => Math.round(c * 255));
+}
+
+// Map MIDI note number → vivid rainbow RGB  (12 semitones = full hue wheel)
+function noteToColor(midiNote) {
+  return hsvToRgb((midiNote % 12) / 12, 1, 1);
+}
+
+function buildColorSwatches() {
+  const wrap = document.getElementById('color-swatches');
+  wrap.innerHTML = '';
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    const group = document.createElement('div');
+    group.className = 'color-swatch-group';
+
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch';
+    swatch.style.background = `rgb(${BASE_COLORS[s].join(',')})`;
+
+    const colorIn = document.createElement('input');
+    colorIn.type  = 'color';
+    colorIn.value = rgbToHex(...BASE_COLORS[s]);
+    colorIn.title = `Click to change Strip ${s} color`;
+
+    const lbl = document.createElement('span');
+    lbl.className   = 'color-swatch-lbl';
+    lbl.textContent = `Strip ${s}`;
+    lbl.style.color = `rgb(${BASE_COLORS[s].join(',')})`;
+
+    colorIn.addEventListener('input', () => {
+      applyStripColor(s, colorIn.value, swatch, lbl);
+    });
+
+    swatch.appendChild(colorIn);
+    group.appendChild(swatch);
+    group.appendChild(lbl);
+    wrap.appendChild(group);
+  }
+}
+
+function applyStripColor(s, hex, swatch, lbl) {
+  const rgb = hexToRgb(hex);
+  BASE_COLORS[s] = rgb;
+  const css = `rgb(${rgb.join(',')})`;
+  swatch.style.background = css;
+  lbl.style.color = css;
+  // Keep viz labels and stats bars in sync
+  const vizLabels = document.querySelectorAll('.strip-label');
+  if (vizLabels[s]) vizLabels[s].style.color = css;
+  const statBars = document.querySelectorAll('.strip-bar');
+  if (statBars[s]) statBars[s].style.background = css;
+}
+
+// ── Color helpers ──────────────────────────────────────────────────────
+function getStripColor(stripIndex, currentTimeMs) {
+  if (colorLocked) return BASE_COLORS[stripIndex];
+  const rotationOffset = Math.floor(currentTimeMs / 10000);
+  const colorIndex     = (stripIndex + rotationOffset) % 5;
+  return BASE_COLORS[colorIndex];
+}
+
+// ── Effect brightness factor ───────────────────────────────────────────
+function effectFactor(effect, t, ledIndex, nowMs) {
+  switch (effect) {
+    case 'strobe': return (Math.floor(nowMs / 25) % 2 === 0) ? 1.0 : 0.0;
+    case 'flash':  return Math.sqrt(Math.max(0, 1.0 - t));
+    case 'pulse':  return Math.sin(t * Math.PI);
+    case 'fade':   return Math.max(0, 1.0 - t);
+    case 'hold':
+      if (t < 0.75) return 1.0;
+      return Math.max(0, 1.0 - ((t - 0.75) / 0.25));
+    case 'wave':   return Math.sin((ledIndex / 19) * Math.PI + t * 2 * Math.PI) * 0.5 + 0.5;
+    default:       return 1.0;
+  }
+}
+
+// ── Compute LED color ──────────────────────────────────────────────────
+function computeLedColor(strip, led, nowMs) {
+  const ev = activeEvents[strip][led];
+  if (!ev) return [20, 20, 20];
+
+  const elapsed = nowMs - ev.time_ms;
+  let t = elapsed / ev.duration_ms;
+  t = Math.min(1.0, Math.max(0.0, t));
+
+  const factor = effectFactor(ev.effect, t, led, nowMs);
+  // Priority: event's own RGB > per-LED manual override > strip/rotation color
+  const [r, g, b] = ev.color || LED_COLOR_OVERRIDES[strip][led] || getStripColor(strip, nowMs);
+  const scale = (ev.brightness / 255) * factor;
+
+  return [
+    Math.round(r * scale),
+    Math.round(g * scale),
+    Math.round(b * scale),
+  ];
+}
+
+// ── Draw a single strip ────────────────────────────────────────────────
+function drawStrip(strip, nowMs) {
+  const ctx = ctxs[strip];
+  const cv  = canvases[strip];
+  ctx.fillStyle = '#111114';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  const cy = CANVAS_H / 2;
+
+  for (let i = 0; i < NUM_LEDS; i++) {
+    const cx = 2 + i * LED_SPACING + LED_SPACING / 2;
+    const [r, g, b] = computeLedColor(strip, i, nowMs);
+    const lit = r > 30 || g > 30 || b > 30;
+
+    if (lit) {
+      const glowRadius = LED_RADIUS * 2.0;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+      grad.addColorStop(0, `rgba(${r},${g},${b},0.45)`);
+      grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, LED_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fill();
+
+    if (lit) {
+      const hiGrad = ctx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, LED_RADIUS);
+      hiGrad.addColorStop(0, 'rgba(255,255,255,0.22)');
+      hiGrad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, LED_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = hiGrad;
+      ctx.fill();
+    }
+
+    // Selection ring
+    if (selectedLed.strip === strip && selectedLed.led === i) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, LED_RADIUS + 3.5, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+}
+
+// ── Event activation / expiry ──────────────────────────────────────────
+function activateEvent(ev) {
+  if (ev.led_pos === 255) {
+    for (let i = 0; i < NUM_LEDS; i++) activeEvents[ev.strip][i] = ev;
+  } else {
+    for (let i = 0; i < NUM_LEDS; i++) {
+      const dist = Math.abs(i - ev.led_pos);
+      if (dist === 0) {
+        activeEvents[ev.strip][i] = ev;
+      } else if (dist === 1) {
+        activeEvents[ev.strip][i] = Object.assign({}, ev, {brightness: Math.round(ev.brightness * 0.40)});
+      } else if (dist === 2) {
+        activeEvents[ev.strip][i] = Object.assign({}, ev, {brightness: Math.round(ev.brightness * 0.15)});
+      }
+      // Beyond ±2: leave whatever is already there
+    }
+  }
+}
+
+function clearActiveEvents() {
+  for (let s = 0; s < NUM_STRIPS; s++)
+    for (let i = 0; i < NUM_LEDS; i++)
+      activeEvents[s][i] = null;
+}
+
+function expireEvents(nowMs) {
+  for (let s = 0; s < NUM_STRIPS; s++)
+    for (let i = 0; i < NUM_LEDS; i++) {
+      const ev = activeEvents[s][i];
+      if (ev && nowMs > ev.time_ms + ev.duration_ms) activeEvents[s][i] = null;
+    }
+}
+
+function dispatchUpTo(nowMs) {
+  while (dispatchPtr < events.length && events[dispatchPtr].time_ms <= nowMs) {
+    activateEvent(events[dispatchPtr]);
+    dispatchPtr++;
+  }
+}
+
+// ── Seek ──────────────────────────────────────────────────────────────
+function seekTo(T) {
+  playbackTime = T;
+  clearActiveEvents();
+  dispatchPtr  = 0;
+
+  for (let i = 0; i < events.length; i++) {
+    const ev = events[i];
+    if (ev.time_ms <= T) {
+      if (ev.time_ms + ev.duration_ms > T) activateEvent(ev);
+      dispatchPtr = i + 1;
+    } else {
+      break;
+    }
+  }
+
+  audioSeek(T);
+}
+
+// ── Animation loop ────────────────────────────────────────────────────
+function animationLoop() {
+  if (isPlaying) {
+    if (audioLoaded && !isDemo) {
+      // Audio is the master clock — subtract audio offset so LED time 0 = audio at offset position
+      playbackTime = audioEl.currentTime * 1000 - getAudioOffsetMs();
+    } else {
+      // No audio loaded — use wall-clock fallback
+      playbackTime = playStartTime + (Date.now() - playStartWall) * playbackSpeed;
+    }
+
+    if (playbackTime >= totalDuration + 2000) {
+      playbackTime = totalDuration + 2000;
+      stopPlayback();
+    }
+  }
+
+  expireEvents(playbackTime);
+  if (isPlaying) dispatchUpTo(playbackTime);
+
+  for (let s = 0; s < NUM_STRIPS; s++) drawStrip(s, playbackTime);
+
+  updateTimeUI(playbackTime);
+
+  rafId = requestAnimationFrame(animationLoop);
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function fmtMs(ms) {
+  ms = Math.max(0, ms);
+  const totalSec = Math.floor(ms / 1000);
+  const m     = Math.floor(totalSec / 60);
+  const s     = totalSec % 60;
+  const milli = Math.floor(ms % 1000);
+  return `${m}:${String(s).padStart(2,'0')}.${String(milli).padStart(3,'0')}`;
+}
+
+function updateTimeUI(nowMs) {
+  const clamped = Math.max(0, Math.min(nowMs, totalDuration));
+  const t = fmtMs(clamped);
+  timeDisplay.textContent = t;
+  tlCurrent.textContent   = t;
+  if (totalDuration > 0) {
+    tlSlider.value = String(Math.round((clamped / totalDuration) * 10000));
+  }
+}
+
+// ── Playback controls ─────────────────────────────────────────────────
+function startPlayback() {
+  if (isPlaying) return;
+  if (playbackTime >= totalDuration + 1000) {
+    seekTo(0);
+    dispatchPtr = 0;
+  }
+  playbackSpeed = parseFloat(speedSel.value);
+
+  if (audioLoaded && !isDemo) {
+    // Seek audio to current position, then wait for the 'playing' event
+    // so LEDs start the exact instant audio output begins (not just when .play() is called)
+    audioEl.playbackRate = playbackSpeed;
+    audioEl.volume = audioMuted ? 0 : parseInt(volSlider.value, 10) / 100;
+    audioSyncPosition(playbackTime);
+    playBtn.textContent = '⌛ Waiting…';
+    playBtn.disabled = true;
+    audioEl.play().catch(() => {
+      // Browser blocked autoplay — start anyway with wall clock
+      isPlaying     = true;
+      playStartWall = Date.now();
+      playStartTime = playbackTime;
+      playBtn.textContent = '⏸ Pause';
+      playBtn.disabled = false;
+    });
+    // 'playing' fires once audio is actually outputting (resolves buffering delay)
+    // — this is where LEDs start
+  } else {
+    // No audio — start immediately
+    isPlaying     = true;
+    playStartWall = Date.now();
+    playStartTime = playbackTime;
+    playBtn.textContent = '⏸ Pause';
+  }
+}
+
+function pausePlayback() {
+  if (!isPlaying) return;
+  isPlaying = false;
+  playBtn.textContent = '▶ Play';
+  playBtn.disabled = false;
+  audioPause();
+}
+
+function stopPlayback() {
+  isPlaying = false;
+  playBtn.textContent = '▶ Play';
+  playBtn.disabled = false;
+  audioPause();
+}
+
+function resetPlayback() {
+  stopPlayback();
+  audioStop();
+  seekTo(0);
+  dispatchPtr = 0;
+  dispatchUpTo(0);
+}
+
+// ── Load events ───────────────────────────────────────────────────────
+function loadEvents(newEvents, demo = false, mode = 'interpret') {
+  stopPlayback();
+  audioStop();
+
+  // Preserve a clean copy of MIDI events so the randomizer can always
+  // remix from the original timing regardless of how many times it's clicked.
+  if (mode !== 'random' && mode !== 'generated') {
+    sourceEvents = newEvents.map(e => Object.assign({}, e));
+  }
+
+  events        = newEvents;
+  isDemo        = demo;
+  currentMode   = mode;
+  totalDuration = events.reduce((mx, ev) => Math.max(mx, ev.time_ms + ev.duration_ms), 0);
+
+  tlTotal.textContent = fmtMs(totalDuration);
+  demoBadge.style.display = demo ? 'inline-block' : 'none';
+
+  clearActiveEvents();
+  dispatchPtr  = 0;
+  playbackTime = 0;
+
+  updateEventTable();
+  updateStatsBar();
+
+  playBtn.disabled   = false;
+  exportBtn.disabled = demo;
+
+  if (!rafId) rafId = requestAnimationFrame(animationLoop);
+}
+
+// ── Event table ───────────────────────────────────────────────────────
+const EFFECT_TAG_COLORS = {
+  strobe: {bg:'rgba(255,80,80,0.18)',   color:'#ff7777'},
+  flash:  {bg:'rgba(255,170,80,0.18)',  color:'#ffbb66'},
+  pulse:  {bg:'rgba(80,170,255,0.18)',  color:'#77bbff'},
+  fade:   {bg:'rgba(170,136,255,0.18)', color:'#bb99ff'},
+  hold:   {bg:'rgba(80,255,170,0.18)',  color:'#66ffcc'},
+  wave:   {bg:'rgba(255,220,80,0.18)',  color:'#ffdd66'},
+};
+
+function updateEventTable() {
+  eventTbody.innerHTML = '';
+  const maxRows    = 2000;
+  const displayed  = events.slice(0, maxRows);
+  for (const ev of displayed) {
+    const tr = document.createElement('tr');
+    const tc = EFFECT_TAG_COLORS[ev.effect] || {bg:'#333',color:'#eee'};
+    tr.innerHTML = `
+      <td>${ev.time_ms}</td>
+      <td style="color:rgb(${BASE_COLORS[ev.strip].join(',')})">${ev.strip}</td>
+      <td>${ev.brightness}</td>
+      <td><span class="effect-tag" style="background:${tc.bg};color:${tc.color}">${ev.effect}</span></td>
+      <td>${ev.duration_ms}</td>
+      <td>${ev.led_pos === 255 ? '— (all)' : ev.led_pos}</td>
+    `;
+    eventTbody.appendChild(tr);
+  }
+  if (events.length > maxRows) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="6" style="text-align:center;color:var(--muted);padding:8px">
+      … and ${events.length - maxRows} more events</td>`;
+    eventTbody.appendChild(tr);
+  }
+}
+
+// ── Stats bar ─────────────────────────────────────────────────────────
+function updateStatsBar() {
+  const perStrip = Array(NUM_STRIPS).fill(0);
+  for (const ev of events) perStrip[ev.strip]++;
+
+  document.getElementById('stat-events').textContent   = events.length;
+  document.getElementById('stat-duration').textContent = fmtMs(totalDuration);
+  document.getElementById('stat-mode').textContent     =
+    isDemo ? 'Demo' : currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+
+  const maxCount = Math.max(...perStrip, 1);
+  const barsEl   = document.getElementById('stat-strip-bars');
+  barsEl.innerHTML = '';
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'strip-bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'strip-bar';
+    bar.style.background = `rgb(${BASE_COLORS[s].join(',')})`;
+    bar.style.height = Math.round((perStrip[s] / maxCount) * 24) + 'px';
+    bar.title = `Strip ${s}: ${perStrip[s]} events`;
+    const lbl = document.createElement('span');
+    lbl.className = 'strip-bar-lbl';
+    lbl.textContent = s;
+    wrap.appendChild(bar);
+    wrap.appendChild(lbl);
+    barsEl.appendChild(wrap);
+  }
+  statsBar.classList.add('visible');
+}
+
+// ── Effect / brightness helpers ────────────────────────────────────────
+function getEffect(durationMs, bpm) {
+  const beats = durationMs / (60000 / bpm);
+  if (beats < 0.25) return 'strobe';
+  if (beats < 0.5)  return 'flash';
+  if (beats < 1.0)  return 'pulse';
+  if (beats < 2.0)  return 'fade';
+  if (beats < 4.0)  return 'hold';
+  return 'wave';
+}
+
+function velocityToBrightness(v) {
+  return Math.max(0, Math.min(255, Math.round((v / 127) * 255)));
+}
+
+function cleanEvents(evts) {
+  for (const ev of evts) {
+    ev.brightness  = Math.max(0, Math.min(255, ev.brightness));
+    ev.strip       = Math.max(0, Math.min(4,   ev.strip));
+    ev.duration_ms = Math.max(10, ev.duration_ms);
+    if (ev.led_pos === undefined) ev.led_pos = 255;
+  }
+  evts.sort((a, b) => a.time_ms - b.time_ms);
+  return evts;
+}
+
+// ── MIDI Parsing — Cue Mode ───────────────────────────────────────────
+function parseCueMode(midi, bpm, offsetMs) {
+  let track = midi.tracks.find(t => t.name && t.name.toUpperCase().includes('LIGHTING CUES'));
+  if (!track) {
+    track = midi.tracks.reduce((best, t) => (t.notes.length > best.notes.length ? t : best), midi.tracks[0]);
+  }
+  if (!track) return [];
+
+  const evts = [];
+  for (const note of track.notes) {
+    if (!(note.midi in CUE_NOTE_MAP)) continue;
+    const strip      = CUE_NOTE_MAP[note.midi];
+    const time_ms    = Math.round(note.time * 1000) + offsetMs;
+    const dur_ms     = Math.max(10, Math.round(note.duration * 1000));
+    const brightness = velocityToBrightness(note.velocity * 127);
+    evts.push({time_ms, strip, brightness, effect: getEffect(dur_ms, bpm), duration_ms: dur_ms, led_pos: 255, color: noteToColor(note.midi)});
+  }
+  return cleanEvents(evts);
+}
+
+// ── MIDI Parsing — Interpret Mode ─────────────────────────────────────
+function parseInterpretMode(midi, bpm, offsetMs) {
+  const allNotes = [];
+  for (const track of midi.tracks)
+    for (const note of track.notes) allNotes.push(note);
+  if (!allNotes.length) return [];
+
+  const pitches    = allNotes.map(n => n.midi);
+  const minPitch   = Math.min(...pitches);
+  const maxPitch   = Math.max(...pitches);
+  const pitchRange = maxPitch - minPitch;
+
+  allNotes.sort((a, b) => a.time - b.time || a.midi - b.midi);
+
+  const evts = [];
+  for (let idx = 0; idx < allNotes.length; idx++) {
+    const note       = allNotes[idx];
+    const strip      = idx % NUM_STRIPS;
+    const time_ms    = Math.round(note.time * 1000) + offsetMs;
+    const dur_ms     = Math.max(10, Math.round(note.duration * 1000));
+    const brightness = velocityToBrightness(note.velocity * 127);
+    const led_pos    = pitchRange === 0
+      ? 255
+      : Math.max(0, Math.min(19, Math.round(((note.midi - minPitch) / pitchRange) * 19)));
+    evts.push({time_ms, strip, brightness, effect: getEffect(dur_ms, bpm), duration_ms: dur_ms, led_pos, color: noteToColor(note.midi)});
+  }
+  return cleanEvents(evts);
+}
+
+// ── MIDI file upload ───────────────────────────────────────────────────
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  loadMidiFile(file);
+});
+
+function loadMidiFile(file) {
+  midiFileName = file.name;
+  fileNameEl.textContent = file.name;
+  loadStatus.textContent = '⟳ Processing MIDI…';
+  loadStatus.classList.add('visible');
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const midi   = new Midi(ev.target.result);
+      const bpm    = parseInt(bpmInput.value, 10) || 120;
+      const offset = getMidiOffsetMs();
+      const mode   = document.querySelector('input[name="mode"]:checked').value;
+
+      const evts = mode === 'cue'
+        ? parseCueMode(midi, bpm, offset)
+        : parseInterpretMode(midi, bpm, offset);
+
+      if (!evts.length) {
+        loadStatus.textContent = '⚠ No events found — check Mode / BPM';
+        return;
+      }
+
+      loadStatus.classList.remove('visible');
+      loadEvents(evts, false, mode);
+
+    } catch (err) {
+      loadStatus.textContent = '✗ Parse error: ' + err.message;
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ── Export .py ────────────────────────────────────────────────────────
+exportBtn.addEventListener('click', () => {
+  if (!events.length) return;
+  const base = midiFileName.replace(/\.(mid|midi)$/i, '');
+  const bpm  = bpmInput.value;
+
+  const header = [
+    '# LED Lighting Events — Pico Light Show Visualizer',
+    '# Format: (time_ms, strip_index, brightness, effect, duration_ms[, led_pos[, r, g, b]])',
+    '# Effects: strobe, flash, pulse, fade, hold, wave',
+    '# led_pos 255 = whole strip; 0-19 = specific LED position',
+    '# r, g, b = explicit LED color (0-255 each); omit to use strip default color',
+    `# Source: ${midiFileName}  Mode: ${currentMode}  BPM: ${bpm}`,
+    '',
+    'events = [',
+  ].join('\n');
+
+  const rows = events.map(ev => {
+    const hasLp  = ev.led_pos !== undefined && ev.led_pos !== 255;
+    const hasCol = Array.isArray(ev.color);
+    // Always include led_pos when color is present so the field positions are unambiguous
+    const lp  = (hasLp || hasCol) ? `, ${ev.led_pos !== undefined ? ev.led_pos : 255}` : '';
+    const col = hasCol ? `, ${ev.color[0]}, ${ev.color[1]}, ${ev.color[2]}` : '';
+    return `    (${ev.time_ms}, ${ev.strip}, ${ev.brightness}, '${ev.effect}', ${ev.duration_ms}${lp}${col}),`;
+  }).join('\n');
+
+  const content = header + rows + '\n]\n';
+  const blob    = new Blob([content], {type: 'text/plain'});
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href        = url;
+  a.download    = `${base}_events.py`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+});
+
+// ── Copy as Python ────────────────────────────────────────────────────
+document.getElementById('copy-py-btn').addEventListener('click', () => {
+  if (!events.length) return;
+  const lines = events.map(ev => {
+    const hasLp  = ev.led_pos !== undefined && ev.led_pos !== 255;
+    const hasCol = Array.isArray(ev.color);
+    const lp  = (hasLp || hasCol) ? `, ${ev.led_pos !== undefined ? ev.led_pos : 255}` : '';
+    const col = hasCol ? `, ${ev.color[0]}, ${ev.color[1]}, ${ev.color[2]}` : '';
+    return `    (${ev.time_ms}, ${ev.strip}, ${ev.brightness}, '${ev.effect}', ${ev.duration_ms}${lp}${col}),`;
+  });
+  navigator.clipboard.writeText(`events = [\n${lines.join('\n')}\n]`).then(() => {
+    const btn = document.getElementById('copy-py-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy as Python', 1500);
+  });
+});
+
+// ── Playback button listeners ─────────────────────────────────────────
+playBtn.addEventListener('click', () => {
+  if (isPlaying) pausePlayback(); else startPlayback();
+});
+stopBtn.addEventListener('click', () => resetPlayback());
+
+// ── Speed selector ────────────────────────────────────────────────────
+speedSel.addEventListener('change', () => {
+  playbackSpeed = parseFloat(speedSel.value);
+  if (isPlaying) {
+    playStartWall = Date.now();
+    playStartTime = playbackTime;
+    audioEl.playbackRate = playbackSpeed;
+  }
+});
+
+// ── Timeline scrubber ─────────────────────────────────────────────────
+tlSlider.addEventListener('input', () => {
+  if (totalDuration === 0) return;
+  const T = Math.round((parseInt(tlSlider.value, 10) / 10000) * totalDuration);
+  seekTo(T);
+  if (isPlaying) {
+    playStartWall = Date.now();
+    playStartTime = T;
+  }
+  updateTimeUI(T);
+});
+
+// ── Event log toggle ──────────────────────────────────────────────────
+logHeader.addEventListener('click', () => {
+  const open = logBody.classList.toggle('open');
+  logToggleBtn.textContent = open ? '▲ Hide' : '▼ Show';
+  logHeader.setAttribute('aria-expanded', open);
+});
+logHeader.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); logHeader.click(); }
+});
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+  if (e.key === ' ') {
+    e.preventDefault();
+    if (isPlaying) pausePlayback(); else startPlayback();
+  }
+  if (e.key === 'r' || e.key === 'R') {
+    e.preventDefault();
+    resetPlayback();
+  }
+  if (e.key === 'm' || e.key === 'M') {
+    muteBtn.click();
+  }
+});
+
+// ── LED color picker ─────────────────────────────────────────────────
+function addCanvasClickHandlers() {
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    (function(strip) {
+      canvases[strip].addEventListener('click', e => {
+        const rect = canvases[strip].getBoundingClientRect();
+        const x   = (e.clientX - rect.left) * (CANVAS_W / rect.width);
+        const led = Math.floor((x - 2) / LED_SPACING);
+        if (led < 0 || led >= NUM_LEDS) return;
+        selectLed(strip, led);
+      });
+    })(s);
+  }
+}
+
+function selectLed(strip, led) {
+  selectedLed = {strip, led};
+  const panel = document.getElementById('led-color-panel');
+  panel.classList.add('visible');
+  const info = document.getElementById('led-sel-info');
+  info.textContent = `Strip ${strip}, LED ${led}`;
+  info.style.color = `rgb(${BASE_COLORS[strip].join(',')})`;  
+  const col = LED_COLOR_OVERRIDES[strip][led] || BASE_COLORS[strip];
+  document.getElementById('led-color-in').value = rgbToHex(...col);
+}
+
+document.getElementById('led-color-in').addEventListener('input', function() {
+  if (selectedLed.strip === null) return;
+  LED_COLOR_OVERRIDES[selectedLed.strip][selectedLed.led] = hexToRgb(this.value);
+});
+
+document.getElementById('btn-clear-led').addEventListener('click', () => {
+  if (selectedLed.strip === null) return;
+  LED_COLOR_OVERRIDES[selectedLed.strip][selectedLed.led] = null;
+  document.getElementById('led-color-in').value = rgbToHex(...BASE_COLORS[selectedLed.strip]);
+});
+
+document.getElementById('btn-clear-strip-leds').addEventListener('click', () => {
+  if (selectedLed.strip === null) return;
+  LED_COLOR_OVERRIDES[selectedLed.strip].fill(null);
+  document.getElementById('led-color-in').value = rgbToHex(...BASE_COLORS[selectedLed.strip]);
+});
+
+document.getElementById('btn-clear-all-leds').addEventListener('click', () => {
+  for (let s = 0; s < NUM_STRIPS; s++) LED_COLOR_OVERRIDES[s].fill(null);
+  if (selectedLed.strip !== null)
+    document.getElementById('led-color-in').value = rgbToHex(...BASE_COLORS[selectedLed.strip]);
+});
+
+// ── Color panel listeners ─────────────────────────────────────────────
+document.getElementById('lock-colors-cb').addEventListener('change', function () {
+  colorLocked = this.checked;
+  document.getElementById('lock-label').classList.toggle('locked', colorLocked);
+});
+
+document.getElementById('rand-colors-btn').addEventListener('click', () => {
+  // Pick a random harmonic palette: complementary, triadic, analogous, or spread
+  const schemes = [
+    [0, 0.50, 0.08, 0.58, 0.25],         // complementary pairs
+    [0, 0.33, 0.67, 0.16, 0.49],         // triadic
+    [0, 0.05, 0.10, 0.15, 0.50],         // analogous + complement
+    [0, 0.20, 0.40, 0.60, 0.80],         // evenly spread
+    [0, 0.11, 0.22, 0.44, 0.72],         // warm skew
+  ];
+  const baseH  = Math.random();
+  const sat    = 0.85 + Math.random() * 0.15;
+  const scheme = schemes[Math.floor(Math.random() * schemes.length)];
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    BASE_COLORS[s] = hsvToRgb((baseH + scheme[s]) % 1, sat, 1.0);
+    LED_COLOR_OVERRIDES[s].fill(null);
+  }
+  if (selectedLed.strip !== null)
+    document.getElementById('led-color-in').value = rgbToHex(...BASE_COLORS[selectedLed.strip]);
+  buildColorSwatches();
+  document.querySelectorAll('.strip-label').forEach((el, s) => {
+    if (s < NUM_STRIPS) el.style.color = `rgb(${BASE_COLORS[s].join(',')})`;
+  });
+  document.querySelectorAll('.strip-bar').forEach((el, s) => {
+    if (s < NUM_STRIPS) el.style.background = `rgb(${BASE_COLORS[s].join(',')})`;
+  });
+});
+
+document.getElementById('reset-colors-btn').addEventListener('click', () => {
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    BASE_COLORS[s] = [...DEFAULT_COLORS[s]];
+    LED_COLOR_OVERRIDES[s].fill(null);
+  }
+  if (selectedLed.strip !== null)
+    document.getElementById('led-color-in').value = rgbToHex(...BASE_COLORS[selectedLed.strip]);
+  buildColorSwatches();
+  // Refresh viz labels
+  const vizLabels = document.querySelectorAll('.strip-label');
+  vizLabels.forEach((el, s) => {
+    if (s < NUM_STRIPS) el.style.color = `rgb(${BASE_COLORS[s].join(',')})`;
+  });
+  // Refresh stats bars
+  const statBars = document.querySelectorAll('.strip-bar');
+  statBars.forEach((el, s) => {
+    if (s < NUM_STRIPS) el.style.background = `rgb(${BASE_COLORS[s].join(',')})`;
+  });
+});
+
+// Revoke audio blob URL when the page is closed to free memory
+window.addEventListener('beforeunload', () => {
+  if (audioObjectURL) { URL.revokeObjectURL(audioObjectURL); audioObjectURL = null; }
+});
+
+// ── Randomize / generate show ─────────────────────────────────────────
+// Each MIDI event maps to one or more output events (same base time_ms).
+// A per-show "style" is chosen at random and applied consistently.
+// ALL colors come from the generated palette — never raw MIDI pitch colors.
+// Styles may return arrays to emit runs, blooms, or scatter bursts.
+function randomizeShow() {
+  const hint = document.getElementById('preset-hint');
+  const base = sourceEvents;
+  if (!base || !base.length) {
+    hint.textContent = '\u26a0 load a MIDI file first';
+    setTimeout(() => { hint.textContent = ''; }, 2200);
+    return;
+  }
+
+  // ── Helpers ─────────────────────────────────────────────────────────
+  const ri    = (lo, hi) => Math.floor(Math.random() * (hi - lo + 1)) + lo;
+  const rf    = (lo, hi) => Math.random() * (hi - lo) + lo;
+  const pick  = arr => arr[Math.floor(Math.random() * arr.length)];
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, Math.round(v)));
+  const shuffle = arr => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) { const j = ri(0, i); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  };
+
+  // ── Tempo grid ──────────────────────────────────────────────────────
+  const bpm     = parseInt(bpmInput.value, 10) || 75;
+  const beat_ms = 60000 / bpm;
+  const GRID    = [0.125, 0.25, 0.5, 1, 2, 4].map(b => Math.round(b * beat_ms));
+  const snap    = (ms, minFrac = 0.25) => {
+    const best = GRID.reduce((p, c) => Math.abs(c - ms) < Math.abs(p - ms) ? c : p);
+    return Math.max(best, Math.round(minFrac * beat_ms), 40);
+  };
+
+  // ── Velocity analysis ───────────────────────────────────────────────
+  const brs   = base.map(e => e.brightness).sort((a, b) => a - b);
+  const velLo = brs[Math.floor(brs.length * 0.25)];
+  const velHi = brs[Math.floor(brs.length * 0.75)];
+  const isLoud  = br => br >= velHi;
+  const isSoft  = br => br <= velLo;
+  const isShort = ms => ms < beat_ms * 0.5;
+  const isLong  = ms => ms >= beat_ms * 2;
+
+  // ── Palette — always taken from the user's strip color swatches ────
+  // BASE_COLORS[0..4] are the 5 swatches the user sees and can edit.
+  // We shuffle so the strip routing doesn't bias one color to one strip.
+  const pal      = shuffle(BASE_COLORS.map(c => c.slice()));
+  const stripMap = shuffle([0, 1, 2, 3, 4]);
+
+  // palC(i) cycles through the 5 user colors by note index.
+  // scC(s) picks by the (already shuffled) strip index.
+  const palC = i => pal[((i % pal.length) + pal.length) % pal.length].slice();
+  const scC  = s => pal[s % pal.length].slice();
+
+  // ── Run helper ───────────────────────────────────────────────────────
+  // Emit sequential single-LED events from startLed → endLed, each
+  // staggered by stepMs. Returns an array of event objects.
+  // Run a line of LEDs from startLed to endLed, staggered by stepMs each.
+  function runLeds(t, s, startLed, endLed, ef, dur, br, c, stepMs) {
+    const dir   = endLed >= startLed ? 1 : -1;
+    const count = Math.abs(endLed - startLed) + 1;
+    const out   = [];
+    for (let k = 0; k < count; k++) {
+      out.push({
+        time_ms:     t + k * stepMs,
+        strip:       s,
+        brightness:  clamp(br * (1 - k * 0.05), 40, 255),
+        effect:      ef,
+        duration_ms: dur,
+        led_pos:     startLed + k * dir,
+        color:       Array.isArray(c) ? c.slice() : c,
+      });
+    }
+    return out;
+  }
+
+  // Flash the same LED N times in rapid succession (stutter effect).
+  function stutterLed(t, s, led, count, gapMs, ef, dur, br, c) {
+    return Array.from({length: count}, (_, k) => ({
+      time_ms:     t + k * gapMs,
+      strip:       s,
+      brightness:  clamp(br * (1 - k * 0.18), 40, 255),
+      effect:      ef,
+      duration_ms: dur,
+      led_pos:     led,
+      color:       Array.isArray(c) ? c.slice() : c,
+    }));
+  }
+
+  // Fire N random individual LEDs spread randomly across spreadMs window.
+  function sparkleLeds(t, s, count, ef, dur, br, c, spreadMs) {
+    return Array.from({length: count}, (_, k) => ({
+      time_ms:     t + Math.floor(Math.random() * Math.max(spreadMs, 1)),
+      strip:       s,
+      brightness:  clamp(br * rf(0.45, 1.0), 40, 255),
+      effect:      ef,
+      duration_ms: dur,
+      led_pos:     ri(0, NUM_LEDS - 1),
+      color:       Array.isArray(c) ? c.slice() : c,
+    }));
+  }
+
+  // Fire from both edges simultaneously toward center (inward=true)
+  // or from center outward (inward=false).
+  function mirrorRun(t, s, ef, dur, br, c, stepMs, inward) {
+    const half = Math.floor(NUM_LEDS / 2);
+    const evts = [];
+    for (let k = 0; k < half; k++) {
+      const ledA = inward ? k                : half - k;
+      const ledB = inward ? NUM_LEDS - 1 - k : half + k;
+      const msBr = clamp(br * (1 - k * 0.045), 40, 255);
+      const msT  = t + k * stepMs;
+      evts.push({ time_ms: msT, strip: s, brightness: msBr, effect: ef, duration_ms: dur, led_pos: ledA, color: Array.isArray(c) ? c.slice() : c });
+      evts.push({ time_ms: msT, strip: s, brightness: msBr, effect: ef, duration_ms: dur, led_pos: ledB, color: Array.isArray(c) ? c.slice() : c });
+    }
+    return evts;
+  }
+
+  // ── Generative grammar ────────────────────────────────────────────────
+  // Instead of a fixed style list, each segment of the song gets a
+  // completely fresh "grammar" built from randomly-chosen independent
+  // parameters. The combinatorial space is huge — spatial mode × color
+  // mode × effect pool × energy mapping × direction mode × density ...
+  // makes effectively endless unique patterns.
+  function buildGrammar(gramPal) {
+
+    // === Randomly choose independent axes of variation ================
+
+    // 1. SPATIAL — how an event maps to LEDs in physical space
+    const SPATIAL = pick([
+      'dot',          // one or a few individual LEDs
+      'run-fwd',      // sequential run forward
+      'run-back',     // sequential run backward
+      'run-alt',      // direction alternates each note
+      'run-energy',   // direction follows local energy
+      'mirror-out',   // simultaneous burst from center outward
+      'mirror-in',    // edges closing to center
+      'scatter',      // random individual dots spread over time
+      'zone-drift',   // active window drifts across strip
+      'comet-fwd',    // comet dim-tail → bright-head forward
+      'comet-back',   // comet backward
+      'stutter',      // same LED fires repeatedly
+      'cross-strip',  // ripple echoes across adjacent strips
+      'full-strip',   // whole strip, always
+    ]);
+
+    // 2. DENSITY — how many LEDs (or events) fire per note
+    const densityLo = ri(1, 3);
+    const densityHi = Math.min(ri(densityLo + 1, 8), NUM_LEDS - 1);
+
+    // 3. RUN LENGTH (for run-* modes)
+    const runMin  = ri(2, 5);
+    const runMax  = ri(runMin + 2, NUM_LEDS - 1);
+
+    // 4. EFFECT POOL — which effects this grammar uses, in rotation
+    const allEffects = ['flash', 'strobe', 'pulse', 'fade', 'hold', 'wave'];
+    const poolSize   = ri(1, 4);
+    const effectPool = shuffle(allEffects).slice(0, poolSize);
+    let   efIdx = 0, efCount = 0;
+    const efEvery = ri(2, 8);  // rotate every N notes
+
+    // 5. DURATION SNAP — which musical grid to snap durations to
+    const durSnap = pick([0.125, 0.25, 0.25, 0.5, 0.5, 1.0]);
+
+    // 6. ENERGY MAPPING — what "high energy" does to the pattern
+    const energyMode = pick([
+      'size',       // bigger run / more dots at high energy
+      'fullstrip',  // whole strip blast at high energy thresholds
+      'count',      // fire more events at high energy
+      'effect',     // switch to more intense effect at high energy
+      'speed',      // faster step timing at high energy
+      'brightness', // max brightness at high energy
+    ]);
+    const energyThreshold = rf(0.42, 0.78);  // fraction above which = "high"
+
+    // 7. COLOR MODE — how colors cycle across notes
+    const colorMode = pick([
+      'cycle',       // note index cycles through all 5 swatches
+      'per-strip',   // strip index determines color
+      'pair',        // alternates between swatch 0 and swatch 2
+      'energy',      // low energy = swatch 1, high energy = swatch 0
+      'progress',    // hue-rotates forward as song progresses
+      'single',      // always swatch 0 only
+      'invert',      // cycles backwards through swatches
+    ]);
+
+    // 8. STEP TIMING (for runs) — how fast the run moves
+    const stepFrac = rf(0.03, 0.14);  // stepMs = beat_ms * stepFrac
+
+    // === Stateful vars ================================================
+    let dir = pick([-1, 1]);          // current direction
+    let pos = ri(0, NUM_LEDS - 1);    // bouncing/chase position
+    let zoneCenter = ri(4, 15), zoneDir = 1;
+
+    // === Color resolver ==============================================
+    function getColor(i, s, energy, progress) {
+      switch (colorMode) {
+        case 'cycle':    return gramPal[((i)                 % gramPal.length + gramPal.length) % gramPal.length].slice();
+        case 'invert':   return gramPal[((gramPal.length - 1 - i % gramPal.length) + gramPal.length) % gramPal.length].slice();
+        case 'per-strip':return gramPal[s % gramPal.length].slice();
+        case 'pair':     return gramPal[(i % 2 === 0 ? 0 : 2) % gramPal.length].slice();
+        case 'energy':   return gramPal[(energy > energyThreshold ? 0 : 3) % gramPal.length].slice();
+        case 'progress': return gramPal[Math.floor(progress * gramPal.length) % gramPal.length].slice();
+        case 'single':   return gramPal[0].slice();
+      }
+    }
+
+    // === Effect resolver (with rotation) =============================
+    function nextEffect(energy) {
+      efCount++;
+      if (efCount >= efEvery) { efCount = 0; efIdx = (efIdx + 1) % effectPool.length; }
+      if (energyMode === 'effect' && energy > energyThreshold) {
+        // At high energy, always use a more intense effect
+        return energy > 0.82 ? 'strobe' : 'flash';
+      }
+      return effectPool[efIdx];
+    }
+
+    // === The map function ============================================
+    return {
+      name: `${SPATIAL}|${colorMode}|${effectPool.join(':')}|${energyMode}`,
+      map(ev, s, i) {
+        const energy  = ev._energy   || 0.5;
+        const prog    = ev._progress || 0;
+        const loud    = energy > energyThreshold;
+        const ef      = nextEffect(energy);
+        const dur     = snap(ev.duration_ms, durSnap);
+        const br      = ev.brightness;
+        const color   = getColor(i, s, energy, prog);
+        const stepMs  = Math.max(Math.round(beat_ms * stepFrac), 12);
+
+        // Energy overrides
+        if (energyMode === 'fullstrip' && loud) {
+          return { led_pos: 255, effect: ef, duration_ms: dur, color, brightness: clamp(br * 1.1, 100, 255) };
+        }
+        const density = energyMode === 'count' && loud ? densityHi : densityLo;
+        const rLen    = energyMode === 'size' && loud ? runMax : ri(runMin, Math.round(runMin + (runMax - runMin) * energy));
+
+        switch (SPATIAL) {
+
+          case 'dot': {
+            if (density === 1) {
+              pos = ri(0, NUM_LEDS - 1);
+              return { led_pos: pos, effect: ef, duration_ms: dur, color, brightness: energyMode === 'brightness' ? clamp(br * (0.5 + energy), 40, 255) : br };
+            }
+            return Array.from({length: density}, (_, k) => ({
+              time_ms: ev.time_ms + k * Math.round(beat_ms * 0.04),
+              strip: s, led_pos: ri(0, NUM_LEDS - 1), effect: ef, duration_ms: dur,
+              color: getColor(i + k, s, energy, prog),
+              brightness: clamp(br * (1 - k * 0.22), 40, 255),
+            }));
+          }
+
+          case 'run-fwd':
+          case 'run-back':
+          case 'run-alt':
+          case 'run-energy': {
+            if (SPATIAL === 'run-alt')    dir *= -1;
+            if (SPATIAL === 'run-energy') dir = loud ? 1 : -1;
+            if (SPATIAL === 'run-back')   dir = -1;
+            if (SPATIAL === 'run-fwd')    dir =  1;
+            const maxStart = Math.max(0, NUM_LEDS - 1 - rLen);
+            const start = dir > 0 ? ri(0, maxStart) : ri(rLen, NUM_LEDS - 1);
+            const end   = clamp(start + dir * rLen, 0, NUM_LEDS - 1);
+            return runLeds(ev.time_ms, s, start, end, ef, Math.round(stepMs * 2.2), br, color, energyMode === 'speed' && loud ? Math.round(stepMs * 0.5) : stepMs);
+          }
+
+          case 'mirror-out': {
+            const sm = Math.max(Math.round(stepMs * (energyMode === 'speed' && loud ? 0.5 : 1)), 10);
+            return mirrorRun(ev.time_ms, s, ef, dur, br, color, sm, false);
+          }
+
+          case 'mirror-in': {
+            const sm = Math.max(Math.round(stepMs * (energyMode === 'speed' && loud ? 0.5 : 1)), 10);
+            return mirrorRun(ev.time_ms, s, ef, dur, br, color, sm, true);
+          }
+
+          case 'scatter': {
+            const count  = energyMode === 'count' ? (loud ? densityHi : densityLo) : density;
+            const spread = Math.round(beat_ms * 0.13);
+            return sparkleLeds(ev.time_ms, s, count, ef, dur, br, color, spread);
+          }
+
+          case 'zone-drift': {
+            if (i % ri(2, 5) === 0) {
+              zoneCenter += zoneDir * ri(1, 3);
+              if (zoneCenter > 16) { zoneCenter = 16; zoneDir = -1; }
+              if (zoneCenter < 3)  { zoneCenter = 3;  zoneDir =  1; }
+            }
+            const hw  = Math.round(energyMode === 'size' ? (loud ? 5 : 2) : rf(1.5, 4));
+            const led = clamp(zoneCenter + ri(-hw, hw), 0, NUM_LEDS - 1);
+            return { led_pos: led, effect: ef, duration_ms: dur, color, brightness: br };
+          }
+
+          case 'comet-fwd':
+          case 'comet-back': {
+            const cDir   = SPATIAL === 'comet-fwd' ? 1 : -1;
+            const start2 = cDir > 0 ? 0 : NUM_LEDS - 1;
+            const end2   = cDir > 0 ? NUM_LEDS - 1 : 0;
+            const sm     = Math.max(Math.round(dur / NUM_LEDS), 11);
+            const evts   = [];
+            for (let k = 0; k < NUM_LEDS; k++) {
+              const led2 = start2 + k * cDir;
+              const frac = k / (NUM_LEDS - 1);
+              const br2  = clamp(br * Math.pow(frac, 0.5), 16, 255);
+              const ef2  = frac > 0.80 ? 'flash' : frac > 0.40 ? ef : 'fade';
+              evts.push({ time_ms: ev.time_ms + k * sm, strip: s, brightness: br2, effect: ef2, duration_ms: Math.round(sm * (frac > 0.6 ? 1.8 : 3.0)), led_pos: led2, color: getColor(i + (frac > 0.7 ? 0 : 1), s, energy, prog) });
+            }
+            return evts;
+          }
+
+          case 'stutter': {
+            const reps = energyMode === 'count' && loud ? ri(3, 6) : ri(2, 4);
+            const gap  = Math.max(Math.round(beat_ms * 0.09), 40);
+            return stutterLed(ev.time_ms, s, ri(0, NUM_LEDS - 1), reps, gap, ef, Math.round(gap * 0.8), br, color);
+          }
+
+          case 'cross-strip': {
+            const waves = loud ? ri(3, 4) : ri(1, 2);
+            const delay = Math.max(Math.round(beat_ms * 0.08), 30);
+            const led2  = ri(0, NUM_LEDS - 1);
+            return Array.from({length: waves + 1}, (_, k) => ({
+              time_ms:     ev.time_ms + k * delay,
+              strip:       (s + k) % NUM_STRIPS,
+              brightness:  clamp(br * Math.pow(0.70, k), 28, 255),
+              effect:      k === 0 ? 'flash' : ef,
+              duration_ms: dur,
+              led_pos:     clamp(led2 + ri(-2, 2), 0, NUM_LEDS - 1),
+              color:       getColor(i + k, (s + k) % NUM_STRIPS, energy, prog),
+            }));
+          }
+
+          case 'full-strip':
+          default:
+            return { led_pos: 255, effect: ef, duration_ms: dur, color, brightness: br };
+        }
+      }
+    };
+  }
+
+  // ── Song-arc: generate 3–4 fresh grammars, one per segment ──────────
+  const arcLen  = ri(3, 4);
+  const arc     = Array.from({length: arcLen}, () => buildGrammar(pal));
+
+  const songDur = base[base.length - 1].time_ms + beat_ms * 2;
+  const segLen  = songDur / arcLen;
+  const xfadeMs = segLen * 0.10;
+
+  function arcGrammars(t) {
+    const seg  = t / segLen;
+    const si   = Math.min(Math.floor(seg), arcLen - 1);
+    const frac = seg - Math.floor(seg);
+    if (frac > (1 - xfadeMs / segLen) && si < arcLen - 1) {
+      const blend = (frac - (1 - xfadeMs / segLen)) / (xfadeMs / segLen);
+      return [{ g: arc[si], w: 1 - blend }, { g: arc[si + 1], w: blend }];
+    }
+    return [{ g: arc[si], w: 1 }];
+  }
+
+  // ── Local energy ─────────────────────────────────────────────────────
+  const ENERGY_WIN = 6;
+  function localEnergy(i) {
+    let sum = 0, cnt = 0;
+    for (let k = Math.max(0, i - ENERGY_WIN); k <= Math.min(base.length - 1, i + ENERGY_WIN); k++) {
+      sum += base[k].brightness; cnt++;
+    }
+    return sum / cnt / 255;
+  }
+
+  // ── Build output ─────────────────────────────────────────────────────
+  const out = base.flatMap((ev, i) => {
+    const s      = stripMap[Math.min(ev.strip, 4)];
+    const energy = localEnergy(i);
+    const active = arcGrammars(ev.time_ms);
+    const allEvts = [];
+
+    for (const { g, w } of active) {
+      const augEv = Object.assign({}, ev, {
+        _energy:   energy,
+        _progress: ev.time_ms / songDur,
+      });
+      const res  = g.map.call(g, augEv, s, i);
+      const evts = Array.isArray(res) ? res : [res];
+      for (const m of evts) {
+        allEvts.push({
+          time_ms:     m.time_ms     !== undefined ? m.time_ms     : ev.time_ms,
+          strip:       m.strip       !== undefined ? m.strip       : s,
+          brightness:  clamp((m.brightness !== undefined ? m.brightness : ev.brightness) * w, 20, 255),
+          effect:      m.effect,
+          duration_ms: Math.max(m.duration_ms !== undefined ? m.duration_ms : 100, 40),
+          led_pos:     m.led_pos,
+          color:       m.color,
+        });
+      }
+    }
+    return allEvts;
+  });
+
+  out.sort((a, b) => a.time_ms - b.time_ms);
+
+  const wasActive = isPlaying || isDemo;
+  loadEvents(out, !audioLoaded, 'random');
+  hint.textContent = '\u2736 generated';
+  setTimeout(() => { hint.textContent = ''; }, 2000);
+  if (wasActive) setTimeout(() => startPlayback(), 80);
+}
+
+document.getElementById('randomize-btn').addEventListener('click', randomizeShow);
+
+// ── Audio master-clock event listeners ───────────────────────────────
+// Fires once the audio is actually outputting sound after play() is called
+audioEl.addEventListener('playing', () => {
+  if (!isPlaying) {
+    isPlaying     = true;
+    playStartWall = Date.now();
+    playStartTime = audioEl.currentTime * 1000 - getAudioOffsetMs();
+    playBtn.textContent = '⏸ Pause';
+    playBtn.disabled    = false;
+  }
+});
+
+// Audio finished naturally — stop the visualizer too
+audioEl.addEventListener('ended', () => {
+  if (isPlaying) stopPlayback();
+});
+
+// Audio is buffering mid-playback — freeze LEDs until it resumes
+audioEl.addEventListener('waiting', () => {
+  if (isPlaying) {
+    isPlaying = false;
+    playBtn.textContent = '⌛ Buffering…';
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────
+buildStripRows();
+buildColorSwatches();
+loadEvents(generateShow(), true, 'demo');
+
+// ── Auto-load 00001 files ─────────────────────────────────────────────
+// Works when served from a local server or Firefox (file://). Chrome from
+// file:// will block fetch — that's expected; user can upload manually.
+(async function tryAutoLoad() {
+  try {
+    const midRes = await fetch('./00001.mid');
+    if (midRes.ok) {
+      const buf    = await midRes.arrayBuffer();
+      const midi   = new Midi(buf);
+      const bpm    = parseInt(bpmInput.value, 10) || 120;
+      const offset = getMidiOffsetMs();
+      const mode   = document.querySelector('input[name="mode"]:checked').value;
+      const evts   = mode === 'cue'
+        ? parseCueMode(midi, bpm, offset)
+        : parseInterpretMode(midi, bpm, offset);
+      if (evts.length) {
+        midiFileName           = '00001.mid';
+        fileNameEl.textContent = '00001.mid';
+        loadStatus.classList.remove('visible');
+        loadEvents(evts, false, mode);
+      }
+    }
+  } catch(e) { /* fetch blocked on file:// in Chrome — silent */ }
+
+  try {
+    // Load audio
+    const audioRes = await fetch('./00001.mp3');
+    if (audioRes.ok) {
+      const blob = await audioRes.blob();
+      if (audioObjectURL) { URL.revokeObjectURL(audioObjectURL); }
+      audioObjectURL = URL.createObjectURL(blob);
+      audioFileName  = '00001.mp3';
+      audioLoaded    = true;
+      audioEl.src    = audioObjectURL;
+      audioEl.load();
+      audioNameEl.textContent = '00001.mp3';
+      audioBadge.textContent  = '♪ 00001.mp3';
+      audioBadge.classList.add('visible');
+    }
+  } catch(e) { /* silent */ }
+})();
+
+// Demo auto-loop
+function checkDemoLoop() {
+  if (isDemo && !isPlaying && playbackTime >= totalDuration + 500) {
+    seekTo(0);
+    setTimeout(() => { if (isDemo) startPlayback(); }, 800);
+  }
+  setTimeout(checkDemoLoop, 500);
+}
+setTimeout(() => {
+  if (isDemo) startPlayback();
+  checkDemoLoop();
+}, 600);
+
+// Ensure RAF always runs
+(function ensureRaf() {
+  if (!rafId) rafId = requestAnimationFrame(animationLoop);
+  setTimeout(ensureRaf, 100);
+})();
+</script>
+</body>
+</html>

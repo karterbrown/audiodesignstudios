@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pico Light Show Visualizer</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.6/build/Midi.js"></script>
+  <style>
+    /* ── Reset & Base ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d0f;
+      --surface:   #161619;
+      --surface2:  #1e1e23;
+      --border:    #2a2a35;
+      --text:      #e0e0e8;
+      --muted:     #6b6b80;
+      --accent:    #00c8ff;
+      --green:     #00c832;
+      --strip0:    rgb(0,200,255);
+      --strip1:    rgb(0,60,255);
+      --strip2:    rgb(148,0,211);
+      --strip3:    rgb(255,200,0);
+      --strip4:    rgb(0,200,50);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Layout ────────────────────────────────────────────────────── */
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Header ────────────────────────────────────────────────────── */
+    .header { text-align: center; padding: 8px 0 4px; }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      background: linear-gradient(90deg, var(--strip0), var(--strip2), var(--strip4));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 0.875rem;
+    }
+
+    /* ── Controls Bar ──────────────────────────────────────────────── */
+    .controls-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+    }
+    .ctrl-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ctrl-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ── Upload buttons ────────────────────────────────────────────── */
+    .upload-btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    #file-btn {
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    #file-btn:hover { background: rgba(0,200,255,0.12); }
+
+    #audio-btn {
+      background: var(--surface2);
+      border: 1px solid var(--green);
+      color: var(--green);
+    }
+    #audio-btn:hover { background: rgba(0,200,50,0.12); }
+
+    #py-btn {
+      background: var(--surface2);
+      border: 1px solid #ffaa55;
+      color: #ffaa55;
+    }
+    #py-btn:hover { background: rgba(255,170,85,0.12); }
+
+    input[type="file"] { display: none; }
+
+    .upload-name {
+      color: var(--muted);
+      font-size: 0.8rem;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Mode toggle ───────────────────────────────────────────────── */
+    .mode-toggle {
+      display: flex;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .mode-toggle label {
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: background 0.15s, color 0.15s;
+      color: var(--muted);
+    }
+    .mode-toggle input[type="radio"] { display: none; }
+    .mode-toggle input[type="radio"]:checked + label {
+      background: rgba(0,200,255,0.18);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Number inputs ─────────────────────────────────────────────── */
+    .num-input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      width: 72px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    .num-input:focus { outline: 1px solid var(--accent); }
+
+    /* ── Action Buttons ────────────────────────────────────────────── */
+    .btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-play   { background: #1a6a2a; color: #7dff9e; }
+    .btn-play:hover:not(:disabled)   { background: #1f7d33; }
+    .btn-stop   { background: #3a1a1a; color: #ff7d7d; }
+    .btn-stop:hover:not(:disabled)   { background: #501f1f; }
+    .btn-export { background: #1a3a6a; color: #7db8ff; }
+    .btn-export:hover:not(:disabled) { background: #1f4a7d; }
+
+    /* ── Speed selector ────────────────────────────────────────────── */
+    .speed-sel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+    }
+
+    /* ── Volume slider ─────────────────────────────────────────────── */
+    #vol-slider {
+      width: 80px;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface2);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    #vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--green);
+      cursor: pointer;
+    }
+    #vol-slider::-moz-range-thumb {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: var(--green);
+      cursor: pointer;
+      border: none;
+    }
+    #mute-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 5px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #mute-btn:hover { color: var(--text); border-color: var(--muted); }
+    #mute-btn.muted { color: #ff7d7d; border-color: #7d3a3a; }
+
+    /* ── Loading indicator ─────────────────────────────────────────── */
+    #load-status {
+      color: var(--accent);
+      font-size: 0.82rem;
+      display: none;
+    }
+    #load-status.visible { display: block; }
+
+    /* ── Stats Bar ─────────────────────────────────────────────────── */
+    #stats-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 18px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    #stats-bar.visible { display: flex; }
+    .stat-item { color: var(--muted); }
+    .stat-item strong { color: var(--text); }
+    .stat-strip-bars {
+      display: flex;
+      gap: 4px;
+      align-items: flex-end;
+      height: 24px;
+    }
+    .strip-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .strip-bar {
+      width: 14px;
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      transition: height 0.3s;
+    }
+    .strip-bar-lbl { font-size: 0.65rem; color: var(--muted); }
+
+    /* ── Visualizer Panel ──────────────────────────────────────────── */
+    .viz-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      position: relative;
+    }
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .viz-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    #time-display {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    #demo-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      background: rgba(148,0,211,0.25);
+      color: #cc77ff;
+      border: 1px solid #7700bb;
+      border-radius: 10px;
+    }
+    #audio-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      background: rgba(0,200,50,0.15);
+      color: #66ff99;
+      border: 1px solid #007722;
+      border-radius: 10px;
+      display: none;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #audio-badge.visible { display: inline-block; }
+
+    .strip-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .strip-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .strip-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 46px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    canvas.strip-canvas {
+      display: block;
+      border-radius: 4px;
+      background: #111114;
+    }
+
+    /* ── Timeline ──────────────────────────────────────────────────── */
+    .timeline-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+    #timeline-slider {
+      width: 100%;
+      height: 8px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--surface2);
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+    #timeline-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: 0 0 6px var(--accent);
+    }
+    #timeline-slider::-moz-range-thumb {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ── Event Log ─────────────────────────────────────────────────── */
+    .log-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .log-header:hover { background: var(--surface2); }
+    .log-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .log-toggle-btn {
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .log-body { display: none; padding: 0 18px 14px; }
+    .log-body.open { display: block; }
+    .log-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+    .btn-copy {
+      padding: 5px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+    }
+    .btn-copy:hover { background: var(--border); }
+    #event-table-wrap {
+      max-height: 260px;
+      overflow-y: auto;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    #event-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    #event-table th {
+      background: var(--surface2);
+      color: var(--muted);
+      text-align: left;
+      padding: 6px 10px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    #event-table td {
+      padding: 5px 10px;
+      border-bottom: 1px solid #1f1f26;
+      font-family: monospace;
+    }
+    #event-table tr:last-child td { border-bottom: none; }
+    #event-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .effect-tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* ── Keyboard shortcut hint ────────────────────────────────────── */
+    .kb-hint {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #3a3a50;
+    }
+    .kb-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-family: monospace;
+      color: var(--muted);
+    }
+
+    /* ── Scrollbars ────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- Hidden audio element — the actual playback engine for MP3 sync -->
+<audio id="audio-el" preload="auto"></audio>
+
+<div class="page">
+
+  <!-- ================================================================
+       HEADER
+       ================================================================ -->
+  <header class="header">
+    <h1>Pico Light Show Visualizer</h1>
+    <p>Upload a MIDI file to preview and export your LED light show</p>
+  </header>
+
+  <!-- ================================================================
+       CONTROLS BAR
+       ================================================================ -->
+  <section class="controls-bar" aria-label="Controls">
+
+    <!-- MIDI File Upload -->
+    <div class="ctrl-group">
+      <button class="upload-btn" id="file-btn" onclick="document.getElementById('file-input').click()">
+        🎹 Upload MIDI
+      </button>
+      <input type="file" id="file-input" accept=".mid,.midi" />
+      <span class="upload-name" id="file-name">No MIDI loaded</span>
+    </div>
+
+    <!-- MP3 Audio Upload -->
+    <div class="ctrl-group">
+      <button class="upload-btn" id="audio-btn" onclick="document.getElementById('audio-input').click()">
+        ♪ Upload MP3
+      </button>
+      <input type="file" id="audio-input" accept="audio/*,.mp3,.wav,.ogg,.flac,.aac,.m4a" />
+      <span class="upload-name" id="audio-name">No audio loaded</span>
+    </div>
+
+    <!-- Events .py Upload -->
+    <div class="ctrl-group">
+      <button class="upload-btn" id="py-btn" onclick="document.getElementById('py-input').click()">
+        🐍 Load .py
+      </button>
+      <input type="file" id="py-input" accept=".py,text/plain" />
+      <span class="upload-name" id="py-name">No .py loaded</span>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- Mode -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Mode</span>
+      <div class="mode-toggle">
+        <input type="radio" name="mode" id="mode-cue" value="cue" />
+        <label for="mode-cue">Cue</label>
+        <input type="radio" name="mode" id="mode-interpret" value="interpret" checked />
+        <label for="mode-interpret">Interpret</label>
+      </div>
+    </div>
+
+    <!-- BPM -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">BPM</span>
+      <input type="number" id="bpm-input" class="num-input" value="120" min="40" max="300" />
+    </div>
+
+    <!-- Offset -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Offset ms</span>
+      <input type="number" id="offset-input" class="num-input" value="0" min="-10000" max="10000" />
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- Playback buttons -->
+    <div class="ctrl-group">
+      <button class="btn btn-play" id="play-btn" disabled>▶ Play</button>
+      <button class="btn btn-stop" id="stop-btn">■ Reset</button>
+    </div>
+
+    <!-- Speed -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Speed</span>
+      <select class="speed-sel" id="speed-sel">
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option>
+        <option value="2">2×</option>
+      </select>
+    </div>
+
+    <!-- Volume (only meaningful when audio is loaded) -->
+    <div class="ctrl-group">
+      <span class="ctrl-label">Vol</span>
+      <input type="range" id="vol-slider" min="0" max="100" value="80" />
+      <button id="mute-btn" title="Mute / Unmute audio">🔊</button>
+    </div>
+
+    <div class="ctrl-divider"></div>
+
+    <!-- Export -->
+    <div class="ctrl-group">
+      <button class="btn btn-export" id="export-btn" disabled>⬇ Export .py</button>
+    </div>
+
+    <!-- Loading indicator -->
+    <span id="load-status">⟳ Processing MIDI…</span>
+  </section>
+
+  <!-- ================================================================
+       STATS BAR
+       ================================================================ -->
+  <div id="stats-bar">
+    <div class="stat-item">Events: <strong id="stat-events">—</strong></div>
+    <div class="stat-item">Duration: <strong id="stat-duration">—</strong></div>
+    <div class="stat-item">Mode: <strong id="stat-mode">—</strong></div>
+    <div class="stat-item" style="display:flex;align-items:center;gap:8px;">
+      Per strip:
+      <div class="stat-strip-bars" id="stat-strip-bars"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       VISUALIZER PANEL
+       ================================================================ -->
+  <section class="viz-panel" aria-label="LED Visualizer">
+    <div class="viz-header">
+      <span class="viz-title">LED Strips</span>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span id="demo-badge">DEMO</span>
+        <span id="audio-badge">♪ —</span>
+        <span id="time-display">0:00.000</span>
+      </div>
+    </div>
+    <div class="strip-rows" id="strip-rows">
+      <!-- Rows injected by JS -->
+    </div>
+  </section>
+
+  <!-- ================================================================
+       TIMELINE SCRUBBER
+       ================================================================ -->
+  <div class="timeline-wrap">
+    <div class="timeline-labels">
+      <span id="tl-current">0:00.000</span>
+      <span id="tl-total">0:00.000</span>
+    </div>
+    <input type="range" id="timeline-slider" min="0" max="10000" value="0" step="1" />
+  </div>
+
+  <!-- ================================================================
+       EVENT LOG (collapsible)
+       ================================================================ -->
+  <div class="log-section">
+    <div class="log-header" id="log-toggle-header" role="button" aria-expanded="false" tabindex="0">
+      <span class="log-title">Event Log</span>
+      <button class="log-toggle-btn" id="log-toggle-btn" aria-label="Toggle event log">▼ Show</button>
+    </div>
+    <div class="log-body" id="log-body">
+      <div class="log-actions">
+        <button class="btn-copy" id="copy-py-btn">Copy as Python</button>
+      </div>
+      <div id="event-table-wrap">
+        <table id="event-table">
+          <thead>
+            <tr>
+              <th>Time (ms)</th>
+              <th>Strip</th>
+              <th>Brightness</th>
+              <th>Effect</th>
+              <th>Duration (ms)</th>
+              <th>LED Pos</th>
+            </tr>
+          </thead>
+          <tbody id="event-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard hints -->
+  <div class="kb-hint">
+    <kbd>Space</kbd> Play/Pause &nbsp;&nbsp; <kbd>R</kbd> Reset &nbsp;&nbsp; <kbd>M</kbd> Mute audio
+  </div>
+
+</div><!-- .page -->
+
+<script>
+/* ============================================================
+   PICO LIGHT SHOW VISUALIZER — core script
+   ============================================================ */
+
+// ── Constants ─────────────────────────────────────────────────────────
+const NUM_STRIPS = 5;
+const NUM_LEDS   = 20;
+
+const BASE_COLORS = [
+  [0, 200, 255],   // Electric blue
+  [0,  60, 255],   // Blue
+  [148,  0, 211],  // Purple
+  [255, 200,  0],  // Yellow
+  [0,  200,  50],  // Green
+];
+
+const CUE_NOTE_MAP = { 24: 0, 26: 1, 28: 2, 29: 3, 31: 4 };
+
+const DEMO_EVENTS = [
+  {time_ms:     0, strip: 0, brightness: 255, effect: 'flash',  duration_ms:  500, led_pos: 255},
+  {time_ms:   500, strip: 1, brightness: 200, effect: 'pulse',  duration_ms:  800, led_pos: 255},
+  {time_ms:  1000, strip: 2, brightness: 255, effect: 'strobe', duration_ms:  300, led_pos: 255},
+  {time_ms:  1500, strip: 3, brightness: 180, effect: 'fade',   duration_ms: 1000, led_pos: 255},
+  {time_ms:  2000, strip: 4, brightness: 200, effect: 'hold',   duration_ms: 1500, led_pos: 255},
+  {time_ms:  3000, strip: 0, brightness: 220, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  4000, strip: 0, brightness: 255, effect: 'pulse',  duration_ms: 1000, led_pos: 255},
+  {time_ms:  4000, strip: 2, brightness: 255, effect: 'pulse',  duration_ms: 1000, led_pos: 255},
+  {time_ms:  4000, strip: 4, brightness: 255, effect: 'pulse',  duration_ms: 1000, led_pos: 255},
+  {time_ms:  5500, strip: 1, brightness: 200, effect: 'flash',  duration_ms:  300, led_pos: 255},
+  {time_ms:  5800, strip: 3, brightness: 200, effect: 'flash',  duration_ms:  300, led_pos: 255},
+  {time_ms:  7000, strip: 0, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7200, strip: 1, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7400, strip: 2, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7600, strip: 3, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms:  7800, strip: 4, brightness: 180, effect: 'wave',   duration_ms: 2000, led_pos: 255},
+  {time_ms: 10000, strip: 0, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 1, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 2, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 3, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10000, strip: 4, brightness: 255, effect: 'strobe', duration_ms:  500, led_pos: 255},
+  {time_ms: 10600, strip: 0, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 1, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 2, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 3, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+  {time_ms: 10600, strip: 4, brightness: 255, effect: 'fade',   duration_ms: 1500, led_pos: 255},
+];
+
+// ── App State ──────────────────────────────────────────────────────────
+let events        = [];
+let isDemo        = true;
+let midiFileName  = '';
+let currentMode   = 'interpret';
+
+// Playback state
+let isPlaying     = false;
+let playStartWall = 0;
+let playStartTime = 0;
+let playbackTime  = 0;
+let playbackSpeed = 1;
+let totalDuration = 0;
+let rafId         = null;
+
+// Per-LED active events
+let activeEvents  = Array.from({length: NUM_STRIPS}, () => Array(NUM_LEDS).fill(null));
+let dispatchPtr   = 0;
+
+// Canvas refs
+let canvases = [];
+let ctxs     = [];
+
+// Audio state
+let audioObjectURL  = null;   // current blob URL for the loaded audio file
+let audioLoaded     = false;
+let audioMuted      = false;
+let audioFileName   = '';
+
+// ── Canvas sizing ──────────────────────────────────────────────────────
+const LED_RADIUS  = 11;
+const LED_SPACING = 28;
+const CANVAS_H    = 28;
+const CANVAS_W    = NUM_LEDS * LED_SPACING + 4;
+
+// ── DOM refs ───────────────────────────────────────────────────────────
+const audioEl      = document.getElementById('audio-el');
+const fileInput    = document.getElementById('file-input');
+const audioInput   = document.getElementById('audio-input');
+const pyInput      = document.getElementById('py-input');
+const fileNameEl   = document.getElementById('file-name');
+const audioNameEl  = document.getElementById('audio-name');
+const pyNameEl     = document.getElementById('py-name');
+const playBtn      = document.getElementById('play-btn');
+const stopBtn      = document.getElementById('stop-btn');
+const exportBtn    = document.getElementById('export-btn');
+const speedSel     = document.getElementById('speed-sel');
+const bpmInput     = document.getElementById('bpm-input');
+const offsetInput  = document.getElementById('offset-input');
+const timeDisplay  = document.getElementById('time-display');
+const tlCurrent    = document.getElementById('tl-current');
+const tlTotal      = document.getElementById('tl-total');
+const tlSlider     = document.getElementById('timeline-slider');
+const demoBadge    = document.getElementById('demo-badge');
+const audioBadge   = document.getElementById('audio-badge');
+const loadStatus   = document.getElementById('load-status');
+const statsBar     = document.getElementById('stats-bar');
+const eventTbody   = document.getElementById('event-tbody');
+const logBody      = document.getElementById('log-body');
+const logToggleBtn = document.getElementById('log-toggle-btn');
+const logHeader    = document.getElementById('log-toggle-header');
+const volSlider    = document.getElementById('vol-slider');
+const muteBtn      = document.getElementById('mute-btn');
+
+// ── Audio helpers ──────────────────────────────────────────────────────
+
+/** Sync the <audio> element position to the current playbackTime. */
+function audioSyncPosition(timeMs) {
+  if (!audioLoaded) return;
+  const t = timeMs / 1000;
+  // Only seek if meaningfully off (avoids jitter from tiny corrections)
+  if (Math.abs(audioEl.currentTime - t) > 0.05) {
+    audioEl.currentTime = t;
+  }
+}
+
+function audioPlay() {
+  if (!audioLoaded || isDemo) return;
+  audioEl.playbackRate = playbackSpeed;
+  audioEl.volume = audioMuted ? 0 : parseInt(volSlider.value, 10) / 100;
+  audioSyncPosition(playbackTime);
+  audioEl.play().catch(() => {}); // browser may block; swallow the rejection
+}
+
+function audioPause() {
+  if (!audioLoaded) return;
+  audioEl.pause();
+}
+
+function audioStop() {
+  if (!audioLoaded) return;
+  audioEl.pause();
+  audioEl.currentTime = 0;
+}
+
+function audioSeek(timeMs) {
+  if (!audioLoaded) return;
+  audioEl.currentTime = timeMs / 1000;
+}
+
+// ── Audio file upload ──────────────────────────────────────────────────
+audioInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Revoke previous blob URL to avoid memory leak
+  if (audioObjectURL) {
+    URL.revokeObjectURL(audioObjectURL);
+    audioObjectURL = null;
+  }
+
+  audioObjectURL = URL.createObjectURL(file);
+  audioFileName  = file.name;
+  audioLoaded    = true;
+
+  audioEl.src = audioObjectURL;
+  audioEl.load();
+
+  // Update UI
+  audioNameEl.textContent = file.name;
+  audioBadge.textContent  = `♪ ${file.name}`;
+  audioBadge.classList.add('visible');
+
+  // If we're already playing, start audio from current position
+  if (isPlaying && !isDemo) {
+    audioPlay();
+  }
+});
+
+// ── Volume / Mute controls ─────────────────────────────────────────────
+volSlider.addEventListener('input', () => {
+  if (!audioMuted) {
+    audioEl.volume = parseInt(volSlider.value, 10) / 100;
+  }
+});
+
+muteBtn.addEventListener('click', () => {
+  audioMuted = !audioMuted;
+  audioEl.volume   = audioMuted ? 0 : parseInt(volSlider.value, 10) / 100;
+  muteBtn.textContent = audioMuted ? '🔇' : '🔊';
+  muteBtn.classList.toggle('muted', audioMuted);
+});
+
+// ── Build strip rows ───────────────────────────────────────────────────
+function buildStripRows() {
+  const container = document.getElementById('strip-rows');
+  container.innerHTML = '';
+  canvases = []; ctxs = [];
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    const row = document.createElement('div');
+    row.className = 'strip-row';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'strip-label';
+    lbl.textContent = `Strip ${s}`;
+    lbl.style.color = `rgb(${BASE_COLORS[s].join(',')})`;
+
+    const cv = document.createElement('canvas');
+    cv.className = 'strip-canvas';
+    cv.width  = CANVAS_W;
+    cv.height = CANVAS_H;
+    cv.style.width  = CANVAS_W + 'px';
+    cv.style.height = CANVAS_H + 'px';
+
+    row.appendChild(lbl);
+    row.appendChild(cv);
+    container.appendChild(row);
+
+    canvases.push(cv);
+    ctxs.push(cv.getContext('2d', {alpha: false}));
+  }
+}
+
+// ── Color helpers ──────────────────────────────────────────────────────
+function getStripColor(stripIndex, currentTimeMs) {
+  const rotationOffset = Math.floor(currentTimeMs / 10000);
+  const colorIndex     = (stripIndex + rotationOffset) % 5;
+  return BASE_COLORS[colorIndex];
+}
+
+// ── Effect brightness factor ───────────────────────────────────────────
+function effectFactor(effect, t, ledIndex, nowMs) {
+  switch (effect) {
+    case 'strobe': return (Math.floor(nowMs / 25) % 2 === 0) ? 1.0 : 0.0;
+    case 'flash':  return Math.sqrt(Math.max(0, 1.0 - t));
+    case 'pulse':  return Math.sin(t * Math.PI);
+    case 'fade':   return Math.max(0, 1.0 - t);
+    case 'hold':
+      if (t < 0.75) return 1.0;
+      return Math.max(0, 1.0 - ((t - 0.75) / 0.25));
+    case 'wave':   return Math.sin((ledIndex / 19) * Math.PI + t * 2 * Math.PI) * 0.5 + 0.5;
+    default:       return 1.0;
+  }
+}
+
+// ── Compute LED color ──────────────────────────────────────────────────
+function computeLedColor(strip, led, nowMs) {
+  const ev = activeEvents[strip][led];
+  if (!ev) return [20, 20, 20];
+
+  const elapsed = nowMs - ev.time_ms;
+  let t = elapsed / ev.duration_ms;
+  t = Math.min(1.0, Math.max(0.0, t));
+
+  const factor = effectFactor(ev.effect, t, led, nowMs);
+  const [r, g, b] = getStripColor(strip, nowMs);
+  const scale = (ev.brightness / 255) * factor;
+
+  return [
+    Math.round(r * scale),
+    Math.round(g * scale),
+    Math.round(b * scale),
+  ];
+}
+
+// ── Draw a single strip ────────────────────────────────────────────────
+function drawStrip(strip, nowMs) {
+  const ctx = ctxs[strip];
+  const cv  = canvases[strip];
+  ctx.fillStyle = '#111114';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  const cy = CANVAS_H / 2;
+
+  for (let i = 0; i < NUM_LEDS; i++) {
+    const cx = 2 + i * LED_SPACING + LED_SPACING / 2;
+    const [r, g, b] = computeLedColor(strip, i, nowMs);
+    const lit = r > 30 || g > 30 || b > 30;
+
+    if (lit) {
+      const glowRadius = LED_RADIUS * 2.0;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+      grad.addColorStop(0, `rgba(${r},${g},${b},0.45)`);
+      grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, LED_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fill();
+
+    if (lit) {
+      const hiGrad = ctx.createRadialGradient(cx - 3, cy - 3, 1, cx, cy, LED_RADIUS);
+      hiGrad.addColorStop(0, 'rgba(255,255,255,0.22)');
+      hiGrad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, LED_RADIUS, 0, Math.PI * 2);
+      ctx.fillStyle = hiGrad;
+      ctx.fill();
+    }
+  }
+}
+
+// ── Event activation / expiry ──────────────────────────────────────────
+function activateEvent(ev) {
+  if (ev.led_pos === 255) {
+    for (let i = 0; i < NUM_LEDS; i++) activeEvents[ev.strip][i] = ev;
+  } else {
+    for (let i = 0; i < NUM_LEDS; i++) {
+      const dist = Math.abs(i - ev.led_pos);
+      if (dist === 0) {
+        activeEvents[ev.strip][i] = ev;
+      } else if (dist === 1) {
+        activeEvents[ev.strip][i] = Object.assign({}, ev, {brightness: Math.round(ev.brightness * 0.40)});
+      } else if (dist === 2) {
+        activeEvents[ev.strip][i] = Object.assign({}, ev, {brightness: Math.round(ev.brightness * 0.15)});
+      }
+      // Beyond ±2: leave whatever is already there
+    }
+  }
+}
+
+function clearActiveEvents() {
+  for (let s = 0; s < NUM_STRIPS; s++)
+    for (let i = 0; i < NUM_LEDS; i++)
+      activeEvents[s][i] = null;
+}
+
+function expireEvents(nowMs) {
+  for (let s = 0; s < NUM_STRIPS; s++)
+    for (let i = 0; i < NUM_LEDS; i++) {
+      const ev = activeEvents[s][i];
+      if (ev && nowMs > ev.time_ms + ev.duration_ms) activeEvents[s][i] = null;
+    }
+}
+
+function dispatchUpTo(nowMs) {
+  while (dispatchPtr < events.length && events[dispatchPtr].time_ms <= nowMs) {
+    activateEvent(events[dispatchPtr]);
+    dispatchPtr++;
+  }
+}
+
+// ── Seek ──────────────────────────────────────────────────────────────
+function seekTo(T) {
+  playbackTime = T;
+  clearActiveEvents();
+  dispatchPtr  = 0;
+
+  for (let i = 0; i < events.length; i++) {
+    const ev = events[i];
+    if (ev.time_ms <= T) {
+      if (ev.time_ms + ev.duration_ms > T) activateEvent(ev);
+      dispatchPtr = i + 1;
+    } else {
+      break;
+    }
+  }
+
+  audioSeek(T);
+}
+
+// ── Animation loop ────────────────────────────────────────────────────
+function animationLoop() {
+  if (isPlaying) {
+    playbackTime = playStartTime + (Date.now() - playStartWall) * playbackSpeed;
+
+    if (playbackTime >= totalDuration + 2000) {
+      playbackTime = totalDuration + 2000;
+      stopPlayback();
+    }
+  }
+
+  expireEvents(playbackTime);
+  if (isPlaying) dispatchUpTo(playbackTime);
+
+  for (let s = 0; s < NUM_STRIPS; s++) drawStrip(s, playbackTime);
+
+  updateTimeUI(playbackTime);
+
+  rafId = requestAnimationFrame(animationLoop);
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function fmtMs(ms) {
+  ms = Math.max(0, ms);
+  const totalSec = Math.floor(ms / 1000);
+  const m     = Math.floor(totalSec / 60);
+  const s     = totalSec % 60;
+  const milli = Math.floor(ms % 1000);
+  return `${m}:${String(s).padStart(2,'0')}.${String(milli).padStart(3,'0')}`;
+}
+
+function updateTimeUI(nowMs) {
+  const clamped = Math.max(0, Math.min(nowMs, totalDuration));
+  const t = fmtMs(clamped);
+  timeDisplay.textContent = t;
+  tlCurrent.textContent   = t;
+  if (totalDuration > 0) {
+    tlSlider.value = String(Math.round((clamped / totalDuration) * 10000));
+  }
+}
+
+// ── Playback controls ─────────────────────────────────────────────────
+function startPlayback() {
+  if (isPlaying) return;
+  if (playbackTime >= totalDuration + 1000) {
+    seekTo(0);
+    dispatchPtr = 0;
+  }
+  isPlaying     = true;
+  playStartWall = Date.now();
+  playStartTime = playbackTime;
+  playbackSpeed = parseFloat(speedSel.value);
+  playBtn.textContent = '⏸ Pause';
+  audioPlay();
+}
+
+function pausePlayback() {
+  if (!isPlaying) return;
+  isPlaying = false;
+  playBtn.textContent = '▶ Play';
+  audioPause();
+}
+
+function stopPlayback() {
+  isPlaying = false;
+  playBtn.textContent = '▶ Play';
+  audioPause();
+}
+
+function resetPlayback() {
+  stopPlayback();
+  audioStop();
+  seekTo(0);
+  dispatchPtr = 0;
+  dispatchUpTo(0);
+}
+
+// ── Load events ───────────────────────────────────────────────────────
+function loadEvents(newEvents, demo = false, mode = 'interpret') {
+  stopPlayback();
+  audioStop();
+
+  events        = newEvents;
+  isDemo        = demo;
+  currentMode   = mode;
+  totalDuration = events.reduce((mx, ev) => Math.max(mx, ev.time_ms + ev.duration_ms), 0);
+
+  tlTotal.textContent = fmtMs(totalDuration);
+  demoBadge.style.display = demo ? 'inline-block' : 'none';
+
+  clearActiveEvents();
+  dispatchPtr  = 0;
+  playbackTime = 0;
+
+  updateEventTable();
+  updateStatsBar();
+
+  playBtn.disabled   = false;
+  exportBtn.disabled = demo;
+
+  if (!rafId) rafId = requestAnimationFrame(animationLoop);
+}
+
+// ── Event table ───────────────────────────────────────────────────────
+const EFFECT_TAG_COLORS = {
+  strobe: {bg:'rgba(255,80,80,0.18)',   color:'#ff7777'},
+  flash:  {bg:'rgba(255,170,80,0.18)',  color:'#ffbb66'},
+  pulse:  {bg:'rgba(80,170,255,0.18)',  color:'#77bbff'},
+  fade:   {bg:'rgba(170,136,255,0.18)', color:'#bb99ff'},
+  hold:   {bg:'rgba(80,255,170,0.18)',  color:'#66ffcc'},
+  wave:   {bg:'rgba(255,220,80,0.18)',  color:'#ffdd66'},
+};
+
+function updateEventTable() {
+  eventTbody.innerHTML = '';
+  const maxRows    = 2000;
+  const displayed  = events.slice(0, maxRows);
+  for (const ev of displayed) {
+    const tr = document.createElement('tr');
+    const tc = EFFECT_TAG_COLORS[ev.effect] || {bg:'#333',color:'#eee'};
+    tr.innerHTML = `
+      <td>${ev.time_ms}</td>
+      <td style="color:rgb(${BASE_COLORS[ev.strip].join(',')})">${ev.strip}</td>
+      <td>${ev.brightness}</td>
+      <td><span class="effect-tag" style="background:${tc.bg};color:${tc.color}">${ev.effect}</span></td>
+      <td>${ev.duration_ms}</td>
+      <td>${ev.led_pos === 255 ? '— (all)' : ev.led_pos}</td>
+    `;
+    eventTbody.appendChild(tr);
+  }
+  if (events.length > maxRows) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="6" style="text-align:center;color:var(--muted);padding:8px">
+      … and ${events.length - maxRows} more events</td>`;
+    eventTbody.appendChild(tr);
+  }
+}
+
+// ── Stats bar ─────────────────────────────────────────────────────────
+function updateStatsBar() {
+  const perStrip = Array(NUM_STRIPS).fill(0);
+  for (const ev of events) perStrip[ev.strip]++;
+
+  document.getElementById('stat-events').textContent   = events.length;
+  document.getElementById('stat-duration').textContent = fmtMs(totalDuration);
+  document.getElementById('stat-mode').textContent     =
+    isDemo ? 'Demo' : currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+
+  const maxCount = Math.max(...perStrip, 1);
+  const barsEl   = document.getElementById('stat-strip-bars');
+  barsEl.innerHTML = '';
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'strip-bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'strip-bar';
+    bar.style.background = `rgb(${BASE_COLORS[s].join(',')})`;
+    bar.style.height = Math.round((perStrip[s] / maxCount) * 24) + 'px';
+    bar.title = `Strip ${s}: ${perStrip[s]} events`;
+    const lbl = document.createElement('span');
+    lbl.className = 'strip-bar-lbl';
+    lbl.textContent = s;
+    wrap.appendChild(bar);
+    wrap.appendChild(lbl);
+    barsEl.appendChild(wrap);
+  }
+  statsBar.classList.add('visible');
+}
+
+// ── Effect / brightness helpers ────────────────────────────────────────
+function getEffect(durationMs, bpm) {
+  const beats = durationMs / (60000 / bpm);
+  if (beats < 0.25) return 'strobe';
+  if (beats < 0.5)  return 'flash';
+  if (beats < 1.0)  return 'pulse';
+  if (beats < 2.0)  return 'fade';
+  if (beats < 4.0)  return 'hold';
+  return 'wave';
+}
+
+function velocityToBrightness(v) {
+  return Math.max(0, Math.min(255, Math.round((v / 127) * 255)));
+}
+
+function cleanEvents(evts) {
+  for (const ev of evts) {
+    ev.brightness  = Math.max(0, Math.min(255, ev.brightness));
+    ev.strip       = Math.max(0, Math.min(4,   ev.strip));
+    ev.duration_ms = Math.max(10, ev.duration_ms);
+    if (ev.led_pos === undefined) ev.led_pos = 255;
+  }
+  evts.sort((a, b) => a.time_ms - b.time_ms);
+  return evts;
+}
+
+// ── MIDI Parsing — Cue Mode ───────────────────────────────────────────
+function parseCueMode(midi, bpm, offsetMs) {
+  let track = midi.tracks.find(t => t.name && t.name.toUpperCase().includes('LIGHTING CUES'));
+  if (!track) {
+    track = midi.tracks.reduce((best, t) => (t.notes.length > best.notes.length ? t : best), midi.tracks[0]);
+  }
+  if (!track) return [];
+
+  const evts = [];
+  for (const note of track.notes) {
+    if (!(note.midi in CUE_NOTE_MAP)) continue;
+    const strip      = CUE_NOTE_MAP[note.midi];
+    const time_ms    = Math.round(note.time * 1000) + offsetMs;
+    const dur_ms     = Math.max(10, Math.round(note.duration * 1000));
+    const brightness = velocityToBrightness(note.velocity * 127);
+    evts.push({time_ms, strip, brightness, effect: getEffect(dur_ms, bpm), duration_ms: dur_ms, led_pos: 255});
+  }
+  return cleanEvents(evts);
+}
+
+// ── MIDI Parsing — Interpret Mode ─────────────────────────────────────
+function parseInterpretMode(midi, bpm, offsetMs) {
+  const allNotes = [];
+  for (const track of midi.tracks)
+    for (const note of track.notes) allNotes.push(note);
+  if (!allNotes.length) return [];
+
+  const pitches    = allNotes.map(n => n.midi);
+  const minPitch   = Math.min(...pitches);
+  const maxPitch   = Math.max(...pitches);
+  const pitchRange = maxPitch - minPitch;
+
+  allNotes.sort((a, b) => a.time - b.time || a.midi - b.midi);
+
+  const evts = [];
+  for (let idx = 0; idx < allNotes.length; idx++) {
+    const note       = allNotes[idx];
+    const strip      = idx % NUM_STRIPS;
+    const time_ms    = Math.round(note.time * 1000) + offsetMs;
+    const dur_ms     = Math.max(10, Math.round(note.duration * 1000));
+    const brightness = velocityToBrightness(note.velocity * 127);
+    const led_pos    = pitchRange === 0
+      ? 255
+      : Math.max(0, Math.min(19, Math.round(((note.midi - minPitch) / pitchRange) * 19)));
+    evts.push({time_ms, strip, brightness, effect: getEffect(dur_ms, bpm), duration_ms: dur_ms, led_pos});
+  }
+  return cleanEvents(evts);
+}
+
+// ── Events .py upload ────────────────────────────────────────────────────
+pyInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  loadPyFile(file);
+});
+
+function loadPyFile(file) {
+  loadStatus.textContent = '⟳ Parsing .py…';
+  loadStatus.classList.add('visible');
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const text = ev.target.result;
+
+      // Extract everything inside events = [ ... ]
+      const match = text.match(/events\s*=\s*\[([\s\S]*?)\]/m);
+      if (!match) throw new Error('No "events = [...]" block found in file.');
+
+      // Parse each tuple: (time_ms, strip, brightness, 'effect', duration_ms[, led_pos])
+      const tupleRe = /\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*['"]([\w]+)['"]\s*,\s*(\d+)(?:\s*,\s*(\d+))?\s*\)/g;
+      const evts = [];
+      let m;
+      while ((m = tupleRe.exec(match[1])) !== null) {
+        evts.push({
+          time_ms:     parseInt(m[1], 10),
+          strip:       Math.max(0, Math.min(4, parseInt(m[2], 10))),
+          brightness:  Math.max(0, Math.min(255, parseInt(m[3], 10))),
+          effect:      m[4],
+          duration_ms: Math.max(10, parseInt(m[5], 10)),
+          led_pos:     m[6] !== undefined ? parseInt(m[6], 10) : 255,
+        });
+      }
+
+      if (!evts.length) throw new Error('No event tuples found — check file format.');
+      evts.sort((a, b) => a.time_ms - b.time_ms);
+
+      // Sniff source filename + mode from header comments if present
+      const srcMatch  = text.match(/# Source:\s*(\S+)/);
+      const modeMatch = text.match(/Mode:\s*(\w+)/);
+      if (srcMatch)  midiFileName = srcMatch[1];
+      if (modeMatch) currentMode  = modeMatch[1].toLowerCase();
+
+      pyNameEl.textContent   = file.name;
+      fileNameEl.textContent = srcMatch ? srcMatch[1] : file.name.replace(/_events\.py$/i, '.mid');
+      loadStatus.classList.remove('visible');
+      loadEvents(evts, false, currentMode || 'interpret');
+
+    } catch (err) {
+      loadStatus.textContent = '✗ .py parse error: ' + err.message;
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── MIDI file upload ───────────────────────────────────────────────────
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  loadMidiFile(file);
+});
+
+function loadMidiFile(file) {
+  midiFileName = file.name;
+  fileNameEl.textContent = file.name;
+  loadStatus.textContent = '⟳ Processing MIDI…';
+  loadStatus.classList.add('visible');
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const midi   = new Midi(ev.target.result);
+      const bpm    = parseInt(bpmInput.value, 10) || 120;
+      const offset = parseInt(offsetInput.value, 10) || 0;
+      const mode   = document.querySelector('input[name="mode"]:checked').value;
+
+      const evts = mode === 'cue'
+        ? parseCueMode(midi, bpm, offset)
+        : parseInterpretMode(midi, bpm, offset);
+
+      if (!evts.length) {
+        loadStatus.textContent = '⚠ No events found — check Mode / BPM';
+        return;
+      }
+
+      loadStatus.classList.remove('visible');
+      loadEvents(evts, false, mode);
+
+    } catch (err) {
+      loadStatus.textContent = '✗ Parse error: ' + err.message;
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ── Export .py ────────────────────────────────────────────────────────
+exportBtn.addEventListener('click', () => {
+  if (!events.length) return;
+  const base = midiFileName.replace(/\.(mid|midi)$/i, '');
+  const bpm  = bpmInput.value;
+
+  const header = [
+    '# LED Lighting Events',
+    '# Format: (time_ms, strip_index, brightness, effect, duration_ms)',
+    '# Effects: strobe, flash, pulse, fade, hold, wave',
+    '# Generated by Pico Light Show Visualizer',
+    `# Source: ${midiFileName}  Mode: ${currentMode}  BPM: ${bpm}`,
+    '',
+    'events = [',
+  ].join('\n');
+
+  const rows = events.map(ev => {
+    const lp = (ev.led_pos !== undefined && ev.led_pos !== 255) ? `, ${ev.led_pos}` : '';
+    return `    (${ev.time_ms}, ${ev.strip}, ${ev.brightness}, '${ev.effect}', ${ev.duration_ms}${lp}),`;
+  }).join('\n');
+
+  const content = header + rows + '\n]\n';
+  const blob    = new Blob([content], {type: 'text/plain'});
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href        = url;
+  a.download    = `${base}_events.py`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+});
+
+// ── Copy as Python ────────────────────────────────────────────────────
+document.getElementById('copy-py-btn').addEventListener('click', () => {
+  if (!events.length) return;
+  const lines = events.map(ev => {
+    const lp = (ev.led_pos !== undefined && ev.led_pos !== 255) ? `, ${ev.led_pos}` : '';
+    return `    (${ev.time_ms}, ${ev.strip}, ${ev.brightness}, '${ev.effect}', ${ev.duration_ms}${lp}),`;
+  });
+  navigator.clipboard.writeText(`events = [\n${lines.join('\n')}\n]`).then(() => {
+    const btn = document.getElementById('copy-py-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy as Python', 1500);
+  });
+});
+
+// ── Playback button listeners ─────────────────────────────────────────
+playBtn.addEventListener('click', () => {
+  if (isPlaying) pausePlayback(); else startPlayback();
+});
+stopBtn.addEventListener('click', () => resetPlayback());
+
+// ── Speed selector ────────────────────────────────────────────────────
+speedSel.addEventListener('change', () => {
+  playbackSpeed = parseFloat(speedSel.value);
+  if (isPlaying) {
+    playStartWall = Date.now();
+    playStartTime = playbackTime;
+    audioEl.playbackRate = playbackSpeed;
+  }
+});
+
+// ── Timeline scrubber ─────────────────────────────────────────────────
+tlSlider.addEventListener('input', () => {
+  if (totalDuration === 0) return;
+  const T = Math.round((parseInt(tlSlider.value, 10) / 10000) * totalDuration);
+  seekTo(T);
+  if (isPlaying) {
+    playStartWall = Date.now();
+    playStartTime = T;
+  }
+  updateTimeUI(T);
+});
+
+// ── Event log toggle ──────────────────────────────────────────────────
+logHeader.addEventListener('click', () => {
+  const open = logBody.classList.toggle('open');
+  logToggleBtn.textContent = open ? '▲ Hide' : '▼ Show';
+  logHeader.setAttribute('aria-expanded', open);
+});
+logHeader.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); logHeader.click(); }
+});
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+  if (e.key === ' ') {
+    e.preventDefault();
+    if (isPlaying) pausePlayback(); else startPlayback();
+  }
+  if (e.key === 'r' || e.key === 'R') {
+    e.preventDefault();
+    resetPlayback();
+  }
+  if (e.key === 'm' || e.key === 'M') {
+    muteBtn.click();
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────
+buildStripRows();
+loadEvents(DEMO_EVENTS, true, 'demo');
+
+// Demo auto-loop
+function checkDemoLoop() {
+  if (isDemo && !isPlaying && playbackTime >= totalDuration + 500) {
+    seekTo(0);
+    setTimeout(() => { if (isDemo) startPlayback(); }, 800);
+  }
+  setTimeout(checkDemoLoop, 500);
+}
+setTimeout(() => {
+  if (isDemo) startPlayback();
+  checkDemoLoop();
+}, 600);
+
+// Ensure RAF always runs
+(function ensureRaf() {
+  if (!rafId) rafId = requestAnimationFrame(animationLoop);
+  setTimeout(ensureRaf, 100);
+})();
+</script>
+</body>
+</html>
