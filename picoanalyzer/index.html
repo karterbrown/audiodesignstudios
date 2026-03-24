@@ -658,12 +658,50 @@
     ::-webkit-scrollbar-track { background: var(--surface); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    /* ── Fullscreen Matrix Overlay ─────────────────────────────────────── */
+    #fullscreen-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      cursor: pointer;
+    }
+    #fullscreen-overlay.active { display: block; }
+    #matrix-screen {
+      position: absolute;
+      top: 0; left: 0;
+      display: block;
+    }
+    #fs-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.28);
+      pointer-events: none;
+      transition: opacity 2s;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
   </style>
 </head>
 <body>
 
 <!-- Hidden audio element — the actual playback engine for MP3 sync -->
 <audio id="audio-el" preload="auto"></audio>
+
+<!-- ================================================================
+     FULLSCREEN MATRIX OVERLAY — play → full screen, click → settings
+     ================================================================ -->
+<div id="fullscreen-overlay">
+  <canvas id="matrix-screen"></canvas>
+  <div id="fs-hint">Click anywhere to exit &nbsp;·&nbsp; Space to pause</div>
+</div>
 
 <div class="page">
 
@@ -1277,6 +1315,12 @@ const logHeader    = document.getElementById('log-toggle-header');
 const volSlider    = document.getElementById('vol-slider');
 const muteBtn      = document.getElementById('mute-btn');
 
+// Fullscreen matrix overlay
+const fsOverlay    = document.getElementById('fullscreen-overlay');
+const matrixCanvas = document.getElementById('matrix-screen');
+const matrixCtx    = matrixCanvas.getContext('2d', {alpha: false, desynchronized: true});
+let   fsActive     = false;
+
 // ── Audio helpers ──────────────────────────────────────────────────────
 
 /** Sync the <audio> element position to the current playbackTime.
@@ -1398,6 +1442,17 @@ function hexToRgb(hex) {
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
 }
 
+// Fire heat palette (adapted from FastLED / music-to-led) — t: 0-1 → [r, g, b]
+// black → red → orange → yellow → white
+function heatColor(t) {
+  const temp = Math.floor(Math.min(1, Math.max(0, t)) * 255);
+  const t192 = Math.floor(temp * 192 / 255);
+  const heatramp = (t192 & 0x3F) << 2;  // 0-63 scaled to 0-252
+  if (t192 & 0x80) return [255, 255, heatramp];  // hottest: yellow → white
+  if (t192 & 0x40) return [255, heatramp, 0];    // middle: orange → yellow
+  return [heatramp, 0, 0];                        // coldest: black → red
+}
+
 // HSV → RGB  (h/s/v each 0-1) → [r, g, b] 0-255
 function hsvToRgb(h, s, v) {
   h = ((h % 1) + 1) % 1;
@@ -1480,6 +1535,10 @@ function effectFactor(effect, t, ledIndex, nowMs) {
     case 'bounce': { const b = Math.floor(t * 3); const p = (t * 3) % 1;       // 3 dampening pulses
                     return Math.sin(p * Math.PI) * Math.pow(0.55, b); }
     case 'blink':  return t < 0.50 ? 1.0 : 0.0;                                // hard cut at halfway
+    case 'twinkle': { // from penguintutor/pico-lights: ramp up, hold peak, ramp down, sustain
+                    const seq = [0.49, 0.49, 0.76, 1.0, 1.0, 1.0, 0.76, 0.49, 0.49, 0.49, 0.49, 0.49];
+                    return seq[Math.min(Math.floor(t * seq.length), seq.length - 1)]; }
+    case 'shimmer': return 0.85 + Math.sin(nowMs * 0.053 + ledIndex * 1.7) * 0.15;  // 0.70-1.00 gentle flicker hold
     default:       return 1.0;
   }
 }
@@ -1493,10 +1552,16 @@ function computeLedColor(strip, led, nowMs) {
   let t = elapsed / ev.duration_ms;
   t = Math.min(1.0, Math.max(0.0, t));
 
-  const factor = effectFactor(ev.effect, t, led, nowMs);
+  const rawFactor = effectFactor(ev.effect, t, led, nowMs);
+  // Visual rendering uses only the effect envelope — never scale by ev.brightness.
+  // (brightness is preserved in the export .py but we want maximum visual intensity.)
+  // Strobe and blink are binary by design; shimmer self-varies; everything else floors at 0.82.
+  const factor = (ev.effect === 'strobe' || ev.effect === 'blink' || ev.effect === 'shimmer')
+    ? rawFactor
+    : Math.max(rawFactor, 0.82);
   // Priority: event's own RGB > per-LED manual override > strip/rotation color
   const [r, g, b] = ev.color || LED_COLOR_OVERRIDES[strip][led] || getStripColor(strip, nowMs);
-  const scale = (ev.brightness / 255) * factor;
+  const scale = factor;   // brightness is purely for export, not for display
 
   return [
     Math.round(r * scale),
@@ -1517,7 +1582,7 @@ function drawStrip(strip, nowMs) {
   for (let i = 0; i < NUM_LEDS; i++) {
     const cx = 2 + i * LED_SPACING + LED_SPACING / 2;
     const [r, g, b] = computeLedColor(strip, i, nowMs);
-    const lit = r > 30 || g > 30 || b > 30;
+    const lit = r > 10 || g > 10 || b > 10;
 
     if (lit) {
       const glowRadius = LED_RADIUS * 2.0;
@@ -1556,6 +1621,88 @@ function drawStrip(strip, nowMs) {
       ctx.setLineDash([]);
     }
   }
+}
+
+// ── Fullscreen matrix renderer ────────────────────────────────────────
+function drawMatrix(nowMs) {
+  const cv  = matrixCanvas;
+  const ctx = matrixCtx;
+  const W   = cv.width;
+  const H   = cv.height;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+
+  const gap     = 3;
+  const tileByW = Math.floor((W - (NUM_LEDS   - 1) * gap) / NUM_LEDS);
+  const tileByH = Math.floor((H - (NUM_STRIPS - 1) * gap) / NUM_STRIPS);
+  const tile    = Math.min(tileByW, tileByH);
+  const gridW   = NUM_LEDS   * tile + (NUM_LEDS   - 1) * gap;
+  const gridH   = NUM_STRIPS * tile + (NUM_STRIPS - 1) * gap;
+  const ox      = Math.round((W - gridW) / 2);
+  const oy      = Math.round((H - gridH) / 2);
+  const cr      = Math.max(4, Math.round(tile * 0.10));
+
+  for (let s = 0; s < NUM_STRIPS; s++) {
+    for (let l = 0; l < NUM_LEDS; l++) {
+      const [r, g, b] = computeLedColor(s, l, nowMs);
+      const x   = ox + l * (tile + gap);
+      const y   = oy + s * (tile + gap);
+      const lit = r > 10 || g > 10 || b > 10;
+
+      // Outer glow bloom
+      if (lit) {
+        const gr = ctx.createRadialGradient(
+          x + tile / 2, y + tile / 2, tile * 0.06,
+          x + tile / 2, y + tile / 2, tile * 1.15);
+        gr.addColorStop(0, `rgba(${r},${g},${b},0.85)`);
+        gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        ctx.fillStyle = gr;
+        const gs = tile * 1.3;
+        ctx.fillRect(x - tile * 0.15, y - tile * 0.15, gs, gs);
+      }
+
+      // Tile face
+      ctx.fillStyle = lit ? `rgb(${r},${g},${b})` : '#030307';
+      if (ctx.roundRect) {
+        ctx.beginPath(); ctx.roundRect(x, y, tile, tile, cr); ctx.fill();
+      } else {
+        ctx.fillRect(x, y, tile, tile);
+      }
+
+      // Specular highlight on lit tiles
+      if (lit) {
+        const hl = ctx.createLinearGradient(x, y, x, y + tile * 0.55);
+        hl.addColorStop(0, 'rgba(255,255,255,0.38)');
+        hl.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = hl;
+        const pad = Math.max(2, tile * 0.07);
+        if (ctx.roundRect) {
+          ctx.beginPath(); ctx.roundRect(x + pad, y + pad, tile - pad * 2, tile * 0.50, [cr, cr, 0, 0]); ctx.fill();
+        } else {
+          ctx.fillRect(x + pad, y + pad, tile - pad * 2, tile * 0.50);
+        }
+      }
+    }
+  }
+}
+
+function enterFullscreen() {
+  matrixCanvas.width  = window.innerWidth;
+  matrixCanvas.height = window.innerHeight;
+  fsActive = true;
+  fsOverlay.classList.add('active');
+  const hint = document.getElementById('fs-hint');
+  hint.style.opacity = '1';
+  setTimeout(() => { if (hint) hint.style.opacity = '0'; }, 3500);
+  document.documentElement.requestFullscreen().catch(() => {});
+}
+
+function exitFullscreen() {
+  fsActive = false;
+  fsOverlay.classList.remove('active');
+  document.getElementById('fs-hint').style.opacity = '1';
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
 }
 
 // ── Event activation / expiry ──────────────────────────────────────────
@@ -1638,6 +1785,7 @@ function animationLoop() {
   if (isPlaying) dispatchUpTo(playbackTime);
 
   for (let s = 0; s < NUM_STRIPS; s++) drawStrip(s, playbackTime);
+  if (fsActive) drawMatrix(playbackTime);
 
   updateTimeUI(playbackTime);
 
@@ -1672,6 +1820,7 @@ function startPlayback() {
     dispatchPtr = 0;
   }
   playbackSpeed = parseFloat(speedSel.value);
+  enterFullscreen();
 
   if (audioLoaded && !isDemo) {
     // Seek audio to current position, then wait for the 'playing' event
@@ -1716,6 +1865,7 @@ function stopPlayback() {
 }
 
 function resetPlayback() {
+  exitFullscreen();
   stopPlayback();
   audioStop();
   seekTo(0);
@@ -2045,6 +2195,9 @@ document.addEventListener('keydown', e => {
   if (e.key === 'm' || e.key === 'M') {
     muteBtn.click();
   }
+  if (e.key === 'Escape' && fsActive) {
+    exitFullscreen();
+  }
 });
 
 // ── LED color picker ─────────────────────────────────────────────────
@@ -2278,32 +2431,31 @@ function randomizeShow() {
   // parameters. The combinatorial space is huge — spatial mode × color
   // mode × effect pool × energy mapping × direction mode × density ...
   // makes effectively endless unique patterns.
-  function buildGrammar(gramPal) {
+  function buildGrammar(gramPal, sectionHint = 'groove', intensityHint = 0.5) {
 
     // === Randomly choose independent axes of variation ================
 
-    // 1. SPATIAL — how an event maps to LEDs in physical space
-    const SPATIAL = pick([
-      'dot',           // one or a few individual LEDs
-      'run-fwd',       // sequential run forward
-      'run-back',      // sequential run backward
-      'run-alt',       // direction alternates each note
-      'run-energy',    // direction follows local energy
-      'mirror-out',    // simultaneous burst from center outward
-      'mirror-in',     // edges closing to center
-      'scatter',       // random individual dots spread over time
-      'zone-drift',    // active window drifts across strip
-      'comet-fwd',     // comet dim-tail → bright-head forward
-      'comet-back',    // comet backward
-      'stutter',       // same LED fires repeatedly
-      'cross-strip',   // ripple echoes across adjacent strips
-      'full-strip',    // whole strip, always
-      'theater-chase', // every Nth LED lit simultaneously, marching
-      'confetti',      // multi-strip random-color bursts
-      'juggle',        // phase-offset bouncing dots across strips
-      'ping-pong',     // two comets from opposite ends colliding
-      'twinkle-fade',  // independent random sparkles over a time window
-    ]);
+    // 1. SPATIAL — biased by musical section type for structural responsiveness
+    const ALL_SPATIAL = [
+      'dot','run-fwd','run-back','run-alt','run-energy','mirror-out','mirror-in',
+      'scatter','zone-drift','comet-fwd','comet-back','stutter','cross-strip',
+      'full-strip','theater-chase','confetti','juggle','ping-pong','twinkle-fade',
+      'chord-bloom','canon-delay',
+    ];
+    const SPATIAL_BIAS = {
+      intro:   ['dot','twinkle-fade','comet-fwd','scatter','juggle','chord-bloom'],
+      build:   ['run-fwd','run-back','mirror-out','comet-fwd','juggle','zone-drift','canon-delay'],
+      drop:    ['ping-pong','theater-chase','confetti','mirror-out','full-strip','cross-strip','chord-bloom'],
+      break:   ['twinkle-fade','scatter','zone-drift','dot','run-alt','juggle'],
+      groove:  ['run-alt','stutter','juggle','cross-strip','scatter','mirror-in','canon-delay'],
+      climax:  ['full-strip','confetti','ping-pong','mirror-out','theater-chase','cross-strip','chord-bloom'],
+      outro:   ['comet-back','twinkle-fade','scatter','dot','run-back','juggle'],
+      drum:    ['cross-strip','scatter','stutter','confetti','dot','ping-pong'],
+      chord:   ['chord-bloom','mirror-out','full-strip','ping-pong','theater-chase','confetti'],
+      bass:    ['run-fwd','zone-drift','comet-fwd','full-strip','dot','mirror-in'],
+    };
+    const biasPool = SPATIAL_BIAS[sectionHint] || SPATIAL_BIAS.groove;
+    const SPATIAL  = Math.random() < 0.68 ? pick(biasPool) : pick(ALL_SPATIAL);
 
     // 2. DENSITY — how many LEDs (or events) fire per note
     const densityLo = ri(1, 3);
@@ -2314,9 +2466,23 @@ function randomizeShow() {
     const runMax  = ri(runMin + 2, NUM_LEDS - 1);
 
     // 4. EFFECT POOL — which effects this grammar uses, in rotation
-    const allEffects = ['flash', 'strobe', 'pulse', 'fade', 'hold', 'wave', 'saw', 'bounce', 'blink'];
+    const allEffects = ['flash', 'strobe', 'pulse', 'fade', 'hold', 'wave', 'saw', 'bounce', 'blink', 'twinkle', 'shimmer'];
     const poolSize   = ri(1, 4);
-    const effectPool = shuffle(allEffects).slice(0, poolSize);
+    // Effect pool biased by section character — drops get punchy, intros get soft, etc.
+    const EFFECT_BY_SEC = {
+      intro:  ['fade','pulse','shimmer','wave','twinkle'],
+      build:  ['pulse','fade','shimmer','wave','flash'],
+      drop:   ['flash','strobe','pulse','saw','blink'],
+      break:  ['fade','wave','twinkle','shimmer','bounce'],
+      groove: ['pulse','shimmer','hold','twinkle','saw'],
+      climax: ['strobe','flash','blink','saw','bounce'],
+      outro:  ['fade','wave','shimmer','twinkle','hold'],
+      drum:   ['flash','strobe','blink','saw','pulse'],
+      chord:  ['flash','pulse','shimmer','twinkle','hold'],
+      bass:   ['pulse','wave','shimmer','twinkle','fade'],
+    };
+    const effectSrc  = EFFECT_BY_SEC[sectionHint] || allEffects;
+    const effectPool = shuffle(Math.random() < 0.72 ? effectSrc.slice() : allEffects.slice()).slice(0, poolSize);
     let   efIdx = 0, efCount = 0;
     const efEvery = ri(2, 8);  // rotate every N notes
 
@@ -2345,6 +2511,8 @@ function randomizeShow() {
       'invert',      // cycles backwards through swatches
       'rainbow',     // true chromatic hue rotation across note index
       'heatmap',     // energy-driven: low=cool blue, high=white hot
+      'fire',        // from music-to-led: energy-driven fire palette (black→red→orange→white)
+      'morph',       // from piano-echo: gradient lerp across full palette by note index
     ]);
 
     // 8. STEP TIMING (for runs) — how fast the run moves
@@ -2371,6 +2539,14 @@ function randomizeShow() {
           const e = Math.min(1, energy * 1.5);
           if (e < 0.5) return [Math.round(e * 2 * 255), 0, Math.round((1 - e * 2) * 255)];
           return [255, Math.round((e - 0.5) * 2 * 255), Math.round((e - 0.5) * 2 * 255)];
+        }
+        case 'fire':   return heatColor(Math.min(1, energy * 1.1 + 0.1));  // energy → fire palette
+        case 'morph': {  // lerp smoothly across full palette by note position (piano-echo inspired)
+          const mt = gramPal.length < 2 ? 0 : (i % (gramPal.length * 4)) / (gramPal.length * 4 - 1);
+          const ai = Math.floor(mt * (gramPal.length - 1));
+          const bi = Math.min(gramPal.length - 1, ai + 1);
+          const lt = mt * (gramPal.length - 1) - ai;
+          return gramPal[ai].map((c, ci) => Math.round(c * (1 - lt) + gramPal[bi][ci] * lt));
         }
       }
     }
@@ -2575,6 +2751,40 @@ function randomizeShow() {
             }));
           }
 
+          case 'chord-bloom': {
+            // Concentric rings bloom outward from a center LED, each ring time-offset
+            const center2 = ri(3, NUM_LEDS - 4);
+            const rings   = ri(3, 6);
+            const ringGap = Math.round(beat_ms * rf(0.04, 0.10));
+            const evts2   = [];
+            for (let r = 0; r <= rings; r++) {
+              const lA  = clamp(center2 - r, 0, NUM_LEDS - 1);
+              const lB  = clamp(center2 + r, 0, NUM_LEDS - 1);
+              const br2 = clamp(br * Math.pow(0.80, r), 30, 255);
+              const c   = getColor(i + r, s, energy, prog);
+              const ef2 = r === 0 ? 'flash' : (r < 3 ? ef : 'fade');
+              const d2  = Math.max(40, Math.round(dur * Math.max(0.4, 1 - r * 0.09)));
+              evts2.push({ time_ms: ev.time_ms + r * ringGap, strip: s, brightness: br2, effect: ef2, duration_ms: d2, led_pos: lA, color: c });
+              if (lA !== lB)
+                evts2.push({ time_ms: ev.time_ms + r * ringGap, strip: s, brightness: br2, effect: ef2, duration_ms: d2, led_pos: lB, color: c });
+            }
+            return evts2;
+          }
+
+          case 'canon-delay': {
+            // Same run pattern echoed across all strips with a staggered delay — musical round
+            const canDelay = Math.round(beat_ms * rf(0.10, 0.28));
+            const rLen2    = ri(runMin, runMax);
+            const cDir2    = ri(0, 1) ? 1 : -1;
+            const startL   = cDir2 > 0 ? 0 : NUM_LEDS - 1;
+            const endL     = clamp(startL + cDir2 * rLen2, 0, NUM_LEDS - 1);
+            const cSm2     = Math.max(Math.round(stepMs), 10);
+            return Array.from({length: NUM_STRIPS}, (_, k) =>
+              runLeds(ev.time_ms + k * canDelay, (s + k) % NUM_STRIPS, startL, endL, ef, dur,
+                clamp(br * (1 - k * 0.11), 40, 255), getColor(i + k, (s + k) % NUM_STRIPS, energy, prog), cSm2)
+            ).flat();
+          }
+
           case 'full-strip':
           default:
             return { led_pos: 255, effect: ef, duration_ms: dur, color, brightness: br };
@@ -2583,26 +2793,77 @@ function randomizeShow() {
     };
   }
 
-  // ── Song-arc: generate 3–4 fresh grammars, one per segment ──────────
-  const arcLen  = ri(3, 4);
-  const arc     = Array.from({length: arcLen}, () => buildGrammar(pal));
-
-  const songDur = base[base.length - 1].time_ms + beat_ms * 2;
-  const segLen  = songDur / arcLen;
-  const xfadeMs = segLen * 0.10;
-
-  function arcGrammars(t) {
-    const seg  = t / segLen;
-    const si   = Math.min(Math.floor(seg), arcLen - 1);
-    const frac = seg - Math.floor(seg);
-    if (frac > (1 - xfadeMs / segLen) && si < arcLen - 1) {
-      const blend = (frac - (1 - xfadeMs / segLen)) / (xfadeMs / segLen);
-      return [{ g: arc[si], w: 1 - blend }, { g: arc[si + 1], w: blend }];
+  // ── MIDI role classification ──────────────────────────────────────────
+  // Infer musical role from processed events without raw track data:
+  //   'drum'   → very short duration + low LED position (GM percussion)
+  //   'chord'  → 2+ notes firing within a tight timing window
+  //   'bass'   → low pitch (led_pos 0–4) and not drum
+  //   'melody' → everything else
+  function classifyEvents(evts) {
+    const roles = new Array(evts.length).fill('melody');
+    // Pass 1: chord detection — two or more events within 55ms are a chord
+    for (let a = 0; a < evts.length; a++) {
+      for (let b = a + 1; b < evts.length && evts[b].time_ms - evts[a].time_ms < 55; b++) {
+        roles[a] = 'chord'; roles[b] = 'chord';
+      }
     }
-    return [{ g: arc[si], w: 1 }];
+    // Pass 2: drum + bass (override chord only when clearly percussive/bass)
+    evts.forEach((ev, idx) => {
+      if (ev.duration_ms < beat_ms * 0.22 && ev.led_pos !== 255 && ev.led_pos <= 7)
+        roles[idx] = 'drum';
+      else if (roles[idx] !== 'chord' && ev.led_pos !== 255 && ev.led_pos <= 4)
+        roles[idx] = 'bass';
+    });
+    return roles;
   }
 
-  // ── Local energy ─────────────────────────────────────────────────────
+  // ── Song structure detection ──────────────────────────────────────────
+  // Divides the song into 4-bar windows, smooths note density, and finds
+  // section boundaries where energy slope changes significantly. Each
+  // section is labelled (intro / build / drop / break / groove / climax / outro)
+  // so grammar selection can be tuned to the song's arc.
+  function detectSections(evts, dur) {
+    const winMs = beat_ms * 4;
+    const nWins = Math.max(4, Math.ceil(dur / winMs));
+    const wins  = Array.from({length: nWins}, (_, w) => {
+      const t0 = w * winMs;
+      const we = evts.filter(e => e.time_ms >= t0 && e.time_ms < t0 + winMs);
+      return { density: we.length };
+    });
+    const maxD   = Math.max(...wins.map(w => w.density), 1);
+    const smooth = wins.map((w, i) => {
+      const lo = Math.max(0, i - 1), hi = Math.min(wins.length - 1, i + 1);
+      const sl = wins.slice(lo, hi + 1);
+      return sl.reduce((s, x) => s + x.density, 0) / sl.length / maxD;
+    });
+    const MIN_SEG = 3, THRESH = 0.16;
+    const bounds = [0];
+    for (let i = 2; i < smooth.length - 1; i++) {
+      if (Math.abs(smooth[i] - smooth[i - 2]) > THRESH && i - bounds[bounds.length - 1] >= MIN_SEG)
+        bounds.push(i);
+    }
+    bounds.push(wins.length);
+    return bounds.slice(0, -1).map((b, idx) => {
+      const bEnd  = bounds[idx + 1];
+      const sl    = smooth.slice(b, bEnd);
+      const avgE  = sl.reduce((s, v) => s + v, 0) / sl.length;
+      const prevE = idx > 0
+        ? smooth.slice(bounds[idx - 1], b).reduce((s, v) => s + v, 0) / (b - bounds[idx - 1])
+        : 0;
+      const isFirst = idx === 0, isLast = idx === bounds.length - 2;
+      let type;
+      if      (isFirst && avgE < 0.30)              type = 'intro';
+      else if (isLast  && avgE < 0.45)              type = 'outro';
+      else if (avgE > 0.70)                         type = 'climax';
+      else if (avgE > 0.50 && avgE > prevE * 1.25)  type = 'drop';
+      else if (avgE < 0.22)                         type = 'break';
+      else if (avgE > prevE + 0.12)                 type = 'build';
+      else                                           type = 'groove';
+      return { start_ms: b * winMs, end_ms: Math.min(bEnd * winMs, dur), type, energy: avgE };
+    });
+  }
+
+  // ── Local energy window ───────────────────────────────────────────────
   const ENERGY_WIN = 6;
   function localEnergy(i) {
     let sum = 0, cnt = 0;
@@ -2612,25 +2873,65 @@ function randomizeShow() {
     return sum / cnt / 255;
   }
 
+  // ── Build structure-aware grammars ────────────────────────────────────
+  const songDur    = base[base.length - 1].time_ms + beat_ms * 2;
+  const sections   = detectSections(base, songDur);
+  const roles      = classifyEvents(base);
+
+  // One grammar per detected section, biased to its musical character.
+  // Dedicated role grammars for drums, chords, and bass — each gets its
+  // own spatial language so they read clearly against the melodic layer.
+  const sectionArc   = sections.map(sec => ({
+    ...sec,
+    grammar: buildGrammar(pal, sec.type, sec.energy),
+  }));
+  const drumGrammar  = buildGrammar(pal, 'drum',  0.85);
+  const chordGrammar = buildGrammar(pal, 'chord', 0.75);
+  const bassGrammar  = buildGrammar(pal, 'bass',  0.40);
+
+  // Crossfade between adjacent section grammars near their boundaries.
+  function arcGrammars(t) {
+    const si = sectionArc.findIndex(sec => t >= sec.start_ms && t < sec.end_ms);
+    const cur = si >= 0 ? sectionArc[si] : sectionArc[sectionArc.length - 1];
+    if (si < 0) return [{ g: cur.grammar, w: 1 }];
+    const secLen = cur.end_ms - cur.start_ms;
+    const xfade  = secLen * 0.08;
+    const pos    = t - cur.start_ms;
+    if (pos > secLen - xfade && si < sectionArc.length - 1) {
+      const blend = (pos - (secLen - xfade)) / xfade;
+      return [{ g: cur.grammar, w: 1 - blend }, { g: sectionArc[si + 1].grammar, w: blend }];
+    }
+    return [{ g: cur.grammar, w: 1 }];
+  }
+
   // ── Build output ─────────────────────────────────────────────────────
+  // Drums, chords, and bass each run through their dedicated grammar
+  // at full weight, plus a 30% echo from the section grammar for
+  // coherence. Pure melody events use only the section grammar.
   const out = base.flatMap((ev, i) => {
     const s      = stripMap[Math.min(ev.strip, 4)];
     const energy = localEnergy(i);
-    const active = arcGrammars(ev.time_ms);
-    const allEvts = [];
+    const role   = roles[i];
 
+    const roleGram = role === 'drum'  ? drumGrammar
+                   : role === 'chord' ? chordGrammar
+                   : role === 'bass'  ? bassGrammar
+                   : null;
+    const sectionG = arcGrammars(ev.time_ms);
+    const active   = roleGram
+      ? [{ g: roleGram, w: 0.85 }, ...sectionG.map(x => ({ g: x.g, w: x.w * 0.30 }))]
+      : sectionG;
+
+    const allEvts = [];
     for (const { g, w } of active) {
-      const augEv = Object.assign({}, ev, {
-        _energy:   energy,
-        _progress: ev.time_ms / songDur,
-      });
+      const augEv = Object.assign({}, ev, { _energy: energy, _progress: ev.time_ms / songDur });
       const res  = g.map.call(g, augEv, s, i);
       const evts = Array.isArray(res) ? res : [res];
       for (const m of evts) {
         allEvts.push({
           time_ms:     m.time_ms     !== undefined ? m.time_ms     : ev.time_ms,
           strip:       m.strip       !== undefined ? m.strip       : s,
-          brightness:  clamp((m.brightness !== undefined ? m.brightness : ev.brightness) * w, 20, 255),
+          brightness:  clamp((m.brightness !== undefined ? m.brightness : ev.brightness) * w, 80, 255),
           effect:      m.effect,
           duration_ms: Math.max(m.duration_ms !== undefined ? m.duration_ms : 100, 40),
           led_pos:     m.led_pos,
@@ -2643,10 +2944,15 @@ function randomizeShow() {
 
   out.sort((a, b) => a.time_ms - b.time_ms);
 
+  // Display detected structure summary in the hint
+  const secLabels = sections.map(s => s.type).join('\u2192');
+  const nDrums    = roles.filter(r => r === 'drum').length;
+  const nChords   = roles.filter(r => r === 'chord').length;
+
   const wasActive = isPlaying || isDemo;
   loadEvents(out, !audioLoaded, 'random');
-  hint.textContent = '\u2736 generated';
-  setTimeout(() => { hint.textContent = ''; }, 2000);
+  hint.textContent = `✶ ${secLabels} | ${nDrums}⚡${nChords}♪`;
+  setTimeout(() => { hint.textContent = ''; }, 4500);
   if (wasActive) setTimeout(() => startPlayback(), 80);
 }
 
@@ -2674,6 +2980,20 @@ audioEl.addEventListener('waiting', () => {
   if (isPlaying) {
     isPlaying = false;
     playBtn.textContent = '⌛ Buffering…';
+  }
+});
+
+// ── Fullscreen overlay listeners ─────────────────────────────────────
+fsOverlay.addEventListener('click', () => exitFullscreen());
+
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && fsActive) exitFullscreen();
+});
+
+window.addEventListener('resize', () => {
+  if (fsActive) {
+    matrixCanvas.width  = window.innerWidth;
+    matrixCanvas.height = window.innerHeight;
   }
 });
 
