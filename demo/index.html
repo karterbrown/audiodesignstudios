@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <!-- ============================================================================
@@ -36,7 +36,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="demo.css?v=1771694691" />
+  <link rel="stylesheet" href="./demo.css?v=1771694691" />
 </head>
 
 <body>
@@ -44,7 +44,7 @@
        SITE HEADER - Simple Logo
        ======================================================================== -->
   <header class="site-header">
-    <a href="index.html" class="logo">Audio Design Studios</a>
+    <a href="../" class="logo">Audio Design Studios</a>
     <button class="demo-header-info-btn" id="demoInfoBtn" aria-label="How to use this player">INFO</button>
   </header>
 
@@ -106,15 +106,15 @@
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">RMS:</span>
-                <span class="ba-meter-value" id="aiRmsValue">-∞ dB</span>
+                <span class="ba-meter-value" id="aiRmsValue">-âˆž dB</span>
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">Peak:</span>
-                <span class="ba-meter-value" id="aiTruePeakValue">-∞ dBFS</span>
+                <span class="ba-meter-value" id="aiTruePeakValue">-âˆž dBFS</span>
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">RMS (avg):</span>
-                <span class="ba-meter-value" id="aiLufsValue">-∞ dB</span>
+                <span class="ba-meter-value" id="aiLufsValue">-âˆž dB</span>
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">Range:</span>
@@ -188,18 +188,18 @@
           <div class="loudness-meter-readings">
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Current Level</span>
-              <span class="loudness-meter-value" id="meterRmsValue">-∞ dB</span>
+              <span class="loudness-meter-value" id="meterRmsValue">-âˆž dB</span>
               <span class="loudness-meter-status" id="meterRmsStatus"></span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Streaming Target</span>
-              <span class="loudness-meter-value" id="meterLufsIValue">-∞ LUFS</span>
-              <span class="loudness-meter-status" id="meterLufsStatus">Target: −14 LUFS</span>
+              <span class="loudness-meter-value" id="meterLufsIValue">-âˆž LUFS</span>
+              <span class="loudness-meter-status" id="meterLufsStatus">Target: âˆ’14 LUFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">True Peak</span>
-              <span class="loudness-meter-value" id="meterTruePeakValue">-∞ dBFS</span>
-              <span class="loudness-meter-status" id="meterPeakStatus">Target: < −1.0 dBFS</span>
+              <span class="loudness-meter-value" id="meterTruePeakValue">-âˆž dBFS</span>
+              <span class="loudness-meter-status" id="meterPeakStatus">Target: < âˆ’1.0 dBFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Dynamic Range</span>
@@ -339,16 +339,16 @@
           title: 'Perfume Trap',
           titleRaw: 'Perfume Trap (RAW)',
           titleMix: 'Perfume Trap (MIX 03012026)',
-          before: 'hiddentracks/Perfume Trap_RAW_ADJUSTED_03012026.mp3', 
-          after: 'hiddentracks/Perfume Trap_MIX_03012026.mp3' 
+          before: '../hiddentracks/Perfume Trap_RAW_ADJUSTED_03012026.mp3', 
+          after: '../hiddentracks/Perfume Trap_MIX_03012026.mp3' 
         },
         { 
           id: 2, 
           title: 'Seen to Be',
           titleRaw: 'Seen to Be (RAW)',
           titleMix: 'Seen to Be (Mix 01042026)',
-          before: 'hiddentracks/Seen To Be_RAW.mp3', 
-          after: 'hiddentracks/Seen To Be_Mix01042026.mp3' 
+          before: '../hiddentracks/Seen To Be_RAW.mp3', 
+          after: '../hiddentracks/Seen To Be_Mix01042026.mp3' 
         }
       ];
 
@@ -399,8 +399,8 @@
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                        ('ontouchstart' in window && window.innerWidth <= 900);
 
-      // Spectrum analysers — 8192 FFT on desktop gives high resolution;
-      // 2048 on mobile cuts the per-frame workload by 4× (still looks great)
+      // Spectrum analysers â€” 8192 FFT on desktop gives high resolution;
+      // 2048 on mobile cuts the per-frame workload by 4Ã— (still looks great)
       const specFftSize = isMobile ? 2048 : 8192;
       const beforeAnalyser = ctx.createAnalyser();
       const afterAnalyser = ctx.createAnalyser();
@@ -413,7 +413,7 @@
       afterAnalyser.minDecibels = -90;
       afterAnalyser.maxDecibels = 0;
 
-      // VU / metering analysers (2048 FFT) — lightweight, used for needle + readouts
+      // VU / metering analysers (2048 FFT) â€” lightweight, used for needle + readouts
       const beforeVUAnalyser = ctx.createAnalyser();
       const afterVUAnalyser = ctx.createAnalyser();
       beforeVUAnalyser.fftSize = 2048;
@@ -425,7 +425,7 @@
       const afterGain = ctx.createGain();
       const beforeData = new Uint8Array(beforeAnalyser.frequencyBinCount);
       const afterData = new Uint8Array(afterAnalyser.frequencyBinCount);
-      // Pre-allocated time-domain buffers (2048 each — matched to VU analysers)
+      // Pre-allocated time-domain buffers (2048 each â€” matched to VU analysers)
       const beforeTimeData = new Float32Array(beforeVUAnalyser.fftSize);
       const afterTimeData = new Float32Array(afterVUAnalyser.fftSize);
 
@@ -472,7 +472,7 @@
       let meterRawFreqData = null;
       let meterMixFreqData = null;
       let specFrameCount = 0;
-      // Cached log-scale pixel→frequency lookup for drawSpectrumGraph
+      // Cached log-scale pixelâ†’frequency lookup for drawSpectrumGraph
       let freqMapCache = null;
       let freqMapCacheWidth = -1;
 
@@ -504,11 +504,11 @@
         if (ctx.state === 'suspended') ctx.resume();
         if (!beforeConnected) {
           const s = ctx.createMediaElementSource(beforeAudio);
-          // VU path: source → VU analyser (2048) → gain → output
+          // VU path: source â†’ VU analyser (2048) â†’ gain â†’ output
           s.connect(beforeVUAnalyser);
           beforeVUAnalyser.connect(beforeGain);
           beforeGain.connect(ctx.destination);
-          // Spectrum tap: source → spectrum analyser (8192, no audio output)
+          // Spectrum tap: source â†’ spectrum analyser (8192, no audio output)
           s.connect(beforeAnalyser);
           beforeConnected = true;
         }
@@ -568,7 +568,7 @@
           const inactiveAudio = afterMode ? beforeAudio : afterAudio;
           const t = inactiveAudio.currentTime || activeAudio.currentTime;
           inactiveAudio.pause();
-          // Only seek if there's meaningful drift — avoids buffering lag
+          // Only seek if there's meaningful drift â€” avoids buffering lag
           const drift = Math.abs(activeAudio.currentTime - t);
           if (drift > 0.05) activeAudio.currentTime = t;
           activeAudio.play().catch(() => {});
@@ -624,7 +624,7 @@
             inactiveAudio.currentTime = activeAudio.currentTime;
             lastSync = now;
           }
-          // Progress bar only needs ~15fps — no reason to force layout at 60fps
+          // Progress bar only needs ~15fps â€” no reason to force layout at 60fps
           if (now - lastRender >= 66) {
             renderProgress();
             lastRender = now;
@@ -655,10 +655,10 @@
         decayLoop();
         
         // Reset digital displays
-        if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
-        if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBFS';
-        if (lufsDisplay) lufsDisplay.textContent = '-∞ dB';
-        if (vuDisplay) vuDisplay.textContent = '-∞ VU';
+        if (rmsDisplay) rmsDisplay.textContent = '-âˆž dB';
+        if (truePeakDisplay) truePeakDisplay.textContent = '-âˆž dBFS';
+        if (lufsDisplay) lufsDisplay.textContent = '-âˆž dB';
+        if (vuDisplay) vuDisplay.textContent = '-âˆž VU';
       }
 
       function startVU() {
@@ -666,9 +666,9 @@
         let lastDisplayUpdate = 0;
         let vuFrameCount = 0;
         const loop = () => {
-          // Throttle to ~30fps on mobile — halves the CPU cost while still feeling smooth
+          // Throttle to ~30fps on mobile â€” halves the CPU cost while still feeling smooth
           if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
-          // Use the lightweight 2048-bin VU analyser — 4x less data than the spectrum analyser
+          // Use the lightweight 2048-bin VU analyser â€” 4x less data than the spectrum analyser
           const analyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
           const timeData = afterMode ? afterTimeData : beforeTimeData;
           analyser.getFloatTimeDomainData(timeData);
@@ -684,7 +684,7 @@
           }
           const rms = Math.sqrt(sumSquares / timeData.length);
 
-          // Short-term RMS via running sum — O(1) instead of O(n) reduce() every frame
+          // Short-term RMS via running sum â€” O(1) instead of O(n) reduce() every frame
           const currentRmsBuffer = afterMode ? afterRmsBuffer : beforeRmsBuffer;
           let currentRmsSumSq = afterMode ? afterRmsSumSq : beforeRmsSumSq;
           if (currentRmsBuffer.length >= rmsBufferSize) {
@@ -710,7 +710,7 @@
             truePeakHold = beforeTruePeakHold;
           }
 
-          // Integrated LUFS via running sum — O(1)
+          // Integrated LUFS via running sum â€” O(1)
           const currentLufsBuffer = afterMode ? afterLufsBuffer : beforeLufsBuffer;
           let currentLufsSumSq = afterMode ? afterLufsSumSq : beforeLufsSumSq;
           if (currentLufsBuffer.length >= lufsBufferSize) {
@@ -752,16 +752,16 @@
           needleAngle += diff * (diff > 0 ? 0.2 : 0.06);
           meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
 
-          // Text readouts throttled to ~10fps — values change too fast to read at 60fps
+          // Text readouts throttled to ~10fps â€” values change too fast to read at 60fps
           // and removing the textContent writes halves the layout work per frame
           const now = performance.now();
           if (now - lastDisplayUpdate >= 100) {
             lastDisplayUpdate = now;
             if (sourceDisplay) sourceDisplay.textContent = afterMode ? 'Mix' : 'RAW';
-            if (vuDisplay) vuDisplay.textContent = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-∞ VU';
-            if (rmsDisplay) rmsDisplay.textContent = shortTermRmsDbFs > -99 ? `${shortTermRmsDbFs.toFixed(1)} dB` : '-∞ dB';
-            if (truePeakDisplay) truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBFS` : '-∞ dBFS';
-            if (lufsDisplay) lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} dB` : '-∞ dB';
+            if (vuDisplay) vuDisplay.textContent = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-âˆž VU';
+            if (rmsDisplay) rmsDisplay.textContent = shortTermRmsDbFs > -99 ? `${shortTermRmsDbFs.toFixed(1)} dB` : '-âˆž dB';
+            if (truePeakDisplay) truePeakDisplay.textContent = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBFS` : '-âˆž dBFS';
+            if (lufsDisplay) lufsDisplay.textContent = lufsValue > -99 ? `${lufsValue.toFixed(1)} dB` : '-âˆž dB';
             if (lraDisplay) lraDisplay.textContent = lraMain > 0 ? `${lraMain.toFixed(1)} dB` : '-- dB';
           }
 
@@ -835,10 +835,10 @@
         lraValuesMain = [];
 
         needleAngle = -50;
-        if (rmsDisplay) rmsDisplay.textContent = '-∞ dB';
-        if (truePeakDisplay) truePeakDisplay.textContent = '-∞ dBFS';
-        if (lufsDisplay) lufsDisplay.textContent = '-∞ dB';
-        if (vuDisplay) vuDisplay.textContent = '-∞ VU';
+        if (rmsDisplay) rmsDisplay.textContent = '-âˆž dB';
+        if (truePeakDisplay) truePeakDisplay.textContent = '-âˆž dBFS';
+        if (lufsDisplay) lufsDisplay.textContent = '-âˆž dB';
+        if (vuDisplay) vuDisplay.textContent = '-âˆž VU';
         if (sourceDisplay) sourceDisplay.textContent = 'Mix';
 if (lraDisplay) lraDisplay.textContent = '-- dB';
 
@@ -1074,7 +1074,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         if (e.target === analysisModal) closeModal();
       });
 
-      // K-weighting pre-filter (ITU-R BS.1770-4) — required for accurate LUFS measurement
+      // K-weighting pre-filter (ITU-R BS.1770-4) â€” required for accurate LUFS measurement
       function kWeightChannel(data, fs) {
         // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
         const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
@@ -1168,7 +1168,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           // Process in blocks (BS.1770: sum per-channel mean squares, then compute loudness)
           // Apply K-weighting on-demand per block to save memory
           for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
-            // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs — stereo is always 1.0
+            // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs â€” stereo is always 1.0
             const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
             let sumChannelMeans = 0;
 
@@ -1312,13 +1312,13 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             clippingHTML = `
               <div class="analysis-metric" style="border-left-color: #7ec98f;">
                 <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
-                <span class="analysis-value" style="color: #7ec98f;">None detected ✓</span>
+                <span class="analysis-value" style="color: #7ec98f;">None detected âœ“</span>
               </div>
             `;
           }
 
           // Streaming Platform Compliance Check
-          const lufsInRange = integratedLUFS >= -15.5 && integratedLUFS <= -12.5; // -14 ±1.5
+          const lufsInRange = integratedLUFS >= -15.5 && integratedLUFS <= -12.5; // -14 Â±1.5
           const peakOk = truePeak < -1.0;
           const noClipping = clippingEvents.length === 0;
           
@@ -1327,7 +1327,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           let complianceDetails = [];
           
           if (lufsInRange && peakOk && noClipping) {
-            complianceStatus = '✓ Ready for Spotify/Apple Music';
+            complianceStatus = 'âœ“ Ready for Spotify/Apple Music';
             complianceClass = 'ready';
             complianceDetails.push('LUFS level is optimal for streaming platforms');
             complianceDetails.push('Sample Peak is below -1.0 dBFS (leaves headroom for encoding)');
@@ -1356,13 +1356,13 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             }
             
             if (issues.length === 1 && issues[0] !== 'clipping') {
-              complianceStatus = '⚠ Minor Issues';
+              complianceStatus = 'âš  Minor Issues';
               complianceClass = 'warning';
             } else if (issues.includes('clipping') || issues.length > 1) {
-              complianceStatus = '✗ Not Ready for Streaming';
+              complianceStatus = 'âœ— Not Ready for Streaming';
               complianceClass = 'fail';
             } else {
-              complianceStatus = '⚠ Minor Issues';
+              complianceStatus = 'âš  Minor Issues';
               complianceClass = 'warning';
             }
           }
@@ -1469,7 +1469,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
       const spectrumMixBtn = document.getElementById('spectrumMixBtn');
 
       function applySpectrumMode(isMix) {
-        // Delegate to the main applyMode — this switches audio gains, main player labels,
+        // Delegate to the main applyMode â€” this switches audio gains, main player labels,
         // nowPlaying title, AND (via applyMode's sync block) updates these modal buttons
         applyMode(isMix);
         // Update modal track name explicitly in case no track is loaded yet
@@ -1533,7 +1533,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         const DB_RANGE = MAX_DB - MIN_DB;
         const MIN_FREQ = 20;
 
-        // Build/reuse cached log-scale pixel→frequency map (avoids Math.pow per pixel per frame)
+        // Build/reuse cached log-scale pixelâ†’frequency map (avoids Math.pow per pixel per frame)
         if (freqMapCacheWidth !== cW) {
           freqMapCache = new Float32Array(cW + 1);
           for (let cx = 0; cx <= cW; cx++) {
@@ -1542,7 +1542,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           freqMapCacheWidth = cW;
         }
 
-        // dB value → canvas y pixel
+        // dB value â†’ canvas y pixel
         function dbToY(db) {
           return MT + cH * (1 - (Math.max(MIN_DB, Math.min(MAX_DB, db)) - MIN_DB) / DB_RANGE);
         }
@@ -1557,11 +1557,11 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           return MIN_DB + (val / 255) * DB_RANGE;
         }
 
-        // ── Clear canvas ────────────────────────────────────────────────────────
+        // â”€â”€ Clear canvas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         meterCtx.fillStyle = '#0f0f0f';
         meterCtx.fillRect(0, 0, W, H);
 
-        // ── Grid lines (drawn without clipping so they reach axis labels) ────────
+        // â”€â”€ Grid lines (drawn without clipping so they reach axis labels) â”€â”€â”€â”€â”€â”€â”€â”€
         const dbStops = [0, -10, -20, -30, -40, -50, -60, -70, -80, -90];
         dbStops.forEach(db => {
           const y = dbToY(db);
@@ -1587,7 +1587,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           meterCtx.stroke();
         });
 
-        // ── Spectrum curves (clipped to chart area) ───────────────────────────────
+        // â”€â”€ Spectrum curves (clipped to chart area) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         meterCtx.save();
         meterCtx.beginPath();
         meterCtx.rect(ML, MT, cW, cH);
@@ -1620,7 +1620,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         drawSpectrum(mixFreqData, 'rgba(126, 201, 143, 0.18)', 'rgba(126, 201, 143, 0.95)');
         meterCtx.restore();
 
-        // ── dBFS axis labels (left margin) ────────────────────────────────────────
+        // â”€â”€ dBFS axis labels (left margin) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         meterCtx.textAlign = 'right';
         meterCtx.textBaseline = 'middle';
         dbStops.forEach(db => {
@@ -1643,7 +1643,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         meterCtx.fillText('dBFS', 0, 0);
         meterCtx.restore();
 
-        // ── Frequency axis labels (bottom margin) ─────────────────────────────────
+        // â”€â”€ Frequency axis labels (bottom margin) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         meterCtx.textAlign = 'center';
         meterCtx.textBaseline = 'bottom';
         freqStops.forEach(freq => {
@@ -1655,7 +1655,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           meterCtx.fillText(label, x, H - 2);
         });
 
-        // ── Legend (top-right corner inside chart) ────────────────────────────────
+        // â”€â”€ Legend (top-right corner inside chart) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const legX = W - MR - 68;
         const legY = MT + 8;
         meterCtx.fillStyle = 'rgba(0, 0, 0, 0.65)';
@@ -1692,7 +1692,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           return;
         }
 
-        // ── Spectrum overlay: use pre-allocated buffers (no GC per frame) ────────
+        // â”€â”€ Spectrum overlay: use pre-allocated buffers (no GC per frame) â”€â”€â”€â”€â”€â”€â”€â”€
         const rawBinCount = beforeAnalyser.frequencyBinCount;
         if (!meterRawFreqData) meterRawFreqData = new Uint8Array(rawBinCount);
         if (!meterMixFreqData) meterMixFreqData = new Uint8Array(afterAnalyser.frequencyBinCount);
@@ -1709,9 +1709,9 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
 
         drawSpectrumGraph(rawSpectrumSmoothed, mixSpectrumSmoothed);
 
-        // ── Digital readouts: use the modal's own Raw/Mix toggle ─────────────
+        // â”€â”€ Digital readouts: use the modal's own Raw/Mix toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         if (playing) {
-          // Use VU analyser for readouts — pre-allocated 2048-sample buffer, no GC
+          // Use VU analyser for readouts â€” pre-allocated 2048-sample buffer, no GC
           const currentVUAnalyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
           if (!meterTimeData) meterTimeData = new Float32Array(currentVUAnalyser.fftSize);
           currentVUAnalyser.getFloatTimeDomainData(meterTimeData);
@@ -1758,41 +1758,41 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             }
           }
 
-          if (meterRmsValueEl) meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-∞ dB';
-          if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBFS` : '-∞ dBFS';
-          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} LUFS` : '-∞ LUFS';
+          if (meterRmsValueEl) meterRmsValueEl.textContent = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-âˆž dB';
+          if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = currentTruePeakHold > -99 ? `${currentTruePeakHold.toFixed(1)} dBFS` : '-âˆž dBFS';
+          if (meterLufsIValueEl) meterLufsIValueEl.textContent = lufsIntegrated > -99 ? `${lufsIntegrated.toFixed(1)} LUFS` : '-âˆž LUFS';
           if (meterLRAValueEl) meterLRAValueEl.textContent = lraValue > 0 ? `${lraValue.toFixed(1)} LU` : '-- LU';
 
           // Update status indicators
           // Current Level status (based on if it's too hot)
           if (meterRmsStatusEl && avgRmsDb > -99) {
             if (avgRmsDb > -6) {
-              meterRmsStatusEl.textContent = '⚠ Too Hot';
+              meterRmsStatusEl.textContent = 'âš  Too Hot';
               meterRmsStatusEl.className = 'loudness-meter-status warning';
             } else if (avgRmsDb > -12) {
-              meterRmsStatusEl.textContent = '✓ Good';
+              meterRmsStatusEl.textContent = 'âœ“ Good';
               meterRmsStatusEl.className = 'loudness-meter-status good';
             } else if (avgRmsDb > -24) {
-              meterRmsStatusEl.textContent = '✓ Normal';
+              meterRmsStatusEl.textContent = 'âœ“ Normal';
               meterRmsStatusEl.className = 'loudness-meter-status good';
             } else {
-              meterRmsStatusEl.textContent = '↓ Quiet';
+              meterRmsStatusEl.textContent = 'â†“ Quiet';
               meterRmsStatusEl.className = 'loudness-meter-status info';
             }
           }
 
-          // Streaming Target status (−14 LUFS target)
+          // Streaming Target status (âˆ’14 LUFS target)
           if (meterLufsStatusEl && lufsIntegrated > -99) {
             const target = -14;
             const delta = lufsIntegrated - target;
             if (Math.abs(delta) < 1.5) {
-              meterLufsStatusEl.textContent = '✓ On Target';
+              meterLufsStatusEl.textContent = 'âœ“ On Target';
               meterLufsStatusEl.className = 'loudness-meter-status good';
             } else if (delta > 0) {
-              meterLufsStatusEl.textContent = `↑ ${Math.abs(delta).toFixed(1)} dB Over`;
+              meterLufsStatusEl.textContent = `â†‘ ${Math.abs(delta).toFixed(1)} dB Over`;
               meterLufsStatusEl.className = 'loudness-meter-status warning';
             } else {
-              meterLufsStatusEl.textContent = `↓ ${Math.abs(delta).toFixed(1)} dB Under`;
+              meterLufsStatusEl.textContent = `â†“ ${Math.abs(delta).toFixed(1)} dB Under`;
               meterLufsStatusEl.className = 'loudness-meter-status info';
             }
           }
@@ -1800,16 +1800,16 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           // True Peak status (< -1.0 dBFS target)
           if (meterPeakStatusEl && currentTruePeakHold > -99) {
             if (currentTruePeakHold >= -0.1) {
-              meterPeakStatusEl.textContent = '✗ Clipping Risk';
+              meterPeakStatusEl.textContent = 'âœ— Clipping Risk';
               meterPeakStatusEl.className = 'loudness-meter-status danger';
             } else if (currentTruePeakHold >= -1.0) {
-              meterPeakStatusEl.textContent = '⚠ Near Limit';
+              meterPeakStatusEl.textContent = 'âš  Near Limit';
               meterPeakStatusEl.className = 'loudness-meter-status warning';
             } else if (currentTruePeakHold >= -3.0) {
-              meterPeakStatusEl.textContent = '✓ Safe';
+              meterPeakStatusEl.textContent = 'âœ“ Safe';
               meterPeakStatusEl.className = 'loudness-meter-status good';
             } else {
-              meterPeakStatusEl.textContent = '✓ Plenty of Headroom';
+              meterPeakStatusEl.textContent = 'âœ“ Plenty of Headroom';
               meterPeakStatusEl.className = 'loudness-meter-status good';
             }
           }
@@ -1817,16 +1817,16 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           // Dynamic Range status
           if (meterLraStatusEl && lraValue > 0) {
             if (lraValue < 4) {
-              meterLraStatusEl.textContent = '⚠ Heavily Limited';
+              meterLraStatusEl.textContent = 'âš  Heavily Limited';
               meterLraStatusEl.className = 'loudness-meter-status warning';
             } else if (lraValue < 8) {
-              meterLraStatusEl.textContent = '✓ Well Compressed';
+              meterLraStatusEl.textContent = 'âœ“ Well Compressed';
               meterLraStatusEl.className = 'loudness-meter-status good';
             } else if (lraValue < 15) {
-              meterLraStatusEl.textContent = '✓ Natural Dynamics';
+              meterLraStatusEl.textContent = 'âœ“ Natural Dynamics';
               meterLraStatusEl.className = 'loudness-meter-status good';
             } else {
-              meterLraStatusEl.textContent = '↑ Very Dynamic';
+              meterLraStatusEl.textContent = 'â†‘ Very Dynamic';
               meterLraStatusEl.className = 'loudness-meter-status info';
             }
           }
@@ -1927,14 +1927,14 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
     <div class="footer-content">
       <h2>Contact</h2>
       <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
-      <p><a href="processor.html" class="footer-special-link">Processor</a></p>
+      <p><a href="../processor/" class="footer-special-link">Processor</a></p>
       <p><a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="footer-special-link">Off World Depot</a></p>
-      <p class="footer-copy">© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
+      <p class="footer-copy">Â© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
     </div>
   </footer>
 
   <!-- Copyright Year -->
-  <script src="content.js"></script>
+  <script src="../content.js"></script>
 
 </body>
 </html>

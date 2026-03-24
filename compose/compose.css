@@ -1,4 +1,4 @@
-/* =============================================================================
+﻿/* =============================================================================
    AUDIO DESIGN STUDIOS - COMPOSE PAGE (compose.html)
    Combined styles for Design & Compose portfolio sections
    
@@ -10,7 +10,7 @@
    5. VU METERS & VOLUME CONTROLS - Portfolio player meters
    ============================================================================= */
 
-@import url('./shared.css');
+@import url('../shared.css');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* =============================================================================
@@ -19,7 +19,7 @@
 
 /* Design Section Background */
 .env-design {
-  background-image: url('Photos/bridgetoshinob800.webp');
+  background-image: url('../Photos/bridgetoshinob800.webp');
   background-position: center;
   background-size: cover;
   min-height: 60vh;
@@ -34,19 +34,19 @@
 
 @media (min-width: 720px) {
   .env-design {
-    background-image: url('Photos/bridgetoshinob1400.webp');
+    background-image: url('../Photos/bridgetoshinob1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-design {
-    background-image: url('Photos/bridgetoshinob2000.webp');
+    background-image: url('../Photos/bridgetoshinob2000.webp');
   }
 }
 
 /* Compose/Portfolio Section Background */
 .env-portfolio {
-  background-image: url('Photos/design800.webp');
+  background-image: url('../Photos/design800.webp');
   background-position: center;
   background-size: cover;
   min-height: 60vh;
@@ -61,13 +61,13 @@
 
 @media (min-width: 720px) {
   .env-portfolio {
-    background-image: url('Photos/design1400.webp');
+    background-image: url('../Photos/design1400.webp');
   }
 }
 
 @media (min-width: 1200px) {
   .env-portfolio {
-    background-image: url('Photos/design2000.webp');
+    background-image: url('../Photos/design2000.webp');
   }
 }
 
@@ -516,7 +516,7 @@ blockquote footer {
 }
 
 .design-meter-scale::before {
-  content: '−';
+  content: 'âˆ’';
   position: absolute;
   left: -10px;
   top: 20px;
@@ -1806,7 +1806,7 @@ blockquote footer {
 }
 
 .portfolio-meter-scale::before {
-  content: '−';
+  content: 'âˆ’';
   position: absolute;
   left: -10px;
   top: 20px;

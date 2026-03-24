@@ -1,4 +1,4 @@
-/* =============================================================================
+﻿/* =============================================================================
    AUDIO DESIGN STUDIOS - DEMO PAGE (demo.html)
    AI Reconstruction Player
    
@@ -9,8 +9,8 @@
    4. AI PLAYER STYLES - VU meter, controls, toggle button
    ============================================================================= */
 
-@import url('./shared.css');
-@import url('./compose.css');
+@import url('../shared.css');
+@import url('../compose/compose.css');
 
 /* =============================================================================
    1. PAGE STRUCTURE
@@ -330,7 +330,7 @@ main {
 }
 
 .ba-meter-scale::before {
-  content: '−';
+  content: 'âˆ’';
   position: absolute;
   left: -10px;
   top: 20px;

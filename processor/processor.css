@@ -1,4 +1,4 @@
-/* =============================================================================
+﻿/* =============================================================================
    AUDIO DESIGN STUDIOS - PROCESSOR PAGE (processor.html)
    Single-File Audio Processor & Analyzer
 
@@ -7,10 +7,10 @@
    Only processor-specific additions are defined here.
    ============================================================================= */
 
-@import url('./demo.css');
+@import url('../demo/demo.css');
 
 /* =============================================================================
-   1. UPLOAD ZONE — drag-and-drop or click to browse
+   1. UPLOAD ZONE â€” drag-and-drop or click to browse
    ============================================================================= */
 
 .upload-zone {
@@ -59,7 +59,7 @@
   z-index: -1;
 }
 
-/* Label that covers the upload zone in empty state — direct tap = file picker */
+/* Label that covers the upload zone in empty state â€” direct tap = file picker */
 .upload-zone-label {
   position: absolute;
   inset: 0;

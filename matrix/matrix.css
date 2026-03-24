@@ -1,9 +1,9 @@
-/* =============================================================================
+﻿/* =============================================================================
    AUDIO DESIGN STUDIOS - MATRIX PAGE (matrix.html)
    Page-specific styles for the matrix animation page
    ============================================================================= */
 
-@import url('./shared.css');
+@import url('../shared.css');
 
 /* Matrix Page Full Screen */
 body {

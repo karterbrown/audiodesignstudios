@@ -1476,6 +1476,10 @@ function effectFactor(effect, t, ledIndex, nowMs) {
       if (t < 0.75) return 1.0;
       return Math.max(0, 1.0 - ((t - 0.75) / 0.25));
     case 'wave':   return Math.sin((ledIndex / 19) * Math.PI + t * 2 * Math.PI) * 0.5 + 0.5;
+    case 'saw':    return t < 0.5 ? t * 2 : Math.max(0, 2 - t * 2);           // triangle: ramp up → ramp down
+    case 'bounce': { const b = Math.floor(t * 3); const p = (t * 3) % 1;       // 3 dampening pulses
+                    return Math.sin(p * Math.PI) * Math.pow(0.55, b); }
+    case 'blink':  return t < 0.50 ? 1.0 : 0.0;                                // hard cut at halfway
     default:       return 1.0;
   }
 }
@@ -1759,6 +1763,9 @@ const EFFECT_TAG_COLORS = {
   fade:   {bg:'rgba(170,136,255,0.18)', color:'#bb99ff'},
   hold:   {bg:'rgba(80,255,170,0.18)',  color:'#66ffcc'},
   wave:   {bg:'rgba(255,220,80,0.18)',  color:'#ffdd66'},
+  saw:    {bg:'rgba(255,100,200,0.18)', color:'#ff88dd'},
+  bounce: {bg:'rgba(100,220,255,0.18)', color:'#66ddff'},
+  blink:  {bg:'rgba(255,255,100,0.18)', color:'#ffff66'},
 };
 
 function updateEventTable() {
@@ -1942,7 +1949,7 @@ exportBtn.addEventListener('click', () => {
   const header = [
     '# LED Lighting Events — Pico Light Show Visualizer',
     '# Format: (time_ms, strip_index, brightness, effect, duration_ms[, led_pos[, r, g, b]])',
-    '# Effects: strobe, flash, pulse, fade, hold, wave',
+    '# Effects: strobe, flash, pulse, fade, hold, wave, saw, bounce, blink',
     '# led_pos 255 = whole strip; 0-19 = specific LED position',
     '# r, g, b = explicit LED color (0-255 each); omit to use strip default color',
     `# Source: ${midiFileName}  Mode: ${currentMode}  BPM: ${bpm}`,
@@ -2277,20 +2284,25 @@ function randomizeShow() {
 
     // 1. SPATIAL — how an event maps to LEDs in physical space
     const SPATIAL = pick([
-      'dot',          // one or a few individual LEDs
-      'run-fwd',      // sequential run forward
-      'run-back',     // sequential run backward
-      'run-alt',      // direction alternates each note
-      'run-energy',   // direction follows local energy
-      'mirror-out',   // simultaneous burst from center outward
-      'mirror-in',    // edges closing to center
-      'scatter',      // random individual dots spread over time
-      'zone-drift',   // active window drifts across strip
-      'comet-fwd',    // comet dim-tail → bright-head forward
-      'comet-back',   // comet backward
-      'stutter',      // same LED fires repeatedly
-      'cross-strip',  // ripple echoes across adjacent strips
-      'full-strip',   // whole strip, always
+      'dot',           // one or a few individual LEDs
+      'run-fwd',       // sequential run forward
+      'run-back',      // sequential run backward
+      'run-alt',       // direction alternates each note
+      'run-energy',    // direction follows local energy
+      'mirror-out',    // simultaneous burst from center outward
+      'mirror-in',     // edges closing to center
+      'scatter',       // random individual dots spread over time
+      'zone-drift',    // active window drifts across strip
+      'comet-fwd',     // comet dim-tail → bright-head forward
+      'comet-back',    // comet backward
+      'stutter',       // same LED fires repeatedly
+      'cross-strip',   // ripple echoes across adjacent strips
+      'full-strip',    // whole strip, always
+      'theater-chase', // every Nth LED lit simultaneously, marching
+      'confetti',      // multi-strip random-color bursts
+      'juggle',        // phase-offset bouncing dots across strips
+      'ping-pong',     // two comets from opposite ends colliding
+      'twinkle-fade',  // independent random sparkles over a time window
     ]);
 
     // 2. DENSITY — how many LEDs (or events) fire per note
@@ -2302,7 +2314,7 @@ function randomizeShow() {
     const runMax  = ri(runMin + 2, NUM_LEDS - 1);
 
     // 4. EFFECT POOL — which effects this grammar uses, in rotation
-    const allEffects = ['flash', 'strobe', 'pulse', 'fade', 'hold', 'wave'];
+    const allEffects = ['flash', 'strobe', 'pulse', 'fade', 'hold', 'wave', 'saw', 'bounce', 'blink'];
     const poolSize   = ri(1, 4);
     const effectPool = shuffle(allEffects).slice(0, poolSize);
     let   efIdx = 0, efCount = 0;
@@ -2331,6 +2343,8 @@ function randomizeShow() {
       'progress',    // hue-rotates forward as song progresses
       'single',      // always swatch 0 only
       'invert',      // cycles backwards through swatches
+      'rainbow',     // true chromatic hue rotation across note index
+      'heatmap',     // energy-driven: low=cool blue, high=white hot
     ]);
 
     // 8. STEP TIMING (for runs) — how fast the run moves
@@ -2351,6 +2365,13 @@ function randomizeShow() {
         case 'energy':   return gramPal[(energy > energyThreshold ? 0 : 3) % gramPal.length].slice();
         case 'progress': return gramPal[Math.floor(progress * gramPal.length) % gramPal.length].slice();
         case 'single':   return gramPal[0].slice();
+        case 'rainbow':  return hsvToRgb((i * 0.13 + progress * 0.5) % 1, 0.95, 1.0);  // true spectral rotation
+        case 'heatmap': {
+          // low energy = blue, mid = red, high = white
+          const e = Math.min(1, energy * 1.5);
+          if (e < 0.5) return [Math.round(e * 2 * 255), 0, Math.round((1 - e * 2) * 255)];
+          return [255, Math.round((e - 0.5) * 2 * 255), Math.round((e - 0.5) * 2 * 255)];
+        }
       }
     }
 
@@ -2476,6 +2497,81 @@ function randomizeShow() {
               duration_ms: dur,
               led_pos:     clamp(led2 + ri(-2, 2), 0, NUM_LEDS - 1),
               color:       getColor(i + k, (s + k) % NUM_STRIPS, energy, prog),
+            }));
+          }
+
+          case 'theater-chase': {
+            // Every Nth LED lit simultaneously — marching-stripe effect
+            const nth = ri(2, 3);
+            const offset = i % nth;
+            return Array.from({length: Math.ceil(NUM_LEDS / nth)}, (_, k) => ({
+              time_ms:     ev.time_ms,
+              strip:       s,
+              brightness:  clamp(br * (k % 2 === 0 ? 1.0 : 0.7), 40, 255),
+              effect:      ef,
+              duration_ms: dur,
+              led_pos:     clamp(offset + k * nth, 0, NUM_LEDS - 1),
+              color:       getColor(i + k, s, energy, prog),
+            }));
+          }
+
+          case 'confetti': {
+            // Multi-strip bursts at random positions — carnival effect
+            const count  = loud ? ri(3, 6) : ri(1, 3);
+            const spread = Math.round(beat_ms * 0.07);
+            return Array.from({length: count}, (_, k) => ({
+              time_ms:     ev.time_ms + k * Math.max(Math.round(spread / count), 8),
+              strip:       (s + ri(0, NUM_STRIPS - 1)) % NUM_STRIPS,
+              brightness:  clamp(br * rf(0.45, 1.0), 35, 255),
+              effect:      pick(['flash', 'pulse', 'saw', ef]),
+              duration_ms: clamp(Math.round(dur * rf(0.25, 0.75)), 40, 1200),
+              led_pos:     ri(0, NUM_LEDS - 1),
+              color:       getColor(i + k + ri(0, 2), (s + k) % NUM_STRIPS, energy, prog),
+            }));
+          }
+
+          case 'juggle': {
+            // Phase-offset sine-position dots across strips — juggling pattern
+            const dots = ri(2, 4);
+            const tightness = rf(1.8, 3.2);
+            return Array.from({length: dots}, (_, k) => ({
+              time_ms:     ev.time_ms + k * Math.round(beat_ms * 0.03),
+              strip:       (s + k) % NUM_STRIPS,
+              brightness:  clamp(br * (1 - k * 0.12), 40, 255),
+              effect:      ef,
+              duration_ms: dur,
+              led_pos:     Math.round(((Math.sin(i * tightness + k * 2.09) + 1) / 2) * (NUM_LEDS - 1)),
+              color:       getColor(i + k, (s + k) % NUM_STRIPS, energy, prog),
+            }));
+          }
+
+          case 'ping-pong': {
+            // Two comets from opposite ends colliding at center
+            const sm   = Math.max(Math.round(dur / NUM_LEDS), 10);
+            const cSm  = energyMode === 'speed' && loud ? Math.round(sm * 0.45) : sm;
+            const evts = [];
+            const half = Math.floor(NUM_LEDS / 2);
+            for (let k = 0; k < half; k++) {
+              const frac = k / half;
+              const br2  = clamp(br * (0.45 + 0.55 * frac), 25, 255);
+              evts.push({ time_ms: ev.time_ms + k * cSm, strip: s, brightness: br2, effect: k > half * 0.7 ? 'flash' : ef, duration_ms: Math.round(cSm * 2.2), led_pos: k,                  color: getColor(i,     s, energy, prog) });
+              evts.push({ time_ms: ev.time_ms + k * cSm, strip: s, brightness: br2, effect: k > half * 0.7 ? 'flash' : ef, duration_ms: Math.round(cSm * 2.2), led_pos: NUM_LEDS - 1 - k, color: getColor(i + 1, s, energy, prog) });
+            }
+            return evts;
+          }
+
+          case 'twinkle-fade': {
+            // Independent random sparkles spread over a time window — starfield
+            const count  = loud ? ri(4, 8) : ri(2, 5);
+            const window = Math.round(beat_ms * rf(0.4, 2.0));
+            return Array.from({length: count}, () => ({
+              time_ms:     ev.time_ms + Math.floor(Math.random() * Math.max(window, 1)),
+              strip:       s,
+              brightness:  clamp(br * rf(0.25, 1.0), 20, 255),
+              effect:      pick(['fade', 'pulse', 'bounce']),
+              duration_ms: clamp(Math.round(beat_ms * rf(0.4, 2.2)), 50, 3000),
+              led_pos:     ri(0, NUM_LEDS - 1),
+              color:       getColor(i + ri(0, 4), s, energy, prog),
             }));
           }
 

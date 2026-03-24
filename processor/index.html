@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <!-- ============================================================================
      PROCESSOR PAGE - Audio Design Studios
      Single-File Audio Processor & Analyzer
      Upload any audio file for real-time metering, loudness analysis, and
-     spectrum visualization. No data is stored — everything is cleared on close.
+     spectrum visualization. No data is stored â€” everything is cleared on close.
      ============================================================================ -->
 
 <head>
@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="processor.css?v=1771694691" />
+  <link rel="stylesheet" href="./processor.css?v=1771694691" />
 </head>
 
 <body>
@@ -46,7 +46,7 @@
        SITE HEADER - Simple Logo + Info Button
        ======================================================================== -->
   <header class="site-header">
-    <a href="index.html" class="logo">Audio Design Studios</a>
+    <a href="../" class="logo">Audio Design Studios</a>
     <button class="demo-header-info-btn" id="processorInfoBtn" aria-label="How to use this processor">INFO</button>
   </header>
 
@@ -61,7 +61,7 @@
           <h2 class="hidden-player-title">Processor</h2>
 
           <!-- ================================================================
-               UPLOAD ZONE — drag-and-drop or click to browse
+               UPLOAD ZONE â€” drag-and-drop or click to browse
                ================================================================ -->
           <div class="upload-zone" id="uploadZone">
             <input
@@ -82,14 +82,14 @@
             </div>
             <!-- Loaded state -->
             <div class="upload-loaded-content" id="uploadLoadedContent" style="display: none;">
-              <div class="upload-loaded-filename" id="uploadFilename">—</div>
+              <div class="upload-loaded-filename" id="uploadFilename">â€”</div>
               <button class="upload-another-btn" id="uploadAnotherBtn" aria-label="Load another file">&#8635; Change</button>
               <button class="upload-clear-btn" id="uploadClearBtn" aria-label="Clear file">&#10005; Clear</button>
             </div>
           </div>
 
           <!-- ================================================================
-               PLAYER — VU METER + METERING DISPLAY
+               PLAYER â€” VU METER + METERING DISPLAY
                ================================================================ -->
           <div class="ba-global-toggle-section">
             <div class="ba-meter-container">
@@ -131,7 +131,7 @@
             <div class="ba-metering-display">
               <div class="ba-meter-item ba-meter-source">
                 <span class="ba-meter-label-text">File:</span>
-                <span class="ba-meter-value" id="procSourceValue">—</span>
+                <span class="ba-meter-value" id="procSourceValue">â€”</span>
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">RMS:</span>
@@ -187,7 +187,7 @@
     </section>
 
     <!-- ========================================================================
-         ANALYSIS MODAL — offline loudness analysis
+         ANALYSIS MODAL â€” offline loudness analysis
          ======================================================================== -->
     <div id="procAnalysisModal" class="analysis-modal" style="display: none;">
       <div class="analysis-modal-content">
@@ -203,7 +203,7 @@
     </div>
 
     <!-- ========================================================================
-         SPECTRUM ANALYZER MODAL — real-time spectrum visualization
+         SPECTRUM ANALYZER MODAL â€” real-time spectrum visualization
          ======================================================================== -->
     <div id="procLoudnessMeterModal" class="analysis-modal" style="display: none;">
       <div class="analysis-modal-content loudness-meter-content">
@@ -223,12 +223,12 @@
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Streaming Target</span>
               <span class="loudness-meter-value" id="procMeterLufsIValue">-&#8734; LUFS</span>
-              <span class="loudness-meter-status" id="procMeterLufsStatus">Target: −14 LUFS</span>
+              <span class="loudness-meter-status" id="procMeterLufsStatus">Target: âˆ’14 LUFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">True Peak</span>
               <span class="loudness-meter-value" id="procMeterTruePeakValue">-&#8734; dBFS</span>
-              <span class="loudness-meter-status" id="procMeterPeakStatus">Target: < −1.0 dBFS</span>
+              <span class="loudness-meter-status" id="procMeterPeakStatus">Target: < âˆ’1.0 dBFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Dynamic Range</span>
@@ -307,7 +307,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // ── Privacy / cleanup ─────────────────────────────────────────────────
+      // â”€â”€ Privacy / cleanup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       // All object URLs are tracked here and revoked when the page is closed.
       // No data is ever written to localStorage, sessionStorage, IndexedDB,
       // or any Cache API. Everything lives in memory only.
@@ -330,7 +330,7 @@
       window.addEventListener('beforeunload', cleanup);
       document.addEventListener('pagehide', cleanup);
 
-      // ── DOM References ────────────────────────────────────────────────────
+      // â”€â”€ DOM References â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const meterNeedle    = document.getElementById('procMeterNeedle');
       const volumeKnob     = document.getElementById('procVolumeKnob');
       const volumeValue    = document.getElementById('procVolumeValue');
@@ -374,7 +374,7 @@
       const meterCanvas         = document.getElementById('procLoudnessMeterCanvas');
       const meterCtx            = meterCanvas.getContext('2d', { alpha: false, desynchronized: true });
 
-      // ── Audio Graph ───────────────────────────────────────────────────────
+      // â”€â”€ Audio Graph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const audio = new Audio();
       audio.preload = 'auto';
 
@@ -385,14 +385,14 @@
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                        ('ontouchstart' in window && window.innerWidth <= 900);
 
-      // Spectrum analyser — 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4×
+      // Spectrum analyser â€” 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4Ã—
       const analyser = ctx.createAnalyser();
       analyser.fftSize = isMobile ? 2048 : 8192;
       analyser.smoothingTimeConstant = 0.8;
       analyser.minDecibels = -90;
       analyser.maxDecibels = 0;
 
-      // VU analyser (2048 FFT) — lightweight, for needle + readouts
+      // VU analyser (2048 FFT) â€” lightweight, for needle + readouts
       const vuAnalyser = ctx.createAnalyser();
       vuAnalyser.fftSize = 2048;
       vuAnalyser.smoothingTimeConstant = 0.8;
@@ -416,7 +416,7 @@
         }
       }
 
-      // ── Volume State ──────────────────────────────────────────────────────
+      // â”€â”€ Volume State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       let db = 0;
       let angle = 360;
       let drag = false;
@@ -431,7 +431,7 @@
         gainNode.gain.value = gain;
       }
 
-      // ── Metering Buffers ──────────────────────────────────────────────────
+      // â”€â”€ Metering Buffers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const lufsBufferSize = 150; // ~3s at 50fps
       const rmsBufferSize  = 15;  // ~300ms at 50fps
 
@@ -469,7 +469,7 @@
         if (meterNeedle)      meterNeedle.style.transform  = 'translateX(-50%) rotate(-50deg)';
       }
 
-      // ── Playback State ────────────────────────────────────────────────────
+      // â”€â”€ Playback State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       let fileLoaded   = false;
       let playing      = false;
       let progressRAF  = null;
@@ -491,7 +491,7 @@
         stopVU();
       });
 
-      // ── Progress Bar ──────────────────────────────────────────────────────
+      // â”€â”€ Progress Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const progressFill = document.createElement('div');
       progressFill.className = 'main-player-progress-fill';
       progressFill.style.width = '0%';
@@ -527,7 +527,7 @@
         progressRAF = requestAnimationFrame(step);
       }
 
-      // ── VU Meter Loop ─────────────────────────────────────────────────────
+      // â”€â”€ VU Meter Loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function stopVU() {
         if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; }
         const decayLoop = () => {
@@ -551,7 +551,7 @@
         let lastDisplayUpdate = 0;
         let vuFrameCount = 0;
         const loop = () => {
-          // Throttle to ~30fps on mobile — halves the CPU cost while still feeling smooth
+          // Throttle to ~30fps on mobile â€” halves the CPU cost while still feeling smooth
           if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
           vuAnalyser.getFloatTimeDomainData(timeData);
 
@@ -594,7 +594,7 @@
             lufsValue = (avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100) - 0.691;
           }
 
-          // LRA (re-sort every ~60 frames ≈ 1s)
+          // LRA (re-sort every ~60 frames â‰ˆ 1s)
           lraValues.push(lufsValue);
           if (lraValues.length > 300) lraValues.shift();
           lraFrame++;
@@ -633,7 +633,7 @@
         vuRAF = requestAnimationFrame(loop);
       }
 
-      // ── File Loading ──────────────────────────────────────────────────────
+      // â”€â”€ File Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function showUploadZone() {
         uploadZone.classList.remove('loaded', 'buffering');
         uploadZoneContent.style.display  = '';
@@ -693,7 +693,7 @@
         playPauseBtn.classList.remove('playing');
         fileLoaded = false;
 
-        // Handler: ready to play — do NOT auto-play, wait for user input
+        // Handler: ready to play â€” do NOT auto-play, wait for user input
         const onReady = () => {
           fileLoaded = true;
           showLoadedZone(file.name);
@@ -715,7 +715,7 @@
         audio.src = currentObjectURL;
       }
 
-      // ── Upload Zone Interactions ──────────────────────────────────────────
+      // â”€â”€ Upload Zone Interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       // Native file input change
       fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -772,7 +772,7 @@
         fileInput.click();
       });
 
-      // ── Transport Controls ────────────────────────────────────────────────
+      // â”€â”€ Transport Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       playPauseBtn.addEventListener('click', async () => {
         if (!fileLoaded) {
           // Prompt user to upload a file
@@ -830,7 +830,7 @@
       });
       document.addEventListener('mouseup', () => { scrubbing = false; });
 
-      // ── Volume Knob ───────────────────────────────────────────────────────
+      // â”€â”€ Volume Knob â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       volumeKnob.addEventListener('mousedown', (e) => {
         drag = true; moved = false;
         startY = e.clientY; startAngle = angle;
@@ -879,7 +879,7 @@
 
       applyVolume();
 
-      // ── Analysis Modal ────────────────────────────────────────────────────
+      // â”€â”€ Analysis Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function closeAnalysisModal() { analysisModal.style.display = 'none'; }
 
       analysisModalClose.addEventListener('click', closeAnalysisModal);
@@ -887,7 +887,7 @@
         if (e.target === analysisModal) closeAnalysisModal();
       });
 
-      // K-weighting pre-filter (ITU-R BS.1770-4) — required for accurate LUFS measurement
+      // K-weighting pre-filter (ITU-R BS.1770-4) â€” required for accurate LUFS measurement
       function kWeightChannel(data, fs) {
         // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
         const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
@@ -964,7 +964,7 @@
             channelData.push(audioBuffer.getChannelData(i));
           }
 
-          // LUFS — 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
+          // LUFS â€” 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
           const blockSize   = Math.floor(sampleRate * 0.4);
           const overlapSize = Math.floor(blockSize * 0.75);
           const step        = blockSize - overlapSize;
@@ -976,7 +976,7 @@
 
           updateProgress(30, 'Processing blocks...');
 
-          // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs — stereo is always 1.0
+          // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs â€” stereo is always 1.0
           const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
 
           // Process in blocks - apply K-weighting on-demand per block to save memory
@@ -1081,12 +1081,12 @@
             clippingHTML = `
               <div class="analysis-metric" style="border-left-color: #7ec98f;">
                 <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
-                <span class="analysis-value" style="color: #7ec98f;">None detected ✓</span>
+                <span class="analysis-value" style="color: #7ec98f;">None detected âœ“</span>
               </div>
             `;
           }
 
-          // Streaming compliance (-14 ± 1.5 LUFS, peak < -1.0 dBTP)
+          // Streaming compliance (-14 Â± 1.5 LUFS, peak < -1.0 dBTP)
           const lufsInRange = intLUFS >= -15.5 && intLUFS <= -12.5;
           const peakOk      = truePeak < -1.0;
           const noClipping  = clippingEvents.length === 0;
@@ -1096,7 +1096,7 @@
           let complianceDetails = [];
 
           if (lufsInRange && peakOk && noClipping) {
-            complianceStatus = '✓ Ready for Spotify/Apple Music';
+            complianceStatus = 'âœ“ Ready for Spotify/Apple Music';
             complianceClass  = 'ready';
             complianceDetails.push('LUFS level is optimal for streaming platforms');
             complianceDetails.push('True Peak is below -1.0 dBTP (prevents inter-sample clipping)');
@@ -1121,13 +1121,13 @@
               complianceDetails.push(`<strong>Clipping Detected:</strong> ${clippingEvents.length} instances found. This will cause audible distortion.`);
             }
             if (issues.length === 1 && issues[0] !== 'clipping') {
-              complianceStatus = '⚠ Minor Issues';
+              complianceStatus = 'âš  Minor Issues';
               complianceClass  = 'warning';
             } else if (issues.includes('clipping') || issues.length > 1) {
-              complianceStatus = '✗ Not Ready for Streaming';
+              complianceStatus = 'âœ— Not Ready for Streaming';
               complianceClass  = 'fail';
             } else {
-              complianceStatus = '⚠ Minor Issues';
+              complianceStatus = 'âš  Minor Issues';
               complianceClass  = 'warning';
             }
           }
@@ -1207,7 +1207,7 @@
         analyzeTrack(currentObjectURL, currentTrackName);
       });
 
-      // ── Spectrum Analyzer Modal ───────────────────────────────────────────
+      // â”€â”€ Spectrum Analyzer Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       let meterActive    = false;
       let meterRAF       = null;
       let specFrameCount = 0;
@@ -1234,7 +1234,7 @@
         const MIN_FREQ = 20;
         const nyquist  = ctx.sampleRate / 2;
 
-        // Pixel → frequency lookup (cached per canvas width)
+        // Pixel â†’ frequency lookup (cached per canvas width)
         if (!freqMapCache || freqMapCacheW !== cW) {
           freqMapCache  = new Float32Array(cW);
           freqMapCacheW = cW;
@@ -1275,7 +1275,7 @@
           meterCtx.stroke();
         });
 
-        // Spectrum curve — clipped to chart area, fill then stroke (smooth, rounded)
+        // Spectrum curve â€” clipped to chart area, fill then stroke (smooth, rounded)
         meterCtx.save();
         meterCtx.beginPath();
         meterCtx.rect(ML, MT, cW, cH);
@@ -1545,7 +1545,7 @@
   </script>
 
   <!-- ========================================================================
-       PROCESSOR INFO MODAL — How to use this page
+       PROCESSOR INFO MODAL â€” How to use this page
        ======================================================================== -->
   <div class="player-info-overlay" id="processorInfoOverlay" aria-hidden="true">
     <div class="player-info-modal" role="dialog" aria-modal="true" aria-labelledby="processorInfoTitle">
@@ -1614,14 +1614,14 @@
     <div class="footer-content">
       <h2>Contact</h2>
       <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
-      <p><a href="processor.html" class="footer-special-link">Processor</a></p>
+      <p><a href="../processor/" class="footer-special-link">Processor</a></p>
       <p><a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="footer-special-link">Off World Depot</a></p>
       <p class="footer-copy">&copy; <span id="year"></span> Audio Design Studios. All rights reserved.</p>
     </div>
   </footer>
 
   <!-- Copyright Year -->
-  <script src="content.js"></script>
+  <script src="../content.js"></script>
 
 </body>
 </html>
