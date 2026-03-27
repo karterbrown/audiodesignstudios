@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <!-- ============================================================================
      PROCESSOR PAGE - Audio Design Studios
      Single-File Audio Processor & Analyzer
      Upload any audio file for real-time metering, loudness analysis, and
-     spectrum visualization. No data is stored â€” everything is cleared on close.
+     spectrum visualization. No data is stored &mdash; everything is cleared on close.
      ============================================================================ -->
 
 <head>
@@ -61,7 +61,7 @@
           <h2 class="hidden-player-title">Processor</h2>
 
           <!-- ================================================================
-               UPLOAD ZONE â€” drag-and-drop or click to browse
+               UPLOAD ZONE &mdash; drag-and-drop or click to browse
                ================================================================ -->
           <div class="upload-zone" id="uploadZone">
             <input
@@ -82,14 +82,14 @@
             </div>
             <!-- Loaded state -->
             <div class="upload-loaded-content" id="uploadLoadedContent" style="display: none;">
-              <div class="upload-loaded-filename" id="uploadFilename">â€”</div>
+              <div class="upload-loaded-filename" id="uploadFilename">&mdash;</div>
               <button class="upload-another-btn" id="uploadAnotherBtn" aria-label="Load another file">&#8635; Change</button>
               <button class="upload-clear-btn" id="uploadClearBtn" aria-label="Clear file">&#10005; Clear</button>
             </div>
           </div>
 
           <!-- ================================================================
-               PLAYER â€” VU METER + METERING DISPLAY
+               PLAYER &mdash; VU METER + METERING DISPLAY
                ================================================================ -->
           <div class="ba-global-toggle-section">
             <div class="ba-meter-container">
@@ -131,7 +131,7 @@
             <div class="ba-metering-display">
               <div class="ba-meter-item ba-meter-source">
                 <span class="ba-meter-label-text">File:</span>
-                <span class="ba-meter-value" id="procSourceValue">â€”</span>
+                <span class="ba-meter-value" id="procSourceValue">&mdash;</span>
               </div>
               <div class="ba-meter-item">
                 <span class="ba-meter-label-text">RMS:</span>
@@ -187,7 +187,7 @@
     </section>
 
     <!-- ========================================================================
-         ANALYSIS MODAL â€” offline loudness analysis
+         ANALYSIS MODAL &mdash; offline loudness analysis
          ======================================================================== -->
     <div id="procAnalysisModal" class="analysis-modal" style="display: none;">
       <div class="analysis-modal-content">
@@ -203,7 +203,7 @@
     </div>
 
     <!-- ========================================================================
-         SPECTRUM ANALYZER MODAL â€” real-time spectrum visualization
+         SPECTRUM ANALYZER MODAL &mdash; real-time spectrum visualization
          ======================================================================== -->
     <div id="procLoudnessMeterModal" class="analysis-modal" style="display: none;">
       <div class="analysis-modal-content loudness-meter-content">
@@ -223,12 +223,12 @@
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Streaming Target</span>
               <span class="loudness-meter-value" id="procMeterLufsIValue">-&#8734; LUFS</span>
-              <span class="loudness-meter-status" id="procMeterLufsStatus">Target: âˆ’14 LUFS</span>
+              <span class="loudness-meter-status" id="procMeterLufsStatus">Target: &minus;14 LUFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">True Peak</span>
               <span class="loudness-meter-value" id="procMeterTruePeakValue">-&#8734; dBFS</span>
-              <span class="loudness-meter-status" id="procMeterPeakStatus">Target: < âˆ’1.0 dBFS</span>
+              <span class="loudness-meter-status" id="procMeterPeakStatus">Target: < &minus;1.0 dBFS</span>
             </div>
             <div class="loudness-meter-reading">
               <span class="loudness-meter-label">Dynamic Range</span>
@@ -385,14 +385,14 @@
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                        ('ontouchstart' in window && window.innerWidth <= 900);
 
-      // Spectrum analyser â€” 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4Ã—
+      // Spectrum analyser &mdash; 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4Ã—
       const analyser = ctx.createAnalyser();
       analyser.fftSize = isMobile ? 2048 : 8192;
       analyser.smoothingTimeConstant = 0.8;
       analyser.minDecibels = -90;
       analyser.maxDecibels = 0;
 
-      // VU analyser (2048 FFT) â€” lightweight, for needle + readouts
+      // VU analyser (2048 FFT) &mdash; lightweight, for needle + readouts
       const vuAnalyser = ctx.createAnalyser();
       vuAnalyser.fftSize = 2048;
       vuAnalyser.smoothingTimeConstant = 0.8;
@@ -551,7 +551,7 @@
         let lastDisplayUpdate = 0;
         let vuFrameCount = 0;
         const loop = () => {
-          // Throttle to ~30fps on mobile â€” halves the CPU cost while still feeling smooth
+          // Throttle to ~30fps on mobile &mdash; halves the CPU cost while still feeling smooth
           if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
           vuAnalyser.getFloatTimeDomainData(timeData);
 
@@ -693,7 +693,7 @@
         playPauseBtn.classList.remove('playing');
         fileLoaded = false;
 
-        // Handler: ready to play â€” do NOT auto-play, wait for user input
+        // Handler: ready to play &mdash; do NOT auto-play, wait for user input
         const onReady = () => {
           fileLoaded = true;
           showLoadedZone(file.name);
@@ -887,7 +887,7 @@
         if (e.target === analysisModal) closeAnalysisModal();
       });
 
-      // K-weighting pre-filter (ITU-R BS.1770-4) â€” required for accurate LUFS measurement
+      // K-weighting pre-filter (ITU-R BS.1770-4) &mdash; required for accurate LUFS measurement
       function kWeightChannel(data, fs) {
         // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
         const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
@@ -964,7 +964,7 @@
             channelData.push(audioBuffer.getChannelData(i));
           }
 
-          // LUFS â€” 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
+          // LUFS &mdash; 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
           const blockSize   = Math.floor(sampleRate * 0.4);
           const overlapSize = Math.floor(blockSize * 0.75);
           const step        = blockSize - overlapSize;
@@ -976,7 +976,7 @@
 
           updateProgress(30, 'Processing blocks...');
 
-          // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs â€” stereo is always 1.0
+          // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs &mdash; stereo is always 1.0
           const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
 
           // Process in blocks - apply K-weighting on-demand per block to save memory
@@ -1081,7 +1081,7 @@
             clippingHTML = `
               <div class="analysis-metric" style="border-left-color: #7ec98f;">
                 <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
-                <span class="analysis-value" style="color: #7ec98f;">None detected âœ“</span>
+                <span class="analysis-value" style="color: #7ec98f;">None detected ✓</span>
               </div>
             `;
           }
@@ -1096,7 +1096,7 @@
           let complianceDetails = [];
 
           if (lufsInRange && peakOk && noClipping) {
-            complianceStatus = 'âœ“ Ready for Spotify/Apple Music';
+            complianceStatus = '✓ Ready for Spotify/Apple Music';
             complianceClass  = 'ready';
             complianceDetails.push('LUFS level is optimal for streaming platforms');
             complianceDetails.push('True Peak is below -1.0 dBTP (prevents inter-sample clipping)');
@@ -1121,13 +1121,13 @@
               complianceDetails.push(`<strong>Clipping Detected:</strong> ${clippingEvents.length} instances found. This will cause audible distortion.`);
             }
             if (issues.length === 1 && issues[0] !== 'clipping') {
-              complianceStatus = 'âš  Minor Issues';
+              complianceStatus = '⚠ Minor Issues';
               complianceClass  = 'warning';
             } else if (issues.includes('clipping') || issues.length > 1) {
-              complianceStatus = 'âœ— Not Ready for Streaming';
+              complianceStatus = '✗ Not Ready for Streaming';
               complianceClass  = 'fail';
             } else {
-              complianceStatus = 'âš  Minor Issues';
+              complianceStatus = '⚠ Minor Issues';
               complianceClass  = 'warning';
             }
           }
@@ -1275,7 +1275,7 @@
           meterCtx.stroke();
         });
 
-        // Spectrum curve â€” clipped to chart area, fill then stroke (smooth, rounded)
+        // Spectrum curve &mdash; clipped to chart area, fill then stroke (smooth, rounded)
         meterCtx.save();
         meterCtx.beginPath();
         meterCtx.rect(ML, MT, cW, cH);
@@ -1545,7 +1545,7 @@
   </script>
 
   <!-- ========================================================================
-       PROCESSOR INFO MODAL â€” How to use this page
+       PROCESSOR INFO MODAL &mdash; How to use this page
        ======================================================================== -->
   <div class="player-info-overlay" id="processorInfoOverlay" aria-hidden="true">
     <div class="player-info-modal" role="dialog" aria-modal="true" aria-labelledby="processorInfoTitle">
