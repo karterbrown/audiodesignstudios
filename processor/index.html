@@ -576,463 +576,21 @@
           const stRmsDb  = stRms > 0.00001 ? 20 * Math.log10(stRms) : -100;
           const peakDb   = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
 
-          // True peak hold
-          if (peakDb > truePeakHold) truePeakHold = peakDb;
-          else truePeakHold = Math.max(truePeakHold * 0.998, -100);
-
-          // Integrated LUFS (running sum)
-          if (lufsBuffer.length >= lufsBufferSize) {
-            const old = lufsBuffer[0];
-            lufsSumSq -= old * old;
-          }
-          lufsBuffer.push(rms);
-          if (lufsBuffer.length > lufsBufferSize) lufsBuffer.shift();
-          lufsSumSq += rms * rms;
-          let lufsValue = -100;
-          if (lufsBuffer.length > 50) {
-            const avgRms = Math.sqrt(lufsSumSq / lufsBuffer.length);
-            lufsValue = (avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100) - 0.691;
-          }
-
-          // LRA (re-sort every ~60 frames â‰ˆ 1s)
-          lraValues.push(lufsValue);
-          if (lraValues.length > 300) lraValues.shift();
-          lraFrame++;
-          if (lraFrame % 60 === 0 && lraValues.length > 100) {
-            const sorted = [...lraValues].filter(v => v > -99).sort((a, b) => a - b);
-            if (sorted.length > 20)
-              lraCached = sorted[Math.floor(sorted.length * 0.95)] - sorted[Math.floor(sorted.length * 0.1)];
-          }
-
-          // VU needle animation (every frame for smooth ballistics)
-          const volGain = Math.pow(10, db / 20);
-          const adjRmsDb = stRmsDb + 20 * Math.log10(volGain);
-          const vuReading = adjRmsDb + 18;
-          const vuMin = -20, vuMax = 3;
-          const clamped = Math.max(vuMin, Math.min(vuMax, vuReading));
-          let norm = (clamped - vuMin) / (vuMax - vuMin);
-          if (clamped < -10) norm = Math.pow((clamped + 20) / 10, 1.2) * 0.435;
-          const targetAngle = -50 + norm * 100;
-          const diff = targetAngle - needleAngle;
-          needleAngle += diff * (diff > 0 ? 0.2 : 0.06);
-          meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
-
-          // Text readouts throttled to ~10fps
-          const now = performance.now();
-          if (now - lastDisplayUpdate >= 100) {
-            lastDisplayUpdate = now;
-            if (vuDisplay)        vuDisplay.textContent        = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-\u221E VU';
-            if (rmsDisplay)       rmsDisplay.textContent       = stRmsDb > -99 ? `${stRmsDb.toFixed(1)} dB` : '-\u221E dB';
-            if (truePeakDisplay)  truePeakDisplay.textContent  = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-\u221E dBTP';
-            if (lufsDisplay)      lufsDisplay.textContent      = lufsValue > -99 ? `${lufsValue.toFixed(1)} LUFS` : '-\u221E LUFS';
-            if (lraDisplay)       lraDisplay.textContent       = lraCached > 0 ? `${lraCached.toFixed(1)} LU` : '-- LU';
-          }
-
-          vuRAF = requestAnimationFrame(loop);
-        };
-        vuRAF = requestAnimationFrame(loop);
-      }
-
-      // â”€â”€ File Loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      function showUploadZone() {
-        uploadZone.classList.remove('loaded', 'buffering');
-        uploadZoneContent.style.display  = '';
-        uploadLoadedContent.style.display = 'none';
-        // Re-enable native file input over the zone
-        // (removing pointer-events:none is handled by removing 'loaded' class)
-      }
-
-      function showLoadedZone(filename) {
-        uploadZone.classList.add('loaded');
-        uploadZone.classList.remove('buffering');
-        uploadZoneContent.style.display  = 'none';
-        uploadLoadedContent.style.display = 'flex';
-        uploadFilename.textContent = filename;
-      }
-
-      function loadFile(file) {
-        if (!file) return;
-
-        // Basic MIME / extension check
-        const ext = file.name.match(/\.([^.]+)$/);
-        const extOk = ext && /^(mp3|wav|aif|aiff|flac|ogg|m4a|aac|opus)$/i.test(ext[1]);
-        if (!file.type.startsWith('audio/') && !extOk) {
-          alert('Please upload a supported audio file (MP3, WAV, AIFF, FLAC, OGG, M4A, AAC).');
-          return;
-        }
-
-        // Stop current playback and cancel animation loops
-        audio.pause();
-        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
-        stopVU();
-        resetBuffers();
-
-        // Update object URL tracking
-        if (currentObjectURL) {
-          URL.revokeObjectURL(currentObjectURL);
-          const idx = allObjectURLs.indexOf(currentObjectURL);
-          if (idx !== -1) allObjectURLs.splice(idx, 1);
-        }
-        currentObjectURL = URL.createObjectURL(file);
-        allObjectURLs.push(currentObjectURL);
-
-        // Strip extension for display, truncate for metering label
-        currentTrackName = file.name.replace(/\.[^.]+$/, '');
-        const shortName = currentTrackName.length > 22
-          ? currentTrackName.substring(0, 22) + '\u2026'
-          : currentTrackName;
-
-        // Reset UI
-        uploadZone.classList.add('buffering');
-        progressFill.style.width = '0%';
-        scrubber.style.left      = '0%';
-        if (timeDisplay)   timeDisplay.textContent = '0:00 / 0:00';
-        nowPlaying.textContent   = currentTrackName;
-        sourceDisplay.textContent = shortName;
-
-        playPauseBtn.classList.remove('playing');
-        fileLoaded = false;
-
-        // Handler: ready to play &mdash; do NOT auto-play, wait for user input
-        const onReady = () => {
-          fileLoaded = true;
-          showLoadedZone(file.name);
-          audio.currentTime = 0;
-          ensureGraph();
-        };
-
-        // Handler: error
-        const onError = () => {
-          alert('Could not load this audio file. The format may be unsupported by your browser.');
-          showUploadZone();
-          nowPlaying.textContent = 'No file loaded';
-          sourceDisplay.textContent = '\u2014';
-        };
-
-        audio.addEventListener('canplay', onReady,  { once: true });
-        audio.addEventListener('error',   onError,  { once: true });
-
-        audio.src = currentObjectURL;
-      }
-
-      // â”€â”€ Upload Zone Interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      // Native file input change
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) loadFile(file);
-        // Reset input so the same file can be re-selected if needed
-        fileInput.value = '';
-      });
-
-      // Drag-and-drop
-      uploadZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (!uploadZone.classList.contains('loaded')) {
-          uploadZone.classList.add('drag-over');
-        }
-      });
-      uploadZone.addEventListener('dragleave', () => {
-        uploadZone.classList.remove('drag-over');
-      });
-      uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file) loadFile(file);
-      });
-
-      // Clear file
-      uploadClearBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        audio.pause();
-        audio.src = '';
-        if (currentObjectURL) {
-          URL.revokeObjectURL(currentObjectURL);
-          const idx = allObjectURLs.indexOf(currentObjectURL);
-          if (idx !== -1) allObjectURLs.splice(idx, 1);
-          currentObjectURL = null;
-        }
-        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
-        stopVU();
-        resetBuffers();
-        fileLoaded = false;
-        currentTrackName = '';
-        progressFill.style.width = '0%';
-        scrubber.style.left = '0%';
-        if (timeDisplay) timeDisplay.textContent = '0:00 / 0:00';
-        nowPlaying.textContent = 'No file loaded';
-        sourceDisplay.textContent = '\u2014';
-        playPauseBtn.classList.remove('playing');
-        showUploadZone();
-      });
-
-      // Change file (load another)
-      uploadAnotherBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.click();
-      });
-
-      // â”€â”€ Transport Controls â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      playPauseBtn.addEventListener('click', async () => {
-        if (!fileLoaded) {
-          // Prompt user to upload a file
-          fileInput.click();
-          return;
-        }
-        if (!audio.paused) {
-          audio.pause();
-          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
-          stopVU();
-        } else {
-          try {
-            ensureGraph();
-            await audio.play();
-            startProgress();
-            startVU();
-          } catch (err) {
-            console.error('[PROCESSOR] Play failed:', err);
-          }
-        }
-      });
-
-      // Previous = restart (or trigger upload if nothing loaded)
-      prevBtn.addEventListener('click', () => {
-        if (!fileLoaded) { fileInput.click(); return; }
-        audio.currentTime = 0;
-        renderProgress();
-      });
-
-      // Next = load another file
-      nextBtn.addEventListener('click', () => {
-        fileInput.click();
-      });
-
-      // Progress bar click / scrub
-      wave.addEventListener('click', (e) => {
-        const dur = audio.duration || 0;
-        if (!dur) return;
-        const rect = wave.getBoundingClientRect();
-        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        audio.currentTime = pct * dur;
-        renderProgress();
-      });
-
-      let scrubbing = false;
-      wave.addEventListener('mousedown', () => { scrubbing = true; });
-      document.addEventListener('mousemove', (e) => {
-        if (!scrubbing) return;
-        const dur = audio.duration || 0;
-        if (!dur) return;
-        const rect = wave.getBoundingClientRect();
-        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        audio.currentTime = pct * dur;
-        renderProgress();
-      });
-      document.addEventListener('mouseup', () => { scrubbing = false; });
-
-      // â”€â”€ Volume Knob â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      volumeKnob.addEventListener('mousedown', (e) => {
-        drag = true; moved = false;
-        startY = e.clientY; startAngle = angle;
-        e.preventDefault();
-      });
-      document.addEventListener('mousemove', (e) => {
-        if (!drag) return;
-        const delta = startY - e.clientY;
-        if (Math.abs(delta) > 2) moved = true;
-        angle = Math.max(180, Math.min(420, startAngle + delta));
-        db = -40 + ((angle - 180) / 240) * 52;
-        applyVolume();
-      });
-      document.addEventListener('mouseup', () => {
-        if (drag && !moved) { db = 0; angle = 360; applyVolume(); }
-        drag = false;
-      });
-      volumeKnob.addEventListener('touchstart', (e) => {
-        drag = true; moved = false;
-        startY = e.touches[0].clientY; startAngle = angle;
-        e.preventDefault();
-      }, { passive: false });
-      document.addEventListener('touchmove', (e) => {
-        if (!drag) return;
-        const delta = startY - e.touches[0].clientY;
-        if (Math.abs(delta) > 2) moved = true;
-        angle = Math.max(180, Math.min(420, startAngle + delta));
-        db = -40 + ((angle - 180) / 240) * 52;
-        applyVolume();
-        e.preventDefault();
-      }, { passive: false });
-      document.addEventListener('touchend', () => {
-        if (drag && !moved) { db = 0; angle = 360; applyVolume(); }
-        drag = false;
-      });
-      document.addEventListener('touchcancel', () => { drag = false; });
-
-      // Visibility: pause VU when tab hidden, restart when visible
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; }
-        } else if (playing && !vuRAF) {
-          startVU();
-        }
-      });
-
-      applyVolume();
-
-      // â”€â”€ Analysis Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-      function closeAnalysisModal() { analysisModal.style.display = 'none'; }
-
-      analysisModalClose.addEventListener('click', closeAnalysisModal);
-      analysisModal.addEventListener('click', (e) => {
-        if (e.target === analysisModal) closeAnalysisModal();
-      });
-
-      // K-weighting pre-filter (ITU-R BS.1770-4) &mdash; required for accurate LUFS measurement
-      function kWeightChannel(data, fs) {
-        // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
-        const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
-        const Ks  = Math.tan(Math.PI * f0s / fs);
-        const Vh  = Math.pow(10, Gs / 20);
-        const Vb  = Math.pow(Vh, 0.4996667741545416);
-        const den = 1 + Ks / Qs + Ks * Ks;
-        const bs0 = (Vh + Vb * Ks / Qs + Ks * Ks) / den;
-        const bs1 = 2 * (Ks * Ks - Vh) / den;
-        const bs2 = (Vh - Vb * Ks / Qs + Ks * Ks) / den;
-        const as1 = 2 * (Ks * Ks - 1) / den;
-        const as2 = (1 - Ks / Qs + Ks * Ks) / den;
-        // Stage 2: Highpass (RLB weighting, models free-field head transfer ~38 Hz)
-        const f0h = 38.13547087602444, Qh = 0.5003270373238773;
-        const Kh  = Math.tan(Math.PI * f0h / fs);
-        const dh  = 1 + Kh / Qh + Kh * Kh;
-        const bh0 = 1 / dh, bh1 = -2 / dh, bh2 = 1 / dh;
-        const ah1 = 2 * (Kh * Kh - 1) / dh;
-        const ah2 = (1 - Kh / Qh + Kh * Kh) / dh;
-        function biquad(input, b0, b1, b2, a1, a2) {
-          const out = new Float32Array(input.length);
-          let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-          for (let i = 0; i < input.length; i++) {
-            const x0 = input[i];
-            const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
-            x2 = x1; x1 = x0; y2 = y1; y1 = y0;
-            out[i] = y0;
-          }
-          return out;
-        }
-        return biquad(biquad(data, bs0, bs1, bs2, as1, as2), bh0, bh1, bh2, ah1, ah2);
-      }
-
-      async function analyzeTrack(audioUrl, trackName) {
-        analysisModal.style.display = 'flex';
-        const progressEl = document.createElement('div');
-        progressEl.className = 'analysis-loading';
-        progressEl.innerHTML = '<span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div><div class="analysis-progress"><div class="analysis-progress-bar" id="analysisProgressBar"></div></div><div class="analysis-progress-text" id="analysisProgressText">0%</div>';
-        analysisResults.innerHTML = '';
-        analysisResults.appendChild(progressEl);
-
-        try {
-          // Fetch audio file with progress
-          const updateProgress = (percent, status) => {
-            const barEl = document.getElementById('analysisProgressBar');
-            const textEl = document.getElementById('analysisProgressText');
-            if (barEl) barEl.style.width = `${percent}%`;
-            if (textEl) textEl.textContent = status || `${Math.round(percent)}%`;
-          };
-
-          updateProgress(5, 'Fetching audio...');
-          // Encode URL to handle spaces and special characters
-          const encodedUrl = encodeURI(audioUrl);
-          const response = await fetch(encodedUrl);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch audio file: ${response.status} ${response.statusText}`);
-          }
-          const arrayBuffer = await response.arrayBuffer();
-
-          updateProgress(15, 'Decoding audio...');
-          // Create audio context for decoding
-          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-          
-          if (!audioBuffer || audioBuffer.length === 0) {
-            throw new Error('Audio file could not be decoded or is empty');
-          }
-
-          updateProgress(25, 'Preparing analysis...');
-          
-          const sampleRate  = audioBuffer.sampleRate;
-          const channelData = [];
-          for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
-            channelData.push(audioBuffer.getChannelData(i));
-          }
-
-          // LUFS &mdash; 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
-          const blockSize   = Math.floor(sampleRate * 0.4);
-          const overlapSize = Math.floor(blockSize * 0.75);
-          const step        = blockSize - overlapSize;
-          const allBlocks   = [];
-
-          // Calculate total blocks for progress
-          const totalBlocks = Math.floor((channelData[0].length - blockSize) / step);
-          let processedBlocks = 0;
-
-          updateProgress(30, 'Processing blocks...');
-
-          // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs &mdash; stereo is always 1.0
-          const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
-
-          // Process in blocks - apply K-weighting on-demand per block to save memory
-          for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
-            let sumChannelMeans = 0;
-            for (let ch = 0; ch < channelData.length; ch++) {
-              // Extract block from channel
-              const block = channelData[ch].slice(pos, pos + blockSize);
-              // Apply K-weighting to this block only
-              const kWeightedBlock = kWeightChannel(block, sampleRate);
-              
-              let sumSq = 0;
-              for (let i = 0; i < blockSize; i++) {
-                const s = kWeightedBlock[i];
-                sumSq += s * s;
-              }
-              sumChannelMeans += (chWeights[ch] || 1.0) * (sumSq / blockSize);
-            }
-            const ms = sumChannelMeans;
-            allBlocks.push({ loudness: -0.691 + 10 * Math.log10(ms), meanSquare: ms });
-
-            // Update progress every 100 blocks
-            processedBlocks++;
-            if (processedBlocks % 100 === 0 || processedBlocks === totalBlocks) {
-              const progress = 30 + (processedBlocks / totalBlocks) * 50; // 30-80%
-              updateProgress(progress, `Processing ${processedBlocks}/${totalBlocks} blocks...`);
-              // Allow UI to update
-              await new Promise(resolve => setTimeout(resolve, 0));
+          // â”€â”€ Max Momentary & Short-term Loudness (free â€” allBlocks already computed) â”€â”€
+          const maxMomentary = allBlocks.reduce((max, b) => Math.max(max, b.loudness), -100);
+          // Short-term: 3 s sliding window = 30 blocks x 100 ms steps
+          const stWindowSize = 30;
+          let maxShortTerm = -100;
+          if (allBlocks.length >= stWindowSize) {
+            for (let si = 0; si <= allBlocks.length - stWindowSize; si++) {
+              let stMs = 0;
+              for (let sk = 0; sk < stWindowSize; sk++) stMs += allBlocks[si + sk].meanSquare;
+              const stL = -0.691 + 10 * Math.log10(stMs / stWindowSize);
+              if (stL > maxShortTerm) maxShortTerm = stL;
             }
           }
 
-          updateProgress(85, 'Calculating metrics...');
-
-          // Absolute gate
-          let gatedMs = 0, gatedCount = 0;
-          allBlocks.forEach(b => { if (b.loudness >= -70) { gatedMs += b.meanSquare; gatedCount++; } });
-          if (gatedCount === 0) throw new Error('No blocks above absolute gate');
-          const gatedLoudness = -0.691 + 10 * Math.log10(gatedMs / gatedCount);
-
-          // Relative gate
-          const relGate = gatedLoudness - 10;
-          let finalMs = 0, finalCount = 0;
-          allBlocks.forEach(b => { if (b.loudness >= relGate) { finalMs += b.meanSquare; finalCount++; } });
-          const intLUFS = finalCount > 0 ? -0.691 + 10 * Math.log10(finalMs / finalCount) : -100;
-
-          // True peak
-          updateProgress(90, 'Calculating peak levels...');
-          let truePeak = -100;
-          for (let ch = 0; ch < channelData.length; ch++) {
-            for (let i = 0; i < channelData[ch].length; i++) {
-              const p = Math.abs(channelData[ch][i]);
-              if (p > 0) { const db = 20 * Math.log10(p); if (db > truePeak) truePeak = db; }
-            }
-          }
-
-          // LRA
+          // LRA (ITU-R BS.1770 gated)
           const sortedLRA = allBlocks
             .filter(b => b.loudness >= relGate)
             .map(b => b.loudness)
@@ -1041,8 +599,54 @@
             ? sortedLRA[Math.floor(sortedLRA.length * 0.95)] - sortedLRA[Math.floor(sortedLRA.length * 0.1)]
             : 0;
 
-          // Clipping events (100ms windows at 99% of full scale)
-          updateProgress(95, 'Detecting clipping...');
+          // Noise floor â€” 5th percentile of gated blocks (approximate in-program floor)
+          const noiseFloor = sortedLRA.length > 10 ? sortedLRA[Math.floor(sortedLRA.length * 0.05)] : -100;
+
+          // Gain needed to reach Spotify target (â€“14 LUFS)
+          const gainToTarget = -14 - intLUFS;
+
+          // â”€â”€ Combined single pass: RMS, DC offset, stereo correlation, width, balance â”€â”€
+          updateProgress(78, 'Analyzing levels & dynamics...');
+          const nCh   = channelData.length;
+          const nSamp = channelData[0].length;
+          const chL   = channelData[0];
+          const chR   = nCh >= 2 ? channelData[1] : channelData[0];
+          let sumSqL = 0, sumSqR = 0, sumL = 0, sumR = 0, sumLR = 0, sumSqM = 0, sumSqS = 0;
+          for (let i = 0; i < nSamp; i++) {
+            const l = chL[i], r = chR[i];
+            sumSqL += l * l; sumSqR += r * r;
+            sumL   += l;     sumR   += r;
+            sumLR  += l * r;
+            const M = (l + r) * 0.5, S = (l - r) * 0.5;
+            sumSqM += M * M; sumSqS += S * S;
+            if (i % 500000 === 0 && i > 0) await new Promise(resolve => setTimeout(resolve, 0));
+          }
+          const rmsLVal    = Math.sqrt(sumSqL / nSamp);
+          const rmsRVal    = Math.sqrt(sumSqR / nSamp);
+          const rmsAvg     = nCh >= 2 ? Math.sqrt((sumSqL + sumSqR) / (2 * nSamp)) : rmsLVal;
+          const rmsDb      = rmsAvg > 0.00001 ? 20 * Math.log10(rmsAvg) : -100;
+          const dcL        = (sumL / nSamp) * 100;
+          const dcR        = nCh >= 2 ? (sumR / nSamp) * 100 : dcL;
+          const corrDenom  = Math.sqrt(sumSqL * sumSqR);
+          const stereoCorr = nCh >= 2 && corrDenom > 0 ? Math.max(-1, Math.min(1, sumLR / corrDenom)) : 1;
+          const stereoWidth = nCh >= 2 && sumSqM > 0 ? Math.min(200, Math.sqrt(sumSqS / sumSqM) * 100) : 0;
+          const balanceDb  = nCh >= 2 && rmsLVal > 0.00001 && rmsRVal > 0.00001
+                             ? 20 * Math.log10(rmsRVal / rmsLVal) : 0;
+
+          // â”€â”€ True Peak â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          updateProgress(84, 'Calculating peak levels...');
+          let truePeak = -100;
+          for (let ch = 0; ch < channelData.length; ch++) {
+            for (let i = 0; i < channelData[ch].length; i++) {
+              const p = Math.abs(channelData[ch][i]);
+              if (p > 0) { const db = 20 * Math.log10(p); if (db > truePeak) truePeak = db; }
+            }
+          }
+          const headroom    = 0 - truePeak;
+          const crestFactor = truePeak - rmsDb;
+
+          // â”€â”€ Clipping events (100 ms windows at â‰¥ 99% of full scale) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          updateProgress(89, 'Detecting clipping...');
           const clipThreshold = 0.99;
           const clippingEvents = [];
           const samplesPerCheck = Math.floor(sampleRate * 0.1);
@@ -1062,126 +666,306 @@
             }
           }
 
-          // Clipping HTML (with green "none" state matching demo)
-          let clippingHTML = '';
-          if (clippingEvents.length > 0) {
-            clippingHTML = `
-              <div class="analysis-metric" style="border-left-color: #ff6b6b;">
-                <span class="analysis-label" style="color: #ff6b6b;">Clipping Events:</span>
-                <span class="analysis-value" style="color: #ff6b6b;">${clippingEvents.length} detected</span>
-              </div>
-              <div class="analysis-clipping-log">
-                <div class="analysis-clipping-header">Clipping Timestamps:</div>
-                <div class="analysis-clipping-events">
-                  ${clippingEvents.map(ev => `<div class="analysis-clipping-event">${ev.timeCode}</div>`).join('')}
-                </div>
-              </div>
-            `;
-          } else {
-            clippingHTML = `
-              <div class="analysis-metric" style="border-left-color: #7ec98f;">
-                <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
-                <span class="analysis-value" style="color: #7ec98f;">None detected ✓</span>
-              </div>
-            `;
-          }
-
-          // Streaming compliance (-14 Â± 1.5 LUFS, peak < -1.0 dBTP)
-          const lufsInRange = intLUFS >= -15.5 && intLUFS <= -12.5;
-          const peakOk      = truePeak < -1.0;
-          const noClipping  = clippingEvents.length === 0;
-
-          let complianceStatus  = '';
-          let complianceClass   = '';
-          let complianceDetails = [];
-
-          if (lufsInRange && peakOk && noClipping) {
-            complianceStatus = '✓ Ready for Spotify/Apple Music';
-            complianceClass  = 'ready';
-            complianceDetails.push('LUFS level is optimal for streaming platforms');
-            complianceDetails.push('True Peak is below -1.0 dBTP (prevents inter-sample clipping)');
-            complianceDetails.push('No clipping detected');
-          } else {
-            const issues = [];
-            if (!lufsInRange) {
-              if (intLUFS < -15.5) {
-                issues.push('too-quiet');
-                complianceDetails.push(`<strong>Too Quiet:</strong> ${intLUFS.toFixed(1)} LUFS is below -15.5 LUFS. Streaming platforms may not turn it up enough.`);
-              } else {
-                issues.push('too-loud');
-                complianceDetails.push(`<strong>Too Loud:</strong> ${intLUFS.toFixed(1)} LUFS is above -12.5 LUFS. Will be turned down by streaming platforms, reducing dynamic impact.`);
+          // â”€â”€ Spectral analysis â€” averaged Hann-windowed radix-2 FFT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          updateProgress(93, 'Analyzing spectral content...');
+          // Cooley-Tukey radix-2 FFT (in-place)
+          function computeFFT(re, im) {
+            const N = re.length;
+            let j = 0;
+            for (let i = 1; i < N; i++) {
+              let bit = N >> 1;
+              for (; j & bit; bit >>= 1) j ^= bit;
+              j ^= bit;
+              if (i < j) {
+                let t = re[i]; re[i] = re[j]; re[j] = t;
+                t = im[i]; im[i] = im[j]; im[j] = t;
               }
             }
-            if (!peakOk) {
-              issues.push('peak-hot');
-              complianceDetails.push(`<strong>Peak Too Hot:</strong> ${truePeak.toFixed(1)} dBTP is at or above -1.0 dBTP. Risk of inter-sample clipping during lossy encoding (MP3/AAC).`);
-            }
-            if (!noClipping) {
-              issues.push('clipping');
-              complianceDetails.push(`<strong>Clipping Detected:</strong> ${clippingEvents.length} instances found. This will cause audible distortion.`);
-            }
-            if (issues.length === 1 && issues[0] !== 'clipping') {
-              complianceStatus = '⚠ Minor Issues';
-              complianceClass  = 'warning';
-            } else if (issues.includes('clipping') || issues.length > 1) {
-              complianceStatus = '✗ Not Ready for Streaming';
-              complianceClass  = 'fail';
-            } else {
-              complianceStatus = '⚠ Minor Issues';
-              complianceClass  = 'warning';
+            for (let len = 2; len <= N; len <<= 1) {
+              const ang = (2 * Math.PI) / len;
+              const wR = Math.cos(ang), wI = -Math.sin(ang);
+              for (let i = 0; i < N; i += len) {
+                let uR = 1, uI = 0;
+                for (let k = 0; k < (len >> 1); k++) {
+                  const eR = re[i+k], eI = im[i+k];
+                  const oR = re[i+k+(len>>1)], oI = im[i+k+(len>>1)];
+                  const tR = oR*uR - oI*uI, tI = oR*uI + oI*uR;
+                  re[i+k]          = eR + tR; im[i+k]          = eI + tI;
+                  re[i+k+(len>>1)] = eR - tR; im[i+k+(len>>1)] = eI - tI;
+                  const nuR = uR*wR - uI*wI; uI = uR*wI + uI*wR; uR = nuR;
+                }
+              }
             }
           }
 
-          const complianceHTML = `
-            <div class="analysis-compliance ${complianceClass}">
-              <div class="analysis-compliance-status">${complianceStatus}</div>
-              <div class="analysis-compliance-details">
-                ${complianceDetails.map(d => `<div class="analysis-compliance-item">${d}</div>`).join('')}
-              </div>
-            </div>
-          `;
+          const FFT_N   = 4096;
+          const halfFFT = FFT_N >> 1;
+          const hannWin = new Float32Array(FFT_N);
+          for (let i = 0; i < FFT_N; i++) hannWin[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / (FFT_N - 1)));
+          const fftRe  = new Float32Array(FFT_N);
+          const fftIm  = new Float32Array(FFT_N);
+          const avgMag = new Float64Array(halfFFT);
+          const hopSamps = Math.floor(sampleRate); // 1-second hop between windows
+          const specSrc  = channelData[0];          // analyse L / mono channel
+          let fftCount = 0;
+          for (let w = 0; w + FFT_N < specSrc.length; w += hopSamps) {
+            for (let i = 0; i < FFT_N; i++) { fftRe[i] = specSrc[w + i] * hannWin[i]; fftIm[i] = 0; }
+            computeFFT(fftRe, fftIm);
+            for (let i = 0; i < halfFFT; i++) avgMag[i] += Math.sqrt(fftRe[i]*fftRe[i] + fftIm[i]*fftIm[i]);
+            fftCount++;
+            if (fftCount % 30 === 0) await new Promise(resolve => setTimeout(resolve, 0));
+          }
+          if (fftCount > 0) { for (let i = 0; i < halfFFT; i++) avgMag[i] /= fftCount; }
 
+          // Spectral centroid â€” frequency of spectral "centre of mass" (perceptual brightness)
+          let magSum = 0, freqWtdSum = 0;
+          for (let i = 1; i < halfFFT; i++) {
+            const freq = i * sampleRate / FFT_N;
+            magSum += avgMag[i]; freqWtdSum += freq * avgMag[i];
+          }
+          const spectralCentroid = magSum > 0 ? freqWtdSum / magSum : 0;
+
+          // Dominant frequency â€” bin with highest average magnitude (ignores DC / sub-20 Hz)
+          const minBin = Math.max(1, Math.ceil(20 * FFT_N / sampleRate));
+          let peakBin = minBin;
+          for (let i = minBin + 1; i < halfFFT; i++) { if (avgMag[i] > avgMag[peakBin]) peakBin = i; }
+          const dominantFreq = peakBin * sampleRate / FFT_N;
+
+          // Band energy breakdown â€” % of total spectral energy in each range
+          const bands = [
+            { label: 'Sub Bass', lo: 20,   hi: 80    },
+            { label: 'Bass',     lo: 80,   hi: 250   },
+            { label: 'Low Mids', lo: 250,  hi: 800   },
+            { label: 'Mids',     lo: 800,  hi: 2500  },
+            { label: 'Hi Mids',  lo: 2500, hi: 5000  },
+            { label: 'Air',      lo: 5000, hi: 20000 },
+          ];
+          let totalBandE = 0;
+          bands.forEach(b => {
+            const lo = Math.max(1, Math.floor(b.lo * FFT_N / sampleRate));
+            const hi = Math.min(halfFFT - 1, Math.ceil(b.hi * FFT_N / sampleRate));
+            b.energy = 0;
+            for (let i = lo; i <= hi; i++) b.energy += avgMag[i] * avgMag[i];
+            totalBandE += b.energy;
+          });
+          bands.forEach(b => { b.pct = totalBandE > 0 ? Math.round(b.energy / totalBandE * 100) : 0; });
+
+          // â”€â”€ Platform compliance table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          updateProgress(97, 'Finalizing results...');
+          const platformDefs = [
+            { name: 'Spotify',            target: -14, tol: 2, maxPeak: -1.0 },
+            { name: 'Apple Music',        target: -16, tol: 2, maxPeak: -1.0 },
+            { name: 'YouTube',            target: -14, tol: 2, maxPeak: -1.0 },
+            { name: 'Tidal',              target: -14, tol: 2, maxPeak: -1.0 },
+            { name: 'Amazon Music',       target: -14, tol: 2, maxPeak: -2.0 },
+            { name: 'Podcast',            target: -16, tol: 2, maxPeak: -1.0 },
+            { name: 'EBU R128 Broadcast', target: -23, tol: 1, maxPeak: -1.0 },
+            { name: 'ATSC A/85 (US TV)',  target: -24, tol: 2, maxPeak: -2.0 },
+          ];
+          const platformRows = platformDefs.map(p => {
+            const delta   = intLUFS - p.target;
+            const lufsOk  = Math.abs(delta) <= p.tol;
+            const peakPOk = truePeak <= p.maxPeak;
+            const near    = Math.abs(delta) <= p.tol + 2;
+            const cls     = lufsOk && peakPOk ? 'pass' : (near && peakPOk ? 'warn' : 'fail');
+            const badge   = cls === 'pass' ? '\u2713' : (cls === 'warn' ? '\u26a0' : '\u2717');
+            const dStr    = delta > p.tol   ? '\u2193 ' + delta.toFixed(1) + ' dB over'
+                          : delta < -p.tol  ? '\u2191 ' + Math.abs(delta).toFixed(1) + ' dB under'
+                          : 'On target';
+            const pkLabel = peakPOk ? '\u2713 Peak' : '\u2717 Peak';
+            return '<div class="analysis-platform-row ' + cls + '">'
+              + '<span class="analysis-platform-badge">' + badge + '</span>'
+              + '<span class="analysis-platform-name">' + p.name + '</span>'
+              + '<span class="analysis-platform-target">' + p.target + ' LUFS</span>'
+              + '<span class="analysis-platform-delta">' + dStr + '</span>'
+              + '<span class="analysis-platform-peak ' + (peakPOk ? 'ok' : 'hot') + '">' + pkLabel + '</span>'
+              + '</div>';
+          }).join('');
+
+          // â”€â”€ HTML block pre-builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // Clipping
+          const clippingEventsListHTML = clippingEvents.map(ev =>
+            '<div class="analysis-clipping-event">' + ev.timeCode + '</div>'
+          ).join('');
+          const clippingHTML = clippingEvents.length > 0
+            ? '<div class="analysis-metric" style="border-left-color:#ff6b6b;">'
+              + '<span class="analysis-label" style="color:#ff6b6b;">Clipping Events:</span>'
+              + '<span class="analysis-value" style="color:#ff6b6b;">' + clippingEvents.length + ' detected</span>'
+              + '</div>'
+              + '<div class="analysis-clipping-log">'
+              + '<div class="analysis-clipping-header">Clipping Timestamps:</div>'
+              + '<div class="analysis-clipping-events">' + clippingEventsListHTML + '</div>'
+              + '</div>'
+            : '<div class="analysis-metric" style="border-left-color:#7ec98f;">'
+              + '<span class="analysis-label" style="color:#7ec98f;">Clipping Events:</span>'
+              + '<span class="analysis-value" style="color:#7ec98f;">None detected \u2713</span>'
+              + '</div>';
+
+          // Stereo section â€” only rendered for stereo/multi-channel files
+          let corrLabel, corrCls;
+          if      (stereoCorr > 0.95) { corrLabel = 'Mono-like';     corrCls = 'info'; }
+          else if (stereoCorr > 0.70) { corrLabel = 'Narrow stereo'; corrCls = 'good'; }
+          else if (stereoCorr > 0.30) { corrLabel = 'Good stereo';   corrCls = 'good'; }
+          else if (stereoCorr >= 0)   { corrLabel = 'Wide stereo';   corrCls = 'good'; }
+          else                        { corrLabel = 'Phase issues';   corrCls = 'warn-text'; }
+          const monoWarnHTML = stereoCorr < 0
+            ? '<div class="analysis-warn">\u26a0 Negative correlation \u2014 signal will partially cancel on mono playback</div>'
+            : '';
+          const balLabel = Math.abs(balanceDb) < 0.3 ? 'Centered'
+            : (balanceDb > 0 ? 'R' : 'L') + ' +' + Math.abs(balanceDb).toFixed(1) + ' dB';
+          const stereoHTML = nCh >= 2
+            ? '<div class="analysis-section-header">STEREO IMAGE</div>'
+              + '<div class="analysis-metric"><span class="analysis-label">Correlation:</span>'
+              + '<span class="analysis-value">' + stereoCorr.toFixed(3)
+              + ' <span class="analysis-tag ' + corrCls + '">' + corrLabel + '</span></span></div>'
+              + '<div class="analysis-metric"><span class="analysis-label">Stereo Width:</span>'
+              + '<span class="analysis-value">' + stereoWidth.toFixed(1) + '%</span></div>'
+              + '<div class="analysis-metric"><span class="analysis-label">L/R Balance:</span>'
+              + '<span class="analysis-value">' + balLabel + '</span></div>'
+              + monoWarnHTML
+            : '';
+
+          // Crest factor label
+          let crestLabel;
+          if      (crestFactor > 20) crestLabel = 'Excellent dynamics';
+          else if (crestFactor > 14) crestLabel = 'Good dynamics';
+          else if (crestFactor > 8)  crestLabel = 'Moderate compression';
+          else                        crestLabel = 'Heavy limiting';
+          const crestCls = crestFactor < 8 ? 'warn-text' : 'good';
+
+          // Spectral centroid label
+          let centroidLabel;
+          if      (spectralCentroid < 1500) centroidLabel = 'Dark / warm';
+          else if (spectralCentroid < 3000) centroidLabel = 'Balanced';
+          else if (spectralCentroid < 5000) centroidLabel = 'Forward / present';
+          else                               centroidLabel = 'Bright';
+          const domFreqStr = dominantFreq < 1000
+            ? Math.round(dominantFreq) + ' Hz'
+            : (dominantFreq / 1000).toFixed(2) + ' kHz';
+
+          // Band energy bars
+          const bandBarsHTML = bands.map(b => {
+            const barW = Math.min(100, b.pct * 2);
+            return '<div class="analysis-band-row">'
+              + '<span class="analysis-band-label">' + b.label + '</span>'
+              + '<div class="analysis-band-bar-outer">'
+              + '<div class="analysis-band-bar-inner" style="width:' + barW + '%"></div>'
+              + '</div>'
+              + '<span class="analysis-band-pct">' + b.pct + '%</span>'
+              + '</div>';
+          }).join('');
+
+          // DC offset
+          function fmtDC(v) {
+            const s = (v >= 0 ? '+' : '') + v.toFixed(4) + '%';
+            return Math.abs(v) > 0.1
+              ? '<span style="color:#ffc850">' + s + ' \u26a0</span>'
+              : s;
+          }
+          const dcOffsetHTML = nCh >= 2
+            ? '<div class="analysis-metric"><span class="analysis-label">DC Offset L:</span>'
+              + '<span class="analysis-value">' + fmtDC(dcL) + '</span></div>'
+              + '<div class="analysis-metric"><span class="analysis-label">DC Offset R:</span>'
+              + '<span class="analysis-value">' + fmtDC(dcR) + '</span></div>'
+            : '<div class="analysis-metric"><span class="analysis-label">DC Offset:</span>'
+              + '<span class="analysis-value">' + fmtDC(dcL) + '</span></div>';
+
+          const channelLabel = audioBuffer.numberOfChannels === 1 ? 'Mono'
+            : audioBuffer.numberOfChannels === 2 ? 'Stereo'
+            : audioBuffer.numberOfChannels + '-channel';
+          const gainStr = Math.abs(gainToTarget) < 0.1 ? 'On target'
+            : gainToTarget > 0
+            ? '+' + gainToTarget.toFixed(1) + ' dB needed'
+            : gainToTarget.toFixed(1) + ' dB (will be reduced)';
+          const inf = '\u2212\u221e';
           const duration = audioBuffer.duration;
 
           updateProgress(100, 'Complete!');
-          await new Promise(resolve => setTimeout(resolve, 200)); // Brief pause to show 100%
-          
+          await new Promise(resolve => setTimeout(resolve, 200));
+
           analysisResults.innerHTML = `
             <div class="analysis-track-name">${trackName}</div>
-            ${complianceHTML}
-            <div class="analysis-metric">
-              <span class="analysis-label">Duration:</span>
-              <span class="analysis-value">${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}</span>
-            </div>
+
+            <div class="analysis-section-header">PLATFORM COMPLIANCE</div>
+            <div class="analysis-platform-table">${platformRows}</div>
+
+            <div class="analysis-section-header">LOUDNESS</div>
             <div class="analysis-metric">
               <span class="analysis-label">Integrated LUFS:</span>
               <span class="analysis-value">${intLUFS.toFixed(1)} LUFS</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Max Momentary:</span>
+              <span class="analysis-value">${maxMomentary > -99 ? maxMomentary.toFixed(1) + ' LUFS' : inf + ' LUFS'}</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Max Short-term:</span>
+              <span class="analysis-value">${maxShortTerm > -99 ? maxShortTerm.toFixed(1) + ' LUFS' : inf + ' LUFS'}</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Loudness Range:</span>
+              <span class="analysis-value">${lra.toFixed(1)} LU</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Noise Floor:</span>
+              <span class="analysis-value">${noiseFloor > -99 ? noiseFloor.toFixed(1) + ' LUFS' : inf + ' LUFS'}</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Gain to Target:</span>
+              <span class="analysis-value">${gainStr}</span>
+            </div>
+
+            <div class="analysis-section-header">LEVELS &amp; DYNAMICS</div>
+            <div class="analysis-metric">
+              <span class="analysis-label">RMS Level:</span>
+              <span class="analysis-value">${rmsDb > -99 ? rmsDb.toFixed(1) + ' dBFS' : inf + ' dBFS'}</span>
             </div>
             <div class="analysis-metric">
               <span class="analysis-label">True Peak:</span>
               <span class="analysis-value">${truePeak.toFixed(1)} dBTP</span>
             </div>
             <div class="analysis-metric">
-              <span class="analysis-label">Loudness Range:</span>
-              <span class="analysis-value">${lra.toFixed(1)} LU</span>
+              <span class="analysis-label">Headroom:</span>
+              <span class="analysis-value">${headroom.toFixed(1)} dB</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Crest Factor:</span>
+              <span class="analysis-value">${crestFactor.toFixed(1)} dB <span class="analysis-tag ${crestCls}">${crestLabel}</span></span>
             </div>
             ${clippingHTML}
+
+            ${stereoHTML}
+
+            <div class="analysis-section-header">SPECTRAL CHARACTER</div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Brightness:</span>
+              <span class="analysis-value">${Math.round(spectralCentroid)} Hz <span class="analysis-tag good">${centroidLabel}</span></span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Dominant Freq:</span>
+              <span class="analysis-value">${domFreqStr}</span>
+            </div>
+            <div class="analysis-band-bars">${bandBarsHTML}</div>
+
+            <div class="analysis-section-header">FILE INFO</div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Duration:</span>
+              <span class="analysis-value">${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}</span>
+            </div>
             <div class="analysis-metric">
               <span class="analysis-label">Sample Rate:</span>
               <span class="analysis-value">${(audioBuffer.sampleRate / 1000).toFixed(1)} kHz</span>
             </div>
             <div class="analysis-metric">
               <span class="analysis-label">Channels:</span>
-              <span class="analysis-value">${audioBuffer.numberOfChannels}</span>
+              <span class="analysis-value">${channelLabel}</span>
             </div>
-            <div class="analysis-note">
-              <strong>Standards Reference:</strong><br>
-              Streaming: -14 to -16 LUFS (Spotify, Apple Music, YouTube)<br>
-              Broadcasting: -23 LUFS (EBU R128)<br>
-              True Peak: &lt; -1.0 dBTP recommended
+            <div class="analysis-metric">
+              <span class="analysis-label">Total Samples:</span>
+              <span class="analysis-value">${(audioBuffer.length / 1e6).toFixed(2)}M</span>
             </div>
+            ${dcOffsetHTML}
           `;
-
           // Close audio context to free resources
           audioCtx.close();
 
