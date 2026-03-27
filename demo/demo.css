@@ -1,4 +1,4 @@
-﻿/* =============================================================================
+/* =============================================================================
    AUDIO DESIGN STUDIOS - DEMO PAGE (demo.html)
    AI Reconstruction Player
    
@@ -330,7 +330,7 @@ main {
 }
 
 .ba-meter-scale::before {
-  content: 'âˆ’';
+  content: '\2212';
   position: absolute;
   left: -10px;
   top: 20px;

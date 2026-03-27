@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <!-- ============================================================================
@@ -307,7 +307,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // â”€â”€ Privacy / cleanup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Privacy / cleanup ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       // All object URLs are tracked here and revoked when the page is closed.
       // No data is ever written to localStorage, sessionStorage, IndexedDB,
       // or any Cache API. Everything lives in memory only.
@@ -330,7 +330,7 @@
       window.addEventListener('beforeunload', cleanup);
       document.addEventListener('pagehide', cleanup);
 
-      // â”€â”€ DOM References â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ DOM References ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       const meterNeedle    = document.getElementById('procMeterNeedle');
       const volumeKnob     = document.getElementById('procVolumeKnob');
       const volumeValue    = document.getElementById('procVolumeValue');
@@ -374,7 +374,7 @@
       const meterCanvas         = document.getElementById('procLoudnessMeterCanvas');
       const meterCtx            = meterCanvas.getContext('2d', { alpha: false, desynchronized: true });
 
-      // â”€â”€ Audio Graph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Audio Graph ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       const audio = new Audio();
       audio.preload = 'auto';
 
@@ -385,7 +385,7 @@
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                        ('ontouchstart' in window && window.innerWidth <= 900);
 
-      // Spectrum analyser &mdash; 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4Ã—
+      // Spectrum analyser &mdash; 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4├âΓÇö
       const analyser = ctx.createAnalyser();
       analyser.fftSize = isMobile ? 2048 : 8192;
       analyser.smoothingTimeConstant = 0.8;
@@ -416,7 +416,7 @@
         }
       }
 
-      // â”€â”€ Volume State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Volume State ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       let db = 0;
       let angle = 360;
       let drag = false;
@@ -431,7 +431,7 @@
         gainNode.gain.value = gain;
       }
 
-      // â”€â”€ Metering Buffers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Metering Buffers ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       const lufsBufferSize = 150; // ~3s at 50fps
       const rmsBufferSize  = 15;  // ~300ms at 50fps
 
@@ -469,7 +469,7 @@
         if (meterNeedle)      meterNeedle.style.transform  = 'translateX(-50%) rotate(-50deg)';
       }
 
-      // â”€â”€ Playback State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Playback State ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       let fileLoaded   = false;
       let playing      = false;
       let progressRAF  = null;
@@ -491,7 +491,7 @@
         stopVU();
       });
 
-      // â”€â”€ Progress Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Progress Bar ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       const progressFill = document.createElement('div');
       progressFill.className = 'main-player-progress-fill';
       progressFill.style.width = '0%';
@@ -527,7 +527,7 @@
         progressRAF = requestAnimationFrame(step);
       }
 
-      // â”€â”€ VU Meter Loop â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ VU Meter Loop ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       function stopVU() {
         if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; }
         const decayLoop = () => {
@@ -576,77 +576,549 @@
           const stRmsDb  = stRms > 0.00001 ? 20 * Math.log10(stRms) : -100;
           const peakDb   = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
 
-          // â”€â”€ Max Momentary & Short-term Loudness (free â€” allBlocks already computed) â”€â”€
-          const maxMomentary = allBlocks.reduce((max, b) => Math.max(max, b.loudness), -100);
-          // Short-term: 3 s sliding window = 30 blocks x 100 ms steps
-          const stWindowSize = 30;
-          let maxShortTerm = -100;
-          if (allBlocks.length >= stWindowSize) {
-            for (let si = 0; si <= allBlocks.length - stWindowSize; si++) {
-              let stMs = 0;
-              for (let sk = 0; sk < stWindowSize; sk++) stMs += allBlocks[si + sk].meanSquare;
-              const stL = -0.691 + 10 * Math.log10(stMs / stWindowSize);
-              if (stL > maxShortTerm) maxShortTerm = stL;
+          // True peak hold
+          if (peakDb > truePeakHold) truePeakHold = peakDb;
+          else truePeakHold = Math.max(truePeakHold * 0.998, -100);
+
+          // Integrated LUFS (running sum)
+          if (lufsBuffer.length >= lufsBufferSize) {
+            const old = lufsBuffer[0];
+            lufsSumSq -= old * old;
+          }
+          lufsBuffer.push(rms);
+          if (lufsBuffer.length > lufsBufferSize) lufsBuffer.shift();
+          lufsSumSq += rms * rms;
+          let lufsValue = -100;
+          if (lufsBuffer.length > 50) {
+            const avgRms = Math.sqrt(lufsSumSq / lufsBuffer.length);
+            lufsValue = (avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100) - 0.691;
+          }
+
+          // LRA (re-sort every ~60 frames ├óΓÇ░╦å 1s)
+          lraValues.push(lufsValue);
+          if (lraValues.length > 300) lraValues.shift();
+          lraFrame++;
+          if (lraFrame % 60 === 0 && lraValues.length > 100) {
+            const sorted = [...lraValues].filter(v => v > -99).sort((a, b) => a - b);
+            if (sorted.length > 20)
+              lraCached = sorted[Math.floor(sorted.length * 0.95)] - sorted[Math.floor(sorted.length * 0.1)];
+          }
+
+          // VU needle animation (every frame for smooth ballistics)
+          const volGain = Math.pow(10, db / 20);
+          const adjRmsDb = stRmsDb + 20 * Math.log10(volGain);
+          const vuReading = adjRmsDb + 18;
+          const vuMin = -20, vuMax = 3;
+          const clamped = Math.max(vuMin, Math.min(vuMax, vuReading));
+          let norm = (clamped - vuMin) / (vuMax - vuMin);
+          if (clamped < -10) norm = Math.pow((clamped + 20) / 10, 1.2) * 0.435;
+          const targetAngle = -50 + norm * 100;
+          const diff = targetAngle - needleAngle;
+          needleAngle += diff * (diff > 0 ? 0.2 : 0.06);
+          meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
+
+          // Text readouts throttled to ~10fps
+          const now = performance.now();
+          if (now - lastDisplayUpdate >= 100) {
+            lastDisplayUpdate = now;
+            if (vuDisplay)        vuDisplay.textContent        = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-\u221E VU';
+            if (rmsDisplay)       rmsDisplay.textContent       = stRmsDb > -99 ? `${stRmsDb.toFixed(1)} dB` : '-\u221E dB';
+            if (truePeakDisplay)  truePeakDisplay.textContent  = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-\u221E dBTP';
+            if (lufsDisplay)      lufsDisplay.textContent      = lufsValue > -99 ? `${lufsValue.toFixed(1)} LUFS` : '-\u221E LUFS';
+            if (lraDisplay)       lraDisplay.textContent       = lraCached > 0 ? `${lraCached.toFixed(1)} LU` : '-- LU';
+          }
+
+          vuRAF = requestAnimationFrame(loop);
+        };
+        vuRAF = requestAnimationFrame(loop);
+      }
+
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ File Loading ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      function showUploadZone() {
+        uploadZone.classList.remove('loaded', 'buffering');
+        uploadZoneContent.style.display  = '';
+        uploadLoadedContent.style.display = 'none';
+        // Re-enable native file input over the zone
+        // (removing pointer-events:none is handled by removing 'loaded' class)
+      }
+
+      function showLoadedZone(filename) {
+        uploadZone.classList.add('loaded');
+        uploadZone.classList.remove('buffering');
+        uploadZoneContent.style.display  = 'none';
+        uploadLoadedContent.style.display = 'flex';
+        uploadFilename.textContent = filename;
+      }
+
+      function loadFile(file) {
+        if (!file) return;
+
+        // Basic MIME / extension check
+        const ext = file.name.match(/\.([^.]+)$/);
+        const extOk = ext && /^(mp3|wav|aif|aiff|flac|ogg|m4a|aac|opus)$/i.test(ext[1]);
+        if (!file.type.startsWith('audio/') && !extOk) {
+          alert('Please upload a supported audio file (MP3, WAV, AIFF, FLAC, OGG, M4A, AAC).');
+          return;
+        }
+
+        // Stop current playback and cancel animation loops
+        audio.pause();
+        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+        stopVU();
+        resetBuffers();
+
+        // Update object URL tracking
+        if (currentObjectURL) {
+          URL.revokeObjectURL(currentObjectURL);
+          const idx = allObjectURLs.indexOf(currentObjectURL);
+          if (idx !== -1) allObjectURLs.splice(idx, 1);
+        }
+        currentObjectURL = URL.createObjectURL(file);
+        allObjectURLs.push(currentObjectURL);
+
+        // Strip extension for display, truncate for metering label
+        currentTrackName = file.name.replace(/\.[^.]+$/, '');
+        const shortName = currentTrackName.length > 22
+          ? currentTrackName.substring(0, 22) + '\u2026'
+          : currentTrackName;
+
+        // Reset UI
+        uploadZone.classList.add('buffering');
+        progressFill.style.width = '0%';
+        scrubber.style.left      = '0%';
+        if (timeDisplay)   timeDisplay.textContent = '0:00 / 0:00';
+        nowPlaying.textContent   = currentTrackName;
+        sourceDisplay.textContent = shortName;
+
+        playPauseBtn.classList.remove('playing');
+        fileLoaded = false;
+
+        // Handler: ready to play &mdash; do NOT auto-play, wait for user input
+        const onReady = () => {
+          fileLoaded = true;
+          showLoadedZone(file.name);
+          audio.currentTime = 0;
+          ensureGraph();
+        };
+
+        // Handler: error
+        const onError = () => {
+          alert('Could not load this audio file. The format may be unsupported by your browser.');
+          showUploadZone();
+          nowPlaying.textContent = 'No file loaded';
+          sourceDisplay.textContent = '\u2014';
+        };
+
+        audio.addEventListener('canplay', onReady,  { once: true });
+        audio.addEventListener('error',   onError,  { once: true });
+
+        audio.src = currentObjectURL;
+      }
+
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Upload Zone Interactions ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      // Native file input change
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) loadFile(file);
+        // Reset input so the same file can be re-selected if needed
+        fileInput.value = '';
+      });
+
+      // Drag-and-drop
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!uploadZone.classList.contains('loaded')) {
+          uploadZone.classList.add('drag-over');
+        }
+      });
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('drag-over');
+      });
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file) loadFile(file);
+      });
+
+      // Clear file
+      uploadClearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        audio.pause();
+        audio.src = '';
+        if (currentObjectURL) {
+          URL.revokeObjectURL(currentObjectURL);
+          const idx = allObjectURLs.indexOf(currentObjectURL);
+          if (idx !== -1) allObjectURLs.splice(idx, 1);
+          currentObjectURL = null;
+        }
+        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+        stopVU();
+        resetBuffers();
+        fileLoaded = false;
+        currentTrackName = '';
+        progressFill.style.width = '0%';
+        scrubber.style.left = '0%';
+        if (timeDisplay) timeDisplay.textContent = '0:00 / 0:00';
+        nowPlaying.textContent = 'No file loaded';
+        sourceDisplay.textContent = '\u2014';
+        playPauseBtn.classList.remove('playing');
+        showUploadZone();
+      });
+
+      // Change file (load another)
+      uploadAnotherBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fileInput.click();
+      });
+
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Transport Controls ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      playPauseBtn.addEventListener('click', async () => {
+        if (!fileLoaded) {
+          // Prompt user to upload a file
+          fileInput.click();
+          return;
+        }
+        if (!audio.paused) {
+          audio.pause();
+          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+          stopVU();
+        } else {
+          try {
+            ensureGraph();
+            await audio.play();
+            startProgress();
+            startVU();
+          } catch (err) {
+            console.error('[PROCESSOR] Play failed:', err);
+          }
+        }
+      });
+
+      // Previous = restart (or trigger upload if nothing loaded)
+      prevBtn.addEventListener('click', () => {
+        if (!fileLoaded) { fileInput.click(); return; }
+        audio.currentTime = 0;
+        renderProgress();
+      });
+
+      // Next = load another file
+      nextBtn.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      // Progress bar click / scrub
+      wave.addEventListener('click', (e) => {
+        const dur = audio.duration || 0;
+        if (!dur) return;
+        const rect = wave.getBoundingClientRect();
+        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = pct * dur;
+        renderProgress();
+      });
+
+      let scrubbing = false;
+      wave.addEventListener('mousedown', () => { scrubbing = true; });
+      document.addEventListener('mousemove', (e) => {
+        if (!scrubbing) return;
+        const dur = audio.duration || 0;
+        if (!dur) return;
+        const rect = wave.getBoundingClientRect();
+        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = pct * dur;
+        renderProgress();
+      });
+      document.addEventListener('mouseup', () => { scrubbing = false; });
+
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Volume Knob ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      volumeKnob.addEventListener('mousedown', (e) => {
+        drag = true; moved = false;
+        startY = e.clientY; startAngle = angle;
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!drag) return;
+        const delta = startY - e.clientY;
+        if (Math.abs(delta) > 2) moved = true;
+        angle = Math.max(180, Math.min(420, startAngle + delta));
+        db = -40 + ((angle - 180) / 240) * 52;
+        applyVolume();
+      });
+      document.addEventListener('mouseup', () => {
+        if (drag && !moved) { db = 0; angle = 360; applyVolume(); }
+        drag = false;
+      });
+      volumeKnob.addEventListener('touchstart', (e) => {
+        drag = true; moved = false;
+        startY = e.touches[0].clientY; startAngle = angle;
+        e.preventDefault();
+      }, { passive: false });
+      document.addEventListener('touchmove', (e) => {
+        if (!drag) return;
+        const delta = startY - e.touches[0].clientY;
+        if (Math.abs(delta) > 2) moved = true;
+        angle = Math.max(180, Math.min(420, startAngle + delta));
+        db = -40 + ((angle - 180) / 240) * 52;
+        applyVolume();
+        e.preventDefault();
+      }, { passive: false });
+      document.addEventListener('touchend', () => {
+        if (drag && !moved) { db = 0; angle = 360; applyVolume(); }
+        drag = false;
+      });
+      document.addEventListener('touchcancel', () => { drag = false; });
+
+      // Visibility: pause VU when tab hidden, restart when visible
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; }
+        } else if (playing && !vuRAF) {
+          startVU();
+        }
+      });
+
+      applyVolume();
+
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Analysis Modal ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      function closeAnalysisModal() { analysisModal.style.display = 'none'; }
+
+      analysisModalClose.addEventListener('click', closeAnalysisModal);
+      analysisModal.addEventListener('click', (e) => {
+        if (e.target === analysisModal) closeAnalysisModal();
+      });
+
+      // K-weighting pre-filter (ITU-R BS.1770-4) &mdash; required for accurate LUFS measurement
+      function kWeightChannel(data, fs) {
+        // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
+        const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
+        const Ks  = Math.tan(Math.PI * f0s / fs);
+        const Vh  = Math.pow(10, Gs / 20);
+        const Vb  = Math.pow(Vh, 0.4996667741545416);
+        const den = 1 + Ks / Qs + Ks * Ks;
+        const bs0 = (Vh + Vb * Ks / Qs + Ks * Ks) / den;
+        const bs1 = 2 * (Ks * Ks - Vh) / den;
+        const bs2 = (Vh - Vb * Ks / Qs + Ks * Ks) / den;
+        const as1 = 2 * (Ks * Ks - 1) / den;
+        const as2 = (1 - Ks / Qs + Ks * Ks) / den;
+        // Stage 2: Highpass (RLB weighting, models free-field head transfer ~38 Hz)
+        const f0h = 38.13547087602444, Qh = 0.5003270373238773;
+        const Kh  = Math.tan(Math.PI * f0h / fs);
+        const dh  = 1 + Kh / Qh + Kh * Kh;
+        const bh0 = 1 / dh, bh1 = -2 / dh, bh2 = 1 / dh;
+        const ah1 = 2 * (Kh * Kh - 1) / dh;
+        const ah2 = (1 - Kh / Qh + Kh * Kh) / dh;
+        function biquad(input, b0, b1, b2, a1, a2) {
+          const out = new Float32Array(input.length);
+          let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+          for (let i = 0; i < input.length; i++) {
+            const x0 = input[i];
+            const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+            x2 = x1; x1 = x0; y2 = y1; y1 = y0;
+            out[i] = y0;
+          }
+          return out;
+        }
+        return biquad(biquad(data, bs0, bs1, bs2, as1, as2), bh0, bh1, bh2, ah1, ah2);
+      }
+
+      async function analyzeTrack(audioUrl, trackName) {
+        analysisModal.style.display = 'flex';
+        const progressEl = document.createElement('div');
+        progressEl.className = 'analysis-loading';
+        progressEl.innerHTML = '<span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div><div class="analysis-progress"><div class="analysis-progress-bar" id="analysisProgressBar"></div></div><div class="analysis-progress-text" id="analysisProgressText">0%</div>';
+        analysisResults.innerHTML = '';
+        analysisResults.appendChild(progressEl);
+
+        try {
+          // Fetch audio file with progress
+          const updateProgress = (percent, status) => {
+            const barEl = document.getElementById('analysisProgressBar');
+            const textEl = document.getElementById('analysisProgressText');
+            if (barEl) barEl.style.width = `${percent}%`;
+            if (textEl) textEl.textContent = status || `${Math.round(percent)}%`;
+          };
+
+          updateProgress(5, 'Fetching audio...');
+          // Encode URL to handle spaces and special characters
+          const encodedUrl = encodeURI(audioUrl);
+          const response = await fetch(encodedUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch audio file: ${response.status} ${response.statusText}`);
+          }
+          const arrayBuffer = await response.arrayBuffer();
+
+          updateProgress(15, 'Decoding audio...');
+          // Create audio context for decoding
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          
+          if (!audioBuffer || audioBuffer.length === 0) {
+            throw new Error('Audio file could not be decoded or is empty');
+          }
+
+          updateProgress(25, 'Preparing analysis...');
+          
+          const sampleRate  = audioBuffer.sampleRate;
+          const channelData = [];
+          for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+            channelData.push(audioBuffer.getChannelData(i));
+          }
+
+          // LUFS &mdash; 400ms blocks, 75% overlap, absolute gate -70, relative gate -10LU
+          const blockSize   = Math.floor(sampleRate * 0.4);
+          const overlapSize = Math.floor(blockSize * 0.75);
+          const step        = blockSize - overlapSize;
+          const allBlocks   = [];
+
+          // Calculate total blocks for progress
+          const totalBlocks = Math.floor((channelData[0].length - blockSize) / step);
+          let processedBlocks = 0;
+
+          updateProgress(30, 'Processing blocks...');
+
+          // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs &mdash; stereo is always 1.0
+          const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
+
+          // Process in blocks - apply K-weighting on-demand per block to save memory
+          for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
+            let sumChannelMeans = 0;
+            for (let ch = 0; ch < channelData.length; ch++) {
+              // Extract block from channel
+              const block = channelData[ch].slice(pos, pos + blockSize);
+              // Apply K-weighting to this block only
+              const kWeightedBlock = kWeightChannel(block, sampleRate);
+              
+              let sumSq = 0;
+              for (let i = 0; i < blockSize; i++) {
+                const s = kWeightedBlock[i];
+                sumSq += s * s;
+              }
+              sumChannelMeans += (chWeights[ch] || 1.0) * (sumSq / blockSize);
+            }
+            const ms = sumChannelMeans;
+            allBlocks.push({ loudness: -0.691 + 10 * Math.log10(ms), meanSquare: ms });
+
+            // Update progress every 100 blocks
+            processedBlocks++;
+            if (processedBlocks % 100 === 0 || processedBlocks === totalBlocks) {
+              const progress = 30 + (processedBlocks / totalBlocks) * 50; // 30-80%
+              updateProgress(progress, `Processing ${processedBlocks}/${totalBlocks} blocks...`);
+              // Allow UI to update
+              await new Promise(resolve => setTimeout(resolve, 0));
             }
           }
 
-          // LRA (ITU-R BS.1770 gated)
-          const sortedLRA = allBlocks
-            .filter(b => b.loudness >= relGate)
-            .map(b => b.loudness)
-            .sort((a, b) => a - b);
-          const lra = sortedLRA.length > 0
-            ? sortedLRA[Math.floor(sortedLRA.length * 0.95)] - sortedLRA[Math.floor(sortedLRA.length * 0.1)]
-            : 0;
+          updateProgress(85, 'Calculating metrics...');
 
-          // Noise floor â€” 5th percentile of gated blocks (approximate in-program floor)
-          const noiseFloor = sortedLRA.length > 10 ? sortedLRA[Math.floor(sortedLRA.length * 0.05)] : -100;
+          // Absolute gate
+          let gatedMs = 0, gatedCount = 0;
+          allBlocks.forEach(b => { if (b.loudness >= -70) { gatedMs += b.meanSquare; gatedCount++; } });
+          if (gatedCount === 0) throw new Error('No blocks above absolute gate');
+          const gatedLoudness = -0.691 + 10 * Math.log10(gatedMs / gatedCount);
 
-          // Gain needed to reach Spotify target (â€“14 LUFS)
+          // Relative gate
+          const relGate = gatedLoudness - 10;
+          let finalMs = 0, finalCount = 0;
+          allBlocks.forEach(b => { if (b.loudness >= relGate) { finalMs += b.meanSquare; finalCount++; } });
+          const intLUFS = finalCount > 0 ? -0.691 + 10 * Math.log10(finalMs / finalCount) : -100;
+
+          // True Peak: 4x Catmull-Rom cubic interpolation (ITU-R BS.1770-4 inter-sample peak)
+          updateProgress(87, 'Calculating true peak & metrics...');
+          let truePeak = -100;
+          const nChAll  = channelData.length;
+          const nSmpAll = channelData[0].length;
+          for (let ch = 0; ch < nChAll; ch++) {
+            const d = channelData[ch];
+            for (let i = 1; i < nSmpAll - 2; i++) {
+              const y1 = d[i];
+              const pa = y1 < 0 ? -y1 : y1;
+              if (pa > 0) { const db = 20 * Math.log10(pa); if (db > truePeak) truePeak = db; }
+              if (pa > 0.9) {
+                const y0 = d[i-1], y2 = d[i+1], y3 = d[i+2];
+                const c0 = y1;
+                const c1 = -0.5*y0 + 0.5*y2;
+                const c2 =  y0 - 2.5*y1 + 2.0*y2 - 0.5*y3;
+                const c3 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
+                for (let ti = 1; ti <= 3; ti++) {
+                  const t = ti * 0.25;
+                  const v = ((c3*t + c2)*t + c1)*t + c0;
+                  const pv = v < 0 ? -v : v;
+                  if (pv > 0) { const db = 20 * Math.log10(pv); if (db > truePeak) truePeak = db; }
+                }
+              }
+            }
+          }
+
+          // Max Momentary (EBU R128: peak 400ms block)
+          const maxMomentary = allBlocks.reduce((max, b) => Math.max(max, b.loudness), -100);
+
+          // 3-second short-term blocks (EBU R128 / EBU Tech 3342)
+          const ST_WIN = 30;
+          const stBlocksArr = [];
+          let maxShortTerm = -100;
+          for (let si = 0; si <= allBlocks.length - ST_WIN; si++) {
+            let stMs = 0;
+            for (let sk = 0; sk < ST_WIN; sk++) stMs += allBlocks[si + sk].meanSquare;
+            stMs /= ST_WIN;
+            const stL = -0.691 + 10 * Math.log10(stMs);
+            stBlocksArr.push({ loudness: stL, meanSquare: stMs });
+            if (stL > maxShortTerm) maxShortTerm = stL;
+          }
+
+          // LRA (EBU Tech 3342): 3s blocks, absolute gate -70 LUFS, relative gate -20 LU
+          let lra = 0;
+          const stAbsGated = stBlocksArr.filter(b => b.loudness >= -70);
+          if (stAbsGated.length > 0) {
+            const lraAbsMs = stAbsGated.reduce((s, b) => s + b.meanSquare, 0) / stAbsGated.length;
+            const lraAbsL  = -0.691 + 10 * Math.log10(lraAbsMs);
+            const lraRelFilt = stAbsGated
+              .filter(b => b.loudness >= lraAbsL - 20)
+              .map(b => b.loudness)
+              .sort((a, b) => a - b);
+            if (lraRelFilt.length > 1)
+              lra = lraRelFilt[Math.floor(lraRelFilt.length * 0.95)] - lraRelFilt[Math.floor(lraRelFilt.length * 0.1)];
+          }
+
+          // Noise floor: 5th percentile of 3s blocks above absolute gate
+          const stAbsSorted = stAbsGated.map(b => b.loudness).sort((a, b) => a - b);
+          const noiseFloor = stAbsSorted.length > 10
+            ? stAbsSorted[Math.floor(stAbsSorted.length * 0.05)] : -100;
+
+          // Gain to target (-14 LUFS)
           const gainToTarget = -14 - intLUFS;
 
-          // â”€â”€ Combined single pass: RMS, DC offset, stereo correlation, width, balance â”€â”€
-          updateProgress(78, 'Analyzing levels & dynamics...');
-          const nCh   = channelData.length;
-          const nSamp = channelData[0].length;
-          const chL   = channelData[0];
-          const chR   = nCh >= 2 ? channelData[1] : channelData[0];
+          // Combined single-pass: RMS, DC offset, stereo correlation, width, balance
+          updateProgress(89, 'Analyzing stereo image...');
+          const nCh  = channelData.length;
+          const nSmp = channelData[0].length;
+          const chL  = channelData[0];
+          const chR  = nCh >= 2 ? channelData[1] : channelData[0];
           let sumSqL = 0, sumSqR = 0, sumL = 0, sumR = 0, sumLR = 0, sumSqM = 0, sumSqS = 0;
-          for (let i = 0; i < nSamp; i++) {
+          for (let i = 0; i < nSmp; i++) {
             const l = chL[i], r = chR[i];
             sumSqL += l * l; sumSqR += r * r;
             sumL   += l;     sumR   += r;
             sumLR  += l * r;
-            const M = (l + r) * 0.5, S = (l - r) * 0.5;
-            sumSqM += M * M; sumSqS += S * S;
-            if (i % 500000 === 0 && i > 0) await new Promise(resolve => setTimeout(resolve, 0));
+            const M = (l + r) * 0.5, Sv = (l - r) * 0.5;
+            sumSqM += M * M; sumSqS += Sv * Sv;
+            if (i % 500000 === 0 && i > 0) await new Promise(res => setTimeout(res, 0));
           }
-          const rmsLVal    = Math.sqrt(sumSqL / nSamp);
-          const rmsRVal    = Math.sqrt(sumSqR / nSamp);
-          const rmsAvg     = nCh >= 2 ? Math.sqrt((sumSqL + sumSqR) / (2 * nSamp)) : rmsLVal;
+          const rmsLVal    = Math.sqrt(sumSqL / nSmp);
+          const rmsRVal    = Math.sqrt(sumSqR / nSmp);
+          const rmsAvg     = nCh >= 2 ? Math.sqrt((sumSqL + sumSqR) / (2 * nSmp)) : rmsLVal;
           const rmsDb      = rmsAvg > 0.00001 ? 20 * Math.log10(rmsAvg) : -100;
-          const dcL        = (sumL / nSamp) * 100;
-          const dcR        = nCh >= 2 ? (sumR / nSamp) * 100 : dcL;
+          const dcL        = (sumL / nSmp) * 100;
+          const dcR        = nCh >= 2 ? (sumR / nSmp) * 100 : dcL;
           const corrDenom  = Math.sqrt(sumSqL * sumSqR);
           const stereoCorr = nCh >= 2 && corrDenom > 0 ? Math.max(-1, Math.min(1, sumLR / corrDenom)) : 1;
           const stereoWidth = nCh >= 2 && sumSqM > 0 ? Math.min(200, Math.sqrt(sumSqS / sumSqM) * 100) : 0;
           const balanceDb  = nCh >= 2 && rmsLVal > 0.00001 && rmsRVal > 0.00001
                              ? 20 * Math.log10(rmsRVal / rmsLVal) : 0;
-
-          // â”€â”€ True Peak â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-          updateProgress(84, 'Calculating peak levels...');
-          let truePeak = -100;
-          for (let ch = 0; ch < channelData.length; ch++) {
-            for (let i = 0; i < channelData[ch].length; i++) {
-              const p = Math.abs(channelData[ch][i]);
-              if (p > 0) { const db = 20 * Math.log10(p); if (db > truePeak) truePeak = db; }
-            }
-          }
           const headroom    = 0 - truePeak;
           const crestFactor = truePeak - rmsDb;
 
-          // â”€â”€ Clipping events (100 ms windows at â‰¥ 99% of full scale) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-          updateProgress(89, 'Detecting clipping...');
+          // Clipping events (100ms windows at 99% of full scale)
+          updateProgress(91, 'Detecting clipping...');
           const clipThreshold = 0.99;
           const clippingEvents = [];
           const samplesPerCheck = Math.floor(sampleRate * 0.1);
@@ -666,9 +1138,8 @@
             }
           }
 
-          // â”€â”€ Spectral analysis â€” averaged Hann-windowed radix-2 FFT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // Spectral analysis: averaged Hann-windowed FFT
           updateProgress(93, 'Analyzing spectral content...');
-          // Cooley-Tukey radix-2 FFT (in-place)
           function computeFFT(re, im) {
             const N = re.length;
             let j = 0;
@@ -697,41 +1168,38 @@
               }
             }
           }
-
           const FFT_N   = 4096;
           const halfFFT = FFT_N >> 1;
           const hannWin = new Float32Array(FFT_N);
           for (let i = 0; i < FFT_N; i++) hannWin[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / (FFT_N - 1)));
-          const fftRe  = new Float32Array(FFT_N);
-          const fftIm  = new Float32Array(FFT_N);
-          const avgMag = new Float64Array(halfFFT);
-          const hopSamps = Math.floor(sampleRate); // 1-second hop between windows
-          const specSrc  = channelData[0];          // analyse L / mono channel
+          const fftRe   = new Float32Array(FFT_N);
+          const fftIm   = new Float32Array(FFT_N);
+          const avgMag  = new Float64Array(halfFFT);
+          const hopSamps = Math.floor(sampleRate);
+          const specSrc  = channelData[0];
           let fftCount = 0;
           for (let w = 0; w + FFT_N < specSrc.length; w += hopSamps) {
             for (let i = 0; i < FFT_N; i++) { fftRe[i] = specSrc[w + i] * hannWin[i]; fftIm[i] = 0; }
             computeFFT(fftRe, fftIm);
             for (let i = 0; i < halfFFT; i++) avgMag[i] += Math.sqrt(fftRe[i]*fftRe[i] + fftIm[i]*fftIm[i]);
             fftCount++;
-            if (fftCount % 30 === 0) await new Promise(resolve => setTimeout(resolve, 0));
+            if (fftCount % 30 === 0) await new Promise(res => setTimeout(res, 0));
           }
           if (fftCount > 0) { for (let i = 0; i < halfFFT; i++) avgMag[i] /= fftCount; }
 
-          // Spectral centroid â€” frequency of spectral "centre of mass" (perceptual brightness)
+          // Spectral centroid and dominant frequency
           let magSum = 0, freqWtdSum = 0;
           for (let i = 1; i < halfFFT; i++) {
             const freq = i * sampleRate / FFT_N;
             magSum += avgMag[i]; freqWtdSum += freq * avgMag[i];
           }
           const spectralCentroid = magSum > 0 ? freqWtdSum / magSum : 0;
-
-          // Dominant frequency â€” bin with highest average magnitude (ignores DC / sub-20 Hz)
           const minBin = Math.max(1, Math.ceil(20 * FFT_N / sampleRate));
           let peakBin = minBin;
           for (let i = minBin + 1; i < halfFFT; i++) { if (avgMag[i] > avgMag[peakBin]) peakBin = i; }
           const dominantFreq = peakBin * sampleRate / FFT_N;
 
-          // Band energy breakdown â€” % of total spectral energy in each range
+          // Band energy breakdown (6 bands)
           const bands = [
             { label: 'Sub Bass', lo: 20,   hi: 80    },
             { label: 'Bass',     lo: 80,   hi: 250   },
@@ -750,7 +1218,71 @@
           });
           bands.forEach(b => { b.pct = totalBandE > 0 ? Math.round(b.energy / totalBandE * 100) : 0; });
 
-          // â”€â”€ Platform compliance table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+          // BPM detection: energy envelope autocorrelation
+          updateProgress(95, 'Detecting tempo and key...');
+          const envHop   = 512;
+          const envSrc   = channelData[0];
+          const nEnv     = Math.floor(envSrc.length / envHop);
+          const envCurve = new Float32Array(nEnv);
+          for (let f = 0; f < nEnv; f++) {
+            let e = 0, off = f * envHop;
+            for (let i = 0; i < envHop; i++) { const s = envSrc[off + i] || 0; e += s * s; }
+            envCurve[f] = Math.sqrt(e / envHop);
+          }
+          const nOns     = nEnv - 1;
+          const onsetStr = new Float32Array(nOns);
+          for (let i = 0; i < nOns; i++) { const d = envCurve[i+1] - envCurve[i]; onsetStr[i] = d > 0 ? d : 0; }
+          let onsetPeak = 0;
+          for (let i = 0; i < nOns; i++) if (onsetStr[i] > onsetPeak) onsetPeak = onsetStr[i];
+          if (onsetPeak > 0) for (let i = 0; i < nOns; i++) onsetStr[i] /= onsetPeak;
+          const envFR = sampleRate / envHop;
+          const lagLo = Math.max(1, Math.floor(envFR * 60 / 210));
+          const lagHi = Math.min(nOns - 1, Math.ceil(envFR * 60 / 55));
+          let bLag = lagLo, bAC = -1;
+          for (let lag = lagLo; lag <= lagHi; lag++) {
+            let c = 0, n = nOns - lag;
+            for (let i = 0; i < n; i++) c += onsetStr[i] * onsetStr[i + lag];
+            c /= n;
+            if (c > bAC) { bAC = c; bLag = lag; }
+          }
+          let detBPM = envFR * 60 / bLag;
+          while (detBPM < 70)  detBPM *= 2;
+          while (detBPM > 175) detBPM /= 2;
+          const bpmDisplay = detBPM.toFixed(1);
+
+          // Key detection: Krumhansl-Schmuckler (1990) profiles, Pearson correlation
+          const ksMajor   = [6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+          const ksMinor   = [6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+          const noteNames = ['C','C\u266f','D','D\u266f','E','F','F\u266f','G','G\u266f','A','A\u266f','B'];
+          const chroma    = new Float64Array(12);
+          for (let i = 1; i < halfFFT; i++) {
+            const freq = i * sampleRate / FFT_N;
+            if (freq < 27.5 || freq > 4200) continue;
+            const pc = (Math.round(12 * Math.log2(freq / 440) + 69) % 12 + 12) % 12;
+            chroma[pc] += avgMag[i];
+          }
+          let chMax = 0;
+          for (let i = 0; i < 12; i++) if (chroma[i] > chMax) chMax = chroma[i];
+          if (chMax > 0) for (let i = 0; i < 12; i++) chroma[i] /= chMax;
+          function ksPearson(v, prof) {
+            let sv=0,sp=0,svp=0,sv2=0,sp2=0;
+            for (let i=0;i<12;i++){sv+=v[i];sp+=prof[i];svp+=v[i]*prof[i];sv2+=v[i]*v[i];sp2+=prof[i]*prof[i];}
+            const num=12*svp-sv*sp, den=Math.sqrt((12*sv2-sv*sv)*(12*sp2-sp*sp));
+            return den>0?num/den:0;
+          }
+          let bestKey='C', bestMode='major', bestKC=-2;
+          for (let r=0; r<12; r++) {
+            const rot=new Float64Array(12);
+            for (let i=0;i<12;i++) rot[i]=chroma[(i+r)%12];
+            const mj=ksPearson(rot,ksMajor), mn=ksPearson(rot,ksMinor);
+            if (mj>bestKC){bestKC=mj;bestKey=noteNames[r];bestMode='major';}
+            if (mn>bestKC){bestKC=mn;bestKey=noteNames[r];bestMode='minor';}
+          }
+          const keyDisplay = bestKey + ' ' + bestMode;
+          const keyConf    = Math.round(Math.max(0, Math.min(100, (bestKC + 1) * 50)));
+          const keyTag     = keyConf >= 70 ? 'good' : keyConf >= 45 ? 'info' : 'warn-text';
+
+          // Platform compliance table (8 platforms)
           updateProgress(97, 'Finalizing results...');
           const platformDefs = [
             { name: 'Spotify',            target: -14, tol: 2, maxPeak: -1.0 },
@@ -763,45 +1295,27 @@
             { name: 'ATSC A/85 (US TV)',  target: -24, tol: 2, maxPeak: -2.0 },
           ];
           const platformRows = platformDefs.map(p => {
-            const delta   = intLUFS - p.target;
-            const lufsOk  = Math.abs(delta) <= p.tol;
-            const peakPOk = truePeak <= p.maxPeak;
-            const near    = Math.abs(delta) <= p.tol + 2;
-            const cls     = lufsOk && peakPOk ? 'pass' : (near && peakPOk ? 'warn' : 'fail');
-            const badge   = cls === 'pass' ? '\u2713' : (cls === 'warn' ? '\u26a0' : '\u2717');
-            const dStr    = delta > p.tol   ? '\u2193 ' + delta.toFixed(1) + ' dB over'
-                          : delta < -p.tol  ? '\u2191 ' + Math.abs(delta).toFixed(1) + ' dB under'
-                          : 'On target';
-            const pkLabel = peakPOk ? '\u2713 Peak' : '\u2717 Peak';
+            const delta  = intLUFS - p.target;
+            const lufsOk = Math.abs(delta) <= p.tol;
+            const pkOk   = truePeak <= p.maxPeak;
+            const near   = Math.abs(delta) <= p.tol + 2;
+            const cls    = lufsOk && pkOk ? 'pass' : (near && pkOk ? 'warn' : 'fail');
+            const badge  = cls === 'pass' ? '\u2713' : (cls === 'warn' ? '\u26a0' : '\u2717');
+            const dStr   = delta > p.tol  ? '\u2193 ' + delta.toFixed(1) + ' dB over'
+                         : delta < -p.tol ? '\u2191 ' + Math.abs(delta).toFixed(1) + ' dB under'
+                         : pkOk           ? 'On target'
+                         : 'Peak too hot';
+            const pkLabel = pkOk ? '\u2713 Peak' : '\u2717 Peak';
             return '<div class="analysis-platform-row ' + cls + '">'
               + '<span class="analysis-platform-badge">' + badge + '</span>'
               + '<span class="analysis-platform-name">' + p.name + '</span>'
               + '<span class="analysis-platform-target">' + p.target + ' LUFS</span>'
               + '<span class="analysis-platform-delta">' + dStr + '</span>'
-              + '<span class="analysis-platform-peak ' + (peakPOk ? 'ok' : 'hot') + '">' + pkLabel + '</span>'
+              + '<span class="analysis-platform-peak ' + (pkOk ? 'ok' : 'hot') + '">' + pkLabel + '</span>'
               + '</div>';
           }).join('');
 
-          // â”€â”€ HTML block pre-builders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-          // Clipping
-          const clippingEventsListHTML = clippingEvents.map(ev =>
-            '<div class="analysis-clipping-event">' + ev.timeCode + '</div>'
-          ).join('');
-          const clippingHTML = clippingEvents.length > 0
-            ? '<div class="analysis-metric" style="border-left-color:#ff6b6b;">'
-              + '<span class="analysis-label" style="color:#ff6b6b;">Clipping Events:</span>'
-              + '<span class="analysis-value" style="color:#ff6b6b;">' + clippingEvents.length + ' detected</span>'
-              + '</div>'
-              + '<div class="analysis-clipping-log">'
-              + '<div class="analysis-clipping-header">Clipping Timestamps:</div>'
-              + '<div class="analysis-clipping-events">' + clippingEventsListHTML + '</div>'
-              + '</div>'
-            : '<div class="analysis-metric" style="border-left-color:#7ec98f;">'
-              + '<span class="analysis-label" style="color:#7ec98f;">Clipping Events:</span>'
-              + '<span class="analysis-value" style="color:#7ec98f;">None detected \u2713</span>'
-              + '</div>';
-
-          // Stereo section â€” only rendered for stereo/multi-channel files
+          // Build display sections
           let corrLabel, corrCls;
           if      (stereoCorr > 0.95) { corrLabel = 'Mono-like';     corrCls = 'info'; }
           else if (stereoCorr > 0.70) { corrLabel = 'Narrow stereo'; corrCls = 'good'; }
@@ -809,11 +1323,11 @@
           else if (stereoCorr >= 0)   { corrLabel = 'Wide stereo';   corrCls = 'good'; }
           else                        { corrLabel = 'Phase issues';   corrCls = 'warn-text'; }
           const monoWarnHTML = stereoCorr < 0
-            ? '<div class="analysis-warn">\u26a0 Negative correlation \u2014 signal will partially cancel on mono playback</div>'
+            ? '<div class="analysis-warn">\u26a0 Negative correlation \u2014 signal may cancel on mono playback</div>'
             : '';
           const balLabel = Math.abs(balanceDb) < 0.3 ? 'Centered'
             : (balanceDb > 0 ? 'R' : 'L') + ' +' + Math.abs(balanceDb).toFixed(1) + ' dB';
-          const stereoHTML = nCh >= 2
+          const stereoSection = nCh >= 2
             ? '<div class="analysis-section-header">STEREO IMAGE</div>'
               + '<div class="analysis-metric"><span class="analysis-label">Correlation:</span>'
               + '<span class="analysis-value">' + stereoCorr.toFixed(3)
@@ -825,15 +1339,12 @@
               + monoWarnHTML
             : '';
 
-          // Crest factor label
-          let crestLabel;
-          if      (crestFactor > 20) crestLabel = 'Excellent dynamics';
-          else if (crestFactor > 14) crestLabel = 'Good dynamics';
-          else if (crestFactor > 8)  crestLabel = 'Moderate compression';
-          else                        crestLabel = 'Heavy limiting';
-          const crestCls = crestFactor < 8 ? 'warn-text' : 'good';
+          let crestLabel, crestCls;
+          if      (crestFactor > 20) { crestLabel = 'Excellent dynamics'; crestCls = 'good'; }
+          else if (crestFactor > 14) { crestLabel = 'Good dynamics';      crestCls = 'good'; }
+          else if (crestFactor > 8)  { crestLabel = 'Moderate compression'; crestCls = 'good'; }
+          else                       { crestLabel = 'Heavy limiting';      crestCls = 'warn-text'; }
 
-          // Spectral centroid label
           let centroidLabel;
           if      (spectralCentroid < 1500) centroidLabel = 'Dark / warm';
           else if (spectralCentroid < 3000) centroidLabel = 'Balanced';
@@ -843,7 +1354,6 @@
             ? Math.round(dominantFreq) + ' Hz'
             : (dominantFreq / 1000).toFixed(2) + ' kHz';
 
-          // Band energy bars
           const bandBarsHTML = bands.map(b => {
             const barW = Math.min(100, b.pct * 2);
             return '<div class="analysis-band-row">'
@@ -855,12 +1365,10 @@
               + '</div>';
           }).join('');
 
-          // DC offset
           function fmtDC(v) {
             const s = (v >= 0 ? '+' : '') + v.toFixed(4) + '%';
             return Math.abs(v) > 0.1
-              ? '<span style="color:#ffc850">' + s + ' \u26a0</span>'
-              : s;
+              ? '<span style="color:#ffc850">' + s + ' \u26a0</span>' : s;
           }
           const dcOffsetHTML = nCh >= 2
             ? '<div class="analysis-metric"><span class="analysis-label">DC Offset L:</span>'
@@ -870,12 +1378,96 @@
             : '<div class="analysis-metric"><span class="analysis-label">DC Offset:</span>'
               + '<span class="analysis-value">' + fmtDC(dcL) + '</span></div>';
 
+          const clipSection = clippingEvents.length > 0
+            ? '<div class="analysis-metric" style="border-left-color:#ff6b6b;">'
+              + '<span class="analysis-label" style="color:#ff6b6b;">Clipping Events:</span>'
+              + '<span class="analysis-value" style="color:#ff6b6b;">' + clippingEvents.length + ' detected</span>'
+              + '</div>'
+              + '<div class="analysis-clipping-log"><div class="analysis-clipping-header">Clipping Timestamps:</div>'
+              + '<div class="analysis-clipping-events">'
+              + clippingEvents.map(ev => '<div class="analysis-clipping-event">' + ev.timeCode + '</div>').join('')
+              + '</div></div>'
+            : '<div class="analysis-metric" style="border-left-color:#7ec98f;">'
+              + '<span class="analysis-label" style="color:#7ec98f;">Clipping Events:</span>'
+              + '<span class="analysis-value" style="color:#7ec98f;">None detected \u2713</span>'
+              + '</div>';
+
+
+          // Clipping HTML (with green "none" state matching demo)
+          let clippingHTML = '';
+          if (clippingEvents.length > 0) {
+            clippingHTML = `
+              <div class="analysis-metric" style="border-left-color: #ff6b6b;">
+                <span class="analysis-label" style="color: #ff6b6b;">Clipping Events:</span>
+                <span class="analysis-value" style="color: #ff6b6b;">${clippingEvents.length} detected</span>
+              </div>
+              <div class="analysis-clipping-log">
+                <div class="analysis-clipping-header">Clipping Timestamps:</div>
+                <div class="analysis-clipping-events">
+                  ${clippingEvents.map(ev => `<div class="analysis-clipping-event">${ev.timeCode}</div>`).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            clippingHTML = `
+              <div class="analysis-metric" style="border-left-color: #7ec98f;">
+                <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
+                <span class="analysis-value" style="color: #7ec98f;">None detected Γ£ô</span>
+              </div>
+            `;
+          }
+
+          // Streaming compliance (-14 ├é┬▒ 1.5 LUFS, peak < -1.0 dBTP)
+          const lufsInRange = intLUFS >= -15.5 && intLUFS <= -12.5;
+          const peakOk      = truePeak < -1.0;
+          const noClipping  = clippingEvents.length === 0;
+
+          let complianceStatus  = '';
+          let complianceClass   = '';
+          let complianceDetails = [];
+
+          if (lufsInRange && peakOk && noClipping) {
+            complianceStatus = 'Γ£ô Ready for Spotify/Apple Music';
+            complianceClass  = 'ready';
+            complianceDetails.push('LUFS level is optimal for streaming platforms');
+            complianceDetails.push('True Peak is below -1.0 dBTP (prevents inter-sample clipping)');
+            complianceDetails.push('No clipping detected');
+          } else {
+            const issues = [];
+            if (!lufsInRange) {
+              if (intLUFS < -15.5) {
+                issues.push('too-quiet');
+                complianceDetails.push(`<strong>Too Quiet:</strong> ${intLUFS.toFixed(1)} LUFS is below -15.5 LUFS. Streaming platforms may not turn it up enough.`);
+              } else {
+                issues.push('too-loud');
+                complianceDetails.push(`<strong>Too Loud:</strong> ${intLUFS.toFixed(1)} LUFS is above -12.5 LUFS. Will be turned down by streaming platforms, reducing dynamic impact.`);
+              }
+            }
+            if (!peakOk) {
+              issues.push('peak-hot');
+              complianceDetails.push(`<strong>Peak Too Hot:</strong> ${truePeak.toFixed(1)} dBTP is at or above -1.0 dBTP. Risk of inter-sample clipping during lossy encoding (MP3/AAC).`);
+            }
+            if (!noClipping) {
+              issues.push('clipping');
+              complianceDetails.push(`<strong>Clipping Detected:</strong> ${clippingEvents.length} instances found. This will cause audible distortion.`);
+            }
+            if (issues.length === 1 && issues[0] !== 'clipping') {
+              complianceStatus = 'ΓÜá Minor Issues';
+              complianceClass  = 'warning';
+            } else if (issues.includes('clipping') || issues.length > 1) {
+              complianceStatus = 'Γ£ù Not Ready for Streaming';
+              complianceClass  = 'fail';
+            } else {
+              complianceStatus = 'ΓÜá Minor Issues';
+              complianceClass  = 'warning';
+            }
+          }
+
           const channelLabel = audioBuffer.numberOfChannels === 1 ? 'Mono'
             : audioBuffer.numberOfChannels === 2 ? 'Stereo'
             : audioBuffer.numberOfChannels + '-channel';
           const gainStr = Math.abs(gainToTarget) < 0.1 ? 'On target'
-            : gainToTarget > 0
-            ? '+' + gainToTarget.toFixed(1) + ' dB needed'
+            : gainToTarget > 0 ? '+' + gainToTarget.toFixed(1) + ' dB needed'
             : gainToTarget.toFixed(1) + ' dB (will be reduced)';
           const inf = '\u2212\u221e';
           const duration = audioBuffer.duration;
@@ -932,9 +1524,9 @@
               <span class="analysis-label">Crest Factor:</span>
               <span class="analysis-value">${crestFactor.toFixed(1)} dB <span class="analysis-tag ${crestCls}">${crestLabel}</span></span>
             </div>
-            ${clippingHTML}
+            ${clipSection}
 
-            ${stereoHTML}
+            ${stereoSection}
 
             <div class="analysis-section-header">SPECTRAL CHARACTER</div>
             <div class="analysis-metric">
@@ -946,6 +1538,16 @@
               <span class="analysis-value">${domFreqStr}</span>
             </div>
             <div class="analysis-band-bars">${bandBarsHTML}</div>
+
+            <div class="analysis-section-header">TEMPO &amp; KEY</div>
+            <div class="analysis-metric">
+              <span class="analysis-label">BPM:</span>
+              <span class="analysis-value">${bpmDisplay}</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Key:</span>
+              <span class="analysis-value">${keyDisplay} <span class="analysis-tag ${keyTag}">${keyConf}% confidence</span></span>
+            </div>
 
             <div class="analysis-section-header">FILE INFO</div>
             <div class="analysis-metric">
@@ -966,6 +1568,7 @@
             </div>
             ${dcOffsetHTML}
           `;
+
           // Close audio context to free resources
           audioCtx.close();
 
@@ -991,7 +1594,7 @@
         analyzeTrack(currentObjectURL, currentTrackName);
       });
 
-      // â”€â”€ Spectrum Analyzer Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Spectrum Analyzer Modal ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       let meterActive    = false;
       let meterRAF       = null;
       let specFrameCount = 0;
@@ -1018,7 +1621,7 @@
         const MIN_FREQ = 20;
         const nyquist  = ctx.sampleRate / 2;
 
-        // Pixel â†’ frequency lookup (cached per canvas width)
+        // Pixel ├óΓÇáΓÇÖ frequency lookup (cached per canvas width)
         if (!freqMapCache || freqMapCacheW !== cW) {
           freqMapCache  = new Float32Array(cW);
           freqMapCacheW = cW;
