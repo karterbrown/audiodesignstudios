@@ -11,6 +11,16 @@ echo "📦 Staging all changes..."
 git add .
 
 echo ""
-echo "✅ All changes staged. Ready to commit and push when you are."
-echo "   git commit -m \"your message\""
-echo "   git push"
+read -rp "💬 Commit message: " COMMIT_MSG
+
+if [[ -z "$COMMIT_MSG" ]]; then
+  echo "❌ No commit message provided. Aborting."
+  exit 1
+fi
+
+git commit -m "$COMMIT_MSG"
+git push
+
+echo ""
+echo "✅ Deployed! GitHub Pages will update in 1–10 minutes."
+echo "   Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)"
