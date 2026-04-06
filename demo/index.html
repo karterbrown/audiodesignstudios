@@ -36,7 +36,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./demo.css?v=1775319657" />
+  <link rel="stylesheet" href="./demo.css?v=1775495771" />
 </head>
 
 <body>
@@ -850,13 +850,12 @@
         if (sourceDisplay) sourceDisplay.textContent = 'Mix';
 if (lraDisplay) lraDisplay.textContent = '-- dB';
 
-        // Set src and force the browser to start buffering
-        beforeAudio.src = t.before;
-        afterAudio.src = t.after;
-        beforeAudio.load();
-        afterAudio.load();
-
         if (!autoplay) {
+          // Set src and buffer without playing
+          beforeAudio.src = t.before;
+          afterAudio.src = t.after;
+          beforeAudio.load();
+          afterAudio.load();
           playing = false;
           playPauseBtn.classList.remove('playing');
           return;
@@ -909,10 +908,18 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           });
         }
 
+        // Attach listeners BEFORE setting src/load so canplay is never missed
+        // (cached audio can fire canplay synchronously before listeners would be attached)
         beforeAudio.addEventListener('canplay', onBeforeReady, { once: true });
         afterAudio.addEventListener('canplay', onAfterReady, { once: true });
         beforeAudio.addEventListener('error', onError, { once: true });
         afterAudio.addEventListener('error', onError, { once: true });
+
+        // Set src and force the browser to start buffering
+        beforeAudio.src = t.before;
+        afterAudio.src = t.after;
+        beforeAudio.load();
+        afterAudio.load();
       }
 
       tracks.forEach((t, i) => {
