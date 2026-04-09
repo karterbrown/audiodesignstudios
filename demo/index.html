@@ -36,7 +36,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./demo.css?v=1775704657" />
+  <link rel="stylesheet" href="./demo.css?v=1775706429" />
 </head>
 
 <body>
@@ -1131,7 +1131,18 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         analysisResults.innerHTML = '';
         analysisResults.appendChild(progressEl);
 
+        // Create the AudioContext HERE — before any await — so it is created while
+        // the user gesture (button click) is still active.  Browsers restrict new
+        // AudioContext auto-start once the transient activation window expires
+        // (typically ~1 s after the click), which would leave the context suspended
+        // and cause decodeAudioData to fail on Safari / some Chrome builds.
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
         try {
+          // Safari may start the context suspended even within a user gesture; resume it.
+          if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+          }
           // Fetch audio file with progress
           const updateProgress = (percent, status) => {
             const barEl = document.getElementById('analysisProgressBar');
@@ -1150,8 +1161,7 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           const arrayBuffer = await response.arrayBuffer();
 
           updateProgress(15, 'Decoding audio...');
-          // Create audio context for decoding
-          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          // audioCtx was created before the first await (see above).
           const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
           
           if (!audioBuffer || audioBuffer.length === 0) {
@@ -1432,9 +1442,6 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
             </div>
           `;
 
-          // Close audio context to free resources
-          audioCtx.close();
-
         } catch (err) {
           console.error('Analysis failed:', err);
           console.error('Audio URL:', audioUrl);
@@ -1446,6 +1453,9 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
               <span style="font-size: 0.9em; opacity: 0.7;">Please ensure the audio file is valid and accessible.</span>
             </div>
           `;
+        } finally {
+          // Always release the decoding context — even if decoding failed.
+          audioCtx.close();
         }
       }
 
@@ -1454,6 +1464,10 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
           alert('Please load a track first');
           return;
         }
+        // Ensure the main audio graph is connected and the AudioContext is running.
+        // This unlocks audio on the page so the analysis AudioContext (created below
+        // inside analyzeTrack) can start in 'running' state even on Safari.
+        ensureGraph();
         const track = tracks[idx];
         // Analyze based on current mode: if afterMode is true, analyze Mix; if false, analyze RAW
         if (afterMode) {
