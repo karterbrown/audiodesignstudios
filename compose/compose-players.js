@@ -35,8 +35,8 @@ function createBAPlayer(config) {
 
   const beforeAudio = new Audio();
   const afterAudio = new Audio();
-  beforeAudio.preload = 'auto';
-  afterAudio.preload = 'auto';
+  beforeAudio.preload = 'metadata';
+  afterAudio.preload = 'metadata';
 
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const beforeAnalyser = audioContext.createAnalyser();
@@ -140,6 +140,16 @@ function createBAPlayer(config) {
   }
 
   function updateVUMeter() {
+    const activeAudio = afterMode ? afterAudio : beforeAudio;
+
+    if (activeAudio.paused) {
+      // Settle needle to rest when not playing
+      currentNeedleAngle += (-50 - currentNeedleAngle) * 0.05;
+      meterNeedle.style.transform = `translateX(-50%) rotate(${currentNeedleAngle}deg)`;
+      vuMeterRAF = null;
+      return;
+    }
+
     const analyser = afterMode ? afterAnalyser : beforeAnalyser;
     const dataArray = afterMode ? afterDataArray : beforeDataArray;
     analyser.getByteFrequencyData(dataArray);
@@ -368,7 +378,11 @@ const inactiveAudio = afterMode ? beforeAudio : afterAudio;
   setMode(true);
   loadTrack(0, false);
 
-  return { audioContext, beforeAudio, afterAudio };
+  return {
+    audioContext, beforeAudio, afterAudio,
+    getActiveUrl:   () => idx >= 0 ? (afterMode ? afterAudio : beforeAudio).src : null,
+    getActiveTitle: () => idx >= 0 ? tracks[idx].title + (afterMode ? ' (Mix)' : ' (Dry)') : null,
+  };
 }
 
 // Export for use in compose.html

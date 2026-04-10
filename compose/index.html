@@ -36,8 +36,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./compose.css?v=1775706429" />
-  <link rel="stylesheet" href="../matrix/matrix.css?v=1775706429" />
+  <link rel="stylesheet" href="./compose.css?v=1775845336" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -224,13 +223,6 @@
         width: 200px;
         height: 200px;
       }
-    }
-
-    /* Full-screen Matrix Background */
-    .matrix-background {
-      display: none;
-      will-change: transform;
-      transform: translateZ(0);
     }
 
     /* Content Container */
@@ -475,7 +467,7 @@
 
     /* Minus sign on left */
     .ba-meter-scale::before {
-      content: 'âˆ’';
+      content: '−';
       position: absolute;
       left: -10px;
       top: 20px;
@@ -1355,8 +1347,6 @@
     </nav>
   </header>
 
-  <!-- Full-screen Matrix Background -->
-  <div class="matrix-background" id="matrixBackground"></div>
 
   <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        ðŸ“‹ PAGE SECTION ORDER MAP
@@ -1388,124 +1378,6 @@
   <!-- Audio Players: Design + Analog Processing -->
   <section class="playlists-section">
     <div class="playlists-container design-analog-container">
-    <div class="design-player-card">
-      <h2 class="design-player-title">Productions</h2>
-      
-      <!-- Module: VU Meter and Volume Control -->
-      <div class="design-meter-section">
-        <!-- Power Button -->
-        <div class="power-button-container">
-          <button class="info-button" aria-label="Player info">INFO</button>
-          <a href="../" class="power-button" aria-label="Power - Return to Design">POWER</a>
-        </div>
-        
-        <div class="design-meter-container">
-          <div class="design-meter-display" id="designMeterDisplay">
-            <div class="design-meter-scale">
-              <!-- Main VU line -->
-              <div class="design-meter-vu-line"></div>
-              
-              <!-- Top VU scale -->
-              <div class="design-meter-tick" style="left: 0%;"></div>
-              <span class="design-meter-label" style="left: 0%;">20</span>
-              
-              <div class="design-meter-tick" style="left: 7.7%;"></div>
-              <span class="design-meter-label" style="left: 7.7%;">10</span>
-              
-              <div class="design-meter-tick" style="left: 15.4%;"></div>
-              <span class="design-meter-label" style="left: 15.4%;">7</span>
-              
-              <div class="design-meter-tick small" style="left: 23%;"></div>
-              
-              <div class="design-meter-tick" style="left: 30.8%;"></div>
-              <span class="design-meter-label" style="left: 30.8%;">5</span>
-              
-              <div class="design-meter-tick small" style="left: 38.5%;"></div>
-              
-              <div class="design-meter-tick" style="left: 46.2%;"></div>
-              <span class="design-meter-label" style="left: 46.2%;">3</span>
-              
-              <div class="design-meter-tick" style="left: 53.8%;"></div>
-              <span class="design-meter-label" style="left: 53.8%;">2</span>
-              
-              <div class="design-meter-tick" style="left: 61.5%;"></div>
-              <span class="design-meter-label" style="left: 61.5%;">1</span>
-              
-              <div class="design-meter-tick" style="left: 76.9%;"></div>
-              <span class="design-meter-label" style="left: 76.9%;">0</span>
-              
-              <div class="design-meter-tick" style="left: 84.6%;"></div>
-              <span class="design-meter-label red" style="left: 84.6%;">1</span>
-              
-              <div class="design-meter-tick" style="left: 92.3%;"></div>
-              <span class="design-meter-label red" style="left: 92.3%;">2</span>
-              
-              <div class="design-meter-tick" style="left: 100%;"></div>
-              <span class="design-meter-label red" style="left: 100%;">3</span>
-              
-              <!-- Bottom percentage line -->
-              <div class="design-meter-percent-line"></div>
-              
-              <div class="design-meter-percent-tick" style="left: 0%;"></div>
-              <div class="design-meter-percent-tick" style="left: 7.7%;"></div>
-              <div class="design-meter-percent-tick" style="left: 15.4%;"></div>
-              <span class="design-meter-percent-label" style="left: 15.4%;">20</span>
-              
-              <div class="design-meter-percent-tick" style="left: 23%;"></div>
-              <div class="design-meter-percent-tick" style="left: 30.8%;"></div>
-              <span class="design-meter-percent-label" style="left: 30.8%;">40</span>
-              
-              <div class="design-meter-percent-tick" style="left: 38.5%;"></div>
-              <div class="design-meter-percent-tick" style="left: 46.2%;"></div>
-              <span class="design-meter-percent-label" style="left: 46.2%;">60</span>
-              
-              <div class="design-meter-percent-tick" style="left: 53.8%;"></div>
-              <div class="design-meter-percent-tick" style="left: 61.5%;"></div>
-              <span class="design-meter-percent-label" style="left: 61.5%;">80</span>
-              
-              <div class="design-meter-percent-tick" style="left: 76.9%;"></div>
-              <span class="design-meter-percent-label" style="left: 76.9%;">100</span>
-            </div>
-            <div class="design-meter-needle" id="designMeterNeedle"></div>
-            <div class="design-meter-branding">AUDIO DESIGN STUDIOS</div>
-          </div>
-        </div>
-        <div class="design-controls-row">
-          <div class="design-volume-control">
-            <div class="design-volume-knob-container">
-              <div class="design-volume-tick"></div>
-              <div class="design-volume-tick"></div>
-              <div class="design-volume-tick"></div>
-              <div class="design-volume-db-label">-40</div>
-              <div class="design-volume-db-label">0</div>
-              <div class="design-volume-db-label">+12</div>
-              <div class="design-volume-knob" id="designVolumeKnob" aria-label="Volume Control"></div>
-              <div class="design-volume-arc"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Track Controls -->
-      <!-- Now Playing Display -->
-      <div id="designNowPlaying" class="now-playing-info">No track playing</div>
-
-      <!-- Progress Bar -->
-      <div id="designMainWave" class="main-player-progress" aria-hidden="true"></div>
-
-      <!-- Transport Controls -->
-      <div class="playlist-player-controls">
-        <button id="designPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
-        <button id="designPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
-        <button id="designNextBtn" class="control-btn" aria-label="Next track"></button>
-      </div>
-
-      <!-- Track List -->
-      <div class="track-list" id="designPlaylistTracks">
-        <!-- Tracks will be injected via JavaScript -->
-      </div>
-    </div>
-
     <div class="hidden-player-card">
       <h2 class="hidden-player-title">Analog Processing</h2>
       <!-- VU Meter Style Toggle -->
@@ -1623,10 +1495,130 @@
         <button id="baPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
         <button id="baPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
         <button id="baNextBtn" class="control-btn" aria-label="Next track"></button>
+        <button class="control-btn-analyze" id="baAnalyzeBtn" aria-label="Analyze current track">ANALYZE</button>
       </div>
 
       <!-- Track List -->
       <div class="track-list" id="baPlaylistTracks">
+        <!-- Tracks will be injected via JavaScript -->
+      </div>
+    </div>
+
+    <div class="design-player-card">
+      <h2 class="design-player-title">Productions</h2>
+      
+      <!-- Module: VU Meter and Volume Control -->
+      <div class="design-meter-section">
+        <!-- Power Button -->
+        <div class="power-button-container">
+          <button class="info-button" aria-label="Player info">INFO</button>
+          <a href="../" class="power-button" aria-label="Power - Return to Design">POWER</a>
+        </div>
+        
+        <div class="design-meter-container">
+          <div class="design-meter-display" id="designMeterDisplay">
+            <div class="design-meter-scale">
+              <!-- Main VU line -->
+              <div class="design-meter-vu-line"></div>
+              
+              <!-- Top VU scale -->
+              <div class="design-meter-tick" style="left: 0%;"></div>
+              <span class="design-meter-label" style="left: 0%;">20</span>
+              
+              <div class="design-meter-tick" style="left: 7.7%;"></div>
+              <span class="design-meter-label" style="left: 7.7%;">10</span>
+              
+              <div class="design-meter-tick" style="left: 15.4%;"></div>
+              <span class="design-meter-label" style="left: 15.4%;">7</span>
+              
+              <div class="design-meter-tick small" style="left: 23%;"></div>
+              
+              <div class="design-meter-tick" style="left: 30.8%;"></div>
+              <span class="design-meter-label" style="left: 30.8%;">5</span>
+              
+              <div class="design-meter-tick small" style="left: 38.5%;"></div>
+              
+              <div class="design-meter-tick" style="left: 46.2%;"></div>
+              <span class="design-meter-label" style="left: 46.2%;">3</span>
+              
+              <div class="design-meter-tick" style="left: 53.8%;"></div>
+              <span class="design-meter-label" style="left: 53.8%;">2</span>
+              
+              <div class="design-meter-tick" style="left: 61.5%;"></div>
+              <span class="design-meter-label" style="left: 61.5%;">1</span>
+              
+              <div class="design-meter-tick" style="left: 76.9%;"></div>
+              <span class="design-meter-label" style="left: 76.9%;">0</span>
+              
+              <div class="design-meter-tick" style="left: 84.6%;"></div>
+              <span class="design-meter-label red" style="left: 84.6%;">1</span>
+              
+              <div class="design-meter-tick" style="left: 92.3%;"></div>
+              <span class="design-meter-label red" style="left: 92.3%;">2</span>
+              
+              <div class="design-meter-tick" style="left: 100%;"></div>
+              <span class="design-meter-label red" style="left: 100%;">3</span>
+              
+              <!-- Bottom percentage line -->
+              <div class="design-meter-percent-line"></div>
+              
+              <div class="design-meter-percent-tick" style="left: 0%;"></div>
+              <div class="design-meter-percent-tick" style="left: 7.7%;"></div>
+              <div class="design-meter-percent-tick" style="left: 15.4%;"></div>
+              <span class="design-meter-percent-label" style="left: 15.4%;">20</span>
+              
+              <div class="design-meter-percent-tick" style="left: 23%;"></div>
+              <div class="design-meter-percent-tick" style="left: 30.8%;"></div>
+              <span class="design-meter-percent-label" style="left: 30.8%;">40</span>
+              
+              <div class="design-meter-percent-tick" style="left: 38.5%;"></div>
+              <div class="design-meter-percent-tick" style="left: 46.2%;"></div>
+              <span class="design-meter-percent-label" style="left: 46.2%;">60</span>
+              
+              <div class="design-meter-percent-tick" style="left: 53.8%;"></div>
+              <div class="design-meter-percent-tick" style="left: 61.5%;"></div>
+              <span class="design-meter-percent-label" style="left: 61.5%;">80</span>
+              
+              <div class="design-meter-percent-tick" style="left: 76.9%;"></div>
+              <span class="design-meter-percent-label" style="left: 76.9%;">100</span>
+            </div>
+            <div class="design-meter-needle" id="designMeterNeedle"></div>
+            <div class="design-meter-branding">AUDIO DESIGN STUDIOS</div>
+          </div>
+        </div>
+        <div class="design-controls-row">
+          <div class="design-volume-control">
+            <div class="design-volume-knob-container">
+              <div class="design-volume-tick"></div>
+              <div class="design-volume-tick"></div>
+              <div class="design-volume-tick"></div>
+              <div class="design-volume-db-label">-40</div>
+              <div class="design-volume-db-label">0</div>
+              <div class="design-volume-db-label">+12</div>
+              <div class="design-volume-knob" id="designVolumeKnob" aria-label="Volume Control"></div>
+              <div class="design-volume-arc"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track Controls -->
+      <!-- Now Playing Display -->
+      <div id="designNowPlaying" class="now-playing-info">No track playing</div>
+
+      <!-- Progress Bar -->
+      <div id="designMainWave" class="main-player-progress" aria-hidden="true"></div>
+
+      <!-- Transport Controls -->
+      <div class="playlist-player-controls">
+        <button id="designPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
+        <button id="designPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
+        <button id="designNextBtn" class="control-btn" aria-label="Next track"></button>
+        <button class="control-btn-analyze" id="designAnalyzeBtn" aria-label="Analyze current track">ANALYZE</button>
+      </div>
+
+      <!-- Track List -->
+      <div class="track-list" id="designPlaylistTracks">
         <!-- Tracks will be injected via JavaScript -->
       </div>
     </div>
@@ -1767,6 +1759,7 @@
           <button id="prevBtn" class="control-btn" aria-label="Back to beginning"></button>
           <button id="playPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
           <button id="nextBtn" class="control-btn" aria-label="Next track"></button>
+          <button class="control-btn-analyze" id="dotpAnalyzeBtn" aria-label="Analyze current track">ANALYZE</button>
         </div>
         
         <!-- Track List -->
@@ -1896,6 +1889,7 @@
           <button id="allPrevBtn" class="control-btn" aria-label="Back to beginning"></button>
           <button id="allPlayPauseBtn" class="control-btn control-btn-play" aria-label="Play/Pause"></button>
           <button id="allNextBtn" class="control-btn" aria-label="Next track"></button>
+          <button class="control-btn-analyze" id="allWorksAnalyzeBtn" aria-label="Analyze current track">ANALYZE</button>
         </div>
         
         <!-- Track List -->
@@ -1912,216 +1906,10 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="../content.js?v=1775706429"></script>
-  <script src="./compose-players.js?v=1775706429"></script>
+  <script src="../content.js?v=1775845336"></script>
+  <script src="./compose-players.js?v=1775845336"></script>
 
-  <!-- Matrix Animation Script -->
-  <script>
-    const terminal = document.getElementById('matrixBackground');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { 
-      alpha: false, 
-      desynchronized: true,
-      willReadFrequently: false 
-    });
-    terminal.appendChild(canvas);
-    
-    const chars = '01â™©â™ªâ™«â™¬â™­â™®â™¯â™©â™ªâ™«â™¬â™­â™®â™¯â™©â™ªâ™«â™¬ãƒ„ã‚·ãƒŸã‚µã‚±ã‚¢ã‚¤ã‚¦ã‚¨ã‚ªã‚«ã‚­ã‚¯ã‚³ã‚µã‚·ã‚¹ã‚»ã‚½ã‚¿ãƒãƒ„ãƒ†ãƒˆãƒŠãƒ‹ãƒŒãƒãƒŽãƒãƒ’ãƒ•ãƒ˜ãƒ›ãƒžãƒŸãƒ ãƒ¡ãƒ¢ãƒ¤ãƒ¦ãƒ¨ãƒ©ãƒªãƒ«ãƒ¬ãƒ­ãƒ¯ãƒ²ãƒ³âˆ´âˆµâ€ â€¡Â§Â¶âˆžÎ©âˆ‘âˆâˆ«â‰ˆâ‰ âˆ‚âˆ‡âˆšâˆ›âˆœÎ±Î²Î³Î´ÎµÎ¶Î·Î¸Î¹ÎºÎ»Î¼Î½Î¾Î¿Ï€ÏÏƒÏ„Ï…Ï†Ï‡ÏˆÏ‰Î‘Î’Î“Î”Î•Î–Î—Î˜Î™ÎšÎ›ÎœÎÎžÎŸÎ Î¡Î£Î¤Î¥Î¦Î§Î¨Î©$â‚¬Â¥Â£â‚¹â‚¿Â¢â‚½â‚©â‚ªâ‚´â‚¦';
-    const binaryChars = [0, 1];
-    const musicalNotes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
-    const japaneseChars = [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63];
-    const mathChars = [64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82];
-    const greekChars = [83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133];
-    const currencyChars = [134,135,136,137,138,139,140,141,142,143,144,145];
-    
-    let columns, rows, drops, charGrid, charAge, speeds, cycleSpeeds;
-    let animationId;
-    let lastFrameTime = 0;
-    const frameInterval = 50;
-    const phaseDurations = [7000, 7000, 7000, 10000, 7000, 7000];
-    let phaseStartTime = Date.now();
-    let isMatrixPaused = false;
-    
-    let frameCount = 0;
-    let lastFpsCheck = Date.now();
-    let currentTrailLength = 15;
-    let performanceMode = 'normal';
-    
-    function getCurrentPhase() {
-      const elapsed = Date.now() - phaseStartTime;
-      const totalCycle = phaseDurations.reduce((a, b) => a + b, 0);
-      const cyclePosition = elapsed % totalCycle;
-      
-      let accumulatedTime = 0;
-      let phase = 0;
-      for (let i = 0; i < phaseDurations.length; i++) {
-        if (cyclePosition < accumulatedTime + phaseDurations[i]) {
-          phase = i;
-          break;
-        }
-        accumulatedTime += phaseDurations[i];
-      }
-      
-      const phaseElapsed = cyclePosition - accumulatedTime;
-      return { phase, phaseElapsed };
-    }
-    
-    function randomChar(isLeading = false) {
-      const { phase, phaseElapsed } = getCurrentPhase();
-      let charSet = binaryChars;
-      
-      const phaseCharSets = [binaryChars, japaneseChars, mathChars, musicalNotes, greekChars, currencyChars];
-      const pureDuration = phase === 3 ? 8000 : 5000;
-      const transitionDuration = 2000;
-      
-      if (phaseElapsed < pureDuration) {
-        charSet = phaseCharSets[phase];
-      } else {
-        const transitionProgress = (phaseElapsed - pureDuration) / transitionDuration;
-        const nextPhase = (phase + 1) % 6;
-        charSet = Math.random() < transitionProgress ? phaseCharSets[nextPhase] : phaseCharSets[phase];
-      }
-      
-      const index = charSet[Math.floor(Math.random() * charSet.length)];
-      return index !== undefined ? index : 0;
-    }
-    
-    function resize() {
-      const maxWidth = Math.min(window.innerWidth, 3840);
-      const maxHeight = Math.min(window.innerHeight, 2160);
-      
-      canvas.width = maxWidth;
-      canvas.height = maxHeight;
-      canvas.style.width = '100vw';
-      canvas.style.height = '100vh';
-      canvas.style.display = 'block';
-      canvas.style.position = 'absolute';
-      canvas.style.top = '0';
-      canvas.style.left = '0';
-      
-      let desiredColumnWidth;
-      if (window.innerWidth < 600) {
-        desiredColumnWidth = 20;
-      } else if (window.innerWidth < 1200) {
-        desiredColumnWidth = 28;
-      } else {
-        desiredColumnWidth = 32;
-      }
-      
-      columns = Math.ceil(canvas.width / desiredColumnWidth);
-      if (columns > 80) columns = 80;
-      const columnWidth = canvas.width / columns;
-      rows = Math.ceil(canvas.height / columnWidth) + 1;
-      
-      if (!drops || !charGrid || drops.length !== columns) {
-        drops = Array(columns).fill(0).map(() => Math.random() * -20);
-        speeds = Array(columns).fill(0).map(() => 0.2 + Math.random() * 0.4);
-        charGrid = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => randomChar()));
-        charAge = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => Math.random()));
-        cycleSpeeds = Array(columns).fill(null).map(() => Array(rows).fill(null).map(() => 0.1 + Math.random() * 0.15));
-      }
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    
-    function draw(timestamp) {
-      if (isMatrixPaused) {
-        return;
-      }
-      if (timestamp - lastFrameTime < frameInterval) {
-        animationId = requestAnimationFrame(draw);
-        return;
-      }
-      lastFrameTime = timestamp;
-      
-      frameCount++;
-      if (Date.now() - lastFpsCheck > 2000) {
-        const fps = frameCount / 2;
-        frameCount = 0;
-        lastFpsCheck = Date.now();
-        
-        if (fps < 15 && performanceMode === 'normal') {
-          performanceMode = 'low';
-          currentTrailLength = 8;
-        } else if (fps > 18 && performanceMode === 'low') {
-          performanceMode = 'normal';
-          currentTrailLength = 15;
-        }
-      }
-      
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      const columnWidth = canvas.width / columns;
-      ctx.font = `${columnWidth * 0.85}px monospace`;
-      ctx.textBaseline = 'top';
-      
-      for (let col = 0; col < columns; col++) {
-        const y = drops[col];
-        const row = Math.floor(y);
-        
-        if (row >= 0 && row < rows) {
-          charAge[col][row] += cycleSpeeds[col][row];
-          if (charAge[col][row] > 1) {
-            charAge[col][row] = 0;
-            charGrid[col][row] = randomChar(false);
-          }
-          
-          for (let i = 0; i < currentTrailLength; i++) {
-            const r = row - i;
-            if (r >= 0 && r < rows) {
-              const alpha = i === 0 ? 1.0 : Math.max(0, 1.0 - (i / currentTrailLength));
-              
-              if (alpha > 0.05) {
-                const green = Math.floor(255 * alpha);
-                ctx.fillStyle = `rgb(0, ${green}, 0)`;
-                const character = chars[charGrid[col][r]];
-                const x = col * columnWidth;
-                const yPos = r * columnWidth;
-                ctx.fillText(character, x, yPos);
-              }
-            }
-          }
-        }
-        
-        drops[col] += speeds[col];
-        if (drops[col] * columnWidth > canvas.height && Math.random() > 0.975) {
-          drops[col] = 0;
-        }
-      }
-      
-      animationId = requestAnimationFrame(draw);
-    }
-    
-    resize();
-    draw(0);
-    
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        resize();
-      }, 150);
-    });
 
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        isMatrixPaused = true;
-        if (animationId) {
-          cancelAnimationFrame(animationId);
-          animationId = null;
-        }
-      } else {
-        isMatrixPaused = false;
-        lastFrameTime = performance.now();
-        animationId = requestAnimationFrame(draw);
-      }
-    });
-
-    terminal.addEventListener('click', () => {
-      window.location.href = '../';
-    });
-  </script>
 
   <!-- Combined Audio Players Script -->
   <script>
@@ -2285,7 +2073,9 @@
       let designCurrentTrack = 0;
       let designIsPlaying = false;
       const designAudio = new Audio();
-      designAudio.preload = 'auto';
+      designAudio.preload = 'metadata';
+      window._designAudio = designAudio;
+      window._designTitle = '';
       
       const designAudioContext = new (window.AudioContext || window.webkitAudioContext)();
       const designAnalyser = designAudioContext.createAnalyser();
@@ -2310,6 +2100,7 @@
         const track = designTracks[index];
         
         designAudio.src = track.url;
+        window._designTitle = track.title || '';
         
         // Reset progress bar
         if (designProgressFill) designProgressFill.style.width = '0%';
@@ -2405,6 +2196,14 @@
 
       function designAnimateVU() {
         requestAnimationFrame(designAnimateVU);
+
+        const needle = document.getElementById('designMeterNeedle');
+        if (designAudio.paused) {
+          // Settle needle to rest when not playing
+          designCurrentNeedleAngle += (-50 - designCurrentNeedleAngle) * 0.05;
+          if (needle) needle.style.transform = `translateX(-50%) rotate(${designCurrentNeedleAngle}deg)`;
+          return;
+        }
         
         if (!designAnalyser) return;
 
@@ -2431,7 +2230,6 @@
         const targetAngle = angleMin + normalizedVU * (angleMax - angleMin);
         designCurrentNeedleAngle += (targetAngle - designCurrentNeedleAngle) * 0.1;
         
-        const needle = document.getElementById('designMeterNeedle');
         if (needle) {
           needle.style.transform = `translateX(-50%) rotate(${designCurrentNeedleAngle}deg)`;
         }
@@ -2537,7 +2335,7 @@
         document.getElementById('designNowPlaying').textContent = firstTrack.title;
         
         designAudio.src = firstTrack.url;
-        designAudio.preload = 'auto';
+        designAudio.preload = 'metadata';
         
         const trackItems = document.querySelectorAll('#designPlaylistTracks .track-item');
         if (trackItems.length > 0) {
@@ -2626,8 +2424,8 @@
       const mainAudio = new Audio();
       const allMainAudio = new Audio();
       
-      mainAudio.preload = 'auto';
-      allMainAudio.preload = 'auto';
+      mainAudio.preload = 'metadata';
+      allMainAudio.preload = 'metadata';
       
       let dotpSourceConnected = false;
       let allWorksSourceConnected = false;
@@ -2639,6 +2437,18 @@
       
       function updateVUMeters() {
         requestAnimationFrame(updateVUMeters);
+
+        const dotpPlaying = !mainAudio.paused;
+        const allWorksPlaying = !allMainAudio.paused;
+
+        if (!dotpPlaying && !allWorksPlaying) {
+          // Settle needles to rest when nothing is playing
+          dotpCurrentNeedleAngle += (-50 - dotpCurrentNeedleAngle) * 0.05;
+          allWorksCurrentNeedleAngle += (-50 - allWorksCurrentNeedleAngle) * 0.05;
+          dotpMeterNeedle.style.transform = `translateX(-50%) rotate(${dotpCurrentNeedleAngle}deg)`;
+          allWorksMeterNeedle.style.transform = `translateX(-50%) rotate(${allWorksCurrentNeedleAngle}deg)`;
+          return;
+        }
         
         dotpAnalyser.getByteFrequencyData(dotpDataArray);
         let dotpSum = 0;
@@ -2859,6 +2669,7 @@
           progressRAF: null
         }
       };
+      window._players = players;
 
       Object.values(players).forEach(ctx => {
         const progressFill = document.createElement('div');
@@ -3296,20 +3107,14 @@
         trackListId: 'baPlaylistTracks'
       });
       
+      // Expose for track analyzer
+      window._baPlayer = baPlayer;
+
       // Register Before/After Player for mobile audio handling
       trackAudioState('beforeAfter', baPlayer.beforeAudio, baPlayer.audioContext, baPlayer.afterAudio);
     });
   </script>
 
-  <!-- Year Update Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const yearEl = document.getElementById('year');
-      if (yearEl) {
-        yearEl.textContent = new Date().getFullYear();
-      }
-    });
-  </script>
 
   <!-- ========================================================================
        MUSIC - On Apple Music
@@ -3319,6 +3124,18 @@
     <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" class="banner-text">on Apple Music</a>
   </section>
 
+
+  <!-- ========================================================================
+       ANALYSIS MODAL - Full-track analysis results
+       ======================================================================== -->
+  <div id="composeAnalysisModal" class="analysis-modal" style="display:none;" aria-hidden="true">
+    <div class="analysis-modal-content" role="dialog" aria-modal="true" aria-label="Track Analysis">
+      <button class="analysis-modal-close" id="composeAnalysisClose" aria-label="Close analysis">&times;</button>
+      <div class="analysis-results" id="composeAnalysisResults">
+        <span class="analysis-loading-text">Loading...</span>
+      </div>
+    </div>
+  </div>
 
   <!-- ========================================================================
        INFO MODAL - Player Instructions
@@ -3364,6 +3181,23 @@
             <p>On the Analog Processing player, use this toggle to switch between the unprocessed (Dry) and processed (Wet) signal for a direct A/B comparison.</p>
           </div>
         </li>
+        <li>
+          <span class="player-info-icon">&#9741;</span>
+          <div>
+            <strong>Analyze</strong>
+            <p>Runs a full offline analysis on the currently loaded track. Results include integrated LUFS, true peak, dynamic range, BPM, key, spectral character, and stereo image. Tap ANALYZE with a track loaded — analysis runs in a background pass and may take a few seconds for longer files.</p>
+            <p style="margin-top:0.5rem; font-size:0.85em; color:rgba(200,200,200,0.6);">
+              <strong style="color:rgba(126,201,143,0.7);">Platform targets:</strong><br>
+              Spotify / YouTube &nbsp;&nbsp;–14 LUFS / &lt;–1.0 dBTP<br>
+              Apple Music &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;–16 LUFS / &lt;–1.0 dBTP<br>
+              Tidal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;–14 LUFS / &lt;–1.0 dBTP<br>
+              Amazon Music &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;–14 LUFS / &lt;–2.0 dBTP<br>
+              Podcast &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;–16 LUFS / &lt;–1.0 dBTP<br>
+              EBU R128 Broadcast &nbsp;–23 LUFS / &lt;–1.0 dBTP<br>
+              ATSC A/85 (US TV) &nbsp;&nbsp;–24 LUFS / &lt;–2.0 dBTP
+            </p>
+          </div>
+        </li>
       </ul>
       <div class="player-info-footer">Click outside this window or press Esc to close</div>
     </div>
@@ -3378,9 +3212,62 @@
       <p>Email: <a href="mailto:music@kartergbrown.com">music@kartergbrown.com</a></p>
       <p><a href="../processor/" class="footer-special-link">Processor</a></p>
       <p><a href="https://offworlddepot.com/seller/cdace954-17ca-4f98-8371-7644f9485220" class="footer-special-link">Off World Depot</a></p>
-      <p class="footer-copy">Â© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
+      <p class="footer-copy">© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
     </div>
   </footer>
+
+  <!-- Shared analysis engine -->
+  <script src="../analyzer.js"></script>
+
+  <!-- ========================================================================
+       TRACK ANALYZER — wires each player's ANALYZE button to AudioAnalyzer
+       ======================================================================== -->
+  <script>
+  (function () {
+    const modal   = document.getElementById('composeAnalysisModal');
+    const closeBtn = document.getElementById('composeAnalysisClose');
+    const results = document.getElementById('composeAnalysisResults');
+
+    function closeModal() { modal.style.display = 'none'; }
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Analog Processing (BA before/after player) ────────────────────────────
+    document.getElementById('baAnalyzeBtn')?.addEventListener('click', () => {
+      const url   = window._baPlayer?.getActiveUrl();
+      const title = window._baPlayer?.getActiveTitle();
+      if (!url) { alert('Load a track first.'); return; }
+      modal.style.display = 'flex';
+      AudioAnalyzer.run(url, title || 'Analog Processing', results);
+    });
+
+    // ── Productions ───────────────────────────────────────────────────────────
+    document.getElementById('designAnalyzeBtn')?.addEventListener('click', () => {
+      const audio = window._designAudio;
+      const title = window._designTitle;
+      if (!audio?.src || audio.src === window.location.href) { alert('Load a track first.'); return; }
+      modal.style.display = 'flex';
+      AudioAnalyzer.run(audio.src, title || 'Productions', results);
+    });
+
+    // ── Daughter of the Plains ────────────────────────────────────────────────
+    document.getElementById('dotpAnalyzeBtn')?.addEventListener('click', () => {
+      const p = window._players?.dotp;
+      if (!p?.audio?.src || p.audio.src === window.location.href) { alert('Load a track first.'); return; }
+      modal.style.display = 'flex';
+      AudioAnalyzer.run(p.audio.src, p.current?.track?.title || 'Daughter of the Plains', results);
+    });
+
+    // ── Sample Works / All Works ──────────────────────────────────────────────
+    document.getElementById('allWorksAnalyzeBtn')?.addEventListener('click', () => {
+      const p = window._players?.allWorks;
+      if (!p?.audio?.src || p.audio.src === window.location.href) { alert('Load a track first.'); return; }
+      modal.style.display = 'flex';
+      AudioAnalyzer.run(p.audio.src, p.current?.track?.title || 'Sample Works', results);
+    });
+  })();
+  </script>
 
 </body>
 </html>
