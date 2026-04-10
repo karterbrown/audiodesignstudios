@@ -35,8 +35,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1775845336" />
-  <link rel="stylesheet" href="editorial.css?v=1775845336" />
+  <link rel="stylesheet" href="index.css?v=1775850938" />
+  <link rel="stylesheet" href="editorial.css?v=1775850938" />
 </head>
 
 <body>
@@ -397,7 +397,7 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1775845336"></script>
+  <script src="content.js?v=1775850938"></script>
 
   <!-- Reel video controls hardening -->
   <script>
@@ -446,9 +446,11 @@
         onTap();
       });
 
-      // Show overlay (interactive) when paused; hide it when playing
+      // On touch/mobile devices keep overlay always active so one tap can pause.
+      // On pointer devices (desktop) hide it when playing so native controls work.
+      const touchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
       const sync = () => {
-        overlay.style.pointerEvents = video.paused ? 'auto' : 'none';
+        overlay.style.pointerEvents = (video.paused || touchOnly) ? 'auto' : 'none';
       };
       video.addEventListener('play',  sync);
       video.addEventListener('pause', sync);
