@@ -20,7 +20,7 @@
   --accent-bright: #33d9e4;       /* Brighter shade — used for glow effects     */
 
   /* --- Backgrounds ---------------------------------------------------------- */
-  --bg:            #1f2127;       /* Main page background (deep navy-black)     */
+  --bg:            #194f70;       /* Main page background (deep navy-black)     */
   --bg-raised:     #101728;       /* Cards and slightly raised surfaces         */
 
   /* --- Text ----------------------------------------------------------------- */
@@ -594,11 +594,11 @@ blockquote footer {
   justify-content: space-between;
   align-items: center;
   padding: 3rem 4vw;
-  background: rgba(6, 10, 24, 0.08);
-  -webkit-backdrop-filter: blur(6px) brightness(0.92);
-  backdrop-filter: blur(6px) brightness(0.92);
-  -webkit-backdrop-filter: url(#glass-distortion) blur(6px) brightness(0.92);
-  backdrop-filter: url(#glass-distortion) blur(6px) brightness(0.92);
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: url(#glass-distortion) blur(12px);
+  backdrop-filter: url(#glass-distortion) blur(12px);
   border: none;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.50);
   z-index: 1000;
@@ -704,9 +704,9 @@ blockquote footer {
   color: var(--text-muted);
   margin-top: 0;
   border-top: none;
-  background: rgba(4, 6, 18, 0.08);
-  -webkit-backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
-  backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   font-weight: 400;
   letter-spacing: 0.01em;
   min-height: 80px;
@@ -989,10 +989,6 @@ picture {
   .site-header {
     padding: 0.75rem 4vw;
     min-height: 80px;
-    background: rgba(6, 10, 24, 0.10);
-    -webkit-backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
-    backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
-    color: #e0e0e0;
   }
 
   .logo {
