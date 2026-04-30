@@ -1,25 +1,43 @@
 /* =============================================================================
    AUDIO DESIGN STUDIOS - SHARED STYLES
-   Common styles used across all pages
-   
-   TABLE OF CONTENTS:
-   1. BASE STYLES & RESET - Core resets, body, html
-   2. COMMON LAYOUT SECTIONS - Section wrappers, matrix sections
-   3. COMMON IMAGE OPTIMIZATION - Picture elements, lazy loading
-   4. TYPOGRAPHY - Headings, paragraphs, text styles
-   5. LAYOUT COMPONENTS - Header, navigation, footer
-   6. UI COMPONENTS - Buttons, forms, cards
-   7. IMAGES & MEDIA - Image and video styling
-   8. PLAY BUTTONS & AUDIO CONTROLS - Shared audio player elements
-   9. RESPONSIVE TABLET - Breakpoints for tablet (max-width: 800px)
-   10. RESPONSIVE MOBILE - Breakpoints for mobile (max-width: 720px)
+   Loaded by every page on the site.
    ============================================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
 
 /* =============================================================================
-   1. BASE STYLES & RESET
+   THEME COLORS — Edit the values below to restyle the entire site at once.
+   These variables are used on every page, so one change updates everything.
+   ============================================================================= */
+
+:root {
+
+  /* --- Accent color (teal — links, nav hover, play buttons, headings) ------- */
+  --accent:        #00c8d4;
+  --accent-rgb:    0, 200, 212;   /* Keep this in sync with --accent above!    */
+  --accent-dark:   #009eaa;       /* Darker shade — used for hover states       */
+  --accent-bright: #33d9e4;       /* Brighter shade — used for glow effects     */
+
+  /* --- Backgrounds ---------------------------------------------------------- */
+  --bg:            #1f2127;       /* Main page background (deep navy-black)     */
+  --bg-raised:     #101728;       /* Cards and slightly raised surfaces         */
+
+  /* --- Text ----------------------------------------------------------------- */
+  --text:          #f4f4ff;       /* Main body text (near-white)                */
+  --text-muted:    #cfcfd8;       /* Captions, footers, secondary info          */
+
+  /* --- Special colors ------------------------------------------------------- */
+  --red:           #ff6b6b;       /* "Contact" nav link and alert items         */
+  --red-light:     #ff8787;       /* Red hover state                            */
+
+  /* --- Internal layout (don't change unless you know what you're doing) ----- */
+  --site-header-offset: 128px;    /* Height of the sticky top navigation bar    */
+
+}
+
+/* =============================================================================
+   BASE RESET
    ============================================================================= */
 
 * {
@@ -28,14 +46,10 @@
   padding: 0;
 }
 
-:root {
-  --site-header-offset: 128px;
-}
-
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #080c18;
-  color: #f4f4ff;
+  background: var(--bg);
+  color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -129,7 +143,7 @@ button:focus {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  color: #f4f4ff;
+  color: var(--text);
   font-size: 1.2rem;
   font-weight: 700;
   text-decoration: none;
@@ -263,7 +277,7 @@ img {
 }
 
 .ba-toggle-before {
-  color: #f4f4ff;
+  color: var(--text);
 }
 
 .ba-toggle-after {
@@ -305,7 +319,7 @@ img {
   width: 28px;
   left: 3px;
   top: 2px;
-  background: linear-gradient(135deg, #f4f4ff, #e8e8ff);
+  background: linear-gradient(135deg, var(--text), #e8e8ff);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
@@ -392,7 +406,7 @@ img {
 .control-btn {
   background: linear-gradient(135deg, rgba(0, 110, 140, 0.25), rgba(0, 110, 140, 0.15));
   border: 1.5px solid rgba(0, 110, 140, 0.5);
-  color: #00b8c4;
+  color: var(--accent-dark);
   padding: 0.75rem 1rem;
   border-radius: 50px;
   cursor: pointer;
@@ -513,7 +527,7 @@ img {
 .contact-wrapper h1 {
   font-size: 2.6rem;
   margin-bottom: 1rem;
-  color: #f4f4ff;
+  color: var(--text);
 }
 
 .hero p,
@@ -530,7 +544,7 @@ img {
   font-family: 'Cinzel', Georgia, serif;
   font-size: 1.8rem;
   margin-bottom: 1.25rem;
-  color: #f4f4ff;
+  color: var(--text);
   text-align: center;
   letter-spacing: 0.05em;
 }
@@ -540,7 +554,7 @@ blockquote {
   padding: 1rem;
   border-left: 4px solid #d0d0d0;
   background: rgba(120, 154, 186, 0.04);
-  color: #f4f4ff;
+  color: var(--text);
   border-radius: 6px;
 }
 
@@ -559,7 +573,7 @@ blockquote p {
 
 blockquote footer {
   margin-top: 1rem;
-  color: #f4f4ff;
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -591,7 +605,7 @@ blockquote footer {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 1.8rem !important;
-  color: #00c8d4;
+  color: var(--accent);
   line-height: 1;
   text-decoration: none;
   position: relative;
@@ -625,21 +639,21 @@ blockquote footer {
 
 .nav a:hover,
 .nav a:focus {
-  color: #00c8d4;
-  border-bottom-color: #00c8d4;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 /* Special header link for A+B (hidden tracks) */
 .nav a.special-link {
-  color: #ff6b6b;
+  color: var(--red);
   font-weight: 600;
   border-bottom-color: transparent;
 }
 
 .nav a.special-link:hover,
 .nav a.special-link:focus {
-  color: #ff8787;
-  border-bottom-color: #ff6b6b;
+  color: var(--red-light);
+  border-bottom-color: var(--red);
 }
 
 
@@ -655,7 +669,7 @@ blockquote footer {
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
-  background: radial-gradient(circle at 10% 10%, rgba(0, 200, 212, 0.25), rgba(4, 6, 24, 0.85));
+  background: radial-gradient(circle at 10% 10%, rgba(var(--accent-rgb), 0.25), rgba(4, 6, 24, 0.85));
   opacity: 0;
   transform: translateY(10px);
   animation: fadeInHero 0.6s ease-out forwards;
@@ -679,7 +693,7 @@ blockquote footer {
   padding: 1rem 4vw;
   text-align: center;
   font-size: 0.8rem;
-  color: #cfcfd8;
+  color: var(--text-muted);
   opacity: 0.85;
   margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
@@ -704,7 +718,7 @@ blockquote footer {
 }
 
 .site-footer a {
-  color: #cfcfd8;
+  color: var(--text-muted);
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -715,13 +729,13 @@ blockquote footer {
 
 /* Special footer link for Off World Depot */
 .footer-special-link {
-  color: #00c8d4 !important;
+  color: var(--accent) !important;
   font-weight: 600;
   text-decoration: underline;
 }
 
 .footer-special-link:hover {
-  color: #33d9e4 !important;
+  color: var(--accent-bright) !important;
   opacity: 1 !important;
 }
 
@@ -742,7 +756,7 @@ blockquote footer {
 button {
   padding: 0.75rem 1.75rem;
   background: linear-gradient(135deg, rgba(0, 110, 140, 0.25), rgba(0, 110, 140, 0.15));
-  color: #00b8c4;
+  color: var(--accent-dark);
   border: 1.5px solid rgba(0, 110, 140, 0.5);
   border-radius: 50px;
   font-weight: 600;
@@ -796,7 +810,7 @@ button:focus-visible {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: #f4f4ff;
+  color: var(--text);
   font-family: inherit;
   font-size: 0.95rem;
   transition: all 0.2s ease;
@@ -847,12 +861,12 @@ button:focus-visible {
 .card h3 {
   font-size: 1.25rem;
   margin-bottom: 0.75rem;
-  color: #f4f4ff;
+  color: var(--text);
 }
 
 .card p {
   font-size: 0.95rem;
-  color: #cfcfd8;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 

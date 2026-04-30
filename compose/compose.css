@@ -1,13 +1,17 @@
 ﻿/* =============================================================================
-   AUDIO DESIGN STUDIOS - COMPOSE PAGE (compose.html)
-   Combined styles for Design & Compose portfolio sections
-   
-   TABLE OF CONTENTS:
-   1. HERO BANNER IMAGES - Design and Portfolio section backgrounds
-   2. SHARED CONTENT SECTIONS - Banner titles, content wrappers
-   3. DESIGN AUDIO PLAYER - Main Design section player with controls
-   4. PORTFOLIO PLAYLISTS - Compose section playlist layouts
-   5. VU METERS & VOLUME CONTROLS - Portfolio player meters
+   COMPOSE PAGE STYLES — compose/index.html
+
+   Controls: the audio player, VU meters, playlist cards, portfolio layout.
+
+   Sections in this file:
+   1. HERO BANNER IMAGES    — background photos behind section titles
+   2. CONTENT SECTIONS      — titles, wrappers, text
+   3. AUDIO PLAYER          — the main play/pause player with progress bar
+   4. PORTFOLIO PLAYLISTS   — track lists and album sections
+   5. VU METERS             — the animated volume bars (silver chrome style)
+
+   NOTE: Colors are NOT defined here. To change colors, open shared.css
+         and edit the THEME COLORS block at the very top of that file.
    ============================================================================= */
 
 @import url('../shared.css');
@@ -314,7 +318,7 @@ blockquote footer {
     radial-gradient(ellipse at 20% 30%, rgba(30, 30, 30, 0.4) 0%, transparent 40%),
     radial-gradient(ellipse at 75% 60%, rgba(25, 25, 25, 0.5) 0%, transparent 35%),
     radial-gradient(ellipse at 50% 80%, rgba(35, 35, 35, 0.3) 0%, transparent 30%),
-    linear-gradient(135deg, #101728 0%, #080c18 50%, #101728 100%);
+    linear-gradient(135deg, var(--bg-raised) 0%, var(--bg) 50%, var(--bg-raised) 100%);
   border: 3px solid rgba(208, 208, 208, 0.5);
   border-radius: 8px;
   box-shadow: 
@@ -374,7 +378,7 @@ blockquote footer {
   height: 42px;
   border: 3px solid #333;
   border-radius: 4px;
-  background: linear-gradient(145deg, #101728, #0a0a0a);
+  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
   box-shadow: 
     inset 0 -2px 4px rgba(0, 0, 0, 0.5),
     0 2px 8px rgba(0, 0, 0, 0.3);
@@ -384,26 +388,26 @@ blockquote footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #00c8d4;
+  color: var(--accent);
   font-size: 0.5rem;
   font-family: 'Courier New', monospace;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 0 8px rgba(0, 200, 212, 0.8), 0 0 4px rgba(0, 200, 212, 1);
+  text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.8), 0 0 4px rgba(var(--accent-rgb), 1);
 }
 
 .design-player-card .info-button:hover {
-  border-color: #00c8d4;
+  border-color: var(--accent);
   box-shadow: 
     inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-    0 2px 8px rgba(0, 200, 212, 0.4);
+    0 2px 8px rgba(var(--accent-rgb), 0.4);
 }
 
 .design-player-card .info-button:active {
   transform: translateY(1px);
   box-shadow: 
     inset 0 2px 4px rgba(0, 0, 0, 0.8),
-    0 1px 2px rgba(0, 200, 212, 0.1);
+    0 1px 2px rgba(var(--accent-rgb), 0.1);
 }
 
 .design-player-card .power-button {
@@ -411,7 +415,7 @@ blockquote footer {
   height: 42px;
   border: 3px solid #333;
   border-radius: 4px;
-  background: linear-gradient(145deg, #101728, #0a0a0a);
+  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
   box-shadow: 
     inset 0 -2px 4px rgba(0, 0, 0, 0.5),
     0 2px 8px rgba(0, 0, 0, 0.3);
@@ -819,7 +823,7 @@ blockquote footer {
 .design-volume-knob {
   width: 85px;
   height: 85px;
-  background: linear-gradient(145deg, #101728, #0a0a0a);
+  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
   border: 3px solid #555;
   clip-path: polygon(
     50% 15%,
@@ -870,7 +874,7 @@ blockquote footer {
     repeating-conic-gradient(
       from 0deg,
       #2a2a2a 0deg 10deg,
-      #101728 10deg 20deg
+      var(--bg-raised) 10deg 20deg
     ),
     radial-gradient(circle, #333, #0a0a0a);
   border-radius: 50%;
@@ -1607,7 +1611,7 @@ blockquote footer {
     radial-gradient(ellipse at 20% 30%, rgba(30, 30, 30, 0.4) 0%, transparent 40%),
     radial-gradient(ellipse at 75% 60%, rgba(25, 25, 25, 0.5) 0%, transparent 35%),
     radial-gradient(ellipse at 50% 80%, rgba(35, 35, 35, 0.3) 0%, transparent 30%),
-    linear-gradient(135deg, #101728 0%, #080c18 50%, #101728 100%);
+    linear-gradient(135deg, var(--bg-raised) 0%, var(--bg) 50%, var(--bg-raised) 100%);
   border: 3px solid rgba(208, 208, 208, 0.5);
   border-radius: 8px;
   box-shadow: 
@@ -1633,7 +1637,7 @@ blockquote footer {
   height: 42px;
   border: 3px solid #333;
   border-radius: 4px;
-  background: linear-gradient(145deg, #101728, #0a0a0a);
+  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
   box-shadow: 
     inset 0 -2px 4px rgba(0, 0, 0, 0.5),
     0 2px 8px rgba(0, 0, 0, 0.3);
@@ -1643,26 +1647,26 @@ blockquote footer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #00c8d4;
+  color: var(--accent);
   font-size: 0.5rem;
   font-family: 'Courier New', monospace;
   font-weight: 600;
   letter-spacing: 0.5px;
-  text-shadow: 0 0 8px rgba(0, 200, 212, 0.8), 0 0 4px rgba(0, 200, 212, 1);
+  text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.8), 0 0 4px rgba(var(--accent-rgb), 1);
 }
 
 .info-button:hover {
-  border-color: #00c8d4;
+  border-color: var(--accent);
   box-shadow: 
     inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-    0 2px 8px rgba(0, 200, 212, 0.4);
+    0 2px 8px rgba(var(--accent-rgb), 0.4);
 }
 
 .info-button:active {
   transform: translateY(1px);
   box-shadow: 
     inset 0 2px 4px rgba(0, 0, 0, 0.8),
-    0 1px 2px rgba(0, 200, 212, 0.1);
+    0 1px 2px rgba(var(--accent-rgb), 0.1);
 }
 
 .power-button {
@@ -1670,7 +1674,7 @@ blockquote footer {
   height: 42px;
   border: 3px solid #333;
   border-radius: 4px;
-  background: linear-gradient(145deg, #101728, #0a0a0a);
+  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
   box-shadow: 
     inset 0 -2px 4px rgba(0, 0, 0, 0.5),
     0 2px 8px rgba(0, 0, 0, 0.3);
@@ -1946,7 +1950,7 @@ blockquote footer {
 .portfolio-volume-knob {
   width: 85px;
   height: 85px;
-  background: linear-gradient(145deg, #101728, #0a0a0a);
+  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
   border: 3px solid #555;
   clip-path: polygon(
     50% 15%,
@@ -1998,7 +2002,7 @@ blockquote footer {
     repeating-conic-gradient(
       from 0deg,
       #2a2a2a 0deg 10deg,
-      #101728 10deg 20deg
+      var(--bg-raised) 10deg 20deg
     ),
     radial-gradient(circle, #333, #0a0a0a);
   border-radius: 50%;
@@ -2143,14 +2147,14 @@ blockquote footer {
   position: relative;
   background: #111;
   border: 1px solid #2a2a2a;
-  border-top: 2px solid #00c8d4;
+  border-top: 2px solid var(--accent);
   border-radius: 6px;
   width: 100%;
   max-width: 460px;
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
   padding: 2rem 2rem 1.6rem;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 200, 212, 0.08);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(var(--accent-rgb), 0.08);
   transform: translateY(8px);
   transition: transform 0.22s ease;
   scrollbar-width: thin;
@@ -2177,7 +2181,7 @@ blockquote footer {
 }
 
 .player-info-close:hover {
-  color: #00c8d4;
+  color: var(--accent);
 }
 
 .player-info-title {
@@ -2186,14 +2190,14 @@ blockquote footer {
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #00c8d4;
+  color: var(--accent);
   margin: 0 0 0.9rem;
-  text-shadow: 0 0 12px rgba(0, 200, 212, 0.4);
+  text-shadow: 0 0 12px rgba(var(--accent-rgb), 0.4);
 }
 
 .player-info-divider {
   height: 1px;
-  background: linear-gradient(to right, #00c8d433, #00c8d488, #00c8d433);
+  background: linear-gradient(to right, var(--accent)33, var(--accent)88, var(--accent)33);
   margin-bottom: 1.4rem;
 }
 
@@ -2220,9 +2224,9 @@ blockquote footer {
   align-items: center;
   justify-content: center;
   font-size: 0.85rem;
-  color: #00c8d4;
-  background: rgba(0, 200, 212, 0.08);
-  border: 1px solid rgba(0, 200, 212, 0.2);
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
   border-radius: 4px;
   margin-top: 1px;
 }
@@ -2298,9 +2302,9 @@ blockquote footer {
 
 .control-btn-analyze {
   background: none;
-  border: 1px solid rgba(0, 200, 212, 0.35);
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
   border-radius: 4px;
-  color: rgba(0, 200, 212, 0.8);
+  color: rgba(var(--accent-rgb), 0.8);
   font-family: 'Courier New', monospace;
   font-size: 0.62rem;
   font-weight: 700;
@@ -2312,9 +2316,9 @@ blockquote footer {
   white-space: nowrap;
 }
 .control-btn-analyze:hover {
-  background: rgba(0, 200, 212, 0.08);
-  border-color: #00c8d4;
-  color: #00c8d4;
+  background: rgba(var(--accent-rgb), 0.08);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .control-btn-analyze:active {
   transform: translateY(1px);
@@ -2336,7 +2340,7 @@ blockquote footer {
   backdrop-filter: blur(4px);
 }
 .analysis-modal-content {
-  background: linear-gradient(135deg, #101728 0%, #080c18 100%);
+  background: linear-gradient(135deg, var(--bg-raised) 0%, var(--bg) 100%);
   border: 1px solid #333;
   border-radius: 12px;
   max-width: 620px;
@@ -2353,7 +2357,7 @@ blockquote footer {
   right: 1rem;
   background: none;
   border: none;
-  color: #00c8d4;
+  color: var(--accent);
   font-size: 2rem;
   line-height: 1;
   cursor: pointer;
@@ -2366,14 +2370,14 @@ blockquote footer {
   transition: all 0.2s;
   padding: 0;
 }
-.analysis-modal-close:hover { background: rgba(0, 200, 212, 0.15); color: #fff; }
+.analysis-modal-close:hover { background: rgba(var(--accent-rgb), 0.15); color: #fff; }
 
 .analysis-results { display: flex; flex-direction: column; gap: 0.75rem; }
 
 .analysis-loading {
   text-align: center;
   padding: 2rem;
-  color: #00c8d4;
+  color: var(--accent);
   font-size: 1rem;
   display: flex;
   flex-direction: column;
@@ -2393,7 +2397,7 @@ blockquote footer {
 }
 .analysis-loading-subtext {
   font-size: 0.78rem;
-  color: rgba(0, 200, 212, 0.6);
+  color: rgba(var(--accent-rgb), 0.6);
   letter-spacing: 0.06em;
   font-style: italic;
   margin-top: 0.2rem;
@@ -2402,21 +2406,21 @@ blockquote footer {
   width: 100%;
   max-width: 300px;
   height: 4px;
-  background: rgba(0, 200, 212, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   border-radius: 2px;
   overflow: hidden;
   margin-top: 0.75rem;
 }
 .analysis-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #00c8d4, #5fb97e);
+  background: linear-gradient(90deg, var(--accent), #5fb97e);
   border-radius: 2px;
   transition: width 0.3s ease;
   width: 0%;
 }
 .analysis-progress-text {
   font-size: 0.72rem;
-  color: rgba(0, 200, 212, 0.7);
+  color: rgba(var(--accent-rgb), 0.7);
   letter-spacing: 0.08em;
   margin-top: 0.4rem;
   font-variant-numeric: tabular-nums;
@@ -2435,8 +2439,8 @@ blockquote footer {
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(0, 200, 212, 0.5);
-  border-bottom: 1px solid rgba(0, 200, 212, 0.15);
+  color: rgba(var(--accent-rgb), 0.5);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.15);
   padding-bottom: 0.35rem;
   margin: 1.2rem 0 0.5rem;
 }
@@ -2454,19 +2458,19 @@ blockquote footer {
   border-radius: 4px;
   border-left: 3px solid transparent;
 }
-.analysis-platform-row.pass { background: rgba(0, 200, 212, 0.06); border-left-color: #00c8d4; }
+.analysis-platform-row.pass { background: rgba(var(--accent-rgb), 0.06); border-left-color: var(--accent); }
 .analysis-platform-row.warn { background: rgba(255, 200, 80, 0.06);  border-left-color: #ffc850; }
-.analysis-platform-row.fail { background: rgba(255, 107, 107, 0.06); border-left-color: #ff6b6b; }
+.analysis-platform-row.fail { background: rgba(255, 107, 107, 0.06); border-left-color: var(--red); }
 .analysis-platform-badge { font-size: 0.82rem; text-align: center; }
-.analysis-platform-row.pass .analysis-platform-badge { color: #00c8d4; }
+.analysis-platform-row.pass .analysis-platform-badge { color: var(--accent); }
 .analysis-platform-row.warn .analysis-platform-badge { color: #ffc850; }
-.analysis-platform-row.fail .analysis-platform-badge { color: #ff6b6b; }
+.analysis-platform-row.fail .analysis-platform-badge { color: var(--red); }
 .analysis-platform-name { color: rgba(200, 200, 200, 0.9); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.analysis-platform-target { color: rgba(0, 200, 212, 0.6); text-align: right; white-space: nowrap; }
+.analysis-platform-target { color: rgba(var(--accent-rgb), 0.6); text-align: right; white-space: nowrap; }
 .analysis-platform-delta  { color: rgba(200, 200, 200, 0.65); text-align: right; white-space: nowrap; }
 .analysis-platform-peak   { font-size: 0.7rem; text-align: right; white-space: nowrap; }
-.analysis-platform-peak.ok  { color: rgba(0, 200, 212, 0.7); }
-.analysis-platform-peak.hot { color: #ff6b6b; }
+.analysis-platform-peak.ok  { color: rgba(var(--accent-rgb), 0.7); }
+.analysis-platform-peak.hot { color: var(--red); }
 
 .analysis-tag {
   display: inline-block;
@@ -2477,9 +2481,9 @@ blockquote footer {
   letter-spacing: 0.03em;
   vertical-align: middle;
 }
-.analysis-tag.good      { background: rgba(0, 200, 212, 0.12); color: #00c8d4; }
+.analysis-tag.good      { background: rgba(var(--accent-rgb), 0.12); color: var(--accent); }
 .analysis-tag.info      { background: rgba(100, 160, 255, 0.12); color: rgba(120, 175, 255, 0.9); }
-.analysis-tag.warn-text { background: rgba(255, 107, 107, 0.12); color: #ff6b6b; }
+.analysis-tag.warn-text { background: rgba(255, 107, 107, 0.12); color: var(--red); }
 
 .analysis-warn {
   font-family: 'Courier New', monospace;
@@ -2496,13 +2500,13 @@ blockquote footer {
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 0.85rem;
-  background: rgba(0, 200, 212, 0.05);
+  background: rgba(var(--accent-rgb), 0.05);
   border-radius: 6px;
-  border-left: 3px solid #00c8d4;
+  border-left: 3px solid var(--accent);
 }
 .analysis-label {
   font-weight: 600;
-  color: #00c8d4;
+  color: var(--accent);
   font-size: 0.9rem;
 }
 .analysis-value {
@@ -2525,12 +2529,12 @@ blockquote footer {
   border-radius: 6px;
   border: 1px solid rgba(255,107,107,0.2);
 }
-.analysis-clipping-header { font-weight: 600; color: #ff6b6b; font-size: 0.8rem; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.analysis-clipping-header { font-weight: 600; color: var(--red); font-size: 0.8rem; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
 .analysis-clipping-events { display: flex; flex-wrap: wrap; gap: 0.4rem; max-height: 180px; overflow-y: auto; }
 .analysis-clipping-event {
   font-family: 'Courier New', monospace;
   font-size: 0.78rem;
-  color: #ff6b6b;
+  color: var(--red);
   background: rgba(255,107,107,0.1);
   padding: 0.2rem 0.45rem;
   border-radius: 4px;
@@ -2539,7 +2543,7 @@ blockquote footer {
 .analysis-error {
   text-align: center;
   padding: 1.5rem;
-  color: #ff6b6b;
+  color: var(--red);
   font-size: 0.95rem;
 }
 

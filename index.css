@@ -1,6 +1,10 @@
 /* =============================================================================
-   AUDIO DESIGN STUDIOS - DESIGN PAGE (index.html)
-   Page-specific styles for the Design/Editorial home page
+   HOME PAGE STYLES — index.html
+
+   Controls: hero layout, the editorial/work grid, contact section.
+
+   NOTE: Colors are NOT defined here. To change colors, open shared.css
+         and edit the THEME COLORS block at the very top of that file.
    ============================================================================= */
 
 @import url('./shared.css');
@@ -64,7 +68,7 @@
 .env-home {
   background-image: url('Photos/about800.webp');
   background-position: center;
-  background-color: #080c18;
+  background-color: var(--bg);
 }
 
 @media (min-width: 720px) {
@@ -106,9 +110,9 @@
 blockquote {
   margin: 0 0 1.5rem 0;
   padding: 1rem;
-  border-left: 4px solid #00c8d4;
+  border-left: 4px solid var(--accent);
   background: rgba(120, 154, 186, 0.04);
-  color: #f4f4ff;
+  color: var(--text);
   border-radius: 6px;
 }
 
@@ -128,7 +132,7 @@ blockquote p {
 
 blockquote footer {
   margin-top: 1rem;
-  color: #f4f4ff;
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -249,10 +253,10 @@ blockquote footer {
    ============================================================================= */
 
 .ambient-player-section {
-  background: linear-gradient(135deg, #101728 0%, #080c18 100%);
+  background: linear-gradient(135deg, var(--bg-raised) 0%, var(--bg) 100%);
   padding: 3rem 4rem;
-  border-top: 1px solid rgba(0, 200, 212, 0.2);
-  border-bottom: 1px solid rgba(0, 200, 212, 0.2);
+  border-top: 1px solid rgba(var(--accent-rgb), 0.2);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.2);
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
@@ -272,7 +276,7 @@ blockquote footer {
   font-family: 'Cinzel', Georgia, serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #00c8d4;
+  color: var(--accent);
   letter-spacing: 0.1em;
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
@@ -292,17 +296,17 @@ blockquote footer {
   background: rgba(0, 0, 0, 0.3);
   padding: 1.25rem 1.5rem;
   border-radius: 8px;
-  border: 1px solid rgba(0, 200, 212, 0.15);
+  border: 1px solid rgba(var(--accent-rgb), 0.15);
   transition: all 0.3s ease;
 }
 
 .ambient-player-controls:hover {
-  border-color: rgba(0, 200, 212, 0.3);
+  border-color: rgba(var(--accent-rgb), 0.3);
   background: rgba(0, 0, 0, 0.4);
 }
 
 .ambient-play-btn {
-  background: linear-gradient(135deg, #00c8d4 0%, #009eaa 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
   border: none;
   width: 60px;
   height: 60px;
@@ -311,18 +315,18 @@ blockquote footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #080c18;
+  color: var(--bg);
   font-size: 1.3rem;
   flex-shrink: 0;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 200, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
   position: relative;
 }
 
 .ambient-play-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0, 200, 212, 0.5);
-  background: linear-gradient(135deg, #1de3ef 0%, #00b0bc 100%);
+  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.5);
+  background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent-dark) 100%);
 }
 
 .ambient-play-btn:active {
@@ -355,9 +359,9 @@ blockquote footer {
 }
 
 .ambient-skip-btn {
-  background: rgba(0, 200, 212, 0.15);
-  border: 1px solid rgba(0, 200, 212, 0.3);
-  color: #00c8d4;
+  background: rgba(var(--accent-rgb), 0.15);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  color: var(--accent);
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
   cursor: pointer;
@@ -371,10 +375,10 @@ blockquote footer {
 }
 
 .ambient-skip-btn:hover {
-  background: rgba(0, 200, 212, 0.25);
-  border-color: rgba(0, 200, 212, 0.5);
+  background: rgba(var(--accent-rgb), 0.25);
+  border-color: rgba(var(--accent-rgb), 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 200, 212, 0.3);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
 }
 
 .ambient-skip-btn:active {
@@ -420,11 +424,11 @@ blockquote footer {
 
 .ambient-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00c8d4 0%, #009eaa 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 100%);
   border-radius: 3px;
   width: 0%;
   transition: width 0.1s linear;
-  box-shadow: 0 0 8px rgba(0, 200, 212, 0.4);
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
 }
 
 .ambient-time-display {
@@ -467,15 +471,15 @@ blockquote footer {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00c8d4 0%, #009eaa 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 200, 212, 0.4);
+  box-shadow: 0 2px 6px rgba(var(--accent-rgb), 0.4);
   transition: all 0.2s ease;
 }
 
 .ambient-volume-slider::-webkit-slider-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 4px 10px rgba(0, 200, 212, 0.6);
+  box-shadow: 0 4px 10px rgba(var(--accent-rgb), 0.6);
 }
 
 /* Firefox */
@@ -483,16 +487,16 @@ blockquote footer {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00c8d4 0%, #009eaa 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 6px rgba(0, 200, 212, 0.4);
+  box-shadow: 0 2px 6px rgba(var(--accent-rgb), 0.4);
   transition: all 0.2s ease;
 }
 
 .ambient-volume-slider::-moz-range-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 4px 10px rgba(0, 200, 212, 0.6);
+  box-shadow: 0 4px 10px rgba(var(--accent-rgb), 0.6);
 }
 
 .ambient-volume-slider::-moz-range-track {
@@ -501,9 +505,9 @@ blockquote footer {
 }
 
 .ambient-volume-slider::-moz-range-progress {
-  background: linear-gradient(90deg, #00c8d4 0%, #009eaa 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 100%);
   border-radius: 5px;
-  box-shadow: 0 0 6px rgba(0, 200, 212, 0.3);
+  box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.3);
 }
 
 /* Mobile responsive */
