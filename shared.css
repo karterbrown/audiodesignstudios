@@ -34,7 +34,7 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #0f0f0f;
+  background: #080c18;
   color: #f4f4ff;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -291,8 +291,8 @@ img {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(153, 102, 204, 0.2), rgba(153, 102, 204, 0.1));
-  border: 2px solid rgba(153, 102, 204, 0.4);
+  background: linear-gradient(135deg, rgba(0, 150, 180, 0.2), rgba(0, 150, 180, 0.1));
+  border: 2px solid rgba(0, 150, 180, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -390,9 +390,9 @@ img {
 }
 
 .control-btn {
-  background: linear-gradient(135deg, rgba(0, 80, 40, 0.25), rgba(0, 80, 40, 0.15));
-  border: 1.5px solid rgba(0, 80, 40, 0.5);
-  color: #5fba7d;
+  background: linear-gradient(135deg, rgba(0, 110, 140, 0.25), rgba(0, 110, 140, 0.15));
+  border: 1.5px solid rgba(0, 110, 140, 0.5);
+  color: #00b8c4;
   padding: 0.75rem 1rem;
   border-radius: 50px;
   cursor: pointer;
@@ -478,9 +478,9 @@ img {
 }
 
 .control-btn:hover {
-  background: linear-gradient(135deg, rgba(0, 80, 40, 0.35), rgba(0, 80, 40, 0.25));
-  border-color: rgba(0, 80, 40, 0.7);
-  box-shadow: 0 4px 12px rgba(0, 80, 40, 0.4);
+  background: linear-gradient(135deg, rgba(0, 110, 140, 0.35), rgba(0, 110, 140, 0.25));
+  border-color: rgba(0, 110, 140, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 110, 140, 0.4);
   transform: translateY(-2px);
 }
 
@@ -490,7 +490,7 @@ img {
 }
 
 .control-btn:focus-visible {
-  outline: 3px solid rgba(0, 80, 40, 0.6);
+  outline: 3px solid rgba(0, 110, 140, 0.6);
   outline-offset: 2px;
 }
 
@@ -499,7 +499,7 @@ img {
   font-size: 1.25rem;
   min-width: 56px;
   min-height: 56px;
-  background: linear-gradient(135deg, rgba(0, 80, 40, 0.35), rgba(0, 80, 40, 0.25));
+  background: linear-gradient(135deg, rgba(0, 110, 140, 0.35), rgba(0, 110, 140, 0.25));
   border-width: 2px;
   line-height: 1;
 }
@@ -580,7 +580,7 @@ blockquote footer {
   justify-content: space-between;
   align-items: center;
   padding: 3rem 4vw;
-  background: rgba(25, 35, 28, 0.95);
+  background: rgba(6, 10, 24, 0.95);
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 1000;
   min-height: 80px;
@@ -591,7 +591,7 @@ blockquote footer {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 1.8rem !important;
-  color: #7ec98f;
+  color: #00c8d4;
   line-height: 1;
   text-decoration: none;
   position: relative;
@@ -625,8 +625,8 @@ blockquote footer {
 
 .nav a:hover,
 .nav a:focus {
-  color: #7ec98f;
-  border-bottom-color: #7ec98f;
+  color: #00c8d4;
+  border-bottom-color: #00c8d4;
 }
 
 /* Special header link for A+B (hidden tracks) */
@@ -655,7 +655,7 @@ blockquote footer {
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
-  background: radial-gradient(circle at 10% 10%, rgba(25, 172, 91, 0.25), rgba(6, 6, 19, 0.85));
+  background: radial-gradient(circle at 10% 10%, rgba(0, 200, 212, 0.25), rgba(4, 6, 24, 0.85));
   opacity: 0;
   transform: translateY(10px);
   animation: fadeInHero 0.6s ease-out forwards;
@@ -683,7 +683,7 @@ blockquote footer {
   opacity: 0.85;
   margin-top: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.03);
-  background: rgba(12, 18, 14, 0.95);
+  background: rgba(4, 6, 18, 0.95);
   font-weight: 400;
   letter-spacing: 0.01em;
   min-height: 80px;
@@ -715,13 +715,13 @@ blockquote footer {
 
 /* Special footer link for Off World Depot */
 .footer-special-link {
-  color: #7ec98f !important;
+  color: #00c8d4 !important;
   font-weight: 600;
   text-decoration: underline;
 }
 
 .footer-special-link:hover {
-  color: #9fe4b0 !important;
+  color: #33d9e4 !important;
   opacity: 1 !important;
 }
 
@@ -741,9 +741,9 @@ blockquote footer {
 .btn,
 button {
   padding: 0.75rem 1.75rem;
-  background: linear-gradient(135deg, rgba(0, 80, 40, 0.25), rgba(0, 80, 40, 0.15));
-  color: #5fba7d;
-  border: 1.5px solid rgba(0, 80, 40, 0.5);
+  background: linear-gradient(135deg, rgba(0, 110, 140, 0.25), rgba(0, 110, 140, 0.15));
+  color: #00b8c4;
+  border: 1.5px solid rgba(0, 110, 140, 0.5);
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
@@ -758,10 +758,10 @@ button {
 
 .btn:hover,
 button:hover {
-  background: linear-gradient(135deg, rgba(0, 80, 40, 0.35), rgba(0, 80, 40, 0.25));
-  border-color: rgba(0, 80, 40, 0.7);
+  background: linear-gradient(135deg, rgba(0, 110, 140, 0.35), rgba(0, 110, 140, 0.25));
+  border-color: rgba(0, 110, 140, 0.7);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 80, 40, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 110, 140, 0.4);
 }
 
 .btn:active,
@@ -772,7 +772,7 @@ button:active {
 
 .btn:focus-visible,
 button:focus-visible {
-  outline: 3px solid rgba(0, 80, 40, 0.6);
+  outline: 3px solid rgba(0, 110, 140, 0.6);
   outline-offset: 2px;
 }
 
@@ -953,7 +953,7 @@ picture {
   .site-header {
     padding: 0.75rem 4vw;
     min-height: 80px;
-    background: rgba(25, 35, 28, 0.95);
+    background: rgba(6, 10, 24, 0.95);
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     color: #e0e0e0;
   }

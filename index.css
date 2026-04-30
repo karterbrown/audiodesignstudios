@@ -64,7 +64,7 @@
 .env-home {
   background-image: url('Photos/about800.webp');
   background-position: center;
-  background-color: #0f0f0f;
+  background-color: #080c18;
 }
 
 @media (min-width: 720px) {
@@ -106,7 +106,7 @@
 blockquote {
   margin: 0 0 1.5rem 0;
   padding: 1rem;
-  border-left: 4px solid #7ec98f;
+  border-left: 4px solid #00c8d4;
   background: rgba(120, 154, 186, 0.04);
   color: #f4f4ff;
   border-radius: 6px;
@@ -249,10 +249,10 @@ blockquote footer {
    ============================================================================= */
 
 .ambient-player-section {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  background: linear-gradient(135deg, #101728 0%, #080c18 100%);
   padding: 3rem 4rem;
-  border-top: 1px solid rgba(126, 201, 143, 0.2);
-  border-bottom: 1px solid rgba(126, 201, 143, 0.2);
+  border-top: 1px solid rgba(0, 200, 212, 0.2);
+  border-bottom: 1px solid rgba(0, 200, 212, 0.2);
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
@@ -272,7 +272,7 @@ blockquote footer {
   font-family: 'Cinzel', Georgia, serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #7ec98f;
+  color: #00c8d4;
   letter-spacing: 0.1em;
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
@@ -292,17 +292,17 @@ blockquote footer {
   background: rgba(0, 0, 0, 0.3);
   padding: 1.25rem 1.5rem;
   border-radius: 8px;
-  border: 1px solid rgba(126, 201, 143, 0.15);
+  border: 1px solid rgba(0, 200, 212, 0.15);
   transition: all 0.3s ease;
 }
 
 .ambient-player-controls:hover {
-  border-color: rgba(126, 201, 143, 0.3);
+  border-color: rgba(0, 200, 212, 0.3);
   background: rgba(0, 0, 0, 0.4);
 }
 
 .ambient-play-btn {
-  background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+  background: linear-gradient(135deg, #00c8d4 0%, #009eaa 100%);
   border: none;
   width: 60px;
   height: 60px;
@@ -311,18 +311,18 @@ blockquote footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0f0f0f;
+  color: #080c18;
   font-size: 1.3rem;
   flex-shrink: 0;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(126, 201, 143, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 200, 212, 0.3);
   position: relative;
 }
 
 .ambient-play-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(126, 201, 143, 0.5);
-  background: linear-gradient(135deg, #8ed99f 0%, #7ac68c 100%);
+  box-shadow: 0 6px 20px rgba(0, 200, 212, 0.5);
+  background: linear-gradient(135deg, #1de3ef 0%, #00b0bc 100%);
 }
 
 .ambient-play-btn:active {
@@ -355,9 +355,9 @@ blockquote footer {
 }
 
 .ambient-skip-btn {
-  background: rgba(126, 201, 143, 0.15);
-  border: 1px solid rgba(126, 201, 143, 0.3);
-  color: #7ec98f;
+  background: rgba(0, 200, 212, 0.15);
+  border: 1px solid rgba(0, 200, 212, 0.3);
+  color: #00c8d4;
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
   cursor: pointer;
@@ -371,10 +371,10 @@ blockquote footer {
 }
 
 .ambient-skip-btn:hover {
-  background: rgba(126, 201, 143, 0.25);
-  border-color: rgba(126, 201, 143, 0.5);
+  background: rgba(0, 200, 212, 0.25);
+  border-color: rgba(0, 200, 212, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(126, 201, 143, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 200, 212, 0.3);
 }
 
 .ambient-skip-btn:active {
@@ -420,11 +420,11 @@ blockquote footer {
 
 .ambient-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #7ec98f 0%, #6ab67c 100%);
+  background: linear-gradient(90deg, #00c8d4 0%, #009eaa 100%);
   border-radius: 3px;
   width: 0%;
   transition: width 0.1s linear;
-  box-shadow: 0 0 8px rgba(126, 201, 143, 0.4);
+  box-shadow: 0 0 8px rgba(0, 200, 212, 0.4);
 }
 
 .ambient-time-display {
@@ -467,15 +467,15 @@ blockquote footer {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+  background: linear-gradient(135deg, #00c8d4 0%, #009eaa 100%);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(126, 201, 143, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 200, 212, 0.4);
   transition: all 0.2s ease;
 }
 
 .ambient-volume-slider::-webkit-slider-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 4px 10px rgba(126, 201, 143, 0.6);
+  box-shadow: 0 4px 10px rgba(0, 200, 212, 0.6);
 }
 
 /* Firefox */
@@ -483,16 +483,16 @@ blockquote footer {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7ec98f 0%, #6ab67c 100%);
+  background: linear-gradient(135deg, #00c8d4 0%, #009eaa 100%);
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 6px rgba(126, 201, 143, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 200, 212, 0.4);
   transition: all 0.2s ease;
 }
 
 .ambient-volume-slider::-moz-range-thumb:hover {
   transform: scale(1.2);
-  box-shadow: 0 4px 10px rgba(126, 201, 143, 0.6);
+  box-shadow: 0 4px 10px rgba(0, 200, 212, 0.6);
 }
 
 .ambient-volume-slider::-moz-range-track {
@@ -501,9 +501,9 @@ blockquote footer {
 }
 
 .ambient-volume-slider::-moz-range-progress {
-  background: linear-gradient(90deg, #7ec98f 0%, #6ab67c 100%);
+  background: linear-gradient(90deg, #00c8d4 0%, #009eaa 100%);
   border-radius: 5px;
-  box-shadow: 0 0 6px rgba(126, 201, 143, 0.3);
+  box-shadow: 0 0 6px rgba(0, 200, 212, 0.3);
 }
 
 /* Mobile responsive */
