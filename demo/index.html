@@ -36,7 +36,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./demo.css?v=1775850938" />
+  <link rel="stylesheet" href="./demo.css?v=1777564674" />
 </head>
 
 <body>
@@ -354,9 +354,9 @@
           id: 3, 
           title: 'From Somewhere I\'d Never Been',
           titleRaw: 'From Somewhere I\'d Never Been (RAW)',
-          titleMix: 'From Somewhere I\'d Never Been (Mix 04082026)',
+          titleMix: 'From Somewhere I\'d Never Been (MIX 04302026)',
           before: '../hiddentracks/From Somewhere I\'d Never Been_RAW_04042026.wav', 
-          after: '../hiddentracks/From Somewhere I\'d Never Been_Mix_04082026.wav' 
+          after: '../hiddentracks/From Somewhere I\'d Never Been_MIX_04302026.wav' 
         }
       ];
 
@@ -1089,17 +1089,378 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
         if (e.target === analysisModal) closeModal();
       });
 
+      // K-weighting pre-filter (ITU-R BS.1770-4) — required for accurate LUFS measurement
+      function kWeightChannel(data, fs) {
+        // Stage 1: Pre-filter (high-shelf, models outer-ear/head diffraction ~1.7 kHz)
+        const f0s = 1681.974450955533, Gs = 3.999843853973347, Qs = 0.7071752369554196;
+        const Ks  = Math.tan(Math.PI * f0s / fs);
+        const Vh  = Math.pow(10, Gs / 20);
+        const Vb  = Math.pow(Vh, 0.4996667741545416);
+        const den = 1 + Ks / Qs + Ks * Ks;
+        const bs0 = (Vh + Vb * Ks / Qs + Ks * Ks) / den;
+        const bs1 = 2 * (Ks * Ks - Vh) / den;
+        const bs2 = (Vh - Vb * Ks / Qs + Ks * Ks) / den;
+        const as1 = 2 * (Ks * Ks - 1) / den;
+        const as2 = (1 - Ks / Qs + Ks * Ks) / den;
+        // Stage 2: Highpass (RLB weighting, models free-field head transfer ~38 Hz)
+        const f0h = 38.13547087602444, Qh = 0.5003270373238773;
+        const Kh  = Math.tan(Math.PI * f0h / fs);
+        const dh  = 1 + Kh / Qh + Kh * Kh;
+        const bh0 = 1 / dh, bh1 = -2 / dh, bh2 = 1 / dh;
+        const ah1 = 2 * (Kh * Kh - 1) / dh;
+        const ah2 = (1 - Kh / Qh + Kh * Kh) / dh;
+        function biquad(input, b0, b1, b2, a1, a2) {
+          const out = new Float32Array(input.length);
+          let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+          for (let i = 0; i < input.length; i++) {
+            const x0 = input[i];
+            const y0 = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+            x2 = x1; x1 = x0; y2 = y1; y1 = y0;
+            out[i] = y0;
+          }
+          return out;
+        }
+        return biquad(biquad(data, bs0, bs1, bs2, as1, as2), bh0, bh1, bh2, ah1, ah2);
+      }
+
+      async function analyzeTrack(audioUrl, trackName) {
+        analysisModal.style.display = 'flex';
+        const progressEl = document.createElement('div');
+        progressEl.className = 'analysis-loading';
+        progressEl.innerHTML = '<span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span><div class="analysis-loading-subtext">This may take a minute</div><div class="analysis-progress"><div class="analysis-progress-bar" id="analysisProgressBar"></div></div><div class="analysis-progress-text" id="analysisProgressText">0%</div>';
+        analysisResults.innerHTML = '';
+        analysisResults.appendChild(progressEl);
+
+        try {
+          // Fetch audio file with progress
+          const updateProgress = (percent, status) => {
+            const barEl = document.getElementById('analysisProgressBar');
+            const textEl = document.getElementById('analysisProgressText');
+            if (barEl) barEl.style.width = `${percent}%`;
+            if (textEl) textEl.textContent = status || `${Math.round(percent)}%`;
+          };
+
+          updateProgress(5, 'Fetching audio...');
+          // Encode URL to handle spaces and special characters
+          const encodedUrl = encodeURI(audioUrl);
+          const response = await fetch(encodedUrl);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch audio file: ${response.status} ${response.statusText}`);
+          }
+          const arrayBuffer = await response.arrayBuffer();
+
+          updateProgress(15, 'Decoding audio...');
+          // Create audio context for decoding
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          
+          if (!audioBuffer || audioBuffer.length === 0) {
+            throw new Error('Audio file could not be decoded or is empty');
+          }
+
+          updateProgress(25, 'Preparing analysis...');
+          
+          // Analyze audio
+          const sampleRate = audioBuffer.sampleRate;
+          const duration = audioBuffer.duration;
+          const channelData = [];
+          for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+            channelData.push(audioBuffer.getChannelData(i));
+          }
+
+          // Calculate integrated LUFS and other metrics
+          const blockSize = Math.floor(sampleRate * 0.4); // 400ms blocks for LUFS
+          const overlapSize = Math.floor(blockSize * 0.75); // 75% overlap
+          const step = blockSize - overlapSize;
+          let allBlocks = [];
+
+          // Calculate total blocks for progress
+          const totalBlocks = Math.floor((channelData[0].length - blockSize) / step);
+          let processedBlocks = 0;
+
+          updateProgress(30, 'Processing blocks...');
+
+          // Process in blocks (BS.1770: sum per-channel mean squares, then compute loudness)
+          // Apply K-weighting on-demand per block to save memory
+          for (let pos = 0; pos < channelData[0].length - blockSize; pos += step) {
+            // G weights: 1.0 for L/R/C, 1.41 for Ls/Rs — stereo is always 1.0
+            const chWeights = [1.0, 1.0, 1.0, 1.41, 1.41, 1.0];
+            let sumChannelMeans = 0;
+
+            for (let ch = 0; ch < channelData.length; ch++) {
+              // Extract block from channel
+              const block = channelData[ch].slice(pos, pos + blockSize);
+              // Apply K-weighting to this block only
+              const kWeightedBlock = kWeightChannel(block, sampleRate);
+              
+              let sumSq = 0;
+              for (let i = 0; i < blockSize; i++) {
+                const sample = kWeightedBlock[i];
+                sumSq += sample * sample;
+              }
+              sumChannelMeans += (chWeights[ch] || 1.0) * (sumSq / blockSize);
+            }
+
+            const meanSquare = sumChannelMeans;
+            const blockLoudness = -0.691 + 10 * Math.log10(meanSquare);
+            
+            allBlocks.push({ loudness: blockLoudness, meanSquare });
+
+            // Update progress every 100 blocks
+            processedBlocks++;
+            if (processedBlocks % 100 === 0 || processedBlocks === totalBlocks) {
+              const progress = 30 + (processedBlocks / totalBlocks) * 50; // 30-80%
+              updateProgress(progress, `Processing ${processedBlocks}/${totalBlocks} blocks...`);
+              // Allow UI to update
+              await new Promise(resolve => setTimeout(resolve, 0));
+            }
+          }
+
+          updateProgress(85, 'Calculating metrics...');
+
+          // Calculate absolute threshold (gating at -70 LUFS)
+          const absoluteGate = -70;
+          let gatedMeanSquare = 0;
+          let gatedCount = 0;
+
+          allBlocks.forEach(block => {
+            if (block.loudness >= absoluteGate) {
+              gatedMeanSquare += block.meanSquare;
+              gatedCount++;
+            }
+          });
+
+          if (gatedCount === 0) {
+            throw new Error('No blocks above absolute gate');
+          }
+
+          const gatedLoudness = -0.691 + 10 * Math.log10(gatedMeanSquare / gatedCount);
+          
+          // Relative gate at -10 LU below gated loudness
+          const relativeGate = gatedLoudness - 10;
+          let finalMeanSquare = 0;
+          let finalCount = 0;
+
+          allBlocks.forEach(block => {
+            if (block.loudness >= relativeGate) {
+              finalMeanSquare += block.meanSquare;
+              finalCount++;
+            }
+          });
+
+          const integratedLUFS = finalCount > 0 
+            ? -0.691 + 10 * Math.log10(finalMeanSquare / finalCount)
+            : -100;
+
+          // Calculate sample peak (highest sample value in the file)
+          updateProgress(90, 'Calculating peak levels...');
+          let truePeak = -100;
+          for (let ch = 0; ch < channelData.length; ch++) {
+            for (let i = 0; i < channelData[ch].length; i++) {
+              const sample = Math.abs(channelData[ch][i]);
+              if (sample > 0) {
+                const peakDb = 20 * Math.log10(sample);
+                if (peakDb > truePeak) truePeak = peakDb;
+              }
+            }
+          }
+
+          // Calculate LRA (Loudness Range)
+          const sortedLoudness = allBlocks
+            .filter(b => b.loudness >= relativeGate)
+            .map(b => b.loudness)
+            .sort((a, b) => a - b);
+          
+          const lra = sortedLoudness.length > 0
+            ? sortedLoudness[Math.floor(sortedLoudness.length * 0.95)] - sortedLoudness[Math.floor(sortedLoudness.length * 0.10)]
+            : 0;
+
+          // Detect clipping events with timestamps
+          updateProgress(95, 'Detecting clipping...');
+          const clipThreshold = 0.99; // 99% of full scale
+          const clippingEvents = [];
+          const sampleInterval = 0.1; // Check every 100ms
+          const samplesPerCheck = Math.floor(sampleRate * sampleInterval);
+          
+          for (let pos = 0; pos < channelData[0].length; pos += samplesPerCheck) {
+            const endPos = Math.min(pos + samplesPerCheck, channelData[0].length);
+            let hasClipping = false;
+            
+            // Check all channels in this time window
+            for (let ch = 0; ch < channelData.length; ch++) {
+              for (let i = pos; i < endPos; i++) {
+                if (Math.abs(channelData[ch][i]) >= clipThreshold) {
+                  hasClipping = true;
+                  break;
+                }
+              }
+              if (hasClipping) break;
+            }
+            
+            if (hasClipping) {
+              const timeInSeconds = pos / sampleRate;
+              const minutes = Math.floor(timeInSeconds / 60);
+              const seconds = (timeInSeconds % 60).toFixed(2);
+              const timeCode = `${minutes}:${seconds.padStart(5, '0')}`;
+              clippingEvents.push({ time: timeInSeconds, timeCode });
+            }
+          }
+
+          // Build clipping log HTML
+          let clippingHTML = '';
+          if (clippingEvents.length > 0) {
+            clippingHTML = `
+              <div class="analysis-metric" style="border-left-color: #ff6b6b;">
+                <span class="analysis-label" style="color: #ff6b6b;">Clipping Events:</span>
+                <span class="analysis-value" style="color: #ff6b6b;">${clippingEvents.length} detected</span>
+              </div>
+              <div class="analysis-clipping-log">
+                <div class="analysis-clipping-header">Clipping Timestamps:</div>
+                <div class="analysis-clipping-events">
+                  ${clippingEvents.map(event => 
+                    `<div class="analysis-clipping-event">${event.timeCode}</div>`
+                  ).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            clippingHTML = `
+              <div class="analysis-metric" style="border-left-color: #7ec98f;">
+                <span class="analysis-label" style="color: #7ec98f;">Clipping Events:</span>
+                <span class="analysis-value" style="color: #7ec98f;">None detected ✓</span>
+              </div>
+            `;
+          }
+
+          // Streaming Platform Compliance Check
+          const lufsInRange = integratedLUFS >= -15.5 && integratedLUFS <= -12.5; // -14 ±1.5
+          const peakOk = truePeak < -1.0;
+          const noClipping = clippingEvents.length === 0;
+          
+          let complianceStatus = '';
+          let complianceClass = '';
+          let complianceDetails = [];
+          
+          if (lufsInRange && peakOk && noClipping) {
+            complianceStatus = '✓ Ready for Spotify/Apple Music';
+            complianceClass = 'ready';
+            complianceDetails.push('LUFS level is optimal for streaming platforms');
+            complianceDetails.push('Sample Peak is below -1.0 dBFS (leaves headroom for encoding)');
+            complianceDetails.push('No clipping detected');
+          } else {
+            const issues = [];
+            
+            if (!lufsInRange) {
+              if (integratedLUFS < -15.5) {
+                issues.push('too-quiet');
+                complianceDetails.push(`<strong>Too Quiet:</strong> ${integratedLUFS.toFixed(1)} LUFS is below -15.5 LUFS. Streaming platforms may not turn it up enough.`);
+              } else {
+                issues.push('too-loud');
+                complianceDetails.push(`<strong>Too Loud:</strong> ${integratedLUFS.toFixed(1)} LUFS is above -12.5 LUFS. Will be turned down by streaming platforms, reducing dynamic impact.`);
+              }
+            }
+            
+            if (!peakOk) {
+              issues.push('peak-hot');
+              complianceDetails.push(`<strong>Peak Too Hot:</strong> ${truePeak.toFixed(1)} dBFS is at or above -1.0 dBFS. May cause clipping during playback or encoding.`);
+            }
+            
+            if (!noClipping) {
+              issues.push('clipping');
+              complianceDetails.push(`<strong>Clipping Detected:</strong> ${clippingEvents.length} instances found. This will cause audible distortion.`);
+            }
+            
+            if (issues.length === 1 && issues[0] !== 'clipping') {
+              complianceStatus = '⚠ Minor Issues';
+              complianceClass = 'warning';
+            } else if (issues.includes('clipping') || issues.length > 1) {
+              complianceStatus = '✗ Not Ready for Streaming';
+              complianceClass = 'fail';
+            } else {
+              complianceStatus = '⚠ Minor Issues';
+              complianceClass = 'warning';
+            }
+          }
+          
+          const complianceHTML = `
+            <div class="analysis-compliance ${complianceClass}">
+              <div class="analysis-compliance-status">${complianceStatus}</div>
+              <div class="analysis-compliance-details">
+                ${complianceDetails.map(detail => `<div class="analysis-compliance-item">${detail}</div>`).join('')}
+              </div>
+            </div>
+          `;
+
+          // Display results
+          updateProgress(100, 'Complete!');
+          await new Promise(resolve => setTimeout(resolve, 200)); // Brief pause to show 100%
+          
+          analysisResults.innerHTML = `
+            <div class="analysis-track-name">${trackName}</div>
+            ${complianceHTML}
+            <div class="analysis-metric">
+              <span class="analysis-label">Duration:</span>
+              <span class="analysis-value">${Math.floor(duration / 60)}:${String(Math.floor(duration % 60)).padStart(2, '0')}</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Integrated LUFS:</span>
+              <span class="analysis-value">${integratedLUFS.toFixed(1)} LUFS</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Sample Peak:</span>
+              <span class="analysis-value">${truePeak.toFixed(1)} dBFS</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Loudness Range:</span>
+              <span class="analysis-value">${lra.toFixed(1)} LU</span>
+            </div>
+            ${clippingHTML}
+            <div class="analysis-metric">
+              <span class="analysis-label">Sample Rate:</span>
+              <span class="analysis-value">${(sampleRate / 1000).toFixed(1)} kHz</span>
+            </div>
+            <div class="analysis-metric">
+              <span class="analysis-label">Channels:</span>
+              <span class="analysis-value">${audioBuffer.numberOfChannels}</span>
+            </div>
+            <div class="analysis-note">
+              <strong>Standards Reference:</strong><br>
+              Streaming: -14 LUFS target (Spotify, Apple Music, YouTube)<br>
+              Broadcasting: -23 LUFS (EBU R128)<br>
+              Sample Peak: &lt; -1.0 dBFS recommended (prevents clipping)<br>
+              <em>Note: True Peak (dBTP) requires 4x oversampling for inter-sample peak detection.</em>
+            </div>
+          `;
+
+          // Close audio context to free resources
+          audioCtx.close();
+
+        } catch (err) {
+          console.error('Analysis failed:', err);
+          console.error('Audio URL:', audioUrl);
+          console.error('Track name:', trackName);
+          analysisResults.innerHTML = `
+            <div class="analysis-error">
+              <strong>Analysis Failed</strong><br>
+              ${err.message}<br>
+              <span style="font-size: 0.9em; opacity: 0.7;">Please ensure the audio file is valid and accessible.</span>
+            </div>
+          `;
+        }
+      }
+
       analyzeBtn.addEventListener('click', () => {
         if (idx < 0) {
           alert('Please load a track first');
           return;
         }
-        ensureGraph();
         const track = tracks[idx];
-        const url   = afterMode ? track.after : track.before;
-        const title = afterMode ? track.titleMix : track.titleRaw;
-        analysisModal.style.display = 'flex';
-        AudioAnalyzer.run(url, title, analysisResults);
+        // Analyze based on current mode: if afterMode is true, analyze Mix; if false, analyze RAW
+        if (afterMode) {
+          analyzeTrack(track.after, track.titleMix);
+        } else {
+          analyzeTrack(track.before, track.titleRaw);
+        }
       });
 
       // ========================================================================
@@ -1108,6 +1469,41 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
       const loudnessMeterBtn = document.getElementById('aiLoudnessMeterBtn');
       const loudnessMeterModal = document.getElementById('loudnessMeterModal');
       const loudnessMeterClose = document.getElementById('loudnessMeterClose');
+      const loudnessMeterCanvas = document.getElementById('loudnessMeterCanvas');
+      const meterCtx = loudnessMeterCanvas ? loudnessMeterCanvas.getContext('2d') : null;
+      const meterRmsValueEl = document.getElementById('meterRmsValue');
+      const meterTruePeakValueEl = document.getElementById('meterTruePeakValue');
+      const meterLufsIValueEl = document.getElementById('meterLufsIValue');
+      const meterLRAValueEl = document.getElementById('meterLRAValue');
+      const meterRmsStatusEl = document.getElementById('meterRmsStatus');
+      const meterPeakStatusEl = document.getElementById('meterPeakStatus');
+      const meterLufsStatusEl = document.getElementById('meterLufsStatus');
+      const meterLraStatusEl = document.getElementById('meterLraStatus');
+      const meterTrackNameEl = document.querySelector('.loudness-meter-track-name');
+      const spectrumRawBtn = document.getElementById('spectrumRawBtn');
+      const spectrumMixBtn = document.getElementById('spectrumMixBtn');
+
+      function applySpectrumMode(isMix) {
+        // Delegate to the main applyMode — this switches audio gains, main player labels,
+        // nowPlaying title, AND (via applyMode's sync block) updates these modal buttons
+        applyMode(isMix);
+        // Update modal track name explicitly in case no track is loaded yet
+        if (meterTrackNameEl && idx >= 0 && tracks[idx]) {
+          meterTrackNameEl.textContent = isMix ? tracks[idx].titleMix : tracks[idx].titleRaw;
+        }
+        // Reset integrated buffers for the newly selected mode so readouts start fresh
+        if (isMix) {
+          afterIntegratedLufsBuffer = [];
+          afterLraValues = [];
+        } else {
+          beforeIntegratedLufsBuffer = [];
+          beforeLraValues = [];
+        }
+      }
+
+      spectrumRawBtn.addEventListener('click', () => applySpectrumMode(false));
+      spectrumMixBtn.addEventListener('click', () => applySpectrumMode(true));
+
       let meterActive = false;
       let meterRAF = null;
 
@@ -1551,9 +1947,6 @@ if (lraDisplay) lraDisplay.textContent = '-- dB';
       <p class="footer-copy">© <span id="year"></span> Audio Design Studios. All rights reserved.</p>
     </div>
   </footer>
-
-  <!-- Shared analysis engine -->
-  <script src="../analyzer.js"></script>
 
   <!-- Copyright Year -->
   <script src="../content.js"></script>
