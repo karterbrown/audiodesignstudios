@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./processor.css?v=1777564674" />
+  <link rel="stylesheet" href="./processor.css?v=1777568479" />
 </head>
 
 <body>
@@ -61,30 +61,57 @@
           <h2 class="hidden-player-title">Processor</h2>
 
           <!-- ================================================================
-               UPLOAD ZONE &mdash; drag-and-drop or click to browse
+               UPLOAD ZONES &mdash; Before (optional) + After
                ================================================================ -->
-          <div class="upload-zone" id="uploadZone">
-            <input
-              type="file"
-              id="fileInput"
-              accept="audio/*,.mp3,.wav,.aif,.aiff,.flac,.ogg,.m4a,.aac,.opus"
-              class="upload-file-input"
-              aria-label="Upload audio file"
-            />
-            <!-- Transparent label covers the zone so any tap opens the file picker on mobile -->
-            <label for="fileInput" class="upload-zone-label" aria-hidden="true"></label>
-            <!-- Empty state -->
-            <div class="upload-zone-content" id="uploadZoneContent">
-              <div class="upload-zone-icon">&#9836;</div>
-              <div class="upload-zone-text">Drop an audio file here</div>
-              <div class="upload-zone-subtext">or tap to browse</div>
-              <div class="upload-zone-formats">MP3 &middot; WAV &middot; AIFF &middot; FLAC &middot; OGG &middot; M4A &middot; AAC</div>
+          <div class="proc-upload-row">
+            <!-- Before upload zone -->
+            <div class="proc-upload-col">
+              <div class="proc-upload-col-label">A</div>
+              <div class="upload-zone" id="uploadZoneBefore">
+                <input
+                  type="file"
+                  id="fileInputBefore"
+                  accept="audio/*,.mp3,.wav,.aif,.aiff,.flac,.ogg,.m4a,.aac,.opus"
+                  class="upload-file-input"
+                  aria-label="Upload before audio file"
+                />
+                <label for="fileInputBefore" class="upload-zone-label" aria-hidden="true"></label>
+                <div class="upload-zone-content" id="uploadZoneContentBefore">
+                  <div class="upload-zone-icon">&#9836;</div>
+                  <div class="upload-zone-text">Drop file here</div>
+                  <div class="upload-zone-subtext">optional &mdash; tap to browse</div>
+                </div>
+                <div class="upload-loaded-content" id="uploadLoadedContentBefore" style="display: none;">
+                  <div class="upload-loaded-filename" id="uploadFilenameBefore">&mdash;</div>
+                  <button class="upload-another-btn" id="uploadAnotherBtnBefore" aria-label="Load another before file">&#8635;</button>
+                  <button class="upload-clear-btn" id="uploadClearBtnBefore" aria-label="Clear before file">&#10005;</button>
+                </div>
+              </div>
             </div>
-            <!-- Loaded state -->
-            <div class="upload-loaded-content" id="uploadLoadedContent" style="display: none;">
-              <div class="upload-loaded-filename" id="uploadFilename">&mdash;</div>
-              <button class="upload-another-btn" id="uploadAnotherBtn" aria-label="Load another file">&#8635; Change</button>
-              <button class="upload-clear-btn" id="uploadClearBtn" aria-label="Clear file">&#10005; Clear</button>
+            <!-- After upload zone -->
+            <div class="proc-upload-col">
+              <div class="proc-upload-col-label">B</div>
+              <div class="upload-zone" id="uploadZoneAfter">
+                <input
+                  type="file"
+                  id="fileInputAfter"
+                  accept="audio/*,.mp3,.wav,.aif,.aiff,.flac,.ogg,.m4a,.aac,.opus"
+                  class="upload-file-input"
+                  aria-label="Upload after audio file"
+                />
+                <label for="fileInputAfter" class="upload-zone-label" aria-hidden="true"></label>
+                <div class="upload-zone-content" id="uploadZoneContentAfter">
+                  <div class="upload-zone-icon">&#9836;</div>
+                  <div class="upload-zone-text">Drop file here</div>
+                  <div class="upload-zone-subtext">or tap to browse</div>
+                  <div class="upload-zone-formats">MP3 &middot; WAV &middot; AIFF &middot; FLAC &middot; OGG &middot; M4A &middot; AAC</div>
+                </div>
+                <div class="upload-loaded-content" id="uploadLoadedContentAfter" style="display: none;">
+                  <div class="upload-loaded-filename" id="uploadFilenameAfter">&mdash;</div>
+                  <button class="upload-another-btn" id="uploadAnotherBtnAfter" aria-label="Load another after file">&#8635;</button>
+                  <button class="upload-clear-btn" id="uploadClearBtnAfter" aria-label="Clear after file">&#10005;</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -93,6 +120,10 @@
                ================================================================ -->
           <div class="ba-global-toggle-section">
             <div class="ba-meter-container">
+              <div class="ba-toggle-labels" id="procToggleLabels" style="display: none;">
+                <span class="ba-toggle-label proc-toggle-before">A</span>
+                <span class="ba-toggle-label proc-toggle-after">B</span>
+              </div>
               <div class="ba-meter-display" id="procMeterDisplay">
                 <div class="ba-meter-scale">
                   <div class="ba-meter-vu-line"></div>
@@ -152,6 +183,7 @@
             </div>
 
             <div class="ba-controls-row" style="justify-content: center; gap: 1.5rem;">
+              <button id="procToggleButton" class="ba-toggle-button" aria-label="Toggle Before/After" style="display: none;"></button>
               <button id="procLoudnessMeterBtn" class="ba-view-btn-inline" aria-label="View Spectrum Analyzer" title="Show spectrum analyzer">View</button>
               <button id="procAnalyzeBtn" class="control-btn-analyze" aria-label="Analyze Track" title="Analyze current file">Analyze</button>
             </div>
@@ -192,7 +224,7 @@
     <div id="procAnalysisModal" class="analysis-modal" style="display: none;">
       <div class="analysis-modal-content">
         <button class="analysis-modal-close" id="procAnalysisModalClose">&times;</button>
-        <h2>Track Analysis</h2>
+        <h2 id="procAnalysisTitle">Track Analysis</h2>
         <div id="procAnalysisResults" class="analysis-results">
           <div class="analysis-loading">
             <span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span>
@@ -210,6 +242,10 @@
         <button class="analysis-modal-close" id="procLoudnessMeterClose">&times;</button>
         <div class="spectrum-modal-header">
           <h2>Spectrum Analyzer</h2>
+          <div class="spectrum-mode-toggle" id="procSpectrumModeToggle" style="display: none;">
+            <button id="procSpectrumBeforeBtn" class="spectrum-mode-btn">A</button>
+            <button id="procSpectrumAfterBtn" class="spectrum-mode-btn active">B</button>
+          </div>
         </div>
         <div id="procLoudnessMeterDisplay" class="loudness-meter-display">
           <div class="loudness-meter-track-name" id="procMeterTrackName">No file loaded</div>
@@ -307,53 +343,63 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Privacy / cleanup ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      // All object URLs are tracked here and revoked when the page is closed.
-      // No data is ever written to localStorage, sessionStorage, IndexedDB,
-      // or any Cache API. Everything lives in memory only.
+      // All object URLs tracked here, revoked on close. Nothing stored externally.
       const allObjectURLs = [];
-      let currentObjectURL = null;
+      let beforeObjectURL = null;
+      let afterObjectURL  = null;
 
       function cleanup() {
-        if (audio) {
-          audio.pause();
-          audio.src = '';
-          try { audio.load(); } catch (_) {}
-        }
+        [audioAfter, audioBefore].forEach(a => {
+          if (a) { a.pause(); a.src = ''; try { a.load(); } catch (_) {} }
+        });
         allObjectURLs.forEach(u => { try { URL.revokeObjectURL(u); } catch (_) {} });
         allObjectURLs.length = 0;
-        currentObjectURL = null;
-        // Clear analysis buffers
+        beforeObjectURL = null;
+        afterObjectURL  = null;
         resetBuffers();
       }
 
       window.addEventListener('beforeunload', cleanup);
       document.addEventListener('pagehide', cleanup);
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ DOM References ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      const meterNeedle    = document.getElementById('procMeterNeedle');
-      const volumeKnob     = document.getElementById('procVolumeKnob');
-      const volumeValue    = document.getElementById('procVolumeValue');
-      const playPauseBtn   = document.getElementById('procPlayPauseBtn');
-      const prevBtn        = document.getElementById('procPrevBtn');
-      const nextBtn        = document.getElementById('procNextBtn');
-      const nowPlaying     = document.getElementById('procNowPlaying');
-      const wave           = document.getElementById('procWave');
-      const timeDisplay    = document.getElementById('procTimeDisplay');
-      const rmsDisplay     = document.getElementById('procRmsValue');
-      const lufsDisplay    = document.getElementById('procLufsValue');
+      // DOM References
+      const meterNeedle     = document.getElementById('procMeterNeedle');
+      const volumeKnob      = document.getElementById('procVolumeKnob');
+      const volumeValue     = document.getElementById('procVolumeValue');
+      const playPauseBtn    = document.getElementById('procPlayPauseBtn');
+      const prevBtn         = document.getElementById('procPrevBtn');
+      const nextBtn         = document.getElementById('procNextBtn');
+      const nowPlaying      = document.getElementById('procNowPlaying');
+      const wave            = document.getElementById('procWave');
+      const timeDisplay     = document.getElementById('procTimeDisplay');
+      const rmsDisplay      = document.getElementById('procRmsValue');
+      const lufsDisplay     = document.getElementById('procLufsValue');
       const truePeakDisplay = document.getElementById('procTruePeakValue');
-      const vuDisplay      = document.getElementById('procVuDisplay');
-      const sourceDisplay  = document.getElementById('procSourceValue');
-      const lraDisplay     = document.getElementById('procLraValue');
+      const vuDisplay       = document.getElementById('procVuDisplay');
+      const sourceDisplay   = document.getElementById('procSourceValue');
+      const lraDisplay      = document.getElementById('procLraValue');
+      const toggleButton    = document.getElementById('procToggleButton');
+      const toggleLabels    = document.getElementById('procToggleLabels');
+      const beforeLabel     = document.querySelector('.proc-toggle-before');
+      const afterLabel      = document.querySelector('.proc-toggle-after');
 
-      const uploadZone         = document.getElementById('uploadZone');
-      const fileInput          = document.getElementById('fileInput');
-      const uploadZoneContent  = document.getElementById('uploadZoneContent');
-      const uploadLoadedContent = document.getElementById('uploadLoadedContent');
-      const uploadFilename     = document.getElementById('uploadFilename');
-      const uploadClearBtn     = document.getElementById('uploadClearBtn');
-      const uploadAnotherBtn   = document.getElementById('uploadAnotherBtn');
+      // After upload zone
+      const uploadZoneAfter          = document.getElementById('uploadZoneAfter');
+      const fileInputAfter           = document.getElementById('fileInputAfter');
+      const uploadZoneContentAfter   = document.getElementById('uploadZoneContentAfter');
+      const uploadLoadedContentAfter = document.getElementById('uploadLoadedContentAfter');
+      const uploadFilenameAfter      = document.getElementById('uploadFilenameAfter');
+      const uploadClearBtnAfter      = document.getElementById('uploadClearBtnAfter');
+      const uploadAnotherBtnAfter    = document.getElementById('uploadAnotherBtnAfter');
+
+      // Before upload zone
+      const uploadZoneBefore          = document.getElementById('uploadZoneBefore');
+      const fileInputBefore           = document.getElementById('fileInputBefore');
+      const uploadZoneContentBefore   = document.getElementById('uploadZoneContentBefore');
+      const uploadLoadedContentBefore = document.getElementById('uploadLoadedContentBefore');
+      const uploadFilenameBefore      = document.getElementById('uploadFilenameBefore');
+      const uploadClearBtnBefore      = document.getElementById('uploadClearBtnBefore');
+      const uploadAnotherBtnBefore    = document.getElementById('uploadAnotherBtnBefore');
 
       const analyzeBtn          = document.getElementById('procAnalyzeBtn');
       const analysisModal       = document.getElementById('procAnalysisModal');
@@ -373,94 +419,138 @@
       const meterLraStatusEl    = document.getElementById('procMeterLraStatus');
       const meterCanvas         = document.getElementById('procLoudnessMeterCanvas');
       const meterCtx            = meterCanvas.getContext('2d', { alpha: false, desynchronized: true });
+      const spectrumBeforeBtn   = document.getElementById('procSpectrumBeforeBtn');
+      const spectrumAfterBtn    = document.getElementById('procSpectrumAfterBtn');
+      const spectrumModeToggle  = document.getElementById('procSpectrumModeToggle');
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Audio Graph ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      const audio = new Audio();
-      audio.preload = 'auto';
+      // Two audio elements: After (primary) and Before (optional)
+      const audioAfter  = new Audio();
+      const audioBefore = new Audio();
+      audioAfter.preload  = 'auto';
+      audioBefore.preload = 'auto';
 
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       window._procAudioContext = ctx;
 
-      // Detect mobile: lower-power devices need a reduced processing budget
       const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
                        ('ontouchstart' in window && window.innerWidth <= 900);
 
-      // Spectrum analyser &mdash; 8192 FFT on desktop; 2048 on mobile to cut per-frame cost by 4├âΓÇö
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = isMobile ? 2048 : 8192;
-      analyser.smoothingTimeConstant = 0.8;
-      analyser.minDecibels = -90;
-      analyser.maxDecibels = 0;
+      const specFftSize = isMobile ? 2048 : 8192;
 
-      // VU analyser (2048 FFT) &mdash; lightweight, for needle + readouts
-      const vuAnalyser = ctx.createAnalyser();
-      vuAnalyser.fftSize = 2048;
-      vuAnalyser.smoothingTimeConstant = 0.8;
+      const afterAnalyser  = ctx.createAnalyser();
+      const beforeAnalyser = ctx.createAnalyser();
+      [afterAnalyser, beforeAnalyser].forEach(a => {
+        a.fftSize = specFftSize;
+        a.smoothingTimeConstant = 0.8;
+        a.minDecibels = -90;
+        a.maxDecibels = 0;
+      });
 
-      const gainNode = ctx.createGain();
+      const afterVUAnalyser  = ctx.createAnalyser();
+      const beforeVUAnalyser = ctx.createAnalyser();
+      [afterVUAnalyser, beforeVUAnalyser].forEach(a => {
+        a.fftSize = 2048;
+        a.smoothingTimeConstant = 0.8;
+      });
 
-      // Pre-allocated time-domain buffer
-      const timeData = new Float32Array(vuAnalyser.fftSize);
+      const afterGain  = ctx.createGain();
+      const beforeGain = ctx.createGain();
+      const afterTimeData  = new Float32Array(afterVUAnalyser.fftSize);
+      const beforeTimeData = new Float32Array(beforeVUAnalyser.fftSize);
 
-      let connected = false;
+      let afterConnected  = false;
+      let beforeConnected = false;
 
-      function ensureGraph() {
+      function ensureAfterGraph() {
         if (ctx.state === 'suspended') ctx.resume();
-        if (!connected) {
-          const src = ctx.createMediaElementSource(audio);
-          src.connect(vuAnalyser);
-          vuAnalyser.connect(gainNode);
-          gainNode.connect(ctx.destination);
-          src.connect(analyser); // spectrum tap (no audio output)
-          connected = true;
+        if (!afterConnected) {
+          const src = ctx.createMediaElementSource(audioAfter);
+          src.connect(afterVUAnalyser);
+          afterVUAnalyser.connect(afterGain);
+          afterGain.connect(ctx.destination);
+          src.connect(afterAnalyser);
+          afterConnected = true;
         }
       }
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Volume State ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      let db = 0;
-      let angle = 360;
-      let drag = false;
-      let moved = false;
-      let startY = 0;
-      let startAngle = 0;
+      function ensureBeforeGraph() {
+        if (ctx.state === 'suspended') ctx.resume();
+        if (!beforeConnected) {
+          const src = ctx.createMediaElementSource(audioBefore);
+          src.connect(beforeVUAnalyser);
+          beforeVUAnalyser.connect(beforeGain);
+          beforeGain.connect(ctx.destination);
+          src.connect(beforeAnalyser);
+          beforeConnected = true;
+        }
+      }
+
+      // Volume / mode state
+      let db = 0, angle = 360, drag = false, moved = false, startY = 0, startAngle = 0;
+      let afterMode = true;
 
       function applyVolume() {
         volumeValue.textContent = `${db >= 0 ? '+' : ''}${db.toFixed(1)} dB`;
         volumeKnob.style.transform = `rotate(${angle - 360}deg)`;
         const gain = Math.pow(10, db / 20);
-        gainNode.gain.value = gain;
+        afterGain.gain.value  = afterMode ? gain : 0;
+        beforeGain.gain.value = afterMode ? 0 : gain;
       }
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Metering Buffers ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      const lufsBufferSize = 150; // ~3s at 50fps
-      const rmsBufferSize  = 15;  // ~300ms at 50fps
+      function activeAudio()   { return afterMode ? audioAfter : audioBefore; }
+      function inactiveAudio() { return afterMode ? audioBefore : audioAfter; }
 
-      let lufsBuffer = [];
-      let rmsBuffer  = [];
-      let rmsSumSq   = 0;
-      let lufsSumSq  = 0;
-      let truePeakHold = -100;
-      let lraValues  = [];
-      let lraCached  = 0;
-      let lraFrame   = 0;
+      function applyMode(nextAfter) {
+        afterMode = nextAfter;
+        if (afterLabel && beforeLabel) {
+          afterLabel.style.opacity    = afterMode ? '1' : '0.6';
+          afterLabel.style.fontWeight = afterMode ? '600' : '500';
+          beforeLabel.style.opacity    = afterMode ? '0.6' : '1';
+          beforeLabel.style.fontWeight = afterMode ? '500' : '600';
+          if (toggleButton) toggleButton.classList.toggle('active', afterMode);
+        }
+        if (sourceDisplay) sourceDisplay.textContent = afterMode ? 'B' : 'A';
+        if (nowPlaying) nowPlaying.textContent = afterMode
+          ? (afterTrackName  || 'No file loaded')
+          : (beforeTrackName || 'No file loaded');
+        applyVolume();
+        const wasPlaying = !audioAfter.paused || !audioBefore.paused;
+        if (wasPlaying) {
+          const active   = activeAudio();
+          const inactive = inactiveAudio();
+          const t = inactive.currentTime || active.currentTime;
+          inactive.pause();
+          if (Math.abs(active.currentTime - t) > 0.05) active.currentTime = t;
+          active.play().catch(() => {});
+        }
+        if (spectrumBeforeBtn && spectrumAfterBtn) {
+          spectrumBeforeBtn.classList.toggle('active', !afterMode);
+          spectrumAfterBtn.classList.toggle('active',   afterMode);
+        }
+        if (meterTrackNameEl) meterTrackNameEl.textContent = afterMode
+          ? (afterTrackName  || 'No file loaded')
+          : (beforeTrackName || 'No file loaded');
+      }
+
+      // Metering buffers
+      const lufsBufferSize = 150;
+      const rmsBufferSize  = 15;
+      let afterLufsBuffer = [], beforeLufsBuffer = [];
+      let afterRmsBuffer  = [], beforeRmsBuffer  = [];
+      let afterRmsSumSq = 0,  beforeRmsSumSq = 0;
+      let afterLufsSumSq = 0, beforeLufsSumSq = 0;
+      let afterTruePeakHold = -100, beforeTruePeakHold = -100;
+      let lraValues = [], lraCached = 0, lraFrame = 0;
       let needleAngle = -50;
 
-      // Integrated LUFS + LRA for spectrum modal
-      let integratedLufsBuffer = [];
-      let lraModalValues = [];
-
       function resetBuffers() {
-        lufsBuffer = [];
-        rmsBuffer  = [];
-        rmsSumSq   = 0;
-        lufsSumSq  = 0;
-        truePeakHold = -100;
-        lraValues  = [];
-        lraCached  = 0;
-        lraFrame   = 0;
+        afterLufsBuffer = []; beforeLufsBuffer = [];
+        afterRmsBuffer  = []; beforeRmsBuffer  = [];
+        afterRmsSumSq = 0;  beforeRmsSumSq = 0;
+        afterLufsSumSq = 0; beforeLufsSumSq = 0;
+        afterTruePeakHold = -100; beforeTruePeakHold = -100;
+        lraValues = []; lraCached = 0; lraFrame = 0;
         needleAngle = -50;
-        integratedLufsBuffer = [];
-        lraModalValues = [];
         if (rmsDisplay)       rmsDisplay.textContent       = '-\u221E dB';
         if (truePeakDisplay)  truePeakDisplay.textContent  = '-\u221E dBTP';
         if (lufsDisplay)      lufsDisplay.textContent      = '-\u221E LUFS';
@@ -469,29 +559,29 @@
         if (meterNeedle)      meterNeedle.style.transform  = 'translateX(-50%) rotate(-50deg)';
       }
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Playback State ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      let fileLoaded   = false;
-      let playing      = false;
-      let progressRAF  = null;
-      let vuRAF        = null;
-      let currentTrackName = '';
+      // Playback state
+      let afterLoaded = false, beforeLoaded = false;
+      let playing = false, progressRAF = null, vuRAF = null;
+      let afterTrackName = '', beforeTrackName = '';
 
-      audio.addEventListener('play', () => {
-        playPauseBtn.classList.add('playing');
-        playing = true;
-      });
-      audio.addEventListener('pause', () => {
-        playPauseBtn.classList.remove('playing');
-        playing = false;
-      });
-      audio.addEventListener('ended', () => {
-        playPauseBtn.classList.remove('playing');
-        playing = false;
+      audioAfter.addEventListener('play',  () => { playPauseBtn.classList.add('playing');    playing = true; });
+      audioAfter.addEventListener('pause', () => { if (audioAfter.paused && audioBefore.paused) { playPauseBtn.classList.remove('playing'); playing = false; } });
+      audioAfter.addEventListener('ended', () => {
+        playPauseBtn.classList.remove('playing'); playing = false;
         if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
         stopVU();
       });
+      audioBefore.addEventListener('play',  () => { playPauseBtn.classList.add('playing');    playing = true; });
+      audioBefore.addEventListener('pause', () => { if (audioAfter.paused && audioBefore.paused) { playPauseBtn.classList.remove('playing'); playing = false; } });
+      audioBefore.addEventListener('ended', () => {
+        if (audioAfter.paused) {
+          playPauseBtn.classList.remove('playing'); playing = false;
+          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+          stopVU();
+        }
+      });
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Progress Bar ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      // Progress bar
       const progressFill = document.createElement('div');
       progressFill.className = 'main-player-progress-fill';
       progressFill.style.width = '0%';
@@ -507,8 +597,9 @@
       }
 
       function renderProgress() {
-        const cur = audio.currentTime || 0;
-        const dur = audio.duration   || 0;
+        const active = activeAudio();
+        const cur = active.currentTime || 0;
+        const dur = active.duration   || 0;
         const pct = dur ? (cur / dur) * 100 : 0;
         progressFill.style.width = pct + '%';
         scrubber.style.left      = pct + '%';
@@ -517,27 +608,30 @@
 
       function startProgress() {
         if (progressRAF) cancelAnimationFrame(progressRAF);
-        let lastRender = 0;
+        let lastSync = 0, lastRender = 0;
         const step = () => {
-          if (audio.paused) { progressRAF = null; return; }
+          const active   = activeAudio();
+          const inactive = inactiveAudio();
+          if (active.paused) { progressRAF = null; return; }
           const now = performance.now();
+          if (now - lastSync > 100) {
+            if (!inactive.paused) inactive.pause();
+            inactive.currentTime = active.currentTime;
+            lastSync = now;
+          }
           if (now - lastRender >= 66) { renderProgress(); lastRender = now; }
           progressRAF = requestAnimationFrame(step);
         };
         progressRAF = requestAnimationFrame(step);
       }
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ VU Meter Loop ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
       function stopVU() {
         if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; }
         const decayLoop = () => {
           needleAngle += (-50 - needleAngle) * 0.1;
           meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
           if (Math.abs(needleAngle - (-50)) > 0.1) requestAnimationFrame(decayLoop);
-          else {
-            needleAngle = -50;
-            meterNeedle.style.transform = 'translateX(-50%) rotate(-50deg)';
-          }
+          else { needleAngle = -50; meterNeedle.style.transform = 'translateX(-50%) rotate(-50deg)'; }
         };
         decayLoop();
         if (rmsDisplay)       rmsDisplay.textContent       = '-\u221E dB';
@@ -548,65 +642,58 @@
 
       function startVU() {
         if (vuRAF) cancelAnimationFrame(vuRAF);
-        let lastDisplayUpdate = 0;
-        let vuFrameCount = 0;
+        let lastDisplayUpdate = 0, vuFrameCount = 0;
         const loop = () => {
-          // Throttle to ~30fps on mobile &mdash; halves the CPU cost while still feeling smooth
           if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
+          const vuAnalyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
+          const timeData   = afterMode ? afterTimeData   : beforeTimeData;
           vuAnalyser.getFloatTimeDomainData(timeData);
 
           let sumSquares = 0, peakSample = 0;
           for (let i = 0; i < timeData.length; i++) {
-            const s = timeData[i];
-            sumSquares += s * s;
-            const a = s < 0 ? -s : s;
-            if (a > peakSample) peakSample = a;
+            const s = timeData[i]; sumSquares += s * s;
+            const a = s < 0 ? -s : s; if (a > peakSample) peakSample = a;
           }
           const rms = Math.sqrt(sumSquares / timeData.length);
 
-          // Short-term RMS (running sum)
-          if (rmsBuffer.length >= rmsBufferSize) {
-            const old = rmsBuffer[0];
-            rmsSumSq -= old * old;
-          }
-          rmsBuffer.push(rms);
-          if (rmsBuffer.length > rmsBufferSize) rmsBuffer.shift();
-          rmsSumSq += rms * rms;
-          const stRms    = rmsBuffer.length > 1 ? Math.sqrt(rmsSumSq / rmsBuffer.length) : rms;
-          const stRmsDb  = stRms > 0.00001 ? 20 * Math.log10(stRms) : -100;
-          const peakDb   = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
+          const currentRmsBuffer = afterMode ? afterRmsBuffer : beforeRmsBuffer;
+          let currentRmsSumSq    = afterMode ? afterRmsSumSq  : beforeRmsSumSq;
+          if (currentRmsBuffer.length >= rmsBufferSize) currentRmsSumSq -= currentRmsBuffer[0] * currentRmsBuffer[0];
+          currentRmsBuffer.push(rms);
+          if (currentRmsBuffer.length > rmsBufferSize) currentRmsBuffer.shift();
+          currentRmsSumSq += rms * rms;
+          if (afterMode) afterRmsSumSq = currentRmsSumSq; else beforeRmsSumSq = currentRmsSumSq;
+          const stRms   = currentRmsBuffer.length > 1 ? Math.sqrt(currentRmsSumSq / currentRmsBuffer.length) : rms;
+          const stRmsDb = stRms > 0.00001 ? 20 * Math.log10(stRms) : -100;
+          const peakDb  = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
 
-          // True peak hold
-          if (peakDb > truePeakHold) truePeakHold = peakDb;
-          else truePeakHold = Math.max(truePeakHold * 0.998, -100);
+          let truePeak = afterMode ? afterTruePeakHold : beforeTruePeakHold;
+          truePeak = peakDb > truePeak ? peakDb : Math.max(truePeak * 0.998, -100);
+          if (afterMode) afterTruePeakHold = truePeak; else beforeTruePeakHold = truePeak;
 
-          // Integrated LUFS (running sum)
-          if (lufsBuffer.length >= lufsBufferSize) {
-            const old = lufsBuffer[0];
-            lufsSumSq -= old * old;
-          }
-          lufsBuffer.push(rms);
-          if (lufsBuffer.length > lufsBufferSize) lufsBuffer.shift();
-          lufsSumSq += rms * rms;
+          const currentLufsBuffer = afterMode ? afterLufsBuffer : beforeLufsBuffer;
+          let currentLufsSumSq    = afterMode ? afterLufsSumSq  : beforeLufsSumSq;
+          if (currentLufsBuffer.length >= lufsBufferSize) currentLufsSumSq -= currentLufsBuffer[0] * currentLufsBuffer[0];
+          currentLufsBuffer.push(rms);
+          if (currentLufsBuffer.length > lufsBufferSize) currentLufsBuffer.shift();
+          currentLufsSumSq += rms * rms;
+          if (afterMode) afterLufsSumSq = currentLufsSumSq; else beforeLufsSumSq = currentLufsSumSq;
           let lufsValue = -100;
-          if (lufsBuffer.length > 50) {
-            const avgRms = Math.sqrt(lufsSumSq / lufsBuffer.length);
+          if (currentLufsBuffer.length > 50) {
+            const avgRms = Math.sqrt(currentLufsSumSq / currentLufsBuffer.length);
             lufsValue = (avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100) - 0.691;
           }
 
-          // LRA (re-sort every ~60 frames ├óΓÇ░╦å 1s)
           lraValues.push(lufsValue);
           if (lraValues.length > 300) lraValues.shift();
           lraFrame++;
           if (lraFrame % 60 === 0 && lraValues.length > 100) {
             const sorted = [...lraValues].filter(v => v > -99).sort((a, b) => a - b);
-            if (sorted.length > 20)
-              lraCached = sorted[Math.floor(sorted.length * 0.95)] - sorted[Math.floor(sorted.length * 0.1)];
+            if (sorted.length > 20) lraCached = sorted[Math.floor(sorted.length * 0.95)] - sorted[Math.floor(sorted.length * 0.1)];
           }
 
-          // VU needle animation (every frame for smooth ballistics)
-          const volGain = Math.pow(10, db / 20);
-          const adjRmsDb = stRmsDb + 20 * Math.log10(volGain);
+          const volGain   = Math.pow(10, db / 20);
+          const adjRmsDb  = stRmsDb + 20 * Math.log10(volGain);
           const vuReading = adjRmsDb + 18;
           const vuMin = -20, vuMax = 3;
           const clamped = Math.max(vuMin, Math.min(vuMax, vuReading));
@@ -617,203 +704,206 @@
           needleAngle += diff * (diff > 0 ? 0.2 : 0.06);
           meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
 
-          // Text readouts throttled to ~10fps
-          const now = performance.now();
-          if (now - lastDisplayUpdate >= 100) {
-            lastDisplayUpdate = now;
+          const nowMs = performance.now();
+          if (nowMs - lastDisplayUpdate >= 100) {
+            lastDisplayUpdate = nowMs;
+            if (sourceDisplay)    sourceDisplay.textContent    = afterMode ? 'B' : 'A';
             if (vuDisplay)        vuDisplay.textContent        = vuReading > -99 ? `${vuReading >= 0 ? '+' : ''}${vuReading.toFixed(1)} VU` : '-\u221E VU';
             if (rmsDisplay)       rmsDisplay.textContent       = stRmsDb > -99 ? `${stRmsDb.toFixed(1)} dB` : '-\u221E dB';
-            if (truePeakDisplay)  truePeakDisplay.textContent  = truePeakHold > -99 ? `${truePeakHold.toFixed(1)} dBTP` : '-\u221E dBTP';
+            if (truePeakDisplay)  truePeakDisplay.textContent  = truePeak > -99 ? `${truePeak.toFixed(1)} dBTP` : '-\u221E dBTP';
             if (lufsDisplay)      lufsDisplay.textContent      = lufsValue > -99 ? `${lufsValue.toFixed(1)} LUFS` : '-\u221E LUFS';
             if (lraDisplay)       lraDisplay.textContent       = lraCached > 0 ? `${lraCached.toFixed(1)} LU` : '-- LU';
           }
-
           vuRAF = requestAnimationFrame(loop);
         };
         vuRAF = requestAnimationFrame(loop);
       }
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ File Loading ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      function showUploadZone() {
-        uploadZone.classList.remove('loaded', 'buffering');
-        uploadZoneContent.style.display  = '';
-        uploadLoadedContent.style.display = 'none';
-        // Re-enable native file input over the zone
-        // (removing pointer-events:none is handled by removing 'loaded' class)
+      // Upload zone helpers
+      function showUploadZone(zone, contentEl, loadedEl) {
+        zone.classList.remove('loaded', 'buffering');
+        contentEl.style.display = '';
+        loadedEl.style.display  = 'none';
       }
 
-      function showLoadedZone(filename) {
-        uploadZone.classList.add('loaded');
-        uploadZone.classList.remove('buffering');
-        uploadZoneContent.style.display  = 'none';
-        uploadLoadedContent.style.display = 'flex';
-        uploadFilename.textContent = filename;
+      function showLoadedZone(zone, contentEl, loadedEl, filenameEl, filename) {
+        zone.classList.add('loaded');
+        zone.classList.remove('buffering');
+        contentEl.style.display = 'none';
+        loadedEl.style.display  = 'flex';
+        filenameEl.textContent  = filename;
       }
 
-      function loadFile(file) {
-        if (!file) return;
+      function updateToggleVisibility() {
+        const hasBoth = afterLoaded && beforeLoaded;
+        if (toggleButton)      toggleButton.style.display      = hasBoth ? '' : 'none';
+        if (toggleLabels)      toggleLabels.style.display       = hasBoth ? '' : 'none';
+        if (spectrumModeToggle) spectrumModeToggle.style.display = hasBoth ? '' : 'none';
+        if (hasBoth) applyMode(afterMode);
+      }
 
-        // Basic MIME / extension check
+      function isValidAudio(file) {
         const ext = file.name.match(/\.([^.]+)$/);
-        const extOk = ext && /^(mp3|wav|aif|aiff|flac|ogg|m4a|aac|opus)$/i.test(ext[1]);
-        if (!file.type.startsWith('audio/') && !extOk) {
-          alert('Please upload a supported audio file (MP3, WAV, AIFF, FLAC, OGG, M4A, AAC).');
-          return;
-        }
+        return file.type.startsWith('audio/') || (ext && /^(mp3|wav|aif|aiff|flac|ogg|m4a|aac|opus)$/i.test(ext[1]));
+      }
 
-        // Stop current playback and cancel animation loops
-        audio.pause();
-        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
-        stopVU();
+      function loadAfterFile(file) {
+        if (!file || !isValidAudio(file)) { if (file) alert('Please upload a supported audio file (MP3, WAV, AIFF, FLAC, OGG, M4A, AAC).'); return; }
+        if (afterMode) {
+          audioAfter.pause();
+          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+          stopVU();
+        }
         resetBuffers();
-
-        // Update object URL tracking
-        if (currentObjectURL) {
-          URL.revokeObjectURL(currentObjectURL);
-          const idx = allObjectURLs.indexOf(currentObjectURL);
-          if (idx !== -1) allObjectURLs.splice(idx, 1);
+        if (afterObjectURL) {
+          URL.revokeObjectURL(afterObjectURL);
+          const i = allObjectURLs.indexOf(afterObjectURL); if (i !== -1) allObjectURLs.splice(i, 1);
         }
-        currentObjectURL = URL.createObjectURL(file);
-        allObjectURLs.push(currentObjectURL);
-
-        // Strip extension for display, truncate for metering label
-        currentTrackName = file.name.replace(/\.[^.]+$/, '');
-        const shortName = currentTrackName.length > 22
-          ? currentTrackName.substring(0, 22) + '\u2026'
-          : currentTrackName;
-
-        // Reset UI
-        uploadZone.classList.add('buffering');
-        progressFill.style.width = '0%';
-        scrubber.style.left      = '0%';
-        if (timeDisplay)   timeDisplay.textContent = '0:00 / 0:00';
-        nowPlaying.textContent   = currentTrackName;
-        sourceDisplay.textContent = shortName;
-
+        afterObjectURL = URL.createObjectURL(file);
+        allObjectURLs.push(afterObjectURL);
+        afterTrackName = file.name.replace(/\.[^.]+$/, '');
+        uploadZoneAfter.classList.add('buffering');
+        if (afterMode) {
+          progressFill.style.width = '0%'; scrubber.style.left = '0%';
+          if (timeDisplay) timeDisplay.textContent = '0:00 / 0:00';
+          nowPlaying.textContent = afterTrackName;
+          sourceDisplay.textContent = afterTrackName.length > 22 ? afterTrackName.substring(0, 22) + '\u2026' : afterTrackName;
+        }
         playPauseBtn.classList.remove('playing');
-        fileLoaded = false;
-
-        // Handler: ready to play &mdash; do NOT auto-play, wait for user input
+        afterLoaded = false;
         const onReady = () => {
-          fileLoaded = true;
-          showLoadedZone(file.name);
-          audio.currentTime = 0;
-          ensureGraph();
+          afterLoaded = true;
+          showLoadedZone(uploadZoneAfter, uploadZoneContentAfter, uploadLoadedContentAfter, uploadFilenameAfter, file.name);
+          audioAfter.currentTime = 0;
+          ensureAfterGraph();
+          updateToggleVisibility();
+          if (!afterMode) applyMode(true);
+          else if (nowPlaying) nowPlaying.textContent = afterTrackName;
         };
-
-        // Handler: error
         const onError = () => {
           alert('Could not load this audio file. The format may be unsupported by your browser.');
-          showUploadZone();
-          nowPlaying.textContent = 'No file loaded';
-          sourceDisplay.textContent = '\u2014';
+          showUploadZone(uploadZoneAfter, uploadZoneContentAfter, uploadLoadedContentAfter);
         };
-
-        audio.addEventListener('canplay', onReady,  { once: true });
-        audio.addEventListener('error',   onError,  { once: true });
-
-        audio.src = currentObjectURL;
+        audioAfter.addEventListener('canplay', onReady, { once: true });
+        audioAfter.addEventListener('error',   onError, { once: true });
+        audioAfter.src = afterObjectURL;
       }
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Upload Zone Interactions ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      // Native file input change
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) loadFile(file);
-        // Reset input so the same file can be re-selected if needed
-        fileInput.value = '';
-      });
-
-      // Drag-and-drop
-      uploadZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (!uploadZone.classList.contains('loaded')) {
-          uploadZone.classList.add('drag-over');
+      function loadBeforeFile(file) {
+        if (!file || !isValidAudio(file)) { if (file) alert('Please upload a supported audio file (MP3, WAV, AIFF, FLAC, OGG, M4A, AAC).'); return; }
+        if (!afterMode) {
+          audioBefore.pause();
+          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+          stopVU();
         }
-      });
-      uploadZone.addEventListener('dragleave', () => {
-        uploadZone.classList.remove('drag-over');
-      });
-      uploadZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadZone.classList.remove('drag-over');
-        const file = e.dataTransfer.files[0];
-        if (file) loadFile(file);
-      });
+        if (beforeObjectURL) {
+          URL.revokeObjectURL(beforeObjectURL);
+          const i = allObjectURLs.indexOf(beforeObjectURL); if (i !== -1) allObjectURLs.splice(i, 1);
+        }
+        beforeObjectURL = URL.createObjectURL(file);
+        allObjectURLs.push(beforeObjectURL);
+        beforeTrackName = file.name.replace(/\.[^.]+$/, '');
+        uploadZoneBefore.classList.add('buffering');
+        beforeLoaded = false;
+        const onReady = () => {
+          beforeLoaded = true;
+          showLoadedZone(uploadZoneBefore, uploadZoneContentBefore, uploadLoadedContentBefore, uploadFilenameBefore, file.name);
+          audioBefore.currentTime = 0;
+          ensureBeforeGraph();
+          updateToggleVisibility();
+        };
+        const onError = () => {
+          alert('Could not load this audio file. The format may be unsupported by your browser.');
+          showUploadZone(uploadZoneBefore, uploadZoneContentBefore, uploadLoadedContentBefore);
+        };
+        audioBefore.addEventListener('canplay', onReady, { once: true });
+        audioBefore.addEventListener('error',   onError, { once: true });
+        audioBefore.src = beforeObjectURL;
+      }
 
-      // Clear file
-      uploadClearBtn.addEventListener('click', (e) => {
+      // After zone wiring
+      fileInputAfter.addEventListener('change', (e) => { const f = e.target.files[0]; if (f) loadAfterFile(f); fileInputAfter.value = ''; });
+      uploadZoneAfter.addEventListener('dragover',  (e) => { e.preventDefault(); if (!uploadZoneAfter.classList.contains('loaded')) uploadZoneAfter.classList.add('drag-over'); });
+      uploadZoneAfter.addEventListener('dragleave', () => uploadZoneAfter.classList.remove('drag-over'));
+      uploadZoneAfter.addEventListener('drop', (e) => { e.preventDefault(); uploadZoneAfter.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) loadAfterFile(f); });
+      uploadClearBtnAfter.addEventListener('click', (e) => {
         e.stopPropagation();
-        audio.pause();
-        audio.src = '';
-        if (currentObjectURL) {
-          URL.revokeObjectURL(currentObjectURL);
-          const idx = allObjectURLs.indexOf(currentObjectURL);
-          if (idx !== -1) allObjectURLs.splice(idx, 1);
-          currentObjectURL = null;
+        audioAfter.pause(); audioAfter.src = '';
+        if (afterMode) {
+          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+          stopVU();
         }
-        if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
-        stopVU();
+        if (afterObjectURL) {
+          URL.revokeObjectURL(afterObjectURL);
+          const i = allObjectURLs.indexOf(afterObjectURL); if (i !== -1) allObjectURLs.splice(i, 1);
+          afterObjectURL = null;
+        }
+        afterLoaded = false; afterTrackName = '';
         resetBuffers();
-        fileLoaded = false;
-        currentTrackName = '';
-        progressFill.style.width = '0%';
-        scrubber.style.left = '0%';
+        progressFill.style.width = '0%'; scrubber.style.left = '0%';
         if (timeDisplay) timeDisplay.textContent = '0:00 / 0:00';
-        nowPlaying.textContent = 'No file loaded';
-        sourceDisplay.textContent = '\u2014';
+        if (afterMode) { nowPlaying.textContent = 'No file loaded'; sourceDisplay.textContent = '\u2014'; }
         playPauseBtn.classList.remove('playing');
-        showUploadZone();
+        showUploadZone(uploadZoneAfter, uploadZoneContentAfter, uploadLoadedContentAfter);
+        updateToggleVisibility();
+        if (beforeLoaded && afterMode) applyMode(false);
       });
+      uploadAnotherBtnAfter.addEventListener('click', (e) => { e.stopPropagation(); fileInputAfter.click(); });
 
-      // Change file (load another)
-      uploadAnotherBtn.addEventListener('click', (e) => {
+      // Before zone wiring
+      fileInputBefore.addEventListener('change', (e) => { const f = e.target.files[0]; if (f) loadBeforeFile(f); fileInputBefore.value = ''; });
+      uploadZoneBefore.addEventListener('dragover',  (e) => { e.preventDefault(); if (!uploadZoneBefore.classList.contains('loaded')) uploadZoneBefore.classList.add('drag-over'); });
+      uploadZoneBefore.addEventListener('dragleave', () => uploadZoneBefore.classList.remove('drag-over'));
+      uploadZoneBefore.addEventListener('drop', (e) => { e.preventDefault(); uploadZoneBefore.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) loadBeforeFile(f); });
+      uploadClearBtnBefore.addEventListener('click', (e) => {
         e.stopPropagation();
-        fileInput.click();
-      });
-
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Transport Controls ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      playPauseBtn.addEventListener('click', async () => {
-        if (!fileLoaded) {
-          // Prompt user to upload a file
-          fileInput.click();
-          return;
+        audioBefore.pause(); audioBefore.src = '';
+        if (!afterMode) {
+          if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
+          stopVU();
         }
-        if (!audio.paused) {
-          audio.pause();
+        if (beforeObjectURL) {
+          URL.revokeObjectURL(beforeObjectURL);
+          const i = allObjectURLs.indexOf(beforeObjectURL); if (i !== -1) allObjectURLs.splice(i, 1);
+          beforeObjectURL = null;
+        }
+        beforeLoaded = false; beforeTrackName = '';
+        showUploadZone(uploadZoneBefore, uploadZoneContentBefore, uploadLoadedContentBefore);
+        updateToggleVisibility();
+        if (!afterMode && afterLoaded) applyMode(true);
+      });
+      uploadAnotherBtnBefore.addEventListener('click', (e) => { e.stopPropagation(); fileInputBefore.click(); });
+
+      // Transport controls
+      playPauseBtn.addEventListener('click', async () => {
+        if (!afterLoaded) { fileInputAfter.click(); return; }
+        const active = activeAudio();
+        if (!active.paused) {
+          active.pause(); inactiveAudio().pause();
           if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
           stopVU();
         } else {
           try {
-            ensureGraph();
-            await audio.play();
-            startProgress();
-            startVU();
-          } catch (err) {
-            console.error('[PROCESSOR] Play failed:', err);
-          }
+            if (afterMode) ensureAfterGraph(); else ensureBeforeGraph();
+            await active.play();
+            startProgress(); startVU();
+          } catch (err) { console.error('[PROCESSOR] Play failed:', err); }
         }
       });
 
-      // Previous = restart (or trigger upload if nothing loaded)
       prevBtn.addEventListener('click', () => {
-        if (!fileLoaded) { fileInput.click(); return; }
-        audio.currentTime = 0;
+        if (!afterLoaded) { fileInputAfter.click(); return; }
+        audioAfter.currentTime = 0; audioBefore.currentTime = 0;
         renderProgress();
       });
 
-      // Next = load another file
-      nextBtn.addEventListener('click', () => {
-        fileInput.click();
-      });
+      nextBtn.addEventListener('click', () => { fileInputAfter.click(); });
 
-      // Progress bar click / scrub
       wave.addEventListener('click', (e) => {
-        const dur = audio.duration || 0;
-        if (!dur) return;
+        const dur = activeAudio().duration || 0; if (!dur) return;
         const rect = wave.getBoundingClientRect();
-        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        audio.currentTime = pct * dur;
+        const t = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) * dur;
+        audioAfter.currentTime = t; audioBefore.currentTime = t;
         renderProgress();
       });
 
@@ -821,417 +911,304 @@
       wave.addEventListener('mousedown', () => { scrubbing = true; });
       document.addEventListener('mousemove', (e) => {
         if (!scrubbing) return;
-        const dur = audio.duration || 0;
-        if (!dur) return;
+        const dur = activeAudio().duration || 0; if (!dur) return;
         const rect = wave.getBoundingClientRect();
-        const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-        audio.currentTime = pct * dur;
+        const t = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)) * dur;
+        audioAfter.currentTime = t; audioBefore.currentTime = t;
         renderProgress();
       });
       document.addEventListener('mouseup', () => { scrubbing = false; });
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Volume Knob ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      volumeKnob.addEventListener('mousedown', (e) => {
-        drag = true; moved = false;
-        startY = e.clientY; startAngle = angle;
-        e.preventDefault();
-      });
+      // Volume knob
+      volumeKnob.addEventListener('mousedown', (e) => { drag = true; moved = false; startY = e.clientY; startAngle = angle; e.preventDefault(); });
       document.addEventListener('mousemove', (e) => {
         if (!drag) return;
-        const delta = startY - e.clientY;
-        if (Math.abs(delta) > 2) moved = true;
+        const delta = startY - e.clientY; if (Math.abs(delta) > 2) moved = true;
         angle = Math.max(180, Math.min(420, startAngle + delta));
-        db = -40 + ((angle - 180) / 240) * 52;
-        applyVolume();
+        db = -40 + ((angle - 180) / 240) * 52; applyVolume();
       });
-      document.addEventListener('mouseup', () => {
-        if (drag && !moved) { db = 0; angle = 360; applyVolume(); }
-        drag = false;
-      });
-      volumeKnob.addEventListener('touchstart', (e) => {
-        drag = true; moved = false;
-        startY = e.touches[0].clientY; startAngle = angle;
-        e.preventDefault();
-      }, { passive: false });
+      document.addEventListener('mouseup', () => { if (drag && !moved) { db = 0; angle = 360; applyVolume(); } drag = false; });
+      volumeKnob.addEventListener('touchstart', (e) => { drag = true; moved = false; startY = e.touches[0].clientY; startAngle = angle; e.preventDefault(); }, { passive: false });
       document.addEventListener('touchmove', (e) => {
         if (!drag) return;
-        const delta = startY - e.touches[0].clientY;
-        if (Math.abs(delta) > 2) moved = true;
+        const delta = startY - e.touches[0].clientY; if (Math.abs(delta) > 2) moved = true;
         angle = Math.max(180, Math.min(420, startAngle + delta));
-        db = -40 + ((angle - 180) / 240) * 52;
-        applyVolume();
-        e.preventDefault();
+        db = -40 + ((angle - 180) / 240) * 52; applyVolume(); e.preventDefault();
       }, { passive: false });
-      document.addEventListener('touchend', () => {
-        if (drag && !moved) { db = 0; angle = 360; applyVolume(); }
-        drag = false;
-      });
+      document.addEventListener('touchend', () => { if (drag && !moved) { db = 0; angle = 360; applyVolume(); } drag = false; });
       document.addEventListener('touchcancel', () => { drag = false; });
 
-      // Visibility: pause VU when tab hidden, restart when visible
+      // Toggle
+      if (toggleButton) toggleButton.addEventListener('click', () => applyMode(!afterMode));
+      if (beforeLabel) beforeLabel.addEventListener('click', () => { if (afterMode  && beforeLoaded) applyMode(false); });
+      if (afterLabel)  afterLabel.addEventListener('click',  () => { if (!afterMode && afterLoaded)  applyMode(true);  });
+
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; }
-        } else if (playing && !vuRAF) {
-          startVU();
-        }
+        if (document.hidden) { if (vuRAF) { cancelAnimationFrame(vuRAF); vuRAF = null; } }
+        else if (playing && !vuRAF) startVU();
       });
 
       applyVolume();
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Analysis Modal ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
+      // Analysis Modal
       function closeAnalysisModal() { analysisModal.style.display = 'none'; }
-
       analysisModalClose.addEventListener('click', closeAnalysisModal);
-      analysisModal.addEventListener('click', (e) => {
-        if (e.target === analysisModal) closeAnalysisModal();
-      });
+      analysisModal.addEventListener('click', (e) => { if (e.target === analysisModal) closeAnalysisModal(); });
+
+      const analysisTitle = document.getElementById('procAnalysisTitle');
 
       analyzeBtn.addEventListener('click', () => {
-        if (!fileLoaded || !currentObjectURL) {
-          alert('Please load a file first.');
-          return;
+        if (!afterLoaded && !beforeLoaded) { alert('Please load a file first.'); return; }
+
+        if (afterLoaded && beforeLoaded) {
+          // Dual analysis — must create both AudioContexts synchronously here (user gesture)
+          analysisTitle.textContent = 'A vs B Analysis';
+          analysisResults.innerHTML =
+            '<div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;">'
+            + '<div style="flex:1;min-width:260px;"><div style="font-family:\'Courier New\',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(126,201,143,0.65);text-align:center;margin-bottom:0.75rem;">A</div><div id="procAnalysisResultsA" class="analysis-results" style="border:none;padding:0;"></div></div>'
+            + '<div style="flex:1;min-width:260px;"><div style="font-family:\'Courier New\',monospace;font-size:0.72rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(126,201,143,0.65);text-align:center;margin-bottom:0.75rem;">B</div><div id="procAnalysisResultsB" class="analysis-results" style="border:none;padding:0;"></div></div>'
+            + '</div>';
+          analysisModal.style.display = 'flex';
+          AudioAnalyzer.run(beforeObjectURL, beforeTrackName, document.getElementById('procAnalysisResultsA'));
+          AudioAnalyzer.run(afterObjectURL,  afterTrackName,  document.getElementById('procAnalysisResultsB'));
+        } else {
+          const url  = afterLoaded ? afterObjectURL  : beforeObjectURL;
+          const name = afterLoaded ? afterTrackName  : beforeTrackName;
+          analysisTitle.textContent = 'Track Analysis';
+          analysisModal.style.display = 'flex';
+          AudioAnalyzer.run(url, name, analysisResults);
         }
-        analysisModal.style.display = 'flex';
-        AudioAnalyzer.run(currentObjectURL, currentTrackName, analysisResults);
       });
 
-      // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ Spectrum Analyzer Modal ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
-      let meterActive    = false;
-      let meterRAF       = null;
-      let specFrameCount = 0;
-      let specSmoothed   = null;
-      let freqMapCache   = null;
-      let freqMapCacheW  = -1;
-
-      // Pre-allocated modal readout buffers
-      let meterTimeDataBuf   = null;
-      let meterFreqDataBuf   = null;
-      let meterIntBuf        = [];
-      let meterLraBuf        = [];
-      let meterTruePeakModal = -100;
-
+      // Spectrum Analyzer Modal
+      let meterActive = false, meterRAF = null, specFrameCount = 0;
+      let specSmoothed = null, specSmoothedBefore = null;
+      let freqMapCache = null, freqMapCacheW = -1;
+      let meterTimeDataBuf = null, meterFreqDataBuf = null, meterFreqDataBuf2 = null;
+      let meterIntBuf = [], meterLraBuf = [], meterTruePeakModal = -100;
       const SPECTRUM_SMOOTHING = 0.85;
 
-      function drawSpectrumGraph(freqData) {
-        const W  = meterCanvas.width;
-        const H  = meterCanvas.height;
+      function drawSpectrumGraph(freqDataAfter, freqDataBefore) {
+        const W = meterCanvas.width, H = meterCanvas.height;
         const ML = 36, MR = 12, MT = 20, MB = 24;
-        const cW = W - ML - MR;
-        const cH = H - MT - MB;
+        const cW = W - ML - MR, cH = H - MT - MB;
+        const MIN_FREQ = 20, nyquist = ctx.sampleRate / 2;
 
-        const MIN_FREQ = 20;
-        const nyquist  = ctx.sampleRate / 2;
-
-        // Pixel ├óΓÇáΓÇÖ frequency lookup (cached per canvas width)
         if (!freqMapCache || freqMapCacheW !== cW) {
-          freqMapCache  = new Float32Array(cW);
-          freqMapCacheW = cW;
-          const binCount = analyser.frequencyBinCount;
+          freqMapCache = new Float32Array(cW); freqMapCacheW = cW;
+          const bc = afterAnalyser.frequencyBinCount;
           for (let px = 0; px < cW; px++) {
             const freq = MIN_FREQ * Math.pow(nyquist / MIN_FREQ, px / (cW - 1));
-            freqMapCache[px] = (freq / nyquist) * binCount;
+            freqMapCache[px] = (freq / nyquist) * bc;
           }
         }
 
-        // Background
-        meterCtx.fillStyle = '#0a0a0a';
-        meterCtx.fillRect(0, 0, W, H);
+        meterCtx.fillStyle = '#0a0a0a'; meterCtx.fillRect(0, 0, W, H);
 
-        // Grid
         const dbStops   = [0, -10, -20, -30, -40, -50, -60, -70, -80];
         const freqStops = [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000];
-        const dbToY     = db => MT + cH * (1 - (db + 90) / 90);
+        const dbToY = db => MT + cH * (1 - (db + 90) / 90);
 
         dbStops.forEach(db => {
           const y = dbToY(db);
           meterCtx.strokeStyle = db === 0 ? 'rgba(126,201,143,0.35)' : 'rgba(126,201,143,0.1)';
           meterCtx.lineWidth = db === 0 ? 1.5 : 1;
-          meterCtx.beginPath();
-          meterCtx.moveTo(ML, y);
-          meterCtx.lineTo(ML + cW, y);
-          meterCtx.stroke();
+          meterCtx.beginPath(); meterCtx.moveTo(ML, y); meterCtx.lineTo(ML + cW, y); meterCtx.stroke();
         });
-
         freqStops.forEach(freq => {
           if (freq >= nyquist) return;
           const x = ML + cW * Math.log(freq / MIN_FREQ) / Math.log(nyquist / MIN_FREQ);
-          meterCtx.strokeStyle = 'rgba(126,201,143,0.1)';
-          meterCtx.lineWidth = 1;
-          meterCtx.beginPath();
-          meterCtx.moveTo(x, MT);
-          meterCtx.lineTo(x, MT + cH);
-          meterCtx.stroke();
+          meterCtx.strokeStyle = 'rgba(126,201,143,0.1)'; meterCtx.lineWidth = 1;
+          meterCtx.beginPath(); meterCtx.moveTo(x, MT); meterCtx.lineTo(x, MT + cH); meterCtx.stroke();
         });
 
-        // Spectrum curve &mdash; clipped to chart area, fill then stroke (smooth, rounded)
         meterCtx.save();
-        meterCtx.beginPath();
-        meterCtx.rect(ML, MT, cW, cH);
-        meterCtx.clip();
+        meterCtx.beginPath(); meterCtx.rect(ML, MT, cW, cH); meterCtx.clip();
+        meterCtx.lineJoin = 'round'; meterCtx.lineCap = 'round';
 
-        meterCtx.lineJoin = 'round';
-        meterCtx.lineCap  = 'round';
-
-        // Build subsampled point set for smooth bezier spline
-        const STEP = Math.max(2, Math.floor(cW / 200));
-        const pts  = [];
-        for (let px = 0; px <= cW; px += STEP) {
-          const safe    = Math.min(px, cW - 1);
-          const binIdx  = Math.round(freqMapCache[safe]);
-          const clamped = Math.min(binIdx, freqData.length - 1);
-          const normVal = freqData[clamped] / 255;
-          pts.push([ML + px, dbToY(normVal * 90 - 90)]);
-        }
-        // Ensure last point reaches right edge
-        if (pts[pts.length - 1][0] < ML + cW) {
-          const binIdx  = Math.round(freqMapCache[cW - 1]);
-          const clamped = Math.min(binIdx, freqData.length - 1);
-          pts.push([ML + cW, dbToY((freqData[clamped] / 255) * 90 - 90)]);
-        }
-
-        // Helper: draw quadratic bezier midpoint spline through pts
-        function splinePath() {
-          meterCtx.moveTo(pts[0][0], pts[0][1]);
+        function drawCurve(freqData, strokeColor, fill0, fill1) {
+          const STEP = Math.max(2, Math.floor(cW / 200));
+          const pts = [];
+          for (let px = 0; px <= cW; px += STEP) {
+            const safe = Math.min(px, cW - 1);
+            const clamped = Math.min(Math.round(freqMapCache[safe]), freqData.length - 1);
+            pts.push([ML + px, dbToY((freqData[clamped] / 255) * 90 - 90)]);
+          }
+          if (pts[pts.length - 1][0] < ML + cW) {
+            const clamped = Math.min(Math.round(freqMapCache[cW - 1]), freqData.length - 1);
+            pts.push([ML + cW, dbToY((freqData[clamped] / 255) * 90 - 90)]);
+          }
+          function splinePath() {
+            meterCtx.moveTo(pts[0][0], pts[0][1]);
+            for (let i = 1; i < pts.length - 1; i++) {
+              const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+              meterCtx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+            }
+            meterCtx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+          }
+          meterCtx.beginPath(); meterCtx.moveTo(ML, MT + cH); meterCtx.lineTo(pts[0][0], pts[0][1]);
           for (let i = 1; i < pts.length - 1; i++) {
-            const mx = (pts[i][0] + pts[i + 1][0]) / 2;
-            const my = (pts[i][1] + pts[i + 1][1]) / 2;
+            const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
             meterCtx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
           }
           meterCtx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+          meterCtx.lineTo(ML + cW, MT + cH); meterCtx.closePath();
+          const grad = meterCtx.createLinearGradient(0, MT, 0, MT + cH);
+          grad.addColorStop(0, fill0); grad.addColorStop(1, fill1);
+          meterCtx.fillStyle = grad; meterCtx.fill();
+          meterCtx.beginPath(); splinePath();
+          meterCtx.strokeStyle = strokeColor; meterCtx.lineWidth = 1.5; meterCtx.stroke();
         }
 
-        // Fill pass: closed shape from bottom-left, along spline, back to bottom-right
-        meterCtx.beginPath();
-        meterCtx.moveTo(ML, MT + cH);
-        meterCtx.lineTo(pts[0][0], pts[0][1]);
-        for (let i = 1; i < pts.length - 1; i++) {
-          const mx = (pts[i][0] + pts[i + 1][0]) / 2;
-          const my = (pts[i][1] + pts[i + 1][1]) / 2;
-          meterCtx.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
-        }
-        meterCtx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
-        meterCtx.lineTo(ML + cW, MT + cH);
-        meterCtx.closePath();
-        const grad = meterCtx.createLinearGradient(0, MT, 0, MT + cH);
-        grad.addColorStop(0, 'rgba(126,201,143,0.25)');
-        grad.addColorStop(1, 'rgba(126,201,143,0.02)');
-        meterCtx.fillStyle = grad;
-        meterCtx.fill();
-
-        // Stroke pass: just the top spline curve
-        meterCtx.beginPath();
-        splinePath();
-        meterCtx.strokeStyle = 'rgba(126,201,143,0.9)';
-        meterCtx.lineWidth   = 1.5;
-        meterCtx.stroke();
-
+        if (freqDataBefore) drawCurve(freqDataBefore, 'rgba(255,130,40,0.85)', 'rgba(255,130,40,0.2)', 'rgba(255,130,40,0.02)');
+        drawCurve(freqDataAfter, 'rgba(126,201,143,0.9)', 'rgba(126,201,143,0.25)', 'rgba(126,201,143,0.02)');
         meterCtx.restore();
 
-        // dBFS axis labels
-        meterCtx.textAlign    = 'right';
-        meterCtx.textBaseline = 'middle';
+        meterCtx.textAlign = 'right'; meterCtx.textBaseline = 'middle';
         dbStops.forEach(db => {
-          const y = dbToY(db);
           meterCtx.fillStyle = db === 0 ? 'rgba(126,201,143,0.9)' : 'rgba(126,201,143,0.5)';
           meterCtx.font = '10px monospace';
-          meterCtx.fillText(db === 0 ? '0' : `${db}`, ML - 5, y);
+          meterCtx.fillText(db === 0 ? '0' : `${db}`, ML - 5, dbToY(db));
         });
         meterCtx.save();
-        meterCtx.fillStyle  = 'rgba(126,201,143,0.35)';
-        meterCtx.font       = '9px monospace';
-        meterCtx.textAlign  = 'center';
-        meterCtx.textBaseline = 'middle';
-        meterCtx.translate(8, MT + cH / 2);
-        meterCtx.rotate(-Math.PI / 2);
-        meterCtx.fillText('dBFS', 0, 0);
-        meterCtx.restore();
-
-        // Frequency axis labels
-        meterCtx.textAlign    = 'center';
-        meterCtx.textBaseline = 'bottom';
+        meterCtx.fillStyle = 'rgba(126,201,143,0.35)'; meterCtx.font = '9px monospace';
+        meterCtx.textAlign = 'center'; meterCtx.textBaseline = 'middle';
+        meterCtx.translate(8, MT + cH / 2); meterCtx.rotate(-Math.PI / 2);
+        meterCtx.fillText('dBFS', 0, 0); meterCtx.restore();
+        meterCtx.textAlign = 'center'; meterCtx.textBaseline = 'bottom';
         freqStops.forEach(freq => {
           if (freq >= nyquist) return;
           const x = ML + cW * Math.log(freq / MIN_FREQ) / Math.log(nyquist / MIN_FREQ);
-          const label = freq >= 1000 ? `${freq / 1000}k` : `${freq}`;
-          meterCtx.fillStyle = 'rgba(126,201,143,0.5)';
-          meterCtx.font = '10px monospace';
-          meterCtx.fillText(label, x, H - 2);
+          meterCtx.fillStyle = 'rgba(126,201,143,0.5)'; meterCtx.font = '10px monospace';
+          meterCtx.fillText(freq >= 1000 ? `${freq / 1000}k` : `${freq}`, x, H - 2);
         });
+
+        if (freqDataBefore) {
+          const legX = W - MR - 78, legY = MT + 8;
+          meterCtx.fillStyle = 'rgba(0,0,0,0.65)'; meterCtx.fillRect(legX - 6, legY - 4, 84, 46);
+          meterCtx.fillStyle = 'rgba(255,130,40,0.85)'; meterCtx.fillRect(legX, legY, 12, 12);
+          meterCtx.fillStyle = '#fff'; meterCtx.font = '11px monospace';
+          meterCtx.textAlign = 'left'; meterCtx.textBaseline = 'middle';
+          meterCtx.fillText('Before', legX + 17, legY + 6);
+          meterCtx.fillStyle = 'rgba(126,201,143,0.95)'; meterCtx.fillRect(legX, legY + 22, 12, 12);
+          meterCtx.fillStyle = '#fff'; meterCtx.fillText('After', legX + 17, legY + 28);
+        }
       }
 
       function updateSpectrumModal() {
         if (!meterActive) { meterRAF = requestAnimationFrame(updateSpectrumModal); return; }
-
         specFrameCount++;
         if (specFrameCount % 2 !== 0) { meterRAF = requestAnimationFrame(updateSpectrumModal); return; }
 
-        // Spectrum data
-        const binCount = analyser.frequencyBinCount;
-        if (!meterFreqDataBuf) meterFreqDataBuf = new Uint8Array(binCount);
-        analyser.getByteFrequencyData(meterFreqDataBuf);
-
+        const binCount = afterAnalyser.frequencyBinCount;
+        if (!meterFreqDataBuf)  meterFreqDataBuf  = new Uint8Array(binCount);
+        if (!meterFreqDataBuf2) meterFreqDataBuf2 = new Uint8Array(binCount);
+        afterAnalyser.getByteFrequencyData(meterFreqDataBuf);
         if (!specSmoothed) specSmoothed = new Float32Array(binCount);
-        for (let i = 0; i < binCount; i++) {
-          specSmoothed[i] = specSmoothed[i] * SPECTRUM_SMOOTHING + meterFreqDataBuf[i] * (1 - SPECTRUM_SMOOTHING);
+        for (let i = 0; i < binCount; i++) specSmoothed[i] = specSmoothed[i] * SPECTRUM_SMOOTHING + meterFreqDataBuf[i] * (1 - SPECTRUM_SMOOTHING);
+
+        let smoothedBefore = null;
+        if (beforeConnected) {
+          beforeAnalyser.getByteFrequencyData(meterFreqDataBuf2);
+          if (!specSmoothedBefore) specSmoothedBefore = new Float32Array(binCount);
+          for (let i = 0; i < binCount; i++) specSmoothedBefore[i] = specSmoothedBefore[i] * SPECTRUM_SMOOTHING + meterFreqDataBuf2[i] * (1 - SPECTRUM_SMOOTHING);
+          smoothedBefore = specSmoothedBefore;
         }
-        drawSpectrumGraph(specSmoothed);
 
-        // Modal readout values (while playing)
+        drawSpectrumGraph(specSmoothed, smoothedBefore);
+
         if (playing) {
-          if (!meterTimeDataBuf) meterTimeDataBuf = new Float32Array(vuAnalyser.fftSize);
-          vuAnalyser.getFloatTimeDomainData(meterTimeDataBuf);
-
+          const vuAn = afterMode ? afterVUAnalyser : beforeVUAnalyser;
+          if (!meterTimeDataBuf) meterTimeDataBuf = new Float32Array(vuAn.fftSize);
+          vuAn.getFloatTimeDomainData(meterTimeDataBuf);
           let sumSq = 0, peak = 0;
           for (let i = 0; i < meterTimeDataBuf.length; i++) {
-            const v = meterTimeDataBuf[i];
-            sumSq += v * v;
-            const a = v < 0 ? -v : v;
-            if (a > peak) peak = a;
+            const v = meterTimeDataBuf[i]; sumSq += v * v;
+            const a = v < 0 ? -v : v; if (a > peak) peak = a;
           }
           const rmsVal = Math.sqrt(sumSq / meterTimeDataBuf.length);
-          const rmsDb  = rmsVal > 0.00001 ? 20 * Math.log10(rmsVal) : -100;
-
-          let avgRmsDb = rmsDb;
+          let avgRmsDb = rmsVal > 0.00001 ? 20 * Math.log10(rmsVal) : -100;
           if (meterIntBuf.length > 5) {
-            const avgSq  = meterIntBuf.reduce((s, v) => s + v * v, 0) / meterIntBuf.length;
-            const avgRms = Math.sqrt(avgSq);
-            avgRmsDb = avgRms > 0.00001 ? 20 * Math.log10(avgRms) : -100;
+            const avgSq = meterIntBuf.reduce((s, v) => s + v * v, 0) / meterIntBuf.length;
+            avgRmsDb = Math.sqrt(avgSq) > 0.00001 ? 20 * Math.log10(Math.sqrt(avgSq)) : -100;
           }
-
           const peakDb = peak > 0.00001 ? 20 * Math.log10(peak) : -100;
           if (peakDb > meterTruePeakModal) meterTruePeakModal = peakDb;
           else meterTruePeakModal = Math.max(meterTruePeakModal * 0.998, -100);
-
           meterIntBuf.push(rmsVal);
           let lufsI = -100;
           if (meterIntBuf.length > 100) {
-            const avgSqI  = meterIntBuf.reduce((s, v) => s + v * v, 0) / meterIntBuf.length;
-            const avgRmsI = Math.sqrt(avgSqI);
-            const avgDbI  = avgRmsI > 0.00001 ? 20 * Math.log10(avgRmsI) : -100;
-            lufsI = avgDbI - 0.691;
+            const avgSqI = meterIntBuf.reduce((s, v) => s + v * v, 0) / meterIntBuf.length;
+            lufsI = (Math.sqrt(avgSqI) > 0.00001 ? 20 * Math.log10(Math.sqrt(avgSqI)) : -100) - 0.691;
           }
-
-          meterLraBuf.push(lufsI);
-          if (meterLraBuf.length > 300) meterLraBuf.shift();
+          meterLraBuf.push(lufsI); if (meterLraBuf.length > 300) meterLraBuf.shift();
           let lraModal = 0;
           if (meterLraBuf.length > 100) {
             const sortedLRA = [...meterLraBuf].filter(v => v > -99).sort((a, b) => a - b);
-            if (sortedLRA.length > 20)
-              lraModal = sortedLRA[Math.floor(sortedLRA.length * 0.95)] - sortedLRA[Math.floor(sortedLRA.length * 0.1)];
+            if (sortedLRA.length > 20) lraModal = sortedLRA[Math.floor(sortedLRA.length * 0.95)] - sortedLRA[Math.floor(sortedLRA.length * 0.1)];
           }
-
           if (meterRmsValueEl)      meterRmsValueEl.textContent      = avgRmsDb > -99 ? `${avgRmsDb.toFixed(1)} dB` : '-\u221E dB';
           if (meterTruePeakValueEl) meterTruePeakValueEl.textContent = meterTruePeakModal > -99 ? `${meterTruePeakModal.toFixed(1)} dBTP` : '-\u221E dBTP';
           if (meterLufsIValueEl)    meterLufsIValueEl.textContent    = lufsI > -99 ? `${lufsI.toFixed(1)} LUFS` : '-\u221E LUFS';
           if (meterLRAValueEl)      meterLRAValueEl.textContent      = lraModal > 0 ? `${lraModal.toFixed(1)} LU` : '-- LU';
-
-          // Update status indicators
-          // Current Level status
           if (meterRmsStatusEl && avgRmsDb > -99) {
-            if (avgRmsDb > -6) {
-              meterRmsStatusEl.textContent = '\u26a0 Too Hot';
-              meterRmsStatusEl.className = 'loudness-meter-status warning';
-            } else if (avgRmsDb > -12) {
-              meterRmsStatusEl.textContent = '\u2713 Good';
-              meterRmsStatusEl.className = 'loudness-meter-status good';
-            } else if (avgRmsDb > -24) {
-              meterRmsStatusEl.textContent = '\u2713 Normal';
-              meterRmsStatusEl.className = 'loudness-meter-status good';
-            } else {
-              meterRmsStatusEl.textContent = '\u2193 Quiet';
-              meterRmsStatusEl.className = 'loudness-meter-status info';
-            }
+            if (avgRmsDb > -6) { meterRmsStatusEl.textContent = '\u26a0 Too Hot'; meterRmsStatusEl.className = 'loudness-meter-status warning'; }
+            else if (avgRmsDb > -12) { meterRmsStatusEl.textContent = '\u2713 Good'; meterRmsStatusEl.className = 'loudness-meter-status good'; }
+            else if (avgRmsDb > -24) { meterRmsStatusEl.textContent = '\u2713 Normal'; meterRmsStatusEl.className = 'loudness-meter-status good'; }
+            else { meterRmsStatusEl.textContent = '\u2193 Quiet'; meterRmsStatusEl.className = 'loudness-meter-status info'; }
           }
-
-          // Streaming Target status (\u221214 LUFS target)
           if (meterLufsStatusEl && lufsI > -99) {
-            const target = -14;
-            const delta = lufsI - target;
-            if (Math.abs(delta) < 1.5) {
-              meterLufsStatusEl.textContent = '\u2713 On Target';
-              meterLufsStatusEl.className = 'loudness-meter-status good';
-            } else if (delta > 0) {
-              meterLufsStatusEl.textContent = `\u2191 ${Math.abs(delta).toFixed(1)} dB Over`;
-              meterLufsStatusEl.className = 'loudness-meter-status warning';
-            } else {
-              meterLufsStatusEl.textContent = `\u2193 ${Math.abs(delta).toFixed(1)} dB Under`;
-              meterLufsStatusEl.className = 'loudness-meter-status info';
-            }
+            const delta = lufsI - (-14);
+            if (Math.abs(delta) < 1.5) { meterLufsStatusEl.textContent = '\u2713 On Target'; meterLufsStatusEl.className = 'loudness-meter-status good'; }
+            else if (delta > 0) { meterLufsStatusEl.textContent = `\u2191 ${Math.abs(delta).toFixed(1)} dB Over`; meterLufsStatusEl.className = 'loudness-meter-status warning'; }
+            else { meterLufsStatusEl.textContent = `\u2193 ${Math.abs(delta).toFixed(1)} dB Under`; meterLufsStatusEl.className = 'loudness-meter-status info'; }
           }
-
-          // True Peak status (< -1.0 dBFS target)
           if (meterPeakStatusEl && meterTruePeakModal > -99) {
-            if (meterTruePeakModal >= -0.1) {
-              meterPeakStatusEl.textContent = '\u2717 Clipping Risk';
-              meterPeakStatusEl.className = 'loudness-meter-status danger';
-            } else if (meterTruePeakModal >= -1.0) {
-              meterPeakStatusEl.textContent = '\u26a0 Near Limit';
-              meterPeakStatusEl.className = 'loudness-meter-status warning';
-            } else if (meterTruePeakModal >= -3.0) {
-              meterPeakStatusEl.textContent = '\u2713 Safe';
-              meterPeakStatusEl.className = 'loudness-meter-status good';
-            } else {
-              meterPeakStatusEl.textContent = '\u2713 Plenty of Headroom';
-              meterPeakStatusEl.className = 'loudness-meter-status good';
-            }
+            if (meterTruePeakModal >= -0.1) { meterPeakStatusEl.textContent = '\u2717 Clipping Risk'; meterPeakStatusEl.className = 'loudness-meter-status danger'; }
+            else if (meterTruePeakModal >= -1.0) { meterPeakStatusEl.textContent = '\u26a0 Near Limit'; meterPeakStatusEl.className = 'loudness-meter-status warning'; }
+            else if (meterTruePeakModal >= -3.0) { meterPeakStatusEl.textContent = '\u2713 Safe'; meterPeakStatusEl.className = 'loudness-meter-status good'; }
+            else { meterPeakStatusEl.textContent = '\u2713 Plenty of Headroom'; meterPeakStatusEl.className = 'loudness-meter-status good'; }
           }
-
-          // Dynamic Range status
           if (meterLraStatusEl && lraModal > 0) {
-            if (lraModal < 4) {
-              meterLraStatusEl.textContent = '\u26a0 Heavily Limited';
-              meterLraStatusEl.className = 'loudness-meter-status warning';
-            } else if (lraModal < 8) {
-              meterLraStatusEl.textContent = '\u2713 Well Compressed';
-              meterLraStatusEl.className = 'loudness-meter-status good';
-            } else if (lraModal < 15) {
-              meterLraStatusEl.textContent = '\u2713 Natural Dynamics';
-              meterLraStatusEl.className = 'loudness-meter-status good';
-            } else {
-              meterLraStatusEl.textContent = '\u2191 Very Dynamic';
-              meterLraStatusEl.className = 'loudness-meter-status info';
-            }
+            if (lraModal < 4) { meterLraStatusEl.textContent = '\u26a0 Heavily Limited'; meterLraStatusEl.className = 'loudness-meter-status warning'; }
+            else if (lraModal < 8) { meterLraStatusEl.textContent = '\u2713 Well Compressed'; meterLraStatusEl.className = 'loudness-meter-status good'; }
+            else if (lraModal < 15) { meterLraStatusEl.textContent = '\u2713 Natural Dynamics'; meterLraStatusEl.className = 'loudness-meter-status good'; }
+            else { meterLraStatusEl.textContent = '\u2191 Very Dynamic'; meterLraStatusEl.className = 'loudness-meter-status info'; }
           }
         }
-
         meterRAF = requestAnimationFrame(updateSpectrumModal);
       }
 
       loudnessMeterBtn.addEventListener('click', () => {
-        if (!fileLoaded) { alert('Please load a file first.'); return; }
-        
-        // Ensure audio graph is connected before opening analyzer
-        ensureAudioGraph();
-
-        if (meterTrackNameEl) meterTrackNameEl.textContent = currentTrackName || 'No file loaded';
-
-        // Reset smoothed spectrum on open
-        specSmoothed     = null;
-        meterIntBuf      = [];
-        meterLraBuf      = [];
-        meterTruePeakModal = -100;
-
+        if (!afterLoaded) { alert('Please load a file first.'); return; }
+        if (afterLoaded)  ensureAfterGraph();
+        if (beforeLoaded) ensureBeforeGraph();
+        if (meterTrackNameEl) meterTrackNameEl.textContent = afterMode ? (afterTrackName || 'No file loaded') : (beforeTrackName || 'No file loaded');
+        specSmoothed = null; specSmoothedBefore = null;
+        meterIntBuf = []; meterLraBuf = []; meterTruePeakModal = -100;
         loudnessMeterModal.style.display = 'flex';
         meterActive = true;
         if (!meterRAF) meterRAF = requestAnimationFrame(updateSpectrumModal);
       });
 
       loudnessMeterClose.addEventListener('click', () => {
-        loudnessMeterModal.style.display = 'none';
-        meterActive = false;
+        loudnessMeterModal.style.display = 'none'; meterActive = false;
         if (meterRAF) { cancelAnimationFrame(meterRAF); meterRAF = null; }
       });
       loudnessMeterModal.addEventListener('click', (e) => {
         if (e.target === loudnessMeterModal) {
-          loudnessMeterModal.style.display = 'none';
-          meterActive = false;
+          loudnessMeterModal.style.display = 'none'; meterActive = false;
           if (meterRAF) { cancelAnimationFrame(meterRAF); meterRAF = null; }
         }
       });
 
+      if (spectrumBeforeBtn) spectrumBeforeBtn.addEventListener('click', () => { if (beforeLoaded) applyMode(false); });
+      if (spectrumAfterBtn)  spectrumAfterBtn.addEventListener('click',  () => { if (afterLoaded)  applyMode(true);  });
+
+
     });
   </script>
+
 
   <!-- ========================================================================
        PROCESSOR INFO MODAL &mdash; How to use this page
