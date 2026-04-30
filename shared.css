@@ -594,11 +594,17 @@ blockquote footer {
   justify-content: space-between;
   align-items: center;
   padding: 3rem 4vw;
-  background: rgba(6, 10, 24, 0.95);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(6, 10, 24, 0.08);
+  -webkit-backdrop-filter: url(#glass-distortion) blur(6px) brightness(0.92);
+  backdrop-filter: url(#glass-distortion) blur(6px) brightness(0.92);
+  border: none;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.50);
   z-index: 1000;
   min-height: 80px;
+  overflow: hidden;
 }
+
+
 
 .logo {
   font-weight: 700;
@@ -609,7 +615,7 @@ blockquote footer {
   line-height: 1;
   text-decoration: none;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .nav {
@@ -617,7 +623,7 @@ blockquote footer {
   align-items: center;
   gap: 0.5rem;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 
@@ -694,17 +700,20 @@ blockquote footer {
   text-align: center;
   font-size: 0.8rem;
   color: var(--text-muted);
-  opacity: 0.85;
   margin-top: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
-  background: rgba(4, 6, 18, 0.95);
+  border-top: none;
+  background: rgba(4, 6, 18, 0.08);
+  -webkit-backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
+  backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
   font-weight: 400;
   letter-spacing: 0.01em;
   min-height: 80px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.50);
 }
+
 
 .site-footer h2 {
   font-size: 1rem;
@@ -832,19 +841,30 @@ button:focus-visible {
 
 .card {
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  background: rgba(6, 10, 24, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  -webkit-backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
+  backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 2px 8px rgba(0, 0, 0, 0.20);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
   display: block;
   text-decoration: none;
   color: inherit;
-  contain: layout style paint;
+  position: relative;
+  overflow: hidden;
 }
 
+
+
 .card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(208, 208, 208, 0.3);
+  background: rgba(6, 10, 28, 0.22);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.55),
+    0 4px 16px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
 }
 
 @media (hover: none), (pointer: coarse) {
@@ -967,8 +987,9 @@ picture {
   .site-header {
     padding: 0.75rem 4vw;
     min-height: 80px;
-    background: rgba(6, 10, 24, 0.95);
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    background: rgba(6, 10, 24, 0.10);
+    -webkit-backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
+    backdrop-filter: blur(4px) saturate(180%) contrast(1.08) brightness(0.92);
     color: #e0e0e0;
   }
 
