@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./matrix.css?v=1783877023" />
+  <link rel="stylesheet" href="./matrix.css?v=1783881453" />
 </head>
 
 <body>
@@ -54,6 +54,25 @@
         await requestWakeLock();
       }
     });
+
+    // Auto-hide cursor after 3 seconds of no movement
+    const _cursorHideStyle = document.createElement('style');
+    document.head.appendChild(_cursorHideStyle);
+    let _cursorTimer = null;
+
+    function _hideCursor() {
+      _cursorHideStyle.textContent = '*, *::before, *::after { cursor: none !important; }';
+    }
+    function _showCursor() {
+      _cursorHideStyle.textContent = '';
+    }
+    function _resetCursorTimer() {
+      _showCursor();
+      clearTimeout(_cursorTimer);
+      _cursorTimer = setTimeout(_hideCursor, 3000);
+    }
+    document.addEventListener('mousemove', _resetCursorTimer);
+    _resetCursorTimer();
     
     const terminal = document.getElementById('matrixFullscreen');
     const canvas = document.createElement('canvas');
