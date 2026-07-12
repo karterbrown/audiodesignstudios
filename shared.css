@@ -13,23 +13,23 @@
 
 :root {
 
-  /* --- Accent color (teal — links, nav hover, play buttons, headings) ------- */
-  --accent:        #00c8d4;
-  --accent-rgb:    0, 200, 212;   /* Keep this in sync with --accent above!    */
-  --accent-dark:   #009eaa;       /* Darker shade — used for hover states       */
-  --accent-bright: #33d9e4;       /* Brighter shade — used for glow effects     */
+  /* --- Accent color (wine red — links, nav hover, play buttons, headings) --- */
+  --accent:        #b0304e;
+  --accent-rgb:    176, 48, 78;   /* Keep this in sync with --accent above!    */
+  --accent-dark:   #8c2340;       /* Darker shade — used for hover states       */
+  --accent-bright: #c9506a;       /* Brighter shade — used for glow effects     */
 
   /* --- Backgrounds ---------------------------------------------------------- */
-  --bg:            #07233a;       /* Main page background (deep navy-black)     */
-  --bg-raised:     #101728;       /* Cards and slightly raised surfaces         */
+  --bg:            #0a0a0a;       /* Main page background (neutral near-black)  */
+  --bg-raised:     #141414;       /* Cards and slightly raised surfaces         */
 
   /* --- Text ----------------------------------------------------------------- */
-  --text:          #f4f4ff;       /* Main body text (near-white)                */
-  --text-muted:    #cfcfd8;       /* Captions, footers, secondary info          */
+  --text:          #f0ede8;       /* Main body text (warm near-white)           */
+  --text-muted:    #b8b2ac;       /* Captions, footers, secondary info          */
 
   /* --- Special colors ------------------------------------------------------- */
-  --red:           #ff6b6b;       /* "Contact" nav link and alert items         */
-  --red-light:     #ff8787;       /* Red hover state                            */
+  --red:           #e06040;       /* "Contact" nav link and alert items         */
+  --red-light:     #e88060;       /* Red hover state                            */
 
   /* --- Internal layout (don't change unless you know what you're doing) ----- */
   --site-header-offset: 128px;    /* Height of the sticky top navigation bar    */
@@ -594,13 +594,9 @@ blockquote footer {
   justify-content: space-between;
   align-items: center;
   padding: 3rem 4vw;
-  background: rgba(255, 255, 255, 0.04);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: url(#glass-distortion) blur(12px);
-  backdrop-filter: url(#glass-distortion) blur(12px);
-  border: none;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.50);
+  background: #111111;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
   z-index: 1000;
   min-height: 80px;
   overflow: hidden;
