@@ -7,7 +7,7 @@
    Only processor-specific additions are defined here.
    ============================================================================= */
 
-@import url('../demo/demo.css');
+@import url('./demo.css');
 
 /* =============================================================================
    1. UPLOAD ZONE â€” drag-and-drop or click to browse

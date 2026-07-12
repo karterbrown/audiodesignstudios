@@ -24,7 +24,6 @@ SED "s/index\.css?v=[0-9]*/index.css?v=$NEW_VERSION/g" *.html
 SED "s/editorial\.css?v=[0-9]*/editorial.css?v=$NEW_VERSION/g" *.html
 SED "s/compose\.css?v=[0-9]*/compose.css?v=$NEW_VERSION/g" compose/index.html
 SED "s/matrix\.css?v=[0-9]*/matrix.css?v=$NEW_VERSION/g" compose/index.html matrix/index.html
-SED "s/demo\.css?v=[0-9]*/demo.css?v=$NEW_VERSION/g" demo/index.html
 SED "s/processor\.css?v=[0-9]*/processor.css?v=$NEW_VERSION/g" processor/index.html
 
 # Update JavaScript file versions in HTML files

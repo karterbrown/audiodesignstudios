@@ -78,7 +78,7 @@ button:focus {
   margin: 0 auto;
 }
 
-#highlights {
+#contact {
   scroll-margin-top: calc(var(--site-header-offset) + 1.25rem);
 }
 
@@ -647,11 +647,25 @@ blockquote footer {
   border-bottom-color: var(--accent);
 }
 
-/* Special header link for A+B (hidden tracks) */
+/* Special header link — Contact button */
 .nav a.special-link {
   color: var(--red);
   font-weight: 600;
-  border-bottom-color: transparent;
+  border: 1.5px solid var(--red);
+  border-radius: 4px;
+  padding: 0.35rem 0.85rem;
+  opacity: 0.9;
+  margin-left: 0.75rem;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.nav a.special-link:hover,
+.nav a.special-link:focus {
+  background: rgba(212, 168, 67, 0.1);
+  border-color: var(--red-light);
+  opacity: 1;
+  color: var(--red-light);
+  border-bottom-color: var(--red-light);
 }
 
 .nav a.special-link:hover,
@@ -762,9 +776,9 @@ blockquote footer {
 .btn,
 button {
   padding: 0.75rem 1.75rem;
-  background: linear-gradient(135deg, rgba(0, 110, 140, 0.25), rgba(0, 110, 140, 0.15));
-  color: var(--accent-dark);
-  border: 1.5px solid rgba(0, 110, 140, 0.5);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.2), rgba(var(--accent-rgb), 0.1));
+  color: var(--text);
+  border: 1.5px solid rgba(var(--accent-rgb), 0.5);
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
@@ -779,10 +793,10 @@ button {
 
 .btn:hover,
 button:hover {
-  background: linear-gradient(135deg, rgba(0, 110, 140, 0.35), rgba(0, 110, 140, 0.25));
-  border-color: rgba(0, 110, 140, 0.7);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.35), rgba(var(--accent-rgb), 0.2));
+  border-color: rgba(var(--accent-rgb), 0.7);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 110, 140, 0.4);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
 }
 
 .btn:active,
@@ -793,7 +807,7 @@ button:active {
 
 .btn:focus-visible,
 button:focus-visible {
-  outline: 3px solid rgba(0, 110, 140, 0.6);
+  outline: 3px solid rgba(var(--accent-rgb), 0.6);
   outline-offset: 2px;
 }
 
@@ -938,7 +952,7 @@ picture {
 
 @media (max-width: 800px) {
   :root {
-    --site-header-offset: 96px;
+    --site-header-offset: 82px;
   }
 
   .hero {
@@ -979,7 +993,7 @@ picture {
 
 @media (max-width: 720px) {
   :root {
-    --site-header-offset: 96px;
+    --site-header-offset: 82px;
   }
 
   .site-header {
@@ -994,6 +1008,10 @@ picture {
 
   .nav {
     gap: 0.1rem;
+  }
+
+  .nav a.special-link {
+    margin-left: 0.25rem;
   }
 
   .nav a {

@@ -35,8 +35,8 @@
   <title>Design - Audio Design Studios | Editorial Sound Design & Mixing</title>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="index.css?v=1783870527" />
-  <link rel="stylesheet" href="editorial.css?v=1783870527" />
+  <link rel="stylesheet" href="index.css?v=1783877023" />
+  <link rel="stylesheet" href="editorial.css?v=1783877023" />
 </head>
 
 <body>
@@ -48,7 +48,6 @@
     <nav class="nav">
       <a href="index.html">Design</a>
       <a href="compose/">Compose</a>
-      <a href="#more-work">More Work</a>
       <a href="#contact" class="special-link">Contact</a>
     </nav>
   </header>
@@ -86,7 +85,53 @@
          HERO BANNER
          ====================================================================== -->
     <section id="hero-banner" class="env-image env-home">
-      <h1 class="banner-title">Editorial Sound Production for Media</h1>
+      <div class="hero-content">
+        <h1 class="banner-title">Sound Design. Score. Production.</h1>
+        <p class="banner-subtitle">10 years of professional audio across film, animation, advertising, and original music.</p>
+        <div class="hero-cta-buttons">
+          <a href="#contact" class="btn-hero btn-hero-outline">Work With Me</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         ABOUT - Bio, Credentials & Testimonial
+         ====================================================================== -->
+    <section id="about" class="section section-alt about-section">
+      <div class="content-wrapper">
+        <div class="about-bio-grid">
+          <div class="about-bio-text">
+            <h2 class="about-heading">Karter Brown</h2>
+            <p class="about-bio-p">Sound designer, composer, and music producer with over 10 years of professional experience across commercial film, animation, advertising, and narrative productions. A lifelong musician who has been recording audio since age 12, he brings deep creative instinct and technical fluency — from editorial sound design and full-mix mastering to original scoring and music arranged to picture.</p>
+            <div class="credential-strip">
+              <div class="credential-item">
+                <span class="credential-number">Score to Screen</span>
+                <span class="credential-label">Arranged to Picture</span>
+              </div>
+              <div class="credential-item">
+                <span class="credential-number">15+</span>
+                <span class="credential-label">Years Recording</span>
+              </div>
+              <div class="credential-item">
+                <span class="credential-number">Film &middot; Animation</span>
+                <span class="credential-label">Ads &middot; Short &amp; Feature</span>
+              </div>
+              <div class="credential-item">
+                <span class="credential-number">Audio Design</span>
+                <span class="credential-label">Sound Production Services</span>
+              </div>
+            </div>
+          </div>
+          <div class="about-right-col">
+            <div class="about-photo-wrapper">
+              <video autoplay muted loop playsinline preload="metadata" id="shedVideo" style="cursor:pointer;" title="Click to unmute">
+                <source src="Video/Shed.mov" type="video/mp4">
+              </video>
+            </div>
+            <p class="media-credit">Courtesy of Nordling Media</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ======================================================================
@@ -109,6 +154,137 @@
               <p class="sizzle-item-title">Narrative Atmosphere &amp; Sonic World-Building</p>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SERVICE: Music Production
+         ====================================================================== -->
+    <section class="section section-alt service-spotlight">
+      <div class="content-wrapper">
+        <div class="service-card">
+          <h3>Music Production</h3>
+          <p>Tracking, arranging, and producing original music across genres. Retrowave, classical, ambient, pop, and beyond.</p>
+          <div class="service-for">For: Artists &middot; Brands &middot; Ad Agencies</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         RELAX &amp; LISTEN - Ambient Music Player
+         ====================================================================== -->
+    <section id="relax-listen" class="ambient-player-section">
+      <div class="ambient-player-container">
+        <div class="ambient-player-header">
+          <h3>Relax &amp; Listen</h3>
+          <p class="ambient-player-subtitle">Classical performances to accompany your visit</p>
+        </div>
+        <div class="ambient-player-controls">
+          <button id="ambientPlayPause" class="ambient-play-btn" aria-label="Play/Pause"></button>
+          <button id="ambientSkip" class="ambient-skip-btn" aria-label="Skip to random track">Skip</button>
+          <div class="ambient-track-info">
+            <div id="ambientTrackTitle" class="ambient-track-title">Loading...</div>
+            <div class="ambient-progress-container">
+              <div class="ambient-progress-bar">
+                <div id="ambientProgressFill" class="ambient-progress-fill"></div>
+              </div>
+              <div class="ambient-time-display">
+                <span id="ambientCurrentTime">0:00</span>
+                <span id="ambientDuration">0:00</span>
+              </div>
+            </div>
+          </div>
+          <div class="ambient-volume-control">
+            <input type="range" id="ambientVolume" class="ambient-volume-slider" min="0" max="100" value="70" aria-label="Volume control" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         HIGHLIGHTS - Contact
+         ====================================================================== -->
+    <section id="contact" class="hero hero-highlights-3col">
+      <!-- Left Column: Headshot -->
+      <div class="hero-left-highlights">
+        <div class="headshot-wrapper-portrait">
+          <picture>
+            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
+            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
+            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
+          </picture>
+        </div>
+      </div>
+
+      <!-- Center Column: Contact Form -->
+      <div class="hero-center-highlights">
+        <div class="contact-wrapper">
+          <h1>Let's Work Together</h1>
+          <p class="contact-availability">Available for freelance projects.</p>
+          <p>Whether you're planning a campaign, finishing a cut, scoring a film, or need audio help mid-production &mdash; reach out and let's see if it's a good fit.</p>
+          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Describe your project..." required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+          </form>
+          <div class="contact-buttons">
+            <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Album Art -->
+      <div class="hero-right-highlights">
+        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
+          <div class="album-cover-centered" aria-hidden="true">
+            <picture>
+              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
+              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
+              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover" loading="lazy" />
+            </picture>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SERVICE: Editorial Sound Design
+         ====================================================================== -->
+    <section class="section section-alt service-spotlight">
+      <div class="content-wrapper">
+        <div class="service-card">
+          <h3>Editorial Sound Design</h3>
+          <p>SFX, Foley, atmospheres, and layered audio environments for film, animation, and brand content. Every element placed with intention.</p>
+          <div class="service-for">For: Directors &middot; Editors &middot; Producers</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PHOTO GALLERY
+         ====================================================================== -->
+    <section id="gallery" class="section section-alt">
+      <div class="content-wrapper">
+        <p class="media-credit">Reed Christian of Nordling Media</p>
+        <div class="photo-gallery">
+          <img src="Photos/gallery_574_800.webp" alt="Studio photo" loading="lazy">
+          <img src="Photos/gallery_577_800.webp" alt="Studio photo" loading="lazy">
+          <img src="Photos/gallery_582_800.webp" alt="Studio photo" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SERVICE: Original Score &amp; Composition
+         ====================================================================== -->
+    <section class="section section-alt service-spotlight">
+      <div class="content-wrapper">
+        <div class="service-card">
+          <h3>Original Score &amp; Composition</h3>
+          <p>Thematic original music arranged and composed to picture. From intimate solo instruments to full cinematic scores.</p>
+          <div class="service-for">For: Film &middot; Animation &middot; Media</div>
         </div>
       </div>
     </section>
@@ -143,50 +319,15 @@
     </section>
 
     <!-- ======================================================================
-         HIGHLIGHTS - 3-Column Portfolio Layout
-         Left: Headshot | Center: Contact form | Right: Album art
+         SERVICE: Mixing &amp; Mastering
          ====================================================================== -->
-    <span id="contact"></span>
-    <section id="highlights" class="hero hero-highlights-3col">
-      <!-- Left Column: Headshot -->
-      <div class="hero-left-highlights">
-        <div class="headshot-wrapper-portrait">
-          <picture>
-            <source media="(min-width:1200px)" srcset="Photos/headshot2_2000.webp">
-            <source media="(min-width:720px)" srcset="Photos/headshot2_1400.webp">
-            <img src="Photos/headshot2_800.webp" alt="Karter Brown Headshot" class="headshot" loading="eager" fetchpriority="high" />
-          </picture>
+    <section class="section section-alt service-spotlight">
+      <div class="content-wrapper">
+        <div class="service-card">
+          <h3>Mixing &amp; Mastering</h3>
+          <p>Full mix and final master engineered for streaming platforms, broadcast, and theatrical delivery. Before/after comparison available.</p>
+          <div class="service-for">For: Any audio project</div>
         </div>
-      </div>
-
-      <!-- Center Column: Contact Form -->
-      <div class="hero-center-highlights">
-        <div class="contact-wrapper">
-          <h1>Let's Talk About Your Project</h1>
-          <p>Whether you're planning a campaign, finishing a cut, or need audio help mid-production — reach out and let's see if it's a good fit.</p>
-          <form class="contact-form" action="https://formspree.io/f/xjknowjb" method="POST">
-            <input type="text" name="name" placeholder="Your Name" required />
-            <input type="email" name="email" placeholder="Your Email" required />
-            <textarea name="message" placeholder="Describe your project..." required></textarea>
-            <button type="submit" class="btn">Send Message</button>
-          </form>
-          <div class="contact-buttons">
-            <a href="mailto:music@kartergbrown.com" class="contact-button">Email: music@kartergbrown.com</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Album Art -->
-      <div class="hero-right-highlights">
-        <a href="https://music.apple.com/us/artist/static-currents/1750169160" target="_blank" rel="noopener noreferrer" aria-label="Visit Static Currents on Apple Music">
-          <div class="album-cover-centered" aria-hidden="true">
-            <picture>
-              <source media="(min-width:1200px)" srcset="Photos/staticcurrents2000.webp">
-              <source media="(min-width:720px)" srcset="Photos/staticcurrents1400.webp">
-              <img src="Photos/staticcurrents800.webp" alt="Static Currents album cover - ambient electronic music by Audio Design Studios" loading="lazy" />
-            </picture>
-          </div>
-        </a>
       </div>
     </section>
 
@@ -197,9 +338,6 @@
       <div class="content-wrapper">
         <div class="sizzle-feature">
           <div class="sizzle-carousel-shell">
-            <span class="sizzle-badge">More Work</span>
-            <h2>Explore the Full Range</h2>
-            <p class="sizzle-subtitle">Browse selected reels across categories — from cinematic atmospheres and brand energy to dialogue, SFX, and full mix.</p>
 
             <div class="sizzle-carousel" id="moreWorkCarousel" aria-label="More work reel selector">
               <button class="sizzle-nav sizzle-nav-prev" id="moreWorkPrev" type="button" aria-label="Previous reel">&#10094;</button>
@@ -207,100 +345,100 @@
               <div class="sizzle-viewport" id="moreWorkViewport" tabindex="0">
                 <div class="sizzle-track" id="moreWorkTrack">
                   <article class="sizzle-item is-active" data-index="0" data-filename="PlantAnimation.mp4" data-title="Animation, Original Score &amp; Full Sound Design">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/plant-poster.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/PlantComplete Animation v18.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="1" data-filename="02_DialogBackground.mp4" data-title="Dialogue Clarity &amp; Background Design">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/02_DialogBackground.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/02_DialogBackground720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="2" data-filename="DocInterview.mp4" data-title="Interview &amp; Documentary Dialog">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media" style="position:relative;aspect-ratio:16/9;">
                       <iframe src="https://www.youtube.com/embed/x4aMF8nVuao?enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;"></iframe>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="3" data-filename="03_MotionPacing.mp4" data-title="Motion &amp; Editorial Pacing">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/03_MotionPacing.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/03_MotionPacing720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="4" data-filename="LucidAd2.mp4" data-title="Brand Spots &amp; Quick Delivery">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/lucid-ad-2-poster.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/Lucid Ad 2 0 Preview MSTR V004.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="5" data-filename="04_BuildImpact.mp4" data-title="Build &amp; Cinematic Impact">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/04_BuildImpact.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/04_BuildImpact720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="6" data-filename="05_SFXMusic.mp4" data-title="SFX &amp; Music Integration">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/05_SFXMusic.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/05_SFXMusic720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="7" data-filename="06_ImmersionStory.mp4" data-title="Immersion &amp; Narrative Story">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/06_ImmersionStory.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/06_ImmersionStory720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="8" data-filename="07_SuspenseFoley.mp4" data-title="Suspense &amp; Foley Detail">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/07_SuspenseFoley.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/07_SuspenseFoley720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="9" data-filename="08_TransitionSoundDesign.mp4" data-title="Transition &amp; Sound Design">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/08_TransitionSoundDesign.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/08_TransitionSoundDesign720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                   <article class="sizzle-item" data-index="10" data-filename="09_MixMaster.mp4" data-title="Full Mix &amp; Master">
+                    <h4 class="sizzle-item-title"></h4>
                     <div class="sizzle-item-media">
                       <video class="sizzle-reel-video" controls preload="metadata" data-poster="Video/09_MixMaster.webp" playsinline controlslist="nodownload noplaybackrate" disablepictureinpicture>
                         <source src="Video/09_MixMaster720.mp4" type="video/mp4">
                         Your browser does not support the video element.
                       </video>
                     </div>
-                    <h4 class="sizzle-item-title"></h4>
                   </article>
                 </div>
               </div>
@@ -310,7 +448,6 @@
                   <button class="sizzle-mobile-nav" id="moreWorkPrevMobile" type="button" aria-label="Previous reel">&#10094;</button>
                   <button class="sizzle-mobile-nav" id="moreWorkNextMobile" type="button" aria-label="Next reel">&#10095;</button>
                 </div>
-                <div class="sizzle-mobile-title" id="moreWorkMobileTitle"></div>
               </div>
 
               <button class="sizzle-nav sizzle-nav-next" id="moreWorkNext" type="button" aria-label="Next reel">&#10095;</button>
@@ -321,62 +458,17 @@
     </section>
 
     <!-- ======================================================================
-         BUILT FOR CREATIVE TEAMS - Target Audience
+         TESTIMONIAL - Frank Stearns
          ====================================================================== -->
-    <section id="services" class="editorial-audience section section-alt">
+    <section class="section section-alt">
       <div class="content-wrapper">
-        <h2>Built for Creative Teams</h2>
-        <p>
-          If you're a director, editor, producer, or creative lead working on brand content, documentary, narrative shorts, sizzle reels, or pitch materials — and you need audio that's polished, collaborative, and fast — this is the lane.
-        </p>
+        <blockquote class="testimonial-pullquote">
+          <p>"After 50 years in the music business, one tends to think you've just about heard it all... But then on rare occasion a Karter Brown comes along. His music is fresh and full of delightful sonic surprises, yet he uses traditional tonalities. With his delightful imagination and musical intuition he's invented 'new' within the bounds of pleasant tradition. Setting mood and tension is a mainstay of that artform, and Karter does those very well."</p>
+          <footer>&#8212; <cite>Frank Stearns, Recording Producer &amp; Audio Engineer</cite></footer>
+        </blockquote>
       </div>
     </section>
 
-    <!-- ======================================================================
-         RELAX & LISTEN - Ambient Music Player
-         ====================================================================== -->
-    <section id="relax-listen" class="ambient-player-section">
-      <div class="ambient-player-container">
-        <div class="ambient-player-header">
-          <h3>Relax & Listen</h3>
-          <p class="ambient-player-subtitle">Classical performances to accompany your visit</p>
-        </div>
-        <div class="ambient-player-controls">
-          <button id="ambientPlayPause" class="ambient-play-btn" aria-label="Play/Pause"></button>
-          <button id="ambientSkip" class="ambient-skip-btn" aria-label="Skip to random track">Skip</button>
-          <div class="ambient-track-info">
-            <div id="ambientTrackTitle" class="ambient-track-title">Loading...</div>
-            <div class="ambient-progress-container">
-              <div class="ambient-progress-bar">
-                <div id="ambientProgressFill" class="ambient-progress-fill"></div>
-              </div>
-              <div class="ambient-time-display">
-                <span id="ambientCurrentTime">0:00</span>
-                <span id="ambientDuration">0:00</span>
-              </div>
-            </div>
-          </div>
-          <div class="ambient-volume-control">
-            <input type="range" id="ambientVolume" class="ambient-volume-slider" min="0" max="100" value="70" aria-label="Volume control" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
-         ABOUT & TESTIMONIAL
-         ====================================================================== -->
-    <section id="about-testimonial" class="env-image env-about"></section>
-
-    <section id="about" class="section section-alt">
-      <h2>About</h2>
-
-      <!-- Professional Testimonial Quote -->
-      <blockquote>
-        <p>"After 50 years in the music business, one tends to think you've just about heard it all, especially in the classical and acoustic worlds, where traditional boundaries of what sounds 'good' are fairly well‑defined. But then on rare occasion a Karter Brown comes along. His music is fresh and full of delightful sonic surprises, yet he uses traditional tonalities. He's far deeper and sensitive than others who resort to odd modalities and awkward rhythms in order to be "new" or "fresh". With his delightful imagination and musical intuition he's invented "new" within the bounds of pleasant tradition. He uses that to great effect in support of his primary compositional interest, film scoring. Setting mood and tension is a mainstay of that artform, and Karter does those very well. And yet, one can listen to a Graham composition without the film, and sit back in happy wonderment at what you're hearing. Chromatic and rhythmic easter eggs abound; each one is an unexpected delight. Devote four to ten minutes to one of his compositions; it will be time well spent. Go back for additional listens to savor again what you heard, or pick up on the things you missed the first time."</p>
-        <footer>— <cite>Frank Stearns, Recording Producer / Audio Engineer</cite></footer>
-      </blockquote>
-    </section>
   </main>
 
   <!-- ========================================================================
@@ -397,7 +489,28 @@
        ======================================================================== -->
   
   <!-- Content Configuration & Dynamic Loader (Edit text/styles here) -->
-  <script src="content.js?v=1783870527"></script>
+  <script src="content.js?v=1783877023"></script>
+
+  <!-- About video mute toggle -->
+  <script>
+    (function () {
+      const video   = document.getElementById('shedVideo');
+      const wrapper = video && video.closest('.about-photo-wrapper');
+      if (!video) return;
+      video.addEventListener('click', () => {
+        video.muted = !video.muted;
+        video.title = video.muted ? 'Click to unmute' : 'Click to mute';
+        if (wrapper) wrapper.classList.toggle('is-unmuted', !video.muted);
+      });
+    })();
+
+    // Move carousel titles above their videos
+    document.querySelectorAll('.sizzle-item').forEach(function(item) {
+      var title = item.querySelector('.sizzle-item-title');
+      var media = item.querySelector('.sizzle-item-media');
+      if (title && media) item.insertBefore(title, media);
+    });
+  </script>
 
   <!-- Reel video controls hardening -->
   <script>
