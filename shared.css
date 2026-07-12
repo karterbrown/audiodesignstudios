@@ -13,11 +13,11 @@
 
 :root {
 
-  /* --- Accent color (wine red — links, nav hover, play buttons, headings) --- */
-  --accent:        #b0304e;
-  --accent-rgb:    176, 48, 78;   /* Keep this in sync with --accent above!    */
-  --accent-dark:   #8c2340;       /* Darker shade — used for hover states       */
-  --accent-bright: #c9506a;       /* Brighter shade — used for glow effects     */
+  /* --- Accent color (warm red-orange — links, nav hover, play buttons, headings) --- */
+  --accent:        #e05c3a;
+  --accent-rgb:    224, 92, 58;   /* Keep this in sync with --accent above!    */
+  --accent-dark:   #b84830;       /* Darker shade — used for hover states       */
+  --accent-bright: #f07a58;       /* Brighter shade — used for glow effects     */
 
   /* --- Backgrounds ---------------------------------------------------------- */
   --bg:            #0a0a0a;       /* Main page background (neutral near-black)  */
@@ -28,8 +28,8 @@
   --text-muted:    #b8b2ac;       /* Captions, footers, secondary info          */
 
   /* --- Special colors ------------------------------------------------------- */
-  --red:           #e06040;       /* "Contact" nav link and alert items         */
-  --red-light:     #e88060;       /* Red hover state                            */
+  --red:           #d4a843;       /* "Contact" nav link — warm gold/amber       */
+  --red-light:     #e0bd6a;       /* Red hover state                            */
 
   /* --- Internal layout (don't change unless you know what you're doing) ----- */
   --site-header-offset: 128px;    /* Height of the sticky top navigation bar    */
