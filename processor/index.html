@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./processor.css?v=1788989815" />
+  <link rel="stylesheet" href="./processor.css?v=1788989971" />
 </head>
 
 <body>
@@ -418,7 +418,7 @@
 
       function cleanup() {
         [audioAfter, audioBefore].forEach(a => {
-          if (a) { a.pause(); a.src = ''; try { a.load(); } catch (_) {} }
+          if (a) { a.pause(); a.removeAttribute('src'); try { a.load(); } catch (_) {} }
         });
         allObjectURLs.forEach(u => { try { URL.revokeObjectURL(u); } catch (_) {} });
         allObjectURLs.length = 0;
@@ -997,6 +997,7 @@
         playPauseBtn.classList.remove('playing');
         afterLoaded = false;
         const onReady = () => {
+          audioAfter.removeEventListener('error', onError);
           afterLoaded = true;
           showLoadedZone(uploadZoneAfter, uploadZoneContentAfter, uploadLoadedContentAfter, uploadFilenameAfter, file.name);
           audioAfter.currentTime = 0;
@@ -1007,6 +1008,9 @@
           if (streamTarget) ensureLoudness();
         };
         const onError = () => {
+          audioAfter.removeEventListener('canplay', onReady);
+          // clearing a source also fires 'error'; only a real src means a real failure
+          if (!audioAfter.getAttribute('src')) return;
           alert('Could not load this audio file. The format may be unsupported by your browser.');
           showUploadZone(uploadZoneAfter, uploadZoneContentAfter, uploadLoadedContentAfter);
         };
@@ -1033,6 +1037,7 @@
         uploadZoneBefore.classList.add('buffering');
         beforeLoaded = false;
         const onReady = () => {
+          audioBefore.removeEventListener('error', onError);
           beforeLoaded = true;
           showLoadedZone(uploadZoneBefore, uploadZoneContentBefore, uploadLoadedContentBefore, uploadFilenameBefore, file.name);
           audioBefore.currentTime = 0;
@@ -1041,6 +1046,9 @@
           if (streamTarget) ensureLoudness();
         };
         const onError = () => {
+          audioBefore.removeEventListener('canplay', onReady);
+          // clearing a source also fires 'error'; only a real src means a real failure
+          if (!audioBefore.getAttribute('src')) return;
           alert('Could not load this audio file. The format may be unsupported by your browser.');
           showUploadZone(uploadZoneBefore, uploadZoneContentBefore, uploadLoadedContentBefore);
         };
@@ -1056,7 +1064,7 @@
       uploadZoneAfter.addEventListener('drop', (e) => { e.preventDefault(); uploadZoneAfter.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) loadAfterFile(f); });
       uploadClearBtnAfter.addEventListener('click', (e) => {
         e.stopPropagation();
-        audioAfter.pause(); audioAfter.src = '';
+        audioAfter.pause(); audioAfter.removeAttribute('src'); try { audioAfter.load(); } catch (_) {}
         if (afterMode) {
           if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
           stopVU();
@@ -1085,7 +1093,7 @@
       uploadZoneBefore.addEventListener('drop', (e) => { e.preventDefault(); uploadZoneBefore.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) loadBeforeFile(f); });
       uploadClearBtnBefore.addEventListener('click', (e) => {
         e.stopPropagation();
-        audioBefore.pause(); audioBefore.src = '';
+        audioBefore.pause(); audioBefore.removeAttribute('src'); try { audioBefore.load(); } catch (_) {}
         if (!afterMode) {
           if (progressRAF) { cancelAnimationFrame(progressRAF); progressRAF = null; }
           stopVU();
