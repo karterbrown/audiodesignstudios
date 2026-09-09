@@ -214,7 +214,8 @@ main {
   position: relative;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid rgba(208, 208, 208, 0.3);
-  width: 280px;
+  width: 360px;
+  max-width: 100%;
 }
 
 .ba-toggle-labels::after {
@@ -250,7 +251,7 @@ main {
 
 .ba-meter-display {
   position: relative;
-  width: 280px;
+  width: 360px;
   height: 155px;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid #d0d0d0;
@@ -323,8 +324,7 @@ main {
 .ba-meter-scale {
   position: absolute;
   top: 25px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 12px;
   width: 240px;
   height: 80px;
 }
@@ -434,7 +434,7 @@ main {
 .ba-meter-needle {
   position: absolute;
   bottom: 25px;
-  left: 50%;
+  left: 132px;
   width: 3px;
   height: 120px;
   background: linear-gradient(to top, #d0d0d0, rgba(208, 208, 208, 0.3));
@@ -443,6 +443,125 @@ main {
   will-change: transform;
   transition: none;
   box-shadow: 0 0 10px rgba(208, 208, 208, 0.6);
+}
+
+/* ---- Vertical peak / RMS ladder ------------------------------------- */
+.ba-led-meter {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  bottom: 8px;
+  width: 84px;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ba-led-scale {
+  position: relative;
+  width: 20px;
+  /* leave room for the caption row under the tracks */
+  margin-bottom: 13px;
+}
+
+.ba-led-scale span {
+  position: absolute;
+  right: 0;
+  transform: translateY(50%);
+  font-family: 'Courier New', monospace;
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(208, 208, 208, 0.75);
+  white-space: nowrap;
+}
+
+.ba-led-columns {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+}
+
+.ba-led-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ba-led-track {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
+  border: 1px solid rgba(208, 208, 208, 0.28);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.ba-led-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  /* colour is anchored to the dBFS scale, not to the fill height */
+  background-image:
+    repeating-linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0px,
+      rgba(0, 0, 0, 0.85) 1px,
+      rgba(0, 0, 0, 0) 1px,
+      rgba(0, 0, 0, 0) 4px
+    ),
+    linear-gradient(
+      to top,
+      #2f8f4f 0%,
+      #58c47a 60%,
+      #9fd94f 70%,
+      #ffd23f 80%,
+      #ff8a3d 90%,
+      #ff3b30 100%
+    );
+  clip-path: inset(100% 0 0 0);
+  will-change: clip-path;
+}
+
+.ba-led-hold {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #f2f2f2;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  will-change: bottom;
+}
+
+.ba-led-caption {
+  margin-top: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 7px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: rgba(208, 208, 208, 0.7);
+}
+
+/* Narrow phones: shrink the fixed-width meter face to fit */
+@media (max-width: 420px) {
+  .ba-meter-display {
+    transform: scale(0.82);
+    transform-origin: top center;
+    margin-bottom: -28px;
+  }
+  .ba-toggle-labels {
+    width: 296px;
+  }
 }
 
 /* Metering Display Section */
@@ -462,19 +581,34 @@ main {
     0 1px 2px rgba(208, 208, 208, 0.1);
 }
 
-/* Large screen: bigger VU meter + wider metering grid */
-@media (min-width: 900px) {
+/* Large screen: bigger VU meter + wider metering grid */@media (min-width: 900px) {
   .ba-toggle-labels {
-    width: 480px;
+    width: 620px;
   }
   .ba-meter-display {
-    width: 480px;
+    width: 620px;
     height: 265px;
   }
   .ba-meter-scale {
     width: 420px;
     height: 140px;
     top: 42px;
+    left: 20px;
+  }
+  .ba-led-meter {
+    width: 128px;
+    top: 16px;
+    right: 16px;
+    bottom: 14px;
+  }
+  .ba-led-scale {
+    width: 26px;
+  }
+  .ba-led-scale span {
+    font-size: 9px;
+  }
+  .ba-led-caption {
+    font-size: 9px;
   }
   .ba-meter-vu-line {
     top: 52px;
@@ -508,6 +642,7 @@ main {
     bottom: 43px !important;
     height: 205px !important;
     width: 3px !important;
+    left: 230px;
     transform-origin: bottom center;
   }
   .ba-meter-branding {
@@ -873,12 +1008,15 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 0;
+  width: 80px;
+  flex: 0 0 80px;
 }
 
 .ba-volume-knob-container {
   position: relative;
   width: 65px;
   height: 65px;
+  flex: 0 0 auto;
 }
 
 .ba-volume-arc {
@@ -947,69 +1085,71 @@ main {
 }
 
 .ba-volume-knob {
-  width: 65px;
-  height: 65px;
-  background: linear-gradient(145deg, var(--bg-raised), #0a0a0a);
-  border: 3px solid #555;
-  clip-path: polygon(
-    50% 15%,
-    calc(50% + 19px) 40%,
-    calc(50% + 11px) 75%,
-    calc(50% - 11px) 75%,
-    calc(50% - 19px) 40%
-  );
-  box-shadow: 
-    inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  position: relative;
-  transition: transform 0.1s;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  transform-origin: 50% 50%;
+  /* knurled grip band around the rim */
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(208, 208, 208, 0.30) 0deg 3deg,
+      rgba(0, 0, 0, 0) 3deg 9deg
+    ),
+    linear-gradient(180deg, #2a2c2e, #131415);
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  box-shadow:
+    0 0 0 1px rgba(208, 208, 208, 0.16),
+    0 3px 9px rgba(0, 0, 0, 0.55);
+  cursor: grab;
+  transition: box-shadow 0.15s ease;
   will-change: transform;
+  touch-action: none;
 }
 
 .ba-volume-knob:active {
-  transform: scale(0.98);
+  cursor: grabbing;
+  box-shadow:
+    0 0 0 1px rgba(208, 208, 208, 0.5),
+    0 0 14px rgba(208, 208, 208, 0.3),
+    0 3px 9px rgba(0, 0, 0, 0.55);
 }
 
+/* tapered luminous pointer */
 .ba-volume-knob::before {
   content: '';
   position: absolute;
-  top: 5px;
+  top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 5px;
-  height: 5px;
-  background: radial-gradient(circle, #d0d0d0, rgba(208, 208, 208, 0.6));
-  border-radius: 50%;
-  box-shadow: 
-    0 0 8px rgba(208, 208, 208, 0.8),
-    0 0 4px rgba(208, 208, 208, 1),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  z-index: 2;
+  width: 7px;
+  height: 10px;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(to bottom, #f2f2f2, rgba(208, 208, 208, 0.55));
+  filter: drop-shadow(0 0 5px rgba(208, 208, 208, 0.85));
 }
 
+/* smooth inner face covering the grip band */
 .ba-volume-knob::after {
   content: '';
   position: absolute;
-  top: 48%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 26px;
-  height: 26px;
-  background: 
-    repeating-conic-gradient(
-      from 0deg,
-      #2a2a2a 0deg 10deg,
-      var(--bg-raised) 10deg 20deg
-    ),
-    radial-gradient(circle, #333, #0a0a0a);
+  width: 33px;
+  height: 33px;
   border-radius: 50%;
-  border: 2px solid rgba(208, 208, 208, 0.5);
-  box-shadow: 
-    inset 0 2px 3px rgba(0, 0, 0, 0.6),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.05),
-    0 0 6px rgba(208, 208, 208, 0.4),
-    0 1px 2px rgba(0, 0, 0, 0.5);
+  background:
+    radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(160deg, #33363a, #0f1011);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.6);
 }
 
 .ba-volume-value {
@@ -1018,6 +1158,10 @@ main {
   font-weight: 600;
   color: #d0d0d0;
   margin-top: 0.5rem;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .power-button-container {
@@ -1366,6 +1510,189 @@ main {
 .loudness-meter-content {
   max-width: 700px;
   padding-top: 4.5rem;
+}
+
+/* ---- Streaming playback preview -------------------------------------- */
+.stream-preview {
+  width: 100%;
+  max-width: 900px;
+  margin: 4px auto 0;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(208, 208, 208, 0.2);
+  border-radius: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.stream-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 9px;
+  min-width: 0;
+}
+
+.stream-preview-title {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(208, 208, 208, 0.7);
+}
+
+.stream-preview-state {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+.stream-preview-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stream-btn {
+  flex: 1 1 auto;
+  min-width: 72px;
+  max-width: 100%;
+  padding: 6px 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(208, 208, 208, 0.8);
+  background: linear-gradient(180deg, #1d1f21, #121314);
+  border: 1px solid rgba(208, 208, 208, 0.22);
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stream-btn:hover {
+  color: #fff;
+  border-color: rgba(208, 208, 208, 0.45);
+}
+
+.stream-btn.active {
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.6);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.25), inset 0 0 8px rgba(var(--accent-rgb), 0.12);
+}
+
+/* ---- Difference spectrogram ------------------------------------------ */
+#procDiffModal .analysis-modal-content {
+  max-width: 1000px;
+}
+
+.diff-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.diff-status {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(208, 208, 208, 0.85);
+  text-align: center;
+  min-height: 17px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+#procDiffCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 900px;
+  background: #0a0a0a;
+  border: 1px solid rgba(208, 208, 208, 0.25);
+  border-radius: 4px;
+}
+
+.diff-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  color: rgba(208, 208, 208, 0.75);
+}
+
+.diff-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.diff-swatch {
+  flex: 0 0 auto;
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+.diff-swatch.add     { background: rgb(255, 90, 60); }
+.diff-swatch.cut     { background: rgb(44, 170, 255); }
+.diff-swatch.neutral { background: rgb(18, 20, 24); border-color: rgba(208, 208, 208, 0.3); }
+
+.diff-readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  width: 100%;
+  max-width: 900px;
+}
+
+.diff-readouts div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(208, 208, 208, 0.15);
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.diff-readouts span {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: rgba(208, 208, 208, 0.6);
+}
+
+.diff-readouts strong {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--accent);
 }
 
 .analysis-modal-close {

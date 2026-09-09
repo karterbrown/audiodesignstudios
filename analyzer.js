@@ -100,6 +100,150 @@ window.AudioAnalyzer = (function () {
   }
 
   // ---------------------------------------------------------------------------
+  // Container probe — reads the real file header.
+  // decodeAudioData resamples to the AudioContext rate, so the decoded buffer
+  // can NOT be trusted for sample rate / bit depth / channel count.
+  // ---------------------------------------------------------------------------
+  function probeContainer(ab) {
+    const v = new DataView(ab);
+    const u8 = new Uint8Array(ab);
+    const n  = u8.length;
+    const tag = (o, s) => {
+      for (let i = 0; i < s.length; i++) if (u8[o + i] !== s.charCodeAt(i)) return false;
+      return true;
+    };
+    const find = (s, from, to) => {
+      const end = Math.min(to, n - s.length);
+      for (let i = from; i <= end; i++) if (tag(i, s)) return i;
+      return -1;
+    };
+    const out = { format: null, sampleRate: 0, channels: 0, bitDepth: 0, lossless: false, codec: null };
+    if (n < 32) return out;
+
+    try {
+      // ── RIFF / WAVE ──────────────────────────────────────────────────────
+      if (tag(0, 'RIFF') && tag(8, 'WAVE')) {
+        out.format = 'WAV'; out.lossless = true;
+        let p = 12;
+        while (p + 8 <= n) {
+          const id = String.fromCharCode(u8[p], u8[p+1], u8[p+2], u8[p+3]);
+          const sz = v.getUint32(p + 4, true);
+          if (id === 'fmt ') {
+            let fmtCode = v.getUint16(p + 8, true);
+            out.channels   = v.getUint16(p + 10, true);
+            out.sampleRate = v.getUint32(p + 12, true);
+            out.bitDepth   = v.getUint16(p + 22, true);
+            if (fmtCode === 0xFFFE && sz >= 40) fmtCode = v.getUint16(p + 32, true);
+            out.codec = fmtCode === 3 ? 'PCM float' : fmtCode === 1 ? 'PCM' : 'code ' + fmtCode;
+            break;
+          }
+          p += 8 + sz + (sz & 1);
+        }
+        return out;
+      }
+
+      // ── AIFF / AIFC ──────────────────────────────────────────────────────
+      if (tag(0, 'FORM') && (tag(8, 'AIFF') || tag(8, 'AIFC'))) {
+        out.format = tag(8, 'AIFC') ? 'AIFC' : 'AIFF';
+        out.lossless = true;
+        let p = 12;
+        while (p + 8 <= n) {
+          const id = String.fromCharCode(u8[p], u8[p+1], u8[p+2], u8[p+3]);
+          const sz = v.getUint32(p + 4, false);
+          if (id === 'COMM') {
+            out.channels = v.getUint16(p + 8, false);
+            out.bitDepth = v.getUint16(p + 14, false);
+            // 80-bit IEEE 754 extended float
+            const o  = p + 16;
+            const e  = ((u8[o] << 8) | u8[o + 1]) & 0x7fff;
+            const hi = v.getUint32(o + 2, false), lo = v.getUint32(o + 6, false);
+            out.sampleRate = Math.round(
+              hi * Math.pow(2, e - 16383 - 31) + lo * Math.pow(2, e - 16383 - 63)
+            );
+            out.codec = out.format === 'AIFC' && sz >= 22
+              ? String.fromCharCode(u8[p+26], u8[p+27], u8[p+28], u8[p+29]) : 'PCM';
+            break;
+          }
+          p += 8 + sz + (sz & 1);
+        }
+        return out;
+      }
+
+      // ── FLAC ─────────────────────────────────────────────────────────────
+      if (tag(0, 'fLaC')) {
+        out.format = 'FLAC'; out.lossless = true; out.codec = 'FLAC';
+        const o = 18; // STREAMINFO + 10 bytes of block sizes
+        out.sampleRate = (u8[o] << 12) | (u8[o+1] << 4) | (u8[o+2] >> 4);
+        out.channels   = ((u8[o+2] >> 1) & 0x07) + 1;
+        out.bitDepth   = (((u8[o+2] & 1) << 4) | (u8[o+3] >> 4)) + 1;
+        return out;
+      }
+
+      // ── Ogg (Vorbis / Opus / FLAC) ───────────────────────────────────────
+      if (tag(0, 'OggS')) {
+        out.format = 'OGG';
+        const vo = find('vorbis', 0, 4096);
+        const op = find('OpusHead', 0, 4096);
+        if (op >= 0) {
+          out.codec = 'Opus';
+          out.channels = u8[op + 9];
+          out.sampleRate = 48000; // Opus always decodes at 48 kHz
+        } else if (vo >= 0) {
+          out.codec = 'Vorbis';
+          out.channels   = u8[vo + 5];
+          out.sampleRate = v.getUint32(vo + 6, true);
+        }
+        return out;
+      }
+
+      // ── MP4 / M4A ────────────────────────────────────────────────────────
+      if (tag(4, 'ftyp')) {
+        out.format = 'MP4';
+        const mp4a = find('mp4a', 0, Math.min(n, 4 << 20));
+        const alac = find('alac', 0, Math.min(n, 4 << 20));
+        out.codec = alac >= 0 ? 'ALAC' : mp4a >= 0 ? 'AAC' : null;
+        out.lossless = alac >= 0;
+        const box = alac >= 0 ? alac : mp4a;
+        if (box >= 0) {
+          out.channels   = v.getUint16(box + 4 + 16, false);
+          out.sampleRate = v.getUint32(box + 4 + 24, false) >>> 16;
+        }
+        // mdhd timescale is authoritative for rates above 65535
+        const mdhd = find('mdhd', 0, Math.min(n, 4 << 20));
+        if (mdhd >= 0) {
+          const ver = u8[mdhd + 4];
+          const ts  = ver === 1 ? v.getUint32(mdhd + 8 + 16, false) : v.getUint32(mdhd + 8 + 8, false);
+          if (ts >= 8000 && ts <= 768000) out.sampleRate = ts;
+        }
+        return out;
+      }
+
+      // ── MP3 ──────────────────────────────────────────────────────────────
+      let off = 0;
+      if (tag(0, 'ID3')) {
+        off = 10 + ((u8[6] & 0x7f) << 21 | (u8[7] & 0x7f) << 14 | (u8[8] & 0x7f) << 7 | (u8[9] & 0x7f));
+      }
+      for (let i = off; i < Math.min(n - 4, off + 200000); i++) {
+        if (u8[i] !== 0xff || (u8[i + 1] & 0xe0) !== 0xe0) continue;
+        const verBits = (u8[i + 1] >> 3) & 3;         // 3=MPEG1, 2=MPEG2, 0=MPEG2.5
+        const layer   = (u8[i + 1] >> 1) & 3;         // 1=Layer III
+        const brIdx   = (u8[i + 2] >> 4) & 0x0f;
+        const srIdx   = (u8[i + 2] >> 2) & 3;
+        if (verBits === 1 || layer === 0 || srIdx === 3 || brIdx === 0 || brIdx === 15) continue;
+        const SR = { 3: [44100, 48000, 32000], 2: [22050, 24000, 16000], 0: [11025, 12000, 8000] };
+        out.format = 'MP3';
+        out.codec  = 'MPEG' + (verBits === 3 ? '1' : verBits === 2 ? '2' : '2.5')
+                   + ' Layer ' + (layer === 3 ? 'I' : layer === 2 ? 'II' : 'III');
+        out.sampleRate = SR[verBits][srIdx];
+        out.channels   = ((u8[i + 3] >> 6) & 3) === 3 ? 1 : 2;
+        return out;
+      }
+    } catch (e) { /* unknown or malformed container — fall back to decoded values */ }
+
+    return out;
+  }
+
+  // ---------------------------------------------------------------------------
   // Core async analysis
   // ---------------------------------------------------------------------------
   async function _analyse(audioCtx, audioUrl, trackName, resultsEl) {
@@ -119,10 +263,26 @@ window.AudioAnalyzer = (function () {
       const resp = await fetch(audioUrl);
       if (!resp.ok) throw new Error('Fetch failed: ' + resp.status + ' ' + resp.statusText);
       const arrayBuf = await resp.arrayBuffer();
+      const fileBytes = arrayBuf.byteLength;
+
+      // ── Probe the real container header ────────────────────────────────────
+      const meta = probeContainer(arrayBuf);
 
       // ── Decode ─────────────────────────────────────────────────────────────
+      // Decode inside an OfflineAudioContext running at the file's native rate
+      // so the samples are not silently resampled to the output device rate.
       upd(15, 'Decoding audio\u2026');
-      const buf = await audioCtx.decodeAudioData(arrayBuf);
+      let buf = null, decodedAtNative = false;
+      if (meta.sampleRate >= 8000 && meta.sampleRate <= 192000) {
+        try {
+          const oc = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
+            1, 1, meta.sampleRate
+          );
+          buf = await oc.decodeAudioData(arrayBuf.slice(0));
+          decodedAtNative = true;
+        } catch (e) { buf = null; }
+      }
+      if (!buf) buf = await audioCtx.decodeAudioData(arrayBuf);
       if (!buf || buf.length < 1) throw new Error('Audio could not be decoded or is empty.');
 
       upd(20, 'Preparing analysis\u2026');
@@ -264,6 +424,7 @@ window.AudioAnalyzer = (function () {
       // ── Single-pass: RMS / DC / stereo image ──────────────────────────────
       upd(80, 'Analyzing stereo image\u2026');
       const chL = chs[0], chR = nCh >= 2 ? chs[1] : chs[0];
+      const monoMix = new Float32Array(nSmp);
       let sqL = 0, sqR = 0, sumL = 0, sumR = 0, sumLR = 0, sqM = 0, sqS = 0;
       for (let i = 0; i < nSmp; i++) {
         const l = chL[i], r = chR[i];
@@ -271,6 +432,7 @@ window.AudioAnalyzer = (function () {
         sumL += l;  sumR += r;
         sumLR += l*r;
         const M = (l + r) * 0.5, S = (l - r) * 0.5;
+        monoMix[i] = M;
         sqM += M*M; sqS += S*S;
         if (i % 500000 === 0 && i > 0) await new Promise(r => setTimeout(r, 0));
       }
@@ -316,7 +478,7 @@ window.AudioAnalyzer = (function () {
       for (let i = 0; i < FFT_N; i++) hannWin[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / (FFT_N - 1)));
       const fftRe  = new Float32Array(FFT_N), fftIm = new Float32Array(FFT_N);
       const avgPow = new Float64Array(halfFFT); // accumulated power (|X|^2)
-      const specSrc = chs[0];
+      const specSrc = monoMix;
       const hopSamp = Math.max(Math.floor(sr * 0.5), FFT_N); // 500 ms hop
       let fftCount  = 0;
       for (let w = 0; w + FFT_N <= specSrc.length; w += hopSamp) {
@@ -365,7 +527,7 @@ window.AudioAnalyzer = (function () {
       upd(91, 'Detecting tempo\u2026');
       let detBPM = 0;
       {
-        const bpmSrc   = chs[0];
+        const bpmSrc   = monoMix;
         const bpmStart = Math.floor(bpmSrc.length * 0.20);
         const bpmEnd   = Math.floor(bpmSrc.length * 0.80);
         const ENV_HOP  = 512;
@@ -556,8 +718,26 @@ window.AudioAnalyzer = (function () {
           + ' &mdash; adjust: ' + adjStr + '</span></div>';
       }).join('');
 
-      const chLabel = nCh === 1 ? 'Mono' : nCh === 2 ? 'Stereo' : nCh + '-channel';
       const dur     = buf.duration;
+
+      // File info — prefer the container header over the decoded buffer, since
+      // decoding can resample and (for mono files) is always float32 internally.
+      const srReported = meta.sampleRate || sr;
+      const chReported = meta.channels   || buf.numberOfChannels;
+      const chReportedLabel = chReported === 1 ? 'Mono' : chReported === 2 ? 'Stereo' : chReported + '-channel';
+      const srStr = srReported % 1000 === 0
+        ? (srReported / 1000) + ' kHz'
+        : (srReported / 1000).toFixed(3).replace(/0+$/, '').replace(/\.$/, '') + ' kHz';
+      const srNote = decodedAtNative || srReported === sr
+        ? '' : ' <span class="analysis-tag info">analysed at ' + (sr / 1000).toFixed(1) + ' kHz</span>';
+      const fmtStr = meta.format
+        ? meta.format + (meta.codec && meta.codec !== meta.format ? ' \u00b7 ' + meta.codec : '')
+        : 'Unknown container';
+      const bitDepthStr = meta.bitDepth ? meta.bitDepth + '-bit' : (meta.lossless ? 'Unknown' : 'n/a (lossy)');
+      const dataRate = dur > 0 ? (fileBytes * 8) / dur / 1000 : 0;
+      const sizeStr = fileBytes >= 1048576
+        ? (fileBytes / 1048576).toFixed(2) + ' MB'
+        : (fileBytes / 1024).toFixed(1) + ' KB';
 
       upd(100, 'Complete!');
       await new Promise(r => setTimeout(r, 150));
@@ -638,20 +818,36 @@ window.AudioAnalyzer = (function () {
 
         <div class="analysis-section-header">FILE INFO</div>
         <div class="analysis-metric">
+          <span class="analysis-label">Format:</span>
+          <span class="analysis-value">${fmtStr}</span>
+        </div>
+        <div class="analysis-metric">
           <span class="analysis-label">Duration:</span>
-          <span class="analysis-value">${Math.floor(dur / 60)}:${String(Math.floor(dur % 60)).padStart(2, '0')}</span>
+          <span class="analysis-value">${Math.floor(dur / 60)}:${String(Math.floor(dur % 60)).padStart(2, '0')}.${String(Math.floor((dur % 1) * 100)).padStart(2, '0')}</span>
         </div>
         <div class="analysis-metric">
           <span class="analysis-label">Sample Rate:</span>
-          <span class="analysis-value">${(sr / 1000).toFixed(1)} kHz</span>
+          <span class="analysis-value">${srStr}${srNote}</span>
+        </div>
+        <div class="analysis-metric">
+          <span class="analysis-label">Bit Depth:</span>
+          <span class="analysis-value">${bitDepthStr}</span>
         </div>
         <div class="analysis-metric">
           <span class="analysis-label">Channels:</span>
-          <span class="analysis-value">${chLabel}</span>
+          <span class="analysis-value">${chReportedLabel}</span>
+        </div>
+        <div class="analysis-metric">
+          <span class="analysis-label">File Size:</span>
+          <span class="analysis-value">${sizeStr}</span>
+        </div>
+        <div class="analysis-metric">
+          <span class="analysis-label">Data Rate:</span>
+          <span class="analysis-value">${dataRate > 0 ? Math.round(dataRate) + ' kbps' : '\u2014'}</span>
         </div>
         <div class="analysis-metric">
           <span class="analysis-label">Total Samples:</span>
-          <span class="analysis-value">${(buf.length / 1e6).toFixed(2)} M</span>
+          <span class="analysis-value">${(buf.length / 1e6).toFixed(2)} M per channel</span>
         </div>
         ${dcOffsetHTML}
       `;
@@ -686,6 +882,312 @@ window.AudioAnalyzer = (function () {
     _analyse(audioCtx, audioUrl, trackName, resultsEl);
   }
 
-  return { run: run };
+  // ---------------------------------------------------------------------------
+  // Shared decode helper — decodes at an explicit rate so two files can be
+  // compared sample-for-sample. Falls back to the default rate if the browser
+  // refuses the requested one.
+  // ---------------------------------------------------------------------------
+  async function decodeAt(url, rate) {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Fetch failed: ' + resp.status);
+    const ab = await resp.arrayBuffer();
+    const meta = probeContainer(ab);
+    const want = rate || meta.sampleRate;
+    const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if (want >= 8000 && want <= 192000) {
+      try {
+        return { buf: await new OAC(1, 1, want).decodeAudioData(ab.slice(0)), meta: meta };
+      } catch (e) { /* fall through */ }
+    }
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      return { buf: await ac.decodeAudioData(ab), meta: meta };
+    } finally { ac.close(); }
+  }
+
+  function monoOf(buf) {
+    const n = buf.length;
+    const out = new Float32Array(n);
+    const c = buf.numberOfChannels;
+    if (c === 1) { out.set(buf.getChannelData(0)); return out; }
+    const l = buf.getChannelData(0), r = buf.getChannelData(1);
+    for (let i = 0; i < n; i++) out[i] = (l[i] + r[i]) * 0.5;
+    return out;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Integrated loudness + true peak only — used for streaming-level preview.
+  // ---------------------------------------------------------------------------
+  async function measureLoudness(url) {
+    const { buf } = await decodeAt(url, 0);
+    const sr = buf.sampleRate;
+    const nCh = Math.min(buf.numberOfChannels, 6);
+    const G = [1.0, 1.0, 1.0, 1.41, 1.41, 0.0];
+
+    // True peak (4x Catmull-Rom around loud samples)
+    let truePeak = -100;
+    for (let ch = 0; ch < nCh; ch++) {
+      const d = buf.getChannelData(ch), n = d.length;
+      for (let i = 1; i < n - 2; i++) {
+        const y1 = d[i], pa = y1 < 0 ? -y1 : y1;
+        if (pa > 0) { const v = 20 * Math.log10(pa); if (v > truePeak) truePeak = v; }
+        if (pa > 0.4) {
+          const y0 = d[i - 1], y2 = d[i + 1], y3 = d[i + 2 < n ? i + 2 : n - 1];
+          const c1 = (-y0 + y2) * 0.5;
+          const c2 = y0 - 2.5 * y1 + 2 * y2 - 0.5 * y3;
+          const c3 = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
+          for (let t = 0.25; t < 1; t += 0.25) {
+            const v = ((c3 * t + c2) * t + c1) * t + y1;
+            const av = v < 0 ? -v : v;
+            if (av > pa) { const d2 = 20 * Math.log10(av); if (d2 > truePeak) truePeak = d2; }
+          }
+        }
+      }
+      await new Promise(r => setTimeout(r, 0));
+    }
+
+    const kw = [];
+    for (let ch = 0; ch < nCh; ch++) {
+      kw.push(kWeightFull(buf.getChannelData(ch), sr));
+      await new Promise(r => setTimeout(r, 0));
+    }
+
+    const blockSz = Math.floor(sr * 0.4), stepSz = Math.floor(blockSz * 0.25);
+    const nBlocks = Math.floor((buf.length - blockSz) / stepSz);
+    if (nBlocks < 1) throw new Error('Track is too short to measure loudness.');
+    const ms = new Float64Array(nBlocks), l = new Float64Array(nBlocks);
+    for (let bi = 0; bi < nBlocks; bi++) {
+      const pos = bi * stepSz;
+      let m = 0;
+      for (let ch = 0; ch < nCh; ch++) {
+        if (G[ch] === 0) continue;
+        const k = kw[ch];
+        let sq = 0;
+        for (let i = pos, e = pos + blockSz; i < e; i++) sq += k[i] * k[i];
+        m += G[ch] * (sq / blockSz);
+      }
+      ms[bi] = m;
+      l[bi] = m > 0 ? -0.691 + 10 * Math.log10(m) : -Infinity;
+      if (bi % 400 === 0) await new Promise(r => setTimeout(r, 0));
+    }
+
+    let gMs = 0, gN = 0;
+    for (let i = 0; i < nBlocks; i++) if (l[i] >= -70) { gMs += ms[i]; gN++; }
+    if (gN === 0) throw new Error('Track is silent.');
+    const relGate = -0.691 + 10 * Math.log10(gMs / gN) - 10;
+    let fMs = 0, fN = 0;
+    for (let i = 0; i < nBlocks; i++) if (l[i] >= relGate) { fMs += ms[i]; fN++; }
+
+    return {
+      lufs: fN > 0 ? -0.691 + 10 * Math.log10(fMs / fN) : -100,
+      truePeak: truePeak,
+      duration: buf.duration,
+      sampleRate: sr
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Difference spectrogram — B minus A, in dB, over log frequency and time.
+  // Red = energy added by the processing, blue = energy removed.
+  // ---------------------------------------------------------------------------
+  async function renderDiff(urlA, urlB, canvas, onStatus) {
+    const say = onStatus || function () {};
+    const FFT_N = 2048, HALF = FFT_N >> 1;
+
+    say('Decoding A\u2026');
+    const a = await decodeAt(urlA, 0);
+    const sr = a.buf.sampleRate;
+    say('Decoding B\u2026');
+    const b = await decodeAt(urlB, sr);
+
+    const mA = monoOf(a.buf), mB = monoOf(b.buf);
+
+    // ── Coarse time alignment via energy-envelope cross-correlation ─────────
+    say('Aligning\u2026');
+    const EH = 1024;
+    const envOf = (d) => {
+      const n = Math.floor(d.length / EH);
+      const e = new Float32Array(n);
+      for (let f = 0; f < n; f++) {
+        let s = 0;
+        for (let i = 0, o = f * EH; i < EH; i++) { const v = d[o + i]; s += v * v; }
+        e[f] = Math.sqrt(s / EH);
+      }
+      return e;
+    };
+    const eA = envOf(mA), eB = envOf(mB);
+    const maxLag = Math.min(Math.floor(sr * 1.5 / EH), Math.min(eA.length, eB.length) - 1);
+    let bestLag = 0, bestScore = -Infinity;
+    for (let lag = -maxLag; lag <= maxLag; lag++) {
+      let s = 0, c = 0;
+      const from = Math.max(0, -lag), to = Math.min(eA.length, eB.length - lag);
+      for (let i = from; i < to; i += 2) { s += eA[i] * eB[i + lag]; c++; }
+      if (c > 0) { const sc = s / c; if (sc > bestScore) { bestScore = sc; bestLag = lag; } }
+    }
+    const shift = bestLag * EH; // samples to add to A's index to reach B
+    const startA = Math.max(0, -shift), startB = Math.max(0, shift);
+    const span = Math.min(mA.length - startA, mB.length - startB);
+    if (span < FFT_N * 4) throw new Error('Files do not overlap enough to compare.');
+
+    // ── Geometry ───────────────────────────────────────────────────────────
+    const FONT = 11;
+    const ML = 52, MR = 82, MT = 30, MB = 36;
+    const W = canvas.width, H = canvas.height;
+    const cW = W - ML - MR, cH = H - MT - MB;
+    const hop = Math.max(512, Math.floor((span - FFT_N) / cW));
+    const nCols = Math.max(1, Math.min(cW, Math.floor((span - FFT_N) / hop)));
+
+    // Log-spaced frequency rows
+    const F_LO = 30, F_HI = Math.min(20000, sr / 2);
+    const rows = cH;
+    const rowLo = new Int32Array(rows), rowHi = new Int32Array(rows);
+    for (let r = 0; r < rows; r++) {
+      // row 0 = top = highest frequency
+      const t0 = (rows - 1 - r) / rows, t1 = (rows - r) / rows;
+      const f0 = F_LO * Math.pow(F_HI / F_LO, t0);
+      const f1 = F_LO * Math.pow(F_HI / F_LO, t1);
+      let lo = Math.floor(f0 * FFT_N / sr), hi = Math.ceil(f1 * FFT_N / sr);
+      if (hi <= lo) hi = lo + 1;
+      rowLo[r] = Math.max(1, Math.min(HALF - 1, lo));
+      rowHi[r] = Math.max(rowLo[r] + 1, Math.min(HALF, hi));
+    }
+
+    const win = new Float32Array(FFT_N);
+    for (let i = 0; i < FFT_N; i++) win[i] = 0.5 * (1 - Math.cos(2 * Math.PI * i / (FFT_N - 1)));
+    const reA = new Float32Array(FFT_N), imA = new Float32Array(FFT_N);
+    const reB = new Float32Array(FFT_N), imB = new Float32Array(FFT_N);
+
+    const ctx2 = canvas.getContext('2d');
+    ctx2.fillStyle = '#0a0a0a';
+    ctx2.fillRect(0, 0, W, H);
+    const img = ctx2.createImageData(nCols, rows);
+    const px = img.data;
+
+    const RANGE = 12;      // dB mapped to full colour saturation
+    const FLOOR = -96;     // band energy below this is treated as silence
+    const STAT_FLOOR = -70; // only audible cells count toward the summary numbers
+    let maxAdd = 0, maxCut = 0, sumAbs = 0, cells = 0;
+
+    for (let c = 0; c < nCols; c++) {
+      const oA = startA + c * hop, oB = startB + c * hop;
+      for (let i = 0; i < FFT_N; i++) {
+        reA[i] = mA[oA + i] * win[i]; imA[i] = 0;
+        reB[i] = mB[oB + i] * win[i]; imB[i] = 0;
+      }
+      computeFFT(reA, imA);
+      computeFFT(reB, imB);
+
+      for (let r = 0; r < rows; r++) {
+        let pa = 0, pb = 0;
+        for (let k = rowLo[r]; k < rowHi[r]; k++) {
+          pa += reA[k] * reA[k] + imA[k] * imA[k];
+          pb += reB[k] * reB[k] + imB[k] * imB[k];
+        }
+        const nb = rowHi[r] - rowLo[r];
+        const dA = pa > 0 ? 10 * Math.log10(pa / nb) - 60 : -200;
+        const dB_ = pb > 0 ? 10 * Math.log10(pb / nb) - 60 : -200;
+
+        let rr, gg, bb;
+        if (dA < FLOOR && dB_ < FLOOR) {
+          rr = 12; gg = 13; bb = 15;                       // both silent
+        } else {
+          const diff = Math.max(-40, Math.min(40, dB_ - dA));
+          if (dA > STAT_FLOOR || dB_ > STAT_FLOOR) {
+            if (diff > maxAdd) maxAdd = diff;
+            else if (-diff > maxCut) maxCut = -diff;
+            sumAbs += diff < 0 ? -diff : diff; cells++;
+          }
+
+          const t = Math.max(-1, Math.min(1, diff / RANGE));
+          const mag = Math.pow(t < 0 ? -t : t, 0.65);
+          if (t >= 0) {                                    // added energy
+            rr = 18 + mag * 237; gg = 20 + mag * 70; bb = 24 + mag * 36;
+          } else {                                         // removed energy
+            rr = 18 + mag * 26;  gg = 20 + mag * 150; bb = 24 + mag * 231;
+          }
+        }
+        const o = (r * nCols + c) * 4;
+        px[o] = rr; px[o + 1] = gg; px[o + 2] = bb; px[o + 3] = 255;
+      }
+
+      if ((c & 31) === 0) {
+        say('Comparing \u2014 ' + Math.round(c / nCols * 100) + '%');
+        await new Promise(r => setTimeout(r, 0));
+      }
+    }
+
+    // ── Blit + axes ────────────────────────────────────────────────────────
+    const tmp = document.createElement('canvas');
+    tmp.width = nCols; tmp.height = rows;
+    tmp.getContext('2d').putImageData(img, 0, 0);
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.drawImage(tmp, ML, MT, cW, cH);
+
+    ctx2.strokeStyle = 'rgba(208,208,208,0.35)';
+    ctx2.lineWidth = 1;
+    ctx2.strokeRect(ML + 0.5, MT + 0.5, cW - 1, cH - 1);
+
+    ctx2.font = FONT + 'px "Courier New", monospace';
+    ctx2.fillStyle = 'rgba(208,208,208,0.75)';
+    ctx2.textAlign = 'right';
+    ctx2.textBaseline = 'middle';
+    [50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000].forEach(f => {
+      if (f < F_LO || f > F_HI) return;
+      const t = Math.log(f / F_LO) / Math.log(F_HI / F_LO);
+      const y = Math.max(MT + FONT / 2, Math.min(MT + cH - FONT / 2, MT + cH - t * cH));
+      ctx2.fillStyle = 'rgba(208,208,208,0.75)';
+      ctx2.fillText(f >= 1000 ? (f / 1000) + 'k' : String(f), ML - 7, y);
+      ctx2.strokeStyle = 'rgba(208,208,208,0.10)';
+      ctx2.beginPath(); ctx2.moveTo(ML, y + 0.5); ctx2.lineTo(ML + cW, y + 0.5); ctx2.stroke();
+    });
+
+    const totalSec = nCols * hop / sr;
+    ctx2.textBaseline = 'top';
+    ctx2.textAlign = 'center';
+    for (let i = 0; i <= 6; i++) {
+      const s = totalSec * i / 6;
+      const label = Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+      const half = ctx2.measureText(label).width / 2;
+      // clamp so the first and last stamps stay inside the canvas
+      const x = Math.max(half + 2, Math.min(W - half - 2, ML + (cW * i / 6)));
+      ctx2.fillStyle = 'rgba(208,208,208,0.75)';
+      ctx2.fillText(label, x, MT + cH + 7);
+    }
+
+    // Legend
+    const lx = ML + cW + 14, lw = 12, lh = cH;
+    const grad = ctx2.createLinearGradient(0, MT, 0, MT + lh);
+    grad.addColorStop(0.00, 'rgb(255,90,60)');
+    grad.addColorStop(0.50, 'rgb(18,20,24)');
+    grad.addColorStop(1.00, 'rgb(44,170,255)');
+    ctx2.fillStyle = grad;
+    ctx2.fillRect(lx, MT, lw, lh);
+    ctx2.strokeStyle = 'rgba(208,208,208,0.35)';
+    ctx2.strokeRect(lx + 0.5, MT + 0.5, lw - 1, lh - 1);
+    ctx2.fillStyle = 'rgba(208,208,208,0.8)';
+    ctx2.textAlign = 'left';
+    ctx2.textBaseline = 'middle';
+    ctx2.fillText('+' + RANGE + ' dB',      lx + lw + 5, MT + FONT / 2);
+    ctx2.fillText('0',                      lx + lw + 5, MT + lh / 2);
+    ctx2.fillText('\u2212' + RANGE + ' dB', lx + lw + 5, MT + lh - FONT / 2);
+
+    ctx2.textAlign = 'left';
+    ctx2.textBaseline = 'top';
+    ctx2.fillStyle = 'rgba(208,208,208,0.6)';
+    ctx2.fillText('B \u2212 A', ML, 10);
+    ctx2.textAlign = 'right';
+    ctx2.fillText('Hz', ML - 7, 10);
+
+    return {
+      offsetMs: shift / sr * 1000,
+      maxAdd: maxAdd,
+      maxCut: maxCut,
+      avgChange: cells > 0 ? sumAbs / cells : 0,
+      seconds: totalSec,
+      sampleRate: sr
+    };
+  }
+
+  return { run: run, measureLoudness: measureLoudness, renderDiff: renderDiff };
 
 })();

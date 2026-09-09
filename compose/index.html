@@ -36,7 +36,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./compose.css?v=1783881453" />
+  <link rel="stylesheet" href="./compose.css?v=1788988876" />
   
   <style>
     /* Hidden Tracks Page Specific Styles */
@@ -697,6 +697,15 @@
       align-items: center;
       gap: 0rem;
       margin-top: -12px;
+      width: 100px;
+      flex: 0 0 100px;
+    }
+
+    #baVolumeValue {
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
 
     .ba-volume-knob-container {
@@ -868,71 +877,71 @@
     }
 
     .ba-volume-knob {
-      width: 85px;
-      height: 85px;
-      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-      border: 3px solid #555;
-      clip-path: polygon(
-        50% 15%,
-        calc(50% + 25px) 40%,
-        calc(50% + 15px) 75%,
-        calc(50% - 15px) 75%,
-        calc(50% - 25px) 40%
-      );
-      box-shadow: 
-        inset 0 -2px 4px rgba(0, 0, 0, 0.5),
-        0 4px 12px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-      position: relative;
-      transition: transform 0.1s;
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      width: 57px;
+      height: 57px;
+      border-radius: 50%;
+      transform-origin: 50% 50%;
+      /* knurled grip band around the rim */
+      background:
+        repeating-conic-gradient(
+          from 0deg,
+          rgba(208, 208, 208, 0.30) 0deg 3deg,
+          rgba(0, 0, 0, 0) 3deg 9deg
+        ),
+        linear-gradient(180deg, #2a2c2e, #131415);
+      border: 1px solid rgba(0, 0, 0, 0.7);
+      box-shadow:
+        0 0 0 1px rgba(208, 208, 208, 0.16),
+        0 3px 9px rgba(0, 0, 0, 0.55);
+      cursor: grab;
+      transition: box-shadow 0.15s ease;
       will-change: transform;
+      touch-action: none;
     }
 
     .ba-volume-knob:active {
-      transform: scale(0.98);
+      cursor: grabbing;
+      box-shadow:
+        0 0 0 1px rgba(208, 208, 208, 0.5),
+        0 0 14px rgba(208, 208, 208, 0.3),
+        0 3px 9px rgba(0, 0, 0, 0.55);
     }
 
-    /* Knob indicator dot */
+    /* Tapered luminous pointer */
     .ba-volume-knob::before {
       content: '';
       position: absolute;
-      top: 6px;
+      top: 3px;
       left: 50%;
       transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
-      background: radial-gradient(circle, #d0d0d0, rgba(208, 208, 208, 0.6));
-      border-radius: 50%;
-      box-shadow: 
-        0 0 8px rgba(208, 208, 208, 0.8),
-        0 0 4px rgba(208, 208, 208, 1),
-        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      z-index: 2;
+      width: 9px;
+      height: 13px;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      background: linear-gradient(to bottom, #f2f2f2, rgba(208, 208, 208, 0.55));
+      filter: drop-shadow(0 0 5px rgba(208, 208, 208, 0.85));
     }
 
-    /* Center cap with ridges */
+    /* Smooth inner face covering the grip band */
     .ba-volume-knob::after {
       content: '';
       position: absolute;
-      top: 48%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 32px;
-      height: 32px;
-      background: 
-        repeating-conic-gradient(
-          from 0deg,
-          #2a2a2a 0deg 10deg,
-          #1a1a1a 10deg 20deg
-        ),
-        radial-gradient(circle, #333, #0a0a0a);
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      border: 2px solid rgba(208, 208, 208, 0.5);
-      box-shadow: 
-        inset 0 2px 3px rgba(0, 0, 0, 0.6),
-        inset 0 -1px 2px rgba(255, 255, 255, 0.05),
-        0 0 6px rgba(208, 208, 208, 0.4),
-        0 1px 2px rgba(0, 0, 0, 0.5);
+      background:
+        radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 60%),
+        linear-gradient(160deg, #33363a, #0f1011);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(0, 0, 0, 0.6);
     }
 
     /* Now Playing Display */
@@ -1905,8 +1914,8 @@
        ======================================================================== -->
 
   <!-- Content Configuration & Dynamic Loader -->
-  <script src="../content.js?v=1783881453"></script>
-  <script src="./compose-players.js?v=1783881453"></script>
+  <script src="../content.js?v=1788988876"></script>
+  <script src="./compose-players.js?v=1788988876"></script>
 
 
 

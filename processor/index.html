@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./processor.css?v=1783881453" />
+  <link rel="stylesheet" href="./processor.css?v=1788988876" />
 </head>
 
 <body>
@@ -155,6 +155,35 @@
                 <div class="ba-meter-needle" id="procMeterNeedle"></div>
                 <div class="ba-meter-branding">AUDIO DESIGN STUDIOS</div>
                 <div class="ba-meter-vu-display" id="procVuDisplay">0 VU</div>
+
+                <!-- Vertical peak / RMS ladder (dBFS) -->
+                <div class="ba-led-meter" aria-hidden="true">
+                  <div class="ba-led-scale">
+                    <span style="bottom:100%;">0</span>
+                    <span style="bottom:90%;">-6</span>
+                    <span style="bottom:80%;">-12</span>
+                    <span style="bottom:66.7%;">-20</span>
+                    <span style="bottom:50%;">-30</span>
+                    <span style="bottom:33.3%;">-40</span>
+                    <span style="bottom:0%;">-60</span>
+                  </div>
+                  <div class="ba-led-columns">
+                    <div class="ba-led-col">
+                      <div class="ba-led-track">
+                        <div class="ba-led-fill" id="procLedPeakFill"></div>
+                        <div class="ba-led-hold" id="procLedPeakHold"></div>
+                      </div>
+                      <span class="ba-led-caption">PK</span>
+                    </div>
+                    <div class="ba-led-col">
+                      <div class="ba-led-track">
+                        <div class="ba-led-fill" id="procLedRmsFill"></div>
+                        <div class="ba-led-hold" id="procLedRmsHold"></div>
+                      </div>
+                      <span class="ba-led-caption">RMS</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -186,6 +215,23 @@
               <button id="procToggleButton" class="ba-toggle-button" aria-label="Toggle Before/After" style="display: none;"></button>
               <button id="procLoudnessMeterBtn" class="ba-view-btn-inline" aria-label="View Spectrum Analyzer" title="Show spectrum analyzer">View</button>
               <button id="procAnalyzeBtn" class="control-btn-analyze" aria-label="Analyze Track" title="Analyze current file">Analyze</button>
+              <button id="procDiffBtn" class="control-btn-analyze" aria-label="Compare A and B" title="Compare what the processing changed" style="display: none;">Compare</button>
+            </div>
+
+            <!-- Streaming level preview -->
+            <div class="stream-preview" id="procStreamPreview">
+              <div class="stream-preview-head">
+                <span class="stream-preview-title">Streaming Playback Preview</span>
+                <span class="stream-preview-state" id="procStreamState">Off &mdash; file at its own level</span>
+              </div>
+              <div class="stream-preview-btns" id="procStreamBtns">
+                <button class="stream-btn active" data-lufs="off">Off</button>
+                <button class="stream-btn" data-lufs="-14" data-tp="-1">Spotify</button>
+                <button class="stream-btn" data-lufs="-16" data-tp="-1">Apple</button>
+                <button class="stream-btn" data-lufs="-14" data-tp="-1">YouTube</button>
+                <button class="stream-btn" data-lufs="-14" data-tp="-2">Amazon</button>
+                <button class="stream-btn" data-lufs="-23" data-tp="-1">Broadcast</button>
+              </div>
             </div>
           </div>
 
@@ -230,6 +276,28 @@
             <span class="analysis-loading-text">Analyzing track</span><span class="analysis-loading-dots"><span>.</span><span>.</span><span>.</span></span>
             <div class="analysis-loading-subtext">This may take a moment</div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================
+         DIFFERENCE SPECTROGRAM MODAL &mdash; what the processing changed
+         ======================================================================== -->
+    <div id="procDiffModal" class="analysis-modal" style="display: none;">
+      <div class="analysis-modal-content loudness-meter-content">
+        <button class="analysis-modal-close" id="procDiffClose">&times;</button>
+        <div class="spectrum-modal-header">
+          <h2>Compare</h2>
+        </div>
+        <div class="diff-display">
+          <div class="diff-status" id="procDiffStatus">Preparing&hellip;</div>
+          <canvas id="procDiffCanvas" width="900" height="420"></canvas>
+          <div class="diff-legend">
+            <span><i class="diff-swatch add"></i>Energy added by B</span>
+            <span><i class="diff-swatch cut"></i>Energy removed by B</span>
+            <span><i class="diff-swatch neutral"></i>Unchanged / silent</span>
+          </div>
+          <div class="diff-readouts" id="procDiffReadouts"></div>
         </div>
       </div>
     </div>
@@ -364,6 +432,10 @@
 
       // DOM References
       const meterNeedle     = document.getElementById('procMeterNeedle');
+      const ledPeakFill     = document.getElementById('procLedPeakFill');
+      const ledPeakHold     = document.getElementById('procLedPeakHold');
+      const ledRmsFill      = document.getElementById('procLedRmsFill');
+      const ledRmsHold      = document.getElementById('procLedRmsHold');
       const volumeKnob      = document.getElementById('procVolumeKnob');
       const volumeValue     = document.getElementById('procVolumeValue');
       const playPauseBtn    = document.getElementById('procPlayPauseBtn');
@@ -402,6 +474,14 @@
       const uploadAnotherBtnBefore    = document.getElementById('uploadAnotherBtnBefore');
 
       const analyzeBtn          = document.getElementById('procAnalyzeBtn');
+      const diffBtn             = document.getElementById('procDiffBtn');
+      const diffModal           = document.getElementById('procDiffModal');
+      const diffModalClose      = document.getElementById('procDiffClose');
+      const diffCanvas          = document.getElementById('procDiffCanvas');
+      const diffStatus          = document.getElementById('procDiffStatus');
+      const diffReadouts        = document.getElementById('procDiffReadouts');
+      const streamBtns          = document.getElementById('procStreamBtns');
+      const streamState         = document.getElementById('procStreamState');
       const analysisModal       = document.getElementById('procAnalysisModal');
       const analysisModalClose  = document.getElementById('procAnalysisModalClose');
       const analysisResults     = document.getElementById('procAnalysisResults');
@@ -455,6 +535,17 @@
 
       const afterGain  = ctx.createGain();
       const beforeGain = ctx.createGain();
+      // Streaming preview limiter — platforms turn quiet tracks up and limit the
+      // peaks rather than refusing the gain, so the preview has to do the same.
+      const afterLimiter  = ctx.createDynamicsCompressor();
+      const beforeLimiter = ctx.createDynamicsCompressor();
+      [afterLimiter, beforeLimiter].forEach(l => {
+        l.threshold.value = 0;
+        l.knee.value      = 0;
+        l.ratio.value     = 1;
+        l.attack.value    = 0.002;
+        l.release.value   = 0.10;
+      });
       const afterTimeData  = new Float32Array(afterVUAnalyser.fftSize);
       const beforeTimeData = new Float32Array(beforeVUAnalyser.fftSize);
 
@@ -467,7 +558,8 @@
           const src = ctx.createMediaElementSource(audioAfter);
           src.connect(afterVUAnalyser);
           afterVUAnalyser.connect(afterGain);
-          afterGain.connect(ctx.destination);
+          afterGain.connect(afterLimiter);
+          afterLimiter.connect(ctx.destination);
           src.connect(afterAnalyser);
           afterConnected = true;
         }
@@ -479,7 +571,8 @@
           const src = ctx.createMediaElementSource(audioBefore);
           src.connect(beforeVUAnalyser);
           beforeVUAnalyser.connect(beforeGain);
-          beforeGain.connect(ctx.destination);
+          beforeGain.connect(beforeLimiter);
+          beforeLimiter.connect(ctx.destination);
           src.connect(beforeAnalyser);
           beforeConnected = true;
         }
@@ -488,19 +581,63 @@
       // Volume / mode state
       let db = 0, angle = 360, drag = false, moved = false, startY = 0, startAngle = 0;
       let afterMode = true;
+      // Independent volume settings per source (A = before, B = after)
+      const volumeState = { after: { db: 0, angle: 360 }, before: { db: 0, angle: 360 } };
+
+      // ---- Streaming playback preview --------------------------------------
+      // Platforms normalise to a target LUFS, so the level you actually hear is
+      // target - integrated. Measured loudness is cached per source.
+      let streamTarget = null;                       // { name, lufs, tp } or null
+      const loudnessCache = { after: null, before: null };
+      let loudnessPending = false;
+
+      function streamGainFor(isAfter) {
+        if (!streamTarget) return 1;
+        const m = loudnessCache[isAfter ? 'after' : 'before'];
+        if (!m) return 1;
+        const adjust = streamTarget.lufs - m.lufs;
+        return Math.pow(10, Math.max(-24, Math.min(12, adjust)) / 20);
+      }
+
+      // True if the normalised signal would hit the platform's peak ceiling.
+      function streamLimiting(isAfter) {
+        if (!streamTarget) return false;
+        const m = loudnessCache[isAfter ? 'after' : 'before'];
+        if (!m) return false;
+        return m.truePeak + 20 * Math.log10(streamGainFor(isAfter)) > streamTarget.tp;
+      }
+
+      function storeVolume() {
+        const slot = volumeState[afterMode ? 'after' : 'before'];
+        slot.db = db; slot.angle = angle;
+      }
 
       function applyVolume() {
         volumeValue.textContent = `${db >= 0 ? '+' : ''}${db.toFixed(1)} dB`;
         volumeKnob.style.transform = `rotate(${angle - 360}deg)`;
-        const gain = Math.pow(10, db / 20);
+        const gain = Math.pow(10, db / 20) * streamGainFor(afterMode);
         afterGain.gain.value  = afterMode ? gain : 0;
         beforeGain.gain.value = afterMode ? 0 : gain;
+        const limiter = afterMode ? afterLimiter : beforeLimiter;
+        if (streamTarget) {
+          limiter.threshold.value = streamTarget.tp;
+          limiter.ratio.value     = 20;
+        } else {
+          limiter.threshold.value = 0;
+          limiter.ratio.value     = 1;
+        }
+        storeVolume();
       }
 
       function activeAudio()   { return afterMode ? audioAfter : audioBefore; }
       function inactiveAudio() { return afterMode ? audioBefore : audioAfter; }
 
       function applyMode(nextAfter) {
+        if (nextAfter !== afterMode) {
+          storeVolume();
+          const slot = volumeState[nextAfter ? 'after' : 'before'];
+          db = slot.db; angle = slot.angle;
+        }
         afterMode = nextAfter;
         if (afterLabel && beforeLabel) {
           afterLabel.style.opacity    = afterMode ? '1' : '0.6';
@@ -510,10 +647,12 @@
           if (toggleButton) toggleButton.classList.toggle('active', afterMode);
         }
         if (sourceDisplay) sourceDisplay.textContent = afterMode ? 'B' : 'A';
+        resetLeds();
         if (nowPlaying) nowPlaying.textContent = afterMode
           ? (afterTrackName  || 'No file loaded')
           : (beforeTrackName || 'No file loaded');
         applyVolume();
+        if (streamTarget) ensureLoudness(); else describeStream();
         const wasPlaying = !audioAfter.paused || !audioBefore.paused;
         if (wasPlaying) {
           const active   = activeAudio();
@@ -543,6 +682,52 @@
       let lraValues = [], lraCached = 0, lraFrame = 0;
       let needleAngle = -50;
 
+      // ---- VU scale: dB -> fraction across the printed face -----------------
+      // Must match the tick positions in the markup so the needle lands on the marks.
+      const VU_SCALE = [
+        [-20, 0.000], [-10, 0.077], [-7, 0.154], [-5, 0.308], [-3, 0.462],
+        [-2, 0.538],  [-1, 0.615],  [0, 0.769],  [1, 0.846],  [2, 0.923], [3, 1.000]
+      ];
+      function vuFraction(vu) {
+        if (vu <= VU_SCALE[0][0]) return 0;
+        const last = VU_SCALE[VU_SCALE.length - 1];
+        if (vu >= last[0]) return 1;
+        for (let i = 1; i < VU_SCALE.length; i++) {
+          const [d1, p1] = VU_SCALE[i];
+          if (vu <= d1) {
+            const [d0, p0] = VU_SCALE[i - 1];
+            return p0 + (vu - d0) / (d1 - d0) * (p1 - p0);
+          }
+        }
+        return 1;
+      }
+
+      // ---- Vertical dBFS ladder ---------------------------------------------
+      const LED_MIN_DB = -60, LED_MAX_DB = 0;
+      let ledPeakDb = -100, ledRmsDb = -100;
+      let ledPeakHoldDb = -100, ledRmsHoldDb = -100;
+      let ledPeakHoldAt = 0, ledRmsHoldAt = 0;
+      const LED_HOLD_MS = 1200, LED_HOLD_FALL_DB_PER_S = 20;
+
+      function ledFraction(dbfs) {
+        if (!(dbfs > LED_MIN_DB)) return 0;
+        return Math.min(1, (dbfs - LED_MIN_DB) / (LED_MAX_DB - LED_MIN_DB));
+      }
+      function setLed(fillEl, holdEl, dbfs, holdDb) {
+        if (fillEl) fillEl.style.clipPath = `inset(${(100 - ledFraction(dbfs) * 100).toFixed(2)}% 0 0 0)`;
+        if (holdEl) {
+          const f = ledFraction(holdDb);
+          holdEl.style.opacity = f > 0 ? '1' : '0';
+          holdEl.style.bottom  = `calc(${(f * 100).toFixed(2)}% - 1px)`;
+        }
+      }
+      function resetLeds() {
+        ledPeakDb = ledRmsDb = -100;
+        ledPeakHoldDb = ledRmsHoldDb = -100;
+        setLed(ledPeakFill, ledPeakHold, -100, -100);
+        setLed(ledRmsFill,  ledRmsHold,  -100, -100);
+      }
+
       function resetBuffers() {
         afterLufsBuffer = []; beforeLufsBuffer = [];
         afterRmsBuffer  = []; beforeRmsBuffer  = [];
@@ -551,6 +736,7 @@
         afterTruePeakHold = -100; beforeTruePeakHold = -100;
         lraValues = []; lraCached = 0; lraFrame = 0;
         needleAngle = -50;
+        resetLeds();
         if (rmsDisplay)       rmsDisplay.textContent       = '-\u221E dB';
         if (truePeakDisplay)  truePeakDisplay.textContent  = '-\u221E dBTP';
         if (lufsDisplay)      lufsDisplay.textContent      = '-\u221E LUFS';
@@ -634,6 +820,7 @@
           else { needleAngle = -50; meterNeedle.style.transform = 'translateX(-50%) rotate(-50deg)'; }
         };
         decayLoop();
+        resetLeds();
         if (rmsDisplay)       rmsDisplay.textContent       = '-\u221E dB';
         if (truePeakDisplay)  truePeakDisplay.textContent  = '-\u221E dBTP';
         if (lufsDisplay)      lufsDisplay.textContent      = '-\u221E LUFS';
@@ -642,12 +829,16 @@
 
       function startVU() {
         if (vuRAF) cancelAnimationFrame(vuRAF);
-        let lastDisplayUpdate = 0, vuFrameCount = 0;
+        let lastDisplayUpdate = 0, vuFrameCount = 0, lastFrameMs = performance.now();
         const loop = () => {
           if (isMobile && (++vuFrameCount & 1)) { vuRAF = requestAnimationFrame(loop); return; }
           const vuAnalyser = afterMode ? afterVUAnalyser : beforeVUAnalyser;
           const timeData   = afterMode ? afterTimeData   : beforeTimeData;
           vuAnalyser.getFloatTimeDomainData(timeData);
+
+          const nowMs = performance.now();
+          const dt = Math.min(0.1, Math.max(0.001, (nowMs - lastFrameMs) / 1000));
+          lastFrameMs = nowMs;
 
           let sumSquares = 0, peakSample = 0;
           for (let i = 0; i < timeData.length; i++) {
@@ -655,6 +846,28 @@
             const a = s < 0 ? -s : s; if (a > peakSample) peakSample = a;
           }
           const rms = Math.sqrt(sumSquares / timeData.length);
+
+          // Inter-sample (true) peak: 4x Catmull-Rom around loud samples only.
+          let tpSample = peakSample;
+          if (peakSample > 0.5) {
+            const n = timeData.length;
+            for (let i = 1; i < n - 2; i++) {
+              const y1 = timeData[i];
+              if ((y1 < 0 ? -y1 : y1) <= 0.5) continue;
+              const y0 = timeData[i - 1], y2 = timeData[i + 1], y3 = timeData[i + 2];
+              const c0 = y1;
+              const c1 = (-y0 + y2) * 0.5;
+              const c2 = y0 - 2.5 * y1 + 2 * y2 - 0.5 * y3;
+              const c3 = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
+              for (let ti = 1; ti <= 3; ti++) {
+                const t = ti * 0.25;
+                const v = ((c3 * t + c2) * t + c1) * t + c0;
+                const av = v < 0 ? -v : v;
+                if (av > tpSample) tpSample = av;
+              }
+            }
+          }
+          const tpDb = tpSample > 0.00001 ? 20 * Math.log10(tpSample) : -100;
 
           const currentRmsBuffer = afterMode ? afterRmsBuffer : beforeRmsBuffer;
           let currentRmsSumSq    = afterMode ? afterRmsSumSq  : beforeRmsSumSq;
@@ -668,7 +881,7 @@
           const peakDb  = peakSample > 0.00001 ? 20 * Math.log10(peakSample) : -100;
 
           let truePeak = afterMode ? afterTruePeakHold : beforeTruePeakHold;
-          truePeak = peakDb > truePeak ? peakDb : Math.max(truePeak * 0.998, -100);
+          truePeak = tpDb > truePeak ? tpDb : Math.max(truePeak - 12 * dt, -100);
           if (afterMode) afterTruePeakHold = truePeak; else beforeTruePeakHold = truePeak;
 
           const currentLufsBuffer = afterMode ? afterLufsBuffer : beforeLufsBuffer;
@@ -692,19 +905,29 @@
             if (sorted.length > 20) lraCached = sorted[Math.floor(sorted.length * 0.95)] - sorted[Math.floor(sorted.length * 0.1)];
           }
 
-          const volGain   = Math.pow(10, db / 20);
-          const adjRmsDb  = stRmsDb + 20 * Math.log10(volGain);
-          const vuReading = adjRmsDb + 18;
-          const vuMin = -20, vuMax = 3;
-          const clamped = Math.max(vuMin, Math.min(vuMax, vuReading));
-          let norm = (clamped - vuMin) / (vuMax - vuMin);
-          if (clamped < -10) norm = Math.pow((clamped + 20) / 10, 1.2) * 0.435;
-          const targetAngle = -50 + norm * 100;
-          const diff = targetAngle - needleAngle;
-          needleAngle += diff * (diff > 0 ? 0.2 : 0.06);
+          // VU: 0 VU = -18 dBFS, measured pre-fader so A/B stays comparable.
+          const vuReading = stRmsDb + 18;
+          // Standard VU ballistics: ~300 ms to 99% of a step, symmetric.
+          const targetAngle = -50 + vuFraction(vuReading) * 100;
+          const vuCoef = 1 - Math.exp(-dt / 0.065);
+          needleAngle += (targetAngle - needleAngle) * vuCoef;
           meterNeedle.style.transform = `translateX(-50%) rotate(${needleAngle}deg)`;
 
-          const nowMs = performance.now();
+          // Vertical ladder: fast-attack digital peak + 300 ms RMS, both with peak-hold.
+          const peakAtt = 1 - Math.exp(-dt / 0.002);
+          const peakRel = 1 - Math.exp(-dt / 0.35);
+          ledPeakDb += (peakDb - ledPeakDb) * (peakDb > ledPeakDb ? peakAtt : peakRel);
+          const rmsCoef = 1 - Math.exp(-dt / 0.12);
+          ledRmsDb += (stRmsDb - ledRmsDb) * rmsCoef;
+
+          if (ledPeakDb >= ledPeakHoldDb) { ledPeakHoldDb = ledPeakDb; ledPeakHoldAt = nowMs; }
+          else if (nowMs - ledPeakHoldAt > LED_HOLD_MS) ledPeakHoldDb -= LED_HOLD_FALL_DB_PER_S * dt;
+          if (ledRmsDb >= ledRmsHoldDb) { ledRmsHoldDb = ledRmsDb; ledRmsHoldAt = nowMs; }
+          else if (nowMs - ledRmsHoldAt > LED_HOLD_MS) ledRmsHoldDb -= LED_HOLD_FALL_DB_PER_S * dt;
+
+          setLed(ledPeakFill, ledPeakHold, ledPeakDb, ledPeakHoldDb);
+          setLed(ledRmsFill,  ledRmsHold,  ledRmsDb,  ledRmsHoldDb);
+
           if (nowMs - lastDisplayUpdate >= 100) {
             lastDisplayUpdate = nowMs;
             if (sourceDisplay)    sourceDisplay.textContent    = afterMode ? 'B' : 'A';
@@ -739,6 +962,7 @@
         if (toggleButton)      toggleButton.style.display      = hasBoth ? '' : 'none';
         if (toggleLabels)      toggleLabels.style.display       = hasBoth ? '' : 'none';
         if (spectrumModeToggle) spectrumModeToggle.style.display = hasBoth ? '' : 'none';
+        if (diffBtn)           diffBtn.style.display            = hasBoth ? '' : 'none';
         if (hasBoth) applyMode(afterMode);
       }
 
@@ -762,6 +986,7 @@
         afterObjectURL = URL.createObjectURL(file);
         allObjectURLs.push(afterObjectURL);
         afterTrackName = file.name.replace(/\.[^.]+$/, '');
+        loudnessCache.after = null;
         uploadZoneAfter.classList.add('buffering');
         if (afterMode) {
           progressFill.style.width = '0%'; scrubber.style.left = '0%';
@@ -779,6 +1004,7 @@
           updateToggleVisibility();
           if (!afterMode) applyMode(true);
           else if (nowPlaying) nowPlaying.textContent = afterTrackName;
+          if (streamTarget) ensureLoudness();
         };
         const onError = () => {
           alert('Could not load this audio file. The format may be unsupported by your browser.');
@@ -803,6 +1029,7 @@
         beforeObjectURL = URL.createObjectURL(file);
         allObjectURLs.push(beforeObjectURL);
         beforeTrackName = file.name.replace(/\.[^.]+$/, '');
+        loudnessCache.before = null;
         uploadZoneBefore.classList.add('buffering');
         beforeLoaded = false;
         const onReady = () => {
@@ -811,6 +1038,7 @@
           audioBefore.currentTime = 0;
           ensureBeforeGraph();
           updateToggleVisibility();
+          if (streamTarget) ensureLoudness();
         };
         const onError = () => {
           alert('Could not load this audio file. The format may be unsupported by your browser.');
@@ -980,9 +1208,85 @@
         }
       });
 
+      // ---- Streaming playback preview --------------------------------------
+      function currentSourceKey() { return afterMode ? 'after' : 'before'; }
+      function currentSourceUrl() { return afterMode ? afterObjectURL : beforeObjectURL; }
+
+      function describeStream() {
+        if (!streamTarget) {
+          streamState.textContent = 'Off \u2014 file at its own level';
+          return;
+        }
+        if (loudnessPending) { streamState.textContent = 'Measuring loudness\u2026'; return; }
+        const m = loudnessCache[currentSourceKey()];
+        if (!m) { streamState.textContent = 'Load a file to preview'; return; }
+        const applied = 20 * Math.log10(streamGainFor(afterMode));
+        streamState.textContent =
+          `${afterMode ? 'B' : 'A'} ${m.lufs.toFixed(1)} \u2192 ${streamTarget.lufs} LUFS `
+          + `(${applied >= 0 ? '+' : ''}${applied.toFixed(1)} dB)`
+          + (streamLimiting(afterMode) ? ' \u00b7 limiting' : '');
+      }
+
+      async function ensureLoudness() {
+        const key = currentSourceKey(), url = currentSourceUrl();
+        if (!url || loudnessCache[key]) { describeStream(); applyVolume(); return; }
+        loudnessPending = true;
+        describeStream();
+        try {
+          loudnessCache[key] = await AudioAnalyzer.measureLoudness(url);
+        } catch (e) {
+          streamState.textContent = 'Could not measure this file';
+        }
+        loudnessPending = false;
+        describeStream();
+        applyVolume();
+      }
+
+      streamBtns.addEventListener('click', (e) => {
+        const btn = e.target.closest('.stream-btn');
+        if (!btn) return;
+        streamBtns.querySelectorAll('.stream-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        streamTarget = btn.dataset.lufs === 'off'
+          ? null
+          : { name: btn.textContent.trim(), lufs: parseFloat(btn.dataset.lufs), tp: parseFloat(btn.dataset.tp) };
+        if (streamTarget) ensureLoudness(); else { describeStream(); applyVolume(); }
+      });
+
+      // ---- Difference spectrogram ------------------------------------------
+      let diffRunning = false;
+      function closeDiffModal() { diffModal.style.display = 'none'; }
+      diffModalClose.addEventListener('click', closeDiffModal);
+      diffModal.addEventListener('click', (e) => { if (e.target === diffModal) closeDiffModal(); });
+
+      diffBtn.addEventListener('click', async () => {
+        if (!afterLoaded || !beforeLoaded) { alert('Load both an A and a B file to compare them.'); return; }
+        if (diffRunning) { diffModal.style.display = 'flex'; return; }
+        diffRunning = true;
+        diffModal.style.display = 'flex';
+        diffReadouts.innerHTML = '';
+        diffStatus.textContent = 'Preparing\u2026';
+        const c = diffCanvas.getContext('2d');
+        c.fillStyle = '#0a0a0a';
+        c.fillRect(0, 0, diffCanvas.width, diffCanvas.height);
+        try {
+          const r = await AudioAnalyzer.renderDiff(
+            beforeObjectURL, afterObjectURL, diffCanvas, (s) => { diffStatus.textContent = s; }
+          );
+          diffStatus.textContent = `${beforeTrackName || 'A'} \u2192 ${afterTrackName || 'B'}`;
+          diffReadouts.innerHTML =
+              '<div><span>Offset</span><strong>' + r.offsetMs.toFixed(0) + ' ms</strong></div>'
+            + '<div><span>Max boost</span><strong>+' + r.maxAdd.toFixed(1) + ' dB</strong></div>'
+            + '<div><span>Max cut</span><strong>\u2212' + r.maxCut.toFixed(1) + ' dB</strong></div>'
+            + '<div><span>Avg change</span><strong>' + r.avgChange.toFixed(1) + ' dB</strong></div>';
+        } catch (err) {
+          diffStatus.textContent = 'Comparison failed: ' + err.message;
+        }
+        diffRunning = false;
+      });
+
       // Spectrum Analyzer Modal
-      let meterActive = false, meterRAF = null, specFrameCount = 0;
-      let specSmoothed = null, specSmoothedBefore = null;
+      let meterActive = false, meterRAF = null, specFrameCount = 0;      let specSmoothed = null, specSmoothedBefore = null;
       let freqMapCache = null, freqMapCacheW = -1;
       let meterTimeDataBuf = null, meterFreqDataBuf = null, meterFreqDataBuf2 = null;
       let meterIntBuf = [], meterLraBuf = [], meterTruePeakModal = -100;
@@ -1244,14 +1548,35 @@
           <span class="player-info-icon">&#9678;</span>
           <div>
             <strong>Volume Knob</strong>
-            <p>Drag upward to raise the monitoring volume, downward to lower it. A click without dragging resets the level to 0 dB. This controls listening level only and does not affect the file.</p>
+            <p>Drag upward to raise the monitoring volume, downward to lower it. A click without dragging resets the level to 0 dB. This controls listening level only &mdash; it does not affect the file or the meters, and each source (A and B) keeps its own setting.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9707;</span>
+          <div>
+            <strong>Meters</strong>
+            <p>The needle is a VU meter with standard 300&nbsp;ms ballistics, referenced so that 0&nbsp;VU equals &minus;18&nbsp;dBFS. To its right, the vertical ladder shows instantaneous level in dBFS: PK is the inter-sample peak (fast attack, 300&nbsp;ms release) and RMS is the averaged level, each with a peak-hold marker. Green stays below &minus;18&nbsp;dBFS, yellow runs from &minus;18 to &minus;6, and red is the last 6&nbsp;dB before full scale.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#128202;</span>
           <div>
             <strong>Analyze</strong>
-            <p>Runs a full offline loudness analysis on the uploaded file, measuring Integrated LUFS, True Peak, LRA, and detecting any clipping events. Includes a streaming compliance check against the -14 LUFS standard.</p>
+            <p>Runs a full offline analysis on the uploaded file &mdash; Integrated LUFS, momentary and short-term maxima, True Peak, LRA, crest factor, clipping events, stereo image, spectral balance, tempo and key, plus streaming compliance for the major platforms. The file header is read directly, so sample rate, bit depth, channel count, and format are reported as they are in the file rather than as your sound card resamples them.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#127760;</span>
+          <div>
+            <strong>Streaming Playback Preview</strong>
+            <p>Every platform normalises to a loudness target, so the level you upload is almost never the level people hear. Pick a platform and the player measures the file's integrated loudness and applies the exact gain that service would apply &mdash; including the ceiling that stops a quiet track being turned up past its peak headroom. This is the single fastest way to show why chasing loudness stops paying off.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9635;</span>
+          <div>
+            <strong>Compare (A vs B)</strong>
+            <p>Available once both an A and a B file are loaded. The two files are time-aligned automatically, then compared frequency band by frequency band across the whole track. Red shows where B has more energy than A, blue shows where it has less, and dark areas are unchanged. It turns an entire processing chain into a single picture &mdash; you can see the de-essing, the low-end shaping, and the compression as distinct shapes.</p>
           </div>
         </li>
         <li>
