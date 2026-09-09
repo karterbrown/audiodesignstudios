@@ -189,9 +189,11 @@ window.AudioAnalyzer = (function () {
           out.channels = u8[op + 9];
           out.sampleRate = 48000; // Opus always decodes at 48 kHz
         } else if (vo >= 0) {
+          // 'vorbis' sits one byte into the identification packet:
+          // 0x01 'vorbis' version(4) channels(1) rate(4)
           out.codec = 'Vorbis';
-          out.channels   = u8[vo + 5];
-          out.sampleRate = v.getUint32(vo + 6, true);
+          out.channels   = u8[vo + 10];
+          out.sampleRate = v.getUint32(vo + 11, true);
         }
         return out;
       }
@@ -303,34 +305,38 @@ window.AudioAnalyzer = (function () {
         await new Promise(r => setTimeout(r, 0));
       }
 
-      // ── Integrated LUFS — 400 ms blocks, 75% overlap (ITU-R BS.1770-4 §2.2)
-      const blockSz = Math.floor(sr * 0.4);
-      const stepSz  = Math.floor(blockSz * 0.25); // 100 ms step
-      const nBlocks = Math.floor((nSmp - blockSz) / stepSz);
-      if (nBlocks < 1)
+      // ── Mean square per 100 ms tile ────────────────────────────────────────
+      // Tiles do not overlap, so any window that is a whole number of tiles has
+      // an exact mean square. Momentary (400 ms) and short-term (3 s) windows
+      // are then just sums of 4 and 30 tiles.
+      const subLen = Math.max(1, Math.round(sr * 0.1));
+      const nSub   = Math.floor(nSmp / subLen);
+      if (nSub < 4)
         throw new Error('Track is too short for loudness analysis (minimum 400 ms).');
 
-      const blockMS = new Float64Array(nBlocks); // per-block mean-square (K-weighted)
-      const blockL  = new Float64Array(nBlocks); // per-block loudness in LUFS
-
       upd(25, 'Processing loudness blocks\u2026');
-      for (let bi = 0; bi < nBlocks; bi++) {
-        const pos = bi * stepSz;
-        let ms = 0;
-        for (let ch = 0; ch < nCh; ch++) {
-          const w = G_WEIGHT[ch];
-          if (w === 0.0) continue;
-          const kw = kwChs[ch];
+      const subMS = new Float64Array(nSub); // channel-weighted mean square per tile
+      for (let ch = 0; ch < nCh; ch++) {
+        const w = G_WEIGHT[ch];
+        if (w === 0.0) continue;
+        const kw = kwChs[ch];
+        for (let s = 0; s < nSub; s++) {
           let sq = 0;
-          for (let i = pos, end = pos + blockSz; i < end; i++) sq += kw[i] * kw[i];
-          ms += w * (sq / blockSz);
+          for (let i = s * subLen, end = i + subLen; i < end; i++) sq += kw[i] * kw[i];
+          subMS[s] += w * (sq / subLen);
         }
+        upd(25 + ((ch + 1) / nCh) * 45, 'Channel ' + (ch + 1) + ' / ' + nCh + '\u2026');
+        await new Promise(r => setTimeout(r, 0));
+      }
+
+      // 400 ms momentary blocks on a 100 ms grid (ITU-R BS.1770-4 §2.2)
+      const nBlocks = nSub - 3;
+      const blockMS = new Float64Array(nBlocks);
+      const blockL  = new Float64Array(nBlocks);
+      for (let bi = 0; bi < nBlocks; bi++) {
+        const ms = (subMS[bi] + subMS[bi + 1] + subMS[bi + 2] + subMS[bi + 3]) * 0.25;
         blockMS[bi] = ms;
         blockL[bi]  = ms > 0 ? -0.691 + 10 * Math.log10(ms) : -Infinity;
-        if (bi % 200 === 0) {
-          upd(25 + (bi / nBlocks) * 45, 'Block ' + bi + ' / ' + nBlocks + '\u2026');
-          await new Promise(r => setTimeout(r, 0));
-        }
       }
 
       upd(72, 'Calculating loudness metrics\u2026');
@@ -346,26 +352,31 @@ window.AudioAnalyzer = (function () {
       const relGate = -0.691 + 10 * Math.log10(gMs / gN) - 10;
       let fMs = 0, fN = 0;
       for (let i = 0; i < nBlocks; i++) {
-        if (blockL[i] >= relGate) { fMs += blockMS[i]; fN++; }
+        // both gates apply; the relative gate can fall below -70 on very quiet material
+        if (blockL[i] >= relGate && blockL[i] >= -70) { fMs += blockMS[i]; fN++; }
       }
       const intLUFS = fN > 0 ? -0.691 + 10 * Math.log10(fMs / fN) : -100;
 
-      // Max Momentary LUFS (peak 400 ms block)
+      // Max Momentary LUFS — loudest 400 ms window, ungated (EBU Tech 3341)
       let maxMomentary = -100;
       for (let i = 0; i < nBlocks; i++) if (blockL[i] > maxMomentary) maxMomentary = blockL[i];
 
-      // Short-term (3 s) windows — 30 x 100 ms steps (EBU Tech 3342 §3)
+      // Short-term — 3 s windows on a 100 ms grid (30 tiles), ungated max
       const ST_WIN = 30;
       const stL  = [];
       const stMS = [];
       let maxShortTerm = -100;
-      for (let si = 0; si + ST_WIN <= nBlocks; si++) {
-        let ms = 0;
-        for (let k = 0; k < ST_WIN; k++) ms += blockMS[si + k];
-        ms /= ST_WIN;
-        const l = ms > 0 ? -0.691 + 10 * Math.log10(ms) : -100;
-        stL.push(l); stMS.push(ms);
-        if (l > maxShortTerm) maxShortTerm = l;
+      if (nSub >= ST_WIN) {
+        let run = 0;
+        for (let k = 0; k < ST_WIN; k++) run += subMS[k];
+        for (let si = 0; ; si++) {
+          const ms = run / ST_WIN;
+          const l  = ms > 0 ? -0.691 + 10 * Math.log10(ms) : -100;
+          stL.push(l); stMS.push(ms);
+          if (l > maxShortTerm) maxShortTerm = l;
+          if (si + ST_WIN >= nSub) break;
+          run += subMS[si + ST_WIN] - subMS[si];
+        }
       }
 
       // LRA — EBU Tech 3342 §2.3
@@ -386,20 +397,22 @@ window.AudioAnalyzer = (function () {
 
       // ── True Peak — 4x Catmull-Rom inter-sample (ITU-R BS.1770-4 §3) ──────
       upd(75, 'Calculating true peak\u2026');
-      let truePeak = -100;
+      let truePeak = -100, samplePeakLin = 0;
       for (let ch = 0; ch < nCh; ch++) {
         const d = chs[ch];
         const n = d.length;
         for (let i = 1; i < n - 2; i++) {
           const y1 = d[i];
           const pa = y1 < 0 ? -y1 : y1;
+          if (pa > samplePeakLin) samplePeakLin = pa;
           if (pa > 0) {
             const db = 20 * Math.log10(pa);
             if (db > truePeak) truePeak = db;
           }
-          // 4x Catmull-Rom upsampling at t = 0.25, 0.5, 0.75
-          // Check near any significant sample (> 0.5 FS) to catch inter-sample peaks
-          if (pa > 0.5) {
+          // 4x Catmull-Rom upsampling at t = 0.25, 0.5, 0.75.
+          // Threshold is well below full scale because an inter-sample peak can
+          // sit a couple of dB above the highest actual sample.
+          if (pa > 0.25) {
             const y0 = d[i - 1];
             const y2 = d[i + 1];
             const y3 = d[i + 2 < n ? i + 2 : n - 1];
@@ -448,18 +461,27 @@ window.AudioAnalyzer = (function () {
       const balanceDb  = nCh >= 2 && rmsLVal > 1e-9 && rmsRVal > 1e-9
                          ? 20 * Math.log10(rmsRVal / rmsLVal) : 0;
       const headroom   = -truePeak;
-      const crestFactor = rmsDb < -99 ? 0 : truePeak - rmsDb;
+      const samplePeak = samplePeakLin > 1e-9 ? 20 * Math.log10(samplePeakLin) : -100;
+      const overshoot  = truePeak - samplePeak;
+      const crestFactor = rmsDb < -99 ? 0 : samplePeak - rmsDb;
 
-      // ── Clipping detection — 100 ms windows at >= 99% full scale ──────────
+      // ── Clipping detection — runs of consecutive samples pinned at full scale
+      // A single sample at full scale is normal; three or more in a row is a
+      // flat top, which is what clipping actually looks like.
       upd(84, 'Detecting clipping\u2026');
       const clipEvts = [];
       const clipStep = Math.floor(sr * 0.1);
+      const CLIP_LEVEL = 0.9995, CLIP_RUN = 3;
       for (let pos = 0; pos + clipStep <= nSmp; pos += clipStep) {
         let clipped = false;
         for (let ch = 0; ch < nCh && !clipped; ch++) {
           const d = chs[ch];
+          let run = 0;
           for (let i = pos, end = pos + clipStep; i < end; i++) {
-            if (d[i] >= 0.99 || d[i] <= -0.99) { clipped = true; break; }
+            const a = d[i] < 0 ? -d[i] : d[i];
+            if (a >= CLIP_LEVEL) {
+              if (++run >= CLIP_RUN) { clipped = true; break; }
+            } else run = 0;
           }
         }
         if (clipped) {
@@ -777,8 +799,12 @@ window.AudioAnalyzer = (function () {
           <span class="analysis-value">${rmsDb > -99 ? rmsDb.toFixed(1) + ' dBFS' : inf + ' dBFS'}</span>
         </div>
         <div class="analysis-metric">
+          <span class="analysis-label">Sample Peak:</span>
+          <span class="analysis-value">${samplePeak > -99 ? samplePeak.toFixed(1) + ' dBFS' : inf + ' dBFS'}</span>
+        </div>
+        <div class="analysis-metric">
           <span class="analysis-label">True Peak:</span>
-          <span class="analysis-value">${truePeak > -99 ? truePeak.toFixed(1) + ' dBTP' : inf + ' dBTP'}</span>
+          <span class="analysis-value">${truePeak > -99 ? truePeak.toFixed(1) + ' dBTP' : inf + ' dBTP'}${overshoot > 0.05 && truePeak > -99 ? ' <span class="analysis-tag info">+' + overshoot.toFixed(1) + ' dB inter-sample</span>' : ''}</span>
         </div>
         <div class="analysis-metric">
           <span class="analysis-label">Headroom:</span>
@@ -976,7 +1002,7 @@ window.AudioAnalyzer = (function () {
     if (gN === 0) throw new Error('Track is silent.');
     const relGate = -0.691 + 10 * Math.log10(gMs / gN) - 10;
     let fMs = 0, fN = 0;
-    for (let i = 0; i < nBlocks; i++) if (l[i] >= relGate) { fMs += ms[i]; fN++; }
+    for (let i = 0; i < nBlocks; i++) if (l[i] >= relGate && l[i] >= -70) { fMs += ms[i]; fN++; }
 
     return {
       lufs: fN > 0 ? -0.691 + 10 * Math.log10(fMs / fN) : -100,
