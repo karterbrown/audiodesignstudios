@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./processor.css?v=1788988876" />
+  <link rel="stylesheet" href="./processor.css?v=1788989185" />
 </head>
 
 <body>
@@ -1527,7 +1527,14 @@
           <span class="player-info-icon">&#9836;</span>
           <div>
             <strong>Upload</strong>
-            <p>Drag and drop an audio file onto the upload zone, or click it to browse your files. Supported formats include MP3, WAV, AIFF, FLAC, OGG, M4A, and AAC.</p>
+            <p>Drag and drop an audio file onto an upload zone, or click it to browse. Supported formats include MP3, WAV, AIFF, FLAC, OGG, M4A, and AAC. Load one file to analyse it on its own, or load two &mdash; A and B &mdash; to compare a mix against its processed version.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#8646;</span>
+          <div>
+            <strong>A / B Switching</strong>
+            <p>With both files loaded, the toggle above the meters switches which one you are hearing. Playback position is carried across, so you land at the same point in the track. Every meter and readout follows the active source, and each source remembers its own volume setting so switching never changes what you hear by accident.</p>
           </div>
         </li>
         <li>
@@ -1562,28 +1569,28 @@
           <span class="player-info-icon">&#128202;</span>
           <div>
             <strong>Analyze</strong>
-            <p>Runs a full offline analysis on the uploaded file &mdash; Integrated LUFS, momentary and short-term maxima, True Peak, LRA, crest factor, clipping events, stereo image, spectral balance, tempo and key, plus streaming compliance for the major platforms. The file header is read directly, so sample rate, bit depth, channel count, and format are reported as they are in the file rather than as your sound card resamples them.</p>
+            <p>Runs a full offline analysis on the uploaded file &mdash; Integrated LUFS, momentary and short-term maxima, True Peak, LRA, crest factor, clipping events, stereo image, spectral balance, tempo and key, plus streaming compliance for the major platforms. The file header is read directly, so sample rate, bit depth, channel count, and format are reported as they are in the file rather than as your sound card resamples them. With both A and B loaded, the two reports are shown side by side.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#127760;</span>
           <div>
             <strong>Streaming Playback Preview</strong>
-            <p>Every platform normalises to a loudness target, so the level you upload is almost never the level people hear. Pick a platform and the player measures the file's integrated loudness and applies the exact gain that service would apply &mdash; including the ceiling that stops a quiet track being turned up past its peak headroom. This is the single fastest way to show why chasing loudness stops paying off.</p>
+            <p>Every platform normalises to a loudness target, so the level you upload is almost never the level people hear. Pick a platform and the player measures the file's integrated loudness, then applies exactly the gain that service would apply. Quiet tracks are turned up through a limiter set to the platform's peak ceiling, just as the services do, and the readout shows the measured loudness, the gain applied, and whether the limiter is working. Switch between A and B with a platform selected to hear how the two actually land side by side.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#9635;</span>
           <div>
             <strong>Compare (A vs B)</strong>
-            <p>Available once both an A and a B file are loaded. The two files are time-aligned automatically, then compared frequency band by frequency band across the whole track. Red shows where B has more energy than A, blue shows where it has less, and dark areas are unchanged. It turns an entire processing chain into a single picture &mdash; you can see the de-essing, the low-end shaping, and the compression as distinct shapes.</p>
+            <p>Appears once both an A and a B file are loaded. The two are time-aligned automatically, then compared band by band across the whole track. Red marks where B has more energy than A, blue where it has less, and dark areas are unchanged. Frequency runs up the left axis, time along the bottom. It turns an entire processing chain into one picture &mdash; de-essing, low-end shaping, and compression each read as their own distinct shape. Underneath, you get the detected time offset between the files, the largest boost and cut, and the average amount of change.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#128065;</span>
           <div>
             <strong>View (Spectrum Analyzer)</strong>
-            <p>Opens a real-time frequency spectrum display while the file plays, alongside live RMS, True Peak, LUFS, and LRA readouts.</p>
+            <p>Opens a real-time frequency spectrum display while the file plays, alongside live RMS, True Peak, LUFS, and LRA readouts. With both files loaded, the A and B buttons in its header switch the source without leaving the window.</p>
           </div>
         </li>
         <li>
