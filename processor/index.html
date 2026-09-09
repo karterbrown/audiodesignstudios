@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./processor.css?v=1788989971" />
+  <link rel="stylesheet" href="./processor.css?v=1788990201" />
 </head>
 
 <body>
@@ -415,8 +415,12 @@
       const allObjectURLs = [];
       let beforeObjectURL = null;
       let afterObjectURL  = null;
+      // Detaching a loaded source during teardown makes the media element fire
+      // 'error'; this keeps that from being reported as a failed upload.
+      let tearingDown = false;
 
       function cleanup() {
+        tearingDown = true;
         [audioAfter, audioBefore].forEach(a => {
           if (a) { a.pause(); a.removeAttribute('src'); try { a.load(); } catch (_) {} }
         });
@@ -427,8 +431,9 @@
         resetBuffers();
       }
 
-      window.addEventListener('beforeunload', cleanup);
-      document.addEventListener('pagehide', cleanup);
+      // pagehide covers reload, navigation and bfcache; beforeunload would only
+      // duplicate it and runs while the page is still interactive.
+      window.addEventListener('pagehide', cleanup);
 
       // DOM References
       const meterNeedle     = document.getElementById('procMeterNeedle');
@@ -1009,8 +1014,8 @@
         };
         const onError = () => {
           audioAfter.removeEventListener('canplay', onReady);
-          // clearing a source also fires 'error'; only a real src means a real failure
-          if (!audioAfter.getAttribute('src')) return;
+          // detaching a source also fires 'error'; only a live src is a real failure
+          if (tearingDown || !audioAfter.getAttribute('src')) return;
           alert('Could not load this audio file. The format may be unsupported by your browser.');
           showUploadZone(uploadZoneAfter, uploadZoneContentAfter, uploadLoadedContentAfter);
         };
@@ -1047,8 +1052,8 @@
         };
         const onError = () => {
           audioBefore.removeEventListener('canplay', onReady);
-          // clearing a source also fires 'error'; only a real src means a real failure
-          if (!audioBefore.getAttribute('src')) return;
+          // detaching a source also fires 'error'; only a live src is a real failure
+          if (tearingDown || !audioBefore.getAttribute('src')) return;
           alert('Could not load this audio file. The format may be unsupported by your browser.');
           showUploadZone(uploadZoneBefore, uploadZoneContentBefore, uploadLoadedContentBefore);
         };
