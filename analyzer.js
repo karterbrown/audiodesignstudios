@@ -1,7 +1,7 @@
 /* =============================================================================
    analyzer.js — Audio analysis engine — Audio Design Studios
    Offline track analysis: ITU-R BS.1770-4 integrated LUFS, True Peak (4x
-   Catmull-Rom), EBU Tech 3342 LRA, streaming compliance, BPM (onset-strength
+   Catmull-Rom), EBU Tech 3342 LRA, BPM (onset-strength
    autocorrelation), Krumhansl-Schmuckler key detection, power spectral FFT,
    stereo image, DC offset, and clipping detection.
 
@@ -722,24 +722,6 @@ window.AudioAnalyzer = (function () {
         : '<div class="analysis-metric"><span class="analysis-label">DC Offset:</span>'
           + '<span class="analysis-value">' + fmtDC(dcL) + '</span></div>';
 
-      const complianceRows = PLATFORMS.map(p => {
-        const delta  = intLUFS - p.lufs; // positive = over target
-        const tpPass = truePeak <= p.tp;
-        let status, cls;
-        if      (Math.abs(delta) <= 1.0 && tpPass)  { status = '\u2713 Pass';                              cls = 'good'; }
-        else if (delta > 1.0 && tpPass)              { status = '\u2193 ' + delta.toFixed(1) + ' LU over'; cls = 'warn-text'; }
-        else if (!tpPass && Math.abs(delta) <= 1.0)  { status = '\u26a0 Peak limit';                       cls = 'warn-text'; }
-        else if (!tpPass)                            { status = '\u2717 Fail (peak + level)';              cls = 'warn-text'; }
-        else                                         { status = '\u2191 ' + Math.abs(delta).toFixed(1) + ' LU under'; cls = 'info'; }
-        const adj    = p.lufs - intLUFS;
-        const adjStr = Math.abs(adj) < 0.05 ? 'On target'
-          : adj > 0 ? '+' + adj.toFixed(1) + ' dB' : adj.toFixed(1) + ' dB';
-        return '<div class="analysis-metric"><span class="analysis-label">' + p.name + ':</span>'
-          + '<span class="analysis-value"><span class="analysis-tag ' + cls + '">' + status + '</span>'
-          + ' &mdash; target ' + p.lufs + ' LUFS / ' + p.tp + ' dBTP'
-          + ' &mdash; adjust: ' + adjStr + '</span></div>';
-      }).join('');
-
       const dur     = buf.duration;
 
       // File info — prefer the container header over the decoded buffer, since
@@ -838,9 +820,6 @@ window.AudioAnalyzer = (function () {
           <span class="analysis-label">Key:</span>
           <span class="analysis-value">${bestKey} ${bestMode} <span class="analysis-tag ${keyTag}">${keyConf}% confidence</span></span>
         </div>
-
-        <div class="analysis-section-header">STREAMING COMPLIANCE</div>
-        ${complianceRows}
 
         <div class="analysis-section-header">FILE INFO</div>
         <div class="analysis-metric">

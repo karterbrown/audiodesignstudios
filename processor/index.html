@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="./processor.css?v=1788990201" />
+  <link rel="stylesheet" href="./processor.css?v=1788990647" />
 </head>
 
 <body>
@@ -1540,77 +1540,84 @@
           <span class="player-info-icon">&#9836;</span>
           <div>
             <strong>Upload</strong>
-            <p>Drag and drop an audio file onto an upload zone, or click it to browse. Supported formats include MP3, WAV, AIFF, FLAC, OGG, M4A, and AAC. Load one file to analyse it on its own, or load two &mdash; A and B &mdash; to compare a mix against its processed version.</p>
+            <p>Drag and drop an audio file onto an upload zone, or click it to browse. Supported formats include MP3, WAV, AIFF, FLAC, OGG, M4A, and AAC. Load one file to analyse it on its own, or load both zones &mdash; A and B &mdash; to compare a mix against its processed version.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#8646;</span>
           <div>
             <strong>A / B Switching</strong>
-            <p>With both files loaded, the toggle above the meters switches which one you are hearing. Playback position is carried across, so you land at the same point in the track. Every meter and readout follows the active source, and each source remembers its own volume setting so switching never changes what you hear by accident.</p>
-          </div>
-        </li>
-        <li>
-          <span class="player-info-icon">&#9654;</span>
-          <div>
-            <strong>Play / Pause</strong>
-            <p>Click the center transport button to start or stop playback. The VU meter and all readouts respond in real time while the file plays.</p>
-          </div>
-        </li>
-        <li>
-          <span class="player-info-icon">&#9644;</span>
-          <div>
-            <strong>Progress Bar</strong>
-            <p>Click anywhere on the progress bar to jump to that position, or click and drag to scrub through the file.</p>
-          </div>
-        </li>
-        <li>
-          <span class="player-info-icon">&#9678;</span>
-          <div>
-            <strong>Volume Knob</strong>
-            <p>Drag upward to raise the monitoring volume, downward to lower it. A click without dragging resets the level to 0 dB. This controls listening level only &mdash; it does not affect the file or the meters, and each source (A and B) keeps its own setting.</p>
+            <p>With both files loaded, a toggle appears above the meters to switch which one you are hearing. Playback position carries across, so you land at the same point in the track. Every meter and readout follows the active source, and each source remembers its own volume setting so switching never changes the comparison by accident.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#9707;</span>
           <div>
             <strong>Meters</strong>
-            <p>The needle is a VU meter with standard 300&nbsp;ms ballistics, referenced so that 0&nbsp;VU equals &minus;18&nbsp;dBFS. To its right, the vertical ladder shows instantaneous level in dBFS: PK is the inter-sample peak (fast attack, 300&nbsp;ms release) and RMS is the averaged level, each with a peak-hold marker. Green stays below &minus;18&nbsp;dBFS, yellow runs from &minus;18 to &minus;6, and red is the last 6&nbsp;dB before full scale.</p>
+            <p>The needle is a VU meter with standard 300&nbsp;ms ballistics, referenced so 0&nbsp;VU equals &minus;18&nbsp;dBFS. The vertical ladder beside it shows level in dBFS: PK is the inter-sample peak with a fast attack, RMS is the averaged level, and both carry a peak-hold marker. Green sits below &minus;18&nbsp;dBFS, yellow runs from &minus;18 to &minus;6, and red is the last 6&nbsp;dB before full scale. Both meters read the file itself, so the volume knob and the streaming preview never change what they show.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#128290;</span>
+          <div>
+            <strong>Live Readouts</strong>
+            <p>Underneath the meters: RMS is the short-term average level, True Peak includes inter-sample peaks that a normal peak meter misses, LUFS (I) is perceived loudness, and LRA is the spread between the quiet and loud parts. These update while the file plays; the Analyze report measures the same things across the entire track at full precision.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#128065;</span>
+          <div>
+            <strong>View</strong>
+            <p>Opens a real-time frequency spectrum while the file plays, alongside live level, loudness, peak, and dynamic range readouts. With both files loaded, the A and B buttons in its header switch source without leaving the window.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#128202;</span>
           <div>
             <strong>Analyze</strong>
-            <p>Runs a full offline analysis on the uploaded file &mdash; Integrated LUFS, momentary and short-term maxima, True Peak, LRA, crest factor, clipping events, stereo image, spectral balance, tempo and key, plus streaming compliance for the major platforms. The file header is read directly, so sample rate, bit depth, channel count, and format are reported as they are in the file rather than as your sound card resamples them. With both A and B loaded, the two reports are shown side by side.</p>
+            <p>Runs a full offline analysis of the whole file &mdash; integrated LUFS, momentary and short-term maxima, sample and true peak, loudness range, crest factor, clipping events with timestamps, stereo image, spectral balance, tempo, and key. The file header is read directly, so sample rate, bit depth, channel count, and format are reported as they are in the file rather than as your sound card resamples them. With both A and B loaded, the two reports appear side by side.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9635;</span>
+          <div>
+            <strong>Compare</strong>
+            <p>Appears once both files are loaded. The two are time-aligned automatically, then compared band by band across the whole track. Frequency runs up the left axis and time along the bottom. Red marks where B has more energy than A, blue where it has less, and dark areas are unchanged &mdash; so an entire processing chain becomes a single picture, with de-essing, low-end shaping, and compression each reading as their own shape. Below the graph: the detected offset between the files, the largest boost and cut, and the average amount of change.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#127760;</span>
           <div>
             <strong>Streaming Playback Preview</strong>
-            <p>Every platform normalises to a loudness target, so the level you upload is almost never the level people hear. Pick a platform and the player measures the file's integrated loudness, then applies exactly the gain that service would apply. Quiet tracks are turned up through a limiter set to the platform's peak ceiling, just as the services do, and the readout shows the measured loudness, the gain applied, and whether the limiter is working. Switch between A and B with a platform selected to hear how the two actually land side by side.</p>
+            <p>Every platform normalises to a loudness target, so the level you upload is almost never the level people hear. Pick a platform and the player measures the file's integrated loudness, then applies exactly the gain that service would apply. Quiet tracks are turned up through a limiter set to the platform's peak ceiling, just as the services do. The readout shows the measured loudness, the gain applied, and whether the limiter is working. Leave a platform selected and switch between A and B to hear how the two actually land next to each other.</p>
           </div>
         </li>
         <li>
-          <span class="player-info-icon">&#9635;</span>
+          <span class="player-info-icon">&#9654;</span>
           <div>
-            <strong>Compare (A vs B)</strong>
-            <p>Appears once both an A and a B file are loaded. The two are time-aligned automatically, then compared band by band across the whole track. Red marks where B has more energy than A, blue where it has less, and dark areas are unchanged. Frequency runs up the left axis, time along the bottom. It turns an entire processing chain into one picture &mdash; de-essing, low-end shaping, and compression each read as their own distinct shape. Underneath, you get the detected time offset between the files, the largest boost and cut, and the average amount of change.</p>
+            <strong>Transport</strong>
+            <p>The centre button plays and pauses. The left button returns to the beginning of the track, and the right button loads a different file into the active player.</p>
           </div>
         </li>
         <li>
-          <span class="player-info-icon">&#128065;</span>
+          <span class="player-info-icon">&#9644;</span>
           <div>
-            <strong>View (Spectrum Analyzer)</strong>
-            <p>Opens a real-time frequency spectrum display while the file plays, alongside live RMS, True Peak, LUFS, and LRA readouts. With both files loaded, the A and B buttons in its header switch the source without leaving the window.</p>
+            <strong>Progress Bar</strong>
+            <p>Click anywhere on the bar to jump to that position, or click and drag to scrub. With both files loaded, the other source follows to the same position.</p>
+          </div>
+        </li>
+        <li>
+          <span class="player-info-icon">&#9678;</span>
+          <div>
+            <strong>Volume Knob</strong>
+            <p>Drag upward to raise the monitoring level, downward to lower it. A click without dragging resets to 0&nbsp;dB. This sets listening level only &mdash; it does not affect the file, the meters, or any measurement, and A and B each keep their own setting.</p>
           </div>
         </li>
         <li>
           <span class="player-info-icon">&#128274;</span>
           <div>
             <strong>Privacy</strong>
-            <p>Your file is processed entirely in your browser. Nothing is uploaded, stored, or transmitted anywhere. All data is automatically cleared when you close or leave this page.</p>
+            <p>Your file is processed entirely in your browser. Nothing is uploaded, stored, or transmitted anywhere. All data is cleared automatically when you close or leave this page.</p>
           </div>
         </li>
       </ul>
